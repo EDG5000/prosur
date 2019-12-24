@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project hc3d-old">
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
+<project default="create_run_jar" name="Create Runnable Jar for Project hc3d-old with Jar-in-Jar Loader">
+    <!--this file was created by Eclipse Runnable JAR file Export Wizard-->
+    <!--ANT 1.7 is required-->
     <!--define folder properties-->
     <property name="dir.buildfile" value="."/>
-    <property name="dir.buildfolder" value="C:/Users/Joel/Documents/hc3d/build"/>
+    <property name="dir.workspace" value="C:/Users/Joel/eclipse-workspace"/>
+    <property name="dir.jarfile" value="${dir.buildfile}/build"/>
     <target name="create_run_jar">
-        <jar destfile="${dir.buildfolder}/hc3d.jar" filesetmanifest="mergewithoutmain">
+        <jar destfile="${dir.jarfile}/hc3d.jar">
             <manifest>
-                <attribute name="Main-Class" value="io.infinus.hc3d.Main"/>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="io.infinus.hc3d.Main"/>
                 <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ gst1-java-core-1.1.0.jar android-arm.jar android-armv7.jar jna.jar gst1-java-swing-0.9.0.jar slf4j-api-1.7.2.jar webcam-capture-0.3.12.jar bridj-0.7-20140918.jar"/>
             </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
             <fileset dir="${dir.buildfile}/bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/gst/gst1-java-core-1.1.0.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/jna/android-arm.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/jna/android-armv7.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/jna/jna.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/gst/gst1-java-swing-0.9.0.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/bridj-0.6.2.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/slf4j-api-1.7.2.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="${dir.buildfile}/lib/webcam-capture-0.3.10.jar"/>
+            <zipfileset dir="${dir.buildfile}/lib/gst" includes="gst1-java-core-1.1.0.jar"/>
+            <zipfileset dir="${dir.buildfile}/lib/jna" includes="android-arm.jar"/>
+            <zipfileset dir="${dir.buildfile}/lib/jna" includes="android-armv7.jar"/>
+            <zipfileset dir="${dir.buildfile}/lib/jna" includes="jna.jar"/>
+            <zipfileset dir="${dir.buildfile}/lib/gst" includes="gst1-java-swing-0.9.0.jar"/>
+            <zipfileset dir="${dir.buildfile}/lib/wc" includes="slf4j-api-1.7.2.jar"/>
+            <zipfileset dir="${dir.buildfile}/lib/wc" includes="webcam-capture-0.3.12.jar"/>
+            <zipfileset dir="${dir.buildfile}/lib/wc" includes="bridj-0.7-20140918.jar"/>
         </jar>
     </target>
 </project>
