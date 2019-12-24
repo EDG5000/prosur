@@ -2,18 +2,21 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/gst1-java-core-1.1.0.jar" sourcepath="lib/gst1-java-core-1.1.0-sources.jar">
+	<classpathentry kind="lib" path="lib/gst/gst1-java-core-1.1.0.jar" sourcepath="lib/gst/gst1-java-core-1.1.0-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/hc3d/lib/gst1-java-core-1.1.0-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/hc3d/lib/gst/gst1-java-core-1.1.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/gst1-java-swing-0.9.0.jar" sourcepath="lib/gst1-java-swing-0.9.0-sources.jar">
+	<classpathentry kind="lib" path="lib/jna/android-arm.jar"/>
+	<classpathentry kind="lib" path="lib/jna/android-armv7.jar"/>
+	<classpathentry kind="lib" path="lib/jna/jna.jar"/>
+	<classpathentry kind="lib" path="lib/gst/gst1-java-swing-0.9.0.jar" sourcepath="lib/gst/gst1-java-swing-0.9.0-sources.jar">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/hc3d/lib/gst1-java-swing-0.9.0-javadoc.jar!/"/>
+			<attribute name="javadoc_location" value="jar:platform:/resource/hc3d-old/lib/gst/gst1-java-swing-0.9.0-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/android-arm.jar"/>
-	<classpathentry kind="lib" path="lib/android-armv7.jar"/>
-	<classpathentry kind="lib" path="lib/jna.jar"/>
+	<classpathentry kind="lib" path="lib/bridj-0.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/webcam-capture-0.3.10.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
