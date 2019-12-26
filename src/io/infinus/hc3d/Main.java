@@ -137,7 +137,6 @@ public class Main{
 		frame.setVisible(true);
 		
 		LLC.init();
-		Temperatures.init();
 		
 		if(Main.mode.equals("calibrate-thermistors")) {
 			// TODO activate calibration mode
