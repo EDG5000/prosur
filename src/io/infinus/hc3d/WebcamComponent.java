@@ -101,7 +101,7 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 		    }
 		});
 		
-		device = (System.getProperty("test.device") != null) ? System.getProperty("test.device") : "/dev/webcam"; // See README to get persistent shortcut 
+		device = Main.Config.webcamDeviceName; // See README to get persistent shortcut 
 		width = (System.getProperty("test.width")!=null) ? Integer.parseInt(System.getProperty("test.width")) : 640;
 		height = (System.getProperty("test.height")!=null) ? Integer.parseInt(System.getProperty("test.height")) : 480;
 		std = (System.getProperty("test.standard")!=null) ? Integer.parseInt(System.getProperty("test.standard")) : V4L4JConstants.STANDARD_WEBCAM;

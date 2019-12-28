@@ -45,7 +45,8 @@ public class Main{
 	public static class Config{
 		public static String[] serialPortIds = new String[LLC.LLC_ADAPTER_COUNT];
 		public static int webcamIndex = -1;
-		public static boolean webcamEnabled;
+		public static String webcamDeviceName;
+		public static boolean webcamEnabled = false;
 	}
 
 	public static void onLLCTickComplete() {
@@ -89,8 +90,8 @@ public class Main{
 		Config.serialPortIds[LLC.LLC_A] = prefs.node("main").get("serialPortIdA", "");
 		Config.serialPortIds[LLC.LLC_B] = prefs.node("main").get("serialPortIdB", "");
 		Config.serialPortIds[LLC.LLC_TREF] = prefs.node("main").get("serialPortIdTREF", "");
-		Config.webcamIndex = prefs.node("main").getInt("webcamIndex", -1);
 		Config.webcamEnabled = prefs.node("main").getBoolean("webcamEnabled", false);
+		Config.webcamDeviceName = prefs.node("main").get("webcamDeviceName", "");
 		
 		if(Config.webcamEnabled) {
 			System.loadLibrary("v4l4j");
@@ -140,7 +141,7 @@ public class Main{
 		temperaturePanel.setBackground(new Color(0, 255, 0, 127)); // Semi transparent black
 		for(int i = 0; i < temperatureLabels.length; i++) {
 			temperatureLabels[i] = new JLabel();
-			temperatureLabels[i].setText("AAA");
+			temperatureLabels[i].setText("-");
 			temperatureLabels[i].setFont(FONT_MAIN);
 			temperatureLabels[i].setForeground(MAIN_TEXT_COLOR);
 			temperatureLabels[i].setPreferredSize(new Dimension(DISP_WIDTH, DISP_HEIGHT));
