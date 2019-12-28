@@ -1,10 +1,9 @@
 package io.infinus.hc3d;
 
-import java.io.File;
 import java.io.IOException;
 
-import org.scream3r.jssc.SerialPort;
-import org.scream3r.jssc.SerialPortException;
+import jssc.SerialPort;
+import jssc.SerialPortException;
 
 
 public class SerialConnection{
@@ -19,7 +18,7 @@ public class SerialConnection{
 	
 	public void openConnection() throws IOException {
 		System.out.println("SerialConnection: Opening device "+deviceId+" with baud rate "+BAUD);
-    	serialPort = new SerialPort(deviceId);
+    	serialPort = new jssc.SerialPort(deviceId);
     	try {
 			boolean result = serialPort.openPort();
 			if(result){

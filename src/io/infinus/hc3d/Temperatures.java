@@ -18,18 +18,18 @@ public class Temperatures {
 	
 	public static int SENSOR_COUNT;
 	public static final int[] SENSOR_FIELD_IDS = new int[] {
+			LLC.IN.TEMP_A0,
 			LLC.IN.TEMP_A1,
 			LLC.IN.TEMP_A2,
 			LLC.IN.TEMP_A3,
 			LLC.IN.TEMP_A4,
 			LLC.IN.TEMP_A5,
-			LLC.IN.TEMP_A6,
+			LLC.IN.TEMP_B0,
 			LLC.IN.TEMP_B1,
 			LLC.IN.TEMP_B2,
 			LLC.IN.TEMP_B3,
 			LLC.IN.TEMP_B4,
-			LLC.IN.TEMP_B5,
-			LLC.IN.TEMP_B6
+			LLC.IN.TEMP_B5
 	};
 	
 	static {

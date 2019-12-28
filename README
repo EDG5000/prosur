@@ -1,18 +1,56 @@
-- install:
+See lib/v4l4j for extra info.
 
-openjdk-8-jre gstreamer1.0-alsa gstreamer1.0-doc gstreamer1.0-libav gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-pulseaudio gstreamer1.0-tools gstreamer1.0-x openssh-server
+Get fixed /dev/video0 device:
 
-
-to run:
-export DISPLAY=:0.0
-
-OBSOLETE:
-- switch to root
-- run crontab -e
-- add @reboot startx
-- save file
-- create file .xinitrc in /root
-- put contents in file: java -jar /home/joel/hc3d.jar
+SUBSYSTEM=="video4linux", ENV{ID_MODEL}=="'0825'", SYMLINK+="a4tech-camera", ENV{GENERATED}="1"
 
 
 
+I'm not sure it can be done; but you can create a persistent symlink based on a device attribute (for instance ID_MODEL).
+
+Plug in your e.g. camera and run
+
+udevadm info --export-db > file.txt
+
+then look at file.txt to locate the camera (perhaps search for A4Tech?) and find the ID_MODEL attribute.
+
+Then create a file called /target/etc/udev/rules.d/70-persistent-capture-device.rules and put stuff like this in it:
+
+SUBSYSTEM=="video4linux", ENV{ID_MODEL}=="'YOUR_ID_MODEL'", SYMLINK+="a4tech-camera", ENV{GENERATED}="1"
+
+Obviously, substitute YOUR_ID_MODEL with the value you found by looking at udevadm output.
+
+When you plugin the camera, a symlink to the appropriate video* device will be created as /dev/a4tech-camera.
+
+You can add a similar line to the same file for your capture card, assuming it shows in udevadm output and you can find an ID_MODEL or other attribute to identify it.
+
+
+
+
+
+
+
+
+SUBSYSTEM=="video4linux", ENV{ID_MODEL}=="'0825'", SYMLINK+="webcam", ENV{GENERATED}="1"
+
+
+
+
+
+
+
+
+LIBJPEG TURBO DEV
+
+
+  146  sudo apt-get remove libjpeg8-dev
+  147  sudo apt-get remove libjpeg8
+  148  wget http://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-1.5.1.tar.gz
+  149  tar -xzf libjpeg-turbo-1.5.1.tar.gz libjpeg-turbo-1.5.1/
+  150  cd libjpeg-turbo-1.5.1/
+  151  ./configure --prefix=/usr                       --mandir=/usr/share/man             --with-jpeg8                        --disable-static                    --docdir=/usr/share/doc/libjpeg-turbo-1.5.1
+  152  ;
+  153  make -j4
+  157  sudo make install
+    181  cd arm-linux-gnueabihf/
+  182  sudo ln ../libjpeg.so.8 libjpeg.so.8

@@ -1,4 +1,4 @@
-char serialCharacter = 'A';
+char serialCharacter = 'B';
 
 void setup() {
   Serial.begin(115200);
@@ -9,7 +9,9 @@ void loop() {
   Serial.print(",");
   for(int i = 0; i < 6; i++){
     Serial.print(analogRead(i));
-    Serial.print(",");
+    if(i != 6-1){
+        Serial.print(",");
+    }
   }
   Serial.print("\n");
   delay(1000);

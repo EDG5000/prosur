@@ -1,0 +1,1 @@
+sudo xinit /usr/bin/java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=y -jar hc3d.jar

@@ -26,25 +26,25 @@ public class LLC {
 	 * LLC configuration
 	 */
 	
-	static final int LLC_ADAPTER_COUNT = 2;
+	static final int LLC_ADAPTER_COUNT = 3;
 	
 	// Field IDs. Need to be in accordance with field layout so that they can be found when calling helper methods
 	public static class IN{
 		// A
-		public static final int TEMP_A1 = 0;
-		public static final int TEMP_A2 = 1;
-		public static final int TEMP_A3 = 2;
-		public static final int TEMP_A4 = 3;
-		public static final int TEMP_A5 = 4;
-		public static final int TEMP_A6 = 5;
+		public static final int TEMP_A0 = 0;
+		public static final int TEMP_A1 = 1;
+		public static final int TEMP_A2 = 2;
+		public static final int TEMP_A3 = 3;
+		public static final int TEMP_A4 = 4;
+		public static final int TEMP_A5 = 5;
 		
 		// B
-		public static final int TEMP_B1 = 6;
-		public static final int TEMP_B2 = 7;
-		public static final int TEMP_B3 = 8;
-		public static final int TEMP_B4 = 9;
-		public static final int TEMP_B5 = 10;
-		public static final int TEMP_B6 = 11;
+		public static final int TEMP_B0 = 6;
+		public static final int TEMP_B1 = 7;
+		public static final int TEMP_B2 = 8;
+		public static final int TEMP_B3 = 9;
+		public static final int TEMP_B4 = 10;
+		public static final int TEMP_B5 = 11;
 		
 		// TREF (module not always connected)
 		public static final int TEMP_TREF0 = 12;
@@ -97,6 +97,8 @@ public class LLC {
 		// Initialize all structures with -1 or empty strings
 		for(int adapter = 0; adapter < LLC_ADAPTER_COUNT; adapter++) {
 			serialReceiveBuffer[adapter] = "";
+			inData[adapter] = new float[IN_FIELD_LAYOUT[adapter]];
+			outData[adapter] = new float[IN_FIELD_LAYOUT[adapter]];
 			incomingFrameWasDropped[adapter] = false;
 			for(int fieldIndex = 0; fieldIndex < IN_FIELD_LAYOUT[adapter]; fieldIndex++) {
 				inData[adapter][fieldIndex] = -1;
@@ -104,18 +106,18 @@ public class LLC {
 			}
 		}
 		
-		fillLookupTable(IN_FIELD_LAYOUT, inFieldLookup);
-		fillLookupTable(OUT_FIELD_LAYOUT, outFieldLookup);
+		inFieldLookup = generateLookupTable(IN_FIELD_LAYOUT);
+		outFieldLookup = generateLookupTable(OUT_FIELD_LAYOUT);
 	}
 	
 	// Use field layout to fill the supplied lookup table
-	static void fillLookupTable(int[] layout, int[][] lookupTable) {
+	static int[][] generateLookupTable(int[] layout) {
 		// Build lookup table for finding fields by Id in field layout
 		int fieldCount = 0;
 		for(int i = 0; i < layout.length; i++) {
 			fieldCount += layout[i];
 		}
-		lookupTable = new int[fieldCount][];
+		int[][] lookupTable = new int[fieldCount][];
 		int fieldId = 0;
 		for(int adapter = 0; adapter < layout.length; adapter++) {
 			for(int fieldIndex = 0; fieldIndex < layout[adapter]; fieldIndex++) {
@@ -124,6 +126,7 @@ public class LLC {
 			}
 			
 		}
+		return lookupTable;
 	}
 
 	public static void init() {
