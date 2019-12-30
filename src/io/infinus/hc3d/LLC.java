@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javafx.util.Pair;
 
 /*
  * V1:
- * 	- continuosly update data structure with recieved rounded floats (indexed by constants)
+ * 	- Continuously update data structure with received rounded floats (indexed by constants)
  *  - data stored in two-dimensional array
  *  - helper method for retrieving fields using single idenfitier
  * V2:
@@ -173,7 +172,7 @@ public class LLC {
 		;
 	}
 	
-	// Store value in ougoing data structure by field ID and value
+	// Store value in outgoing data structure by field ID and value
 	public static void setValue(int fieldId, float value) {
 		 outData
 			[outFieldLookup[fieldId][0]]
@@ -182,7 +181,7 @@ public class LLC {
 	}
 	
 	/*
-	 * Read into recieve buffer
+	 * Read into receive buffer
 	 * If a line is completed, update the fields accordingly
 	 * Write the full outgoing data array
 	 */

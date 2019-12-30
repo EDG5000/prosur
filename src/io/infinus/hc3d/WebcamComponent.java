@@ -102,8 +102,12 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 		});
 		
 		device = Main.Config.webcamDeviceName; // See README to get persistent shortcut 
-		width = (System.getProperty("test.width")!=null) ? Integer.parseInt(System.getProperty("test.width")) : 640;
-		height = (System.getProperty("test.height")!=null) ? Integer.parseInt(System.getProperty("test.height")) : 480;
+		int w = 1280;
+		int h = 960;
+		//int w = 640;
+		//int h = 480;
+		width = (System.getProperty("test.width")!=null) ? Integer.parseInt(System.getProperty("test.width")) : w;
+		height = (System.getProperty("test.height")!=null) ? Integer.parseInt(System.getProperty("test.height")) : h;
 		std = (System.getProperty("test.standard")!=null) ? Integer.parseInt(System.getProperty("test.standard")) : V4L4JConstants.STANDARD_WEBCAM;
 		channel = (System.getProperty("test.channel")!=null) ? Integer.parseInt(System.getProperty("test.channel")) : 0;
 		
@@ -177,11 +181,9 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 		count++;
 		if(count == 5) {
 			count = 0;
-			//label.getGraphics().drawImage(frame.getBufferedImage(), 0, 0, width, height, null);
 			setImage(frame.getBufferedImage());
 			repaint();
 		}
-		// recycle the frame
 		frame.recycle();
 	}
 	
@@ -252,7 +254,6 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 						bounds.height / (double) image.getHeight());
 		}
 	}
-
 
 	/**
 	 * {@inheritDoc}

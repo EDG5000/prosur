@@ -1,4 +1,9 @@
+TLDR:
+- Copy all libs into /usr/lib/arm-linux-gnueabihf (or equi), or symlink them
+
 Fork with rpi binaries from: https://github.com/sarxos/v4l4j
+
+Long: 
 
 On this page, I will explain how to setup a basic Ubuntu root filesystem that can be used to compile v4l4j for an ARM target, assumed to be running a Debian/Ubuntu OS. Instructions on this page are taken from here.
 

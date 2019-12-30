@@ -36,7 +36,7 @@ public class Main{
 	static {
 		System.setProperty("awt.useSystemAAFontSettings","on");
 		System.setProperty("swing.aatext", "true");
-		System.setProperty("java.awt.headless", "false");
+		System.setProperty("java.awt.headless", "false"); // Required when running jar without desktop environment loaded
 	}
 		
 	static boolean uiReady = false;
@@ -47,8 +47,11 @@ public class Main{
 		public static int webcamIndex = -1;
 		public static String webcamDeviceName;
 		public static boolean webcamEnabled = false;
+		public static boolean calibrationMode;
 	}
 
+	public static String applicationFolder;
+	
 	public static void onLLCTickComplete() {
 		if(!uiReady) {
 			// UI still initializing
@@ -68,16 +71,17 @@ public class Main{
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
-		if(args.length > 0) {
-			mode = args[0];
+		if(args.length == 0) {
+			throw new RuntimeException("Application folder argument must be supplied.");
 		}
+		applicationFolder = args[0];
 		
 		// Load INI config
 		Ini ini = null;
 		try {
-			File configFile = new File(Util.getApplicationFolder() + "/config.ini");
+			File configFile = new File(applicationFolder + "/config.ini");
 			if(!configFile.exists()) {
-				throw new RuntimeException("config.ini not present in " + Util.getApplicationFolder());
+				throw new RuntimeException("config.ini not present in " + applicationFolder);
 			}
 			ini = new Ini(configFile);
 			
@@ -92,9 +96,21 @@ public class Main{
 		Config.serialPortIds[LLC.LLC_TREF] = prefs.node("main").get("serialPortIdTREF", "");
 		Config.webcamEnabled = prefs.node("main").getBoolean("webcamEnabled", false);
 		Config.webcamDeviceName = prefs.node("main").get("webcamDeviceName", "");
+		Config.calibrationMode = prefs.node("main").getBoolean("calibrationMode", false);
 		
+		/*
+		 * Load native library for v4l4j
+		 */
 		if(Config.webcamEnabled) {
-			System.loadLibrary("v4l4j");
+			System.out.println("Loading v4lvj native libraries.");
+			if(System.getProperty("os.arch").equals("arm")) {
+				// Assumes Linux armhf
+				System.load(applicationFolder + "/lib/v4l4j/libv4l4j-linux-armhf.so");
+			}else {
+				// Assumed Linux x64
+				System.load(applicationFolder + "/lib/v4l4j/libv4l4j-linux-x86_64.so");
+			}
+			System.out.println("Libraries loaded.");
 		}
 		
 		// Initialize webcam and webcam panel

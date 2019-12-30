@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.infinus.hc3d.Main.Config;
+
 /*
  * Allows reading of temperature by index
  * Applies scaling based on calibration
@@ -130,7 +132,7 @@ public class Temperatures {
 		samplesCollected = 0;
 		calibrating = true;
 		try {
-			String path = Util.getApplicationFolder() + "/" + "calib-diag-all.csv";
+			String path = Main.applicationFolder + "/" + "calib-diag-all.csv";
 			if(new File(path).exists()) {
 				throw new RuntimeException("Error: Unable to perform calibration: Diagnostic output file for all samples already exists.");
 			}

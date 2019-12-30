@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/ini4j/ini4j-0.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/jssc/jssc-2.8.0.jar" sourcepath="lib/jssc/src.zip">
 		<attributes>
@@ -9,6 +13,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="hc3d/lib/jssc/libs"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/v4l4j/v4l4j-0.9.1-r507.jar" sourcepath="lib/v4l4j/src.zip"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/v4l4j"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
