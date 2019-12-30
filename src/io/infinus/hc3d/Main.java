@@ -28,7 +28,6 @@ public class Main{
 	private final static int TEMPERATURE_LABEL_HEIGHT = 40;
 	private final static Color MAIN_TEXT_COLOR = Color.white;
 	static JLabel[] temperatureLabels = new JLabel[Temperatures.SENSOR_COUNT];
-	
 	static WebcamComponent webcamComponent;
 	
 	private final static Font FONT_MAIN = new Font("RobotoMono-Regular", Font.PLAIN, 12);
@@ -62,8 +61,6 @@ public class Main{
 			temperatureLabels[i].setText(Temperatures.getTemperature(i) + "°C");
 		}
 	}
-	
-	public static String mode = null;
 	
 	public static void onError(String error) {
 		// TODO show on UI
@@ -113,32 +110,29 @@ public class Main{
 			System.out.println("Libraries loaded.");
 		}
 		
-		// Initialize webcam and webcam panel
+		if(Config.calibrationMode) {
+			Temperatures.startCalib();
+		}else {
+			// Start UI init in other thread, not sure if beneficial, but is seems conventional
+	        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+	            public void run() {
+	                Main.createAndShowGui();
+	            }
+	        });
+		}
+		
+		LLC.init();
+	}
+	
+	static void createAndShowGui() {
+		/*
+		 * Create webcam component, which will initialize the webcam as well
+		 */
 		if(Config.webcamEnabled) {
 			System.out.println("Starting webcam init");
 			webcamComponent = new WebcamComponent();
 			webcamComponent.setBounds(0, 0, DISP_WIDTH, DISP_HEIGHT);
 		}
-		
-        //Schedule a job for the event-dispatching thread:
-        //creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                Main.createAndShowGui();
-            }
-        });
-		
-		//LLC.init();
-		
-		if(Main.mode != null && Main.mode.equals("calibrate-thermistors")) {
-			Temperatures.startCalib();
-		}
-	}
-	
-	static void createAndShowGui() {
-
-		
-
 		
 		/*
 		 * Create UI
@@ -170,15 +164,12 @@ public class Main{
 	    	      GraphicsEnvironment.getLocalGraphicsEnvironment();
 	    	      GraphicsDevice device = graphics.getDefaultScreenDevice();
 		
-		
 		JFrame frame = new JFrame("Test webcam panel");
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		frame.setUndecorated(true);
 		//frame.setBounds(0, 0, DISP_WIDTH, DISP_HEIGHT);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-
 		
 		// Create hierarchy
 		frame.add(containerPanel);
@@ -194,7 +185,4 @@ public class Main{
 		System.out.println("UI ready");
 		uiReady = true;
 	}
-
-
-	
 }

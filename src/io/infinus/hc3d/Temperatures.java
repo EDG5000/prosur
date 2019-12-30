@@ -5,9 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-
-import io.infinus.hc3d.Main.Config;
 
 /*
  * Allows reading of temperature by index
@@ -48,27 +47,24 @@ public class Temperatures {
 	private static BufferedWriter calibDiagnosticFileWriter;
 	
 	private static class Sample{
-		float time; // Time since 00:00 today. Float is used to maintain uniformity
+		int time; // Time since 00:00 today. Float is used to maintain uniformity
 		float[] thermistorVoltages;
 		float refTemp0; // Main ref
 		float refTemp1; // Used for consistency check
 		public String toString() {
 			String line = time + ",";
 			line += refTemp0 + ",";
-			line += refTemp1 + ",";
+			line += refTemp1;
 
 			// Add thermistor voltages to string
 			for(int i = 0; i < thermistorVoltages.length; i++) {
-				line += thermistorVoltages[i] + ",";
+				line += "," + thermistorVoltages[i];
 			}
 			
 			// Add calulated temperatures using exising calibration data for verification of calculations applying calibration data
 			if(ThermistorCalibrationData.calibrationData != null) {
 				for(int sensorIndex = 0; sensorIndex < thermistorVoltages.length; sensorIndex++) {
-					line += temperatureFromThermistorVoltage(sensorIndex, thermistorVoltages[sensorIndex]);
-					if(sensorIndex != thermistorVoltages.length-1) {
-						line += ",";
-					}
+					line += "," + temperatureFromThermistorVoltage(sensorIndex, thermistorVoltages[sensorIndex]);
 				}
 			}
 			return line;
@@ -78,6 +74,7 @@ public class Temperatures {
 	// Find matching two points from calibration data and linearly interpolate between those points to calculate the temperature based on input voltage
 	private static float temperatureFromThermistorVoltage(int sensorIndex, float voltage) {
 		/*
+		 * 
 		voltage /= 4;
 		if(voltage >= 4.20){
 			return 100;
@@ -128,20 +125,27 @@ public class Temperatures {
 	}
 	
 	public static void startCalib() {
-		// Collect samples for X seconds
-		samplesCollected = 0;
-		calibrating = true;
+		System.out.println("Starting thermistor calibration.");
+
 		try {
 			String path = Main.applicationFolder + "/" + "calib-diag-all.csv";
 			if(new File(path).exists()) {
 				throw new RuntimeException("Error: Unable to perform calibration: Diagnostic output file for all samples already exists.");
 			}
 			calibDiagnosticFileWriter =  new BufferedWriter(new FileWriter(path));
+			
+			// Collect samples for X seconds
+			samplesCollected = 0;
+			calibrating = true;
+			samples = new ArrayList<Sample>();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	/*
+	 * Only used when calibrating
+	 */
 	public static void onLLCTickComplete() {
 		if(!calibrating) return;
 		if(samplesCollected == CALIB_SAMPLE_COUNT) {
@@ -151,7 +155,19 @@ public class Temperatures {
 			// All samples collected
 			// Keep only one sample per 1 deg C temperature change
 			List<Sample> keptSamples = new ArrayList<Sample>();
+			// Sort samples by refTemp. Assumed is at least one cycle of 0-100 deg C is experienced during calibration
+			// Without sorting the later check would ignore any samples after a temperature peak has been reached (when desencing)
+			// TODO improvement:
+			// The algorythm should perhaps consider any peaks a session separator and in post processing of the data, the sessions can be merged by averaging the tref assigned to each degree
+			// Keep the original raw calibration data so the algo can be optimized later on with the old data!
+			samples.sort(new Comparator<Sample>() {
+				@Override
+				public int compare(Sample sample1, Sample sample2) {
+					return Math.round(sample1.refTemp0) - Math.round(sample2.refTemp0);
+				}
+			});
 			float lastTemp = 0;
+			// Filter samples, only keep one sample per rounded temperature of refTemp0
 			for(Sample sample: samples) {
 				// Check if both reference temperature sensor are within .4 deg C of each other, otherwise abort process
 				if(Math.abs(sample.refTemp0  - sample.refTemp1) > .4) {
@@ -164,7 +180,7 @@ public class Temperatures {
 					lastTemp = sample.refTemp0;
 				}
 			}
-			
+			System.out.println("Generated calibration data: ");
 			// Write generated Java array initiliazer code to console
 			// If calibration data already exists, this also adds calculated temperatures based on existing calibration data at the end of each row
 			for(Sample sample : keptSamples) {
@@ -180,14 +196,16 @@ public class Temperatures {
 			// Copy reference temperatures from LLC incoming buffer
 			sample.refTemp0 = LLC.getValue(LLC.IN.TEMP_TREF0);
 			sample.refTemp1 = LLC.getValue(LLC.IN.TEMP_TREF1);
-			sample.time = System.currentTimeMillis() % (1000 * 60 * 60); // Substract full days to obtain timestamp for today only
+			sample.time = (int) (System.currentTimeMillis() % (1000 * 60 * 60)); // Substract full days to obtain timestamp for today only
 			samples.add(sample);
+			System.out.println("Collected calibration sample " + samplesCollected + "/" + CALIB_SAMPLE_COUNT + ": " + sample.toString());
 			try {
 				calibDiagnosticFileWriter.write(sample.toString() + "\n");
 				calibDiagnosticFileWriter.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			samplesCollected++;
 		}
 	}
 }

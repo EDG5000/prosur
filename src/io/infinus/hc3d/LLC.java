@@ -1,9 +1,8 @@
 package io.infinus.hc3d;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /*
@@ -129,7 +128,6 @@ public class LLC {
 	}
 
 	public static void init() {
-	
 		
 		// Initialize serial connections
 		try {
@@ -143,20 +141,15 @@ public class LLC {
 		}
 		
 		// LLC tick (.1hz)
-		new Thread(new Runnable() {
+		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
 				for(int i = 0; i < LLC_ADAPTER_COUNT; i++) {
 					serialTick(i);
 				}
 				emitOnTickComplete();
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 			}
-		}).start();
+		}, 0, 1000);
 	}
 	
 	private static void emitOnTickComplete() {
@@ -218,9 +211,10 @@ public class LLC {
 						}
 					}else {
 						// Parse components and store into main data structure
-						for(int componentIndex = 0; componentIndex < IN_FIELD_LAYOUT[adapter] + 1; componentIndex++) {
-							float fieldValue = Float.parseFloat(components[componentIndex]);
-							inData[adapter][componentIndex-1] = fieldValue;
+						for(int fieldIndex = 0; fieldIndex < IN_FIELD_LAYOUT[adapter]; fieldIndex++) {
+							// Shift component index by one to account of the device identifier which takes up the first position
+							float fieldValue = Float.parseFloat(components[fieldIndex+1]);
+							inData[adapter][fieldIndex] = fieldValue;
 						}
 					}
 				}

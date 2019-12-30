@@ -18,17 +18,19 @@ public class ThermistorCalibrationData {
 		public float[] thermistorTemperatures; // Can be null in some cases
 	}
 	static {
-		// Place raw data into data structure to facilitate access of the data
-		for(float[] values: rawCalibrationData) {
-			DataPoint dataPoint = new DataPoint();
-			dataPoint.time = values[0];
-			dataPoint.refTemp0 = values[1];
-			dataPoint.refTemp1 = values[2];
-			dataPoint.thermistorVoltages = new float[Temperatures.SENSOR_COUNT];
-			dataPoint.thermistorTemperatures = new float[Temperatures.SENSOR_COUNT];
-			for(int sensorIndex = 0; sensorIndex < Temperatures.SENSOR_COUNT; sensorIndex++) {
-				dataPoint.thermistorVoltages[sensorIndex] = values[sensorIndex + 2];
-				dataPoint.thermistorTemperatures[sensorIndex] = values[sensorIndex + 2 + Temperatures.SENSOR_COUNT];
+		if(rawCalibrationData != null) {
+			// Place raw data into data structure to facilitate access of the data
+			for(float[] values: rawCalibrationData) {
+				DataPoint dataPoint = new DataPoint();
+				dataPoint.time = values[0];
+				dataPoint.refTemp0 = values[1];
+				dataPoint.refTemp1 = values[2];
+				dataPoint.thermistorVoltages = new float[Temperatures.SENSOR_COUNT];
+				dataPoint.thermistorTemperatures = new float[Temperatures.SENSOR_COUNT];
+				for(int sensorIndex = 0; sensorIndex < Temperatures.SENSOR_COUNT; sensorIndex++) {
+					dataPoint.thermistorVoltages[sensorIndex] = values[sensorIndex + 2];
+					dataPoint.thermistorTemperatures[sensorIndex] = values[sensorIndex + 2 + Temperatures.SENSOR_COUNT];
+				}
 			}
 		}
 	}
