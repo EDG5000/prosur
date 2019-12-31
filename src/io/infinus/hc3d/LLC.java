@@ -27,6 +27,7 @@ public class LLC {
 	static final int LLC_ADAPTER_COUNT = 3;
 	
 	// Field IDs. Need to be in accordance with field layout so that they can be found when calling helper methods
+	// Only used for convenience access
 	public static class IN{
 		// A
 		public static final int TEMP_A0 = 0;
@@ -52,7 +53,7 @@ public class LLC {
 	public static class OUT{
 		
 	}
-	
+	// Indexed by adapter, values represent field count per adapter
 	static final int[] IN_FIELD_LAYOUT = new int[]{
 			6, // A
 			6, // B
@@ -188,37 +189,42 @@ public class LLC {
 			if(dataRead != null && dataRead.length > 0) {
 				serialReceiveBuffer[adapter] += new String(dataRead);
 			}
-			// Extract complete lines from buffer. Drop incomplete frames, unless they are at the end
-			// Data at the end remains in the buffer, the rest is removed
-			String[] lines = serialReceiveBuffer[adapter].split("\n");
-			// If no full lines are received wait until next tick
-			if(lines.length > 0) {
-				// Copy last segment into buffer, it will not be processed this tick
-				serialReceiveBuffer[adapter] = lines[lines.length-1]; 
-				// If there is a segment before it, it them if it contain the correct field count, otherwise drop it
-				// Ignore all earlier segements
-				if(lines.length > 1) {
-					String line = lines[lines.length-2];
-					String[] components = line.split(",");
-					// Check component count. Should be fieldCount + 1 (identifier is added at beginning)
-					if(components.length != IN_FIELD_LAYOUT[adapter] + 1) {
-						// Dropping line. Can happen when application starts in the middle of frame transmission from LLC
-						// Should happen no more than max 1 times per sesssion
-						if(incomingFrameWasDropped[adapter]) {
-							Main.onError("Dropped more than one frame for adapter " + adapter);
-						}else {
-							incomingFrameWasDropped[adapter] = true;
-						}
+			
+			int lastIndexOfNewline = serialReceiveBuffer[adapter].lastIndexOf("\n");
+			if(lastIndexOfNewline != -1) {
+				// A newline was found in the buffer, this means we have enough data to process it
+				// Extract data we want to process
+				String dataToParse = serialReceiveBuffer[adapter].substring(0, lastIndexOfNewline);
+				// Overwrite buffer with the part that will not be processed in this tick
+				serialReceiveBuffer[adapter] = serialReceiveBuffer[adapter].substring(lastIndexOfNewline+1); // Add +1 to skip the newline which will always be at the beginning?
+				// Further filter the data we want to parse by only keeping the last line
+				// In some cases this will not make a difference (when no newline is present)
+				String[] lines = dataToParse.split("\n");
+				
+				// Reduce it to 1 line
+				dataToParse = lines[lines.length-1];
+				
+				String[] components = dataToParse.split(",");
+				
+				// Check component count. Should be fieldCount + 1 (identifier is added at beginning)
+				if(components.length != IN_FIELD_LAYOUT[adapter] + 1) {
+					// Dropping line. Can happen when application starts in the middle of frame transmission from LLC
+					// Should happen no more than max 1 times per sesssion
+					if(incomingFrameWasDropped[adapter]) {
+						Main.onError("Dropped more than one frame for adapter " + adapter);
 					}else {
-						// Parse components and store into main data structure
-						for(int fieldIndex = 0; fieldIndex < IN_FIELD_LAYOUT[adapter]; fieldIndex++) {
-							// Shift component index by one to account of the device identifier which takes up the first position
-							float fieldValue = Float.parseFloat(components[fieldIndex+1]);
-							inData[adapter][fieldIndex] = fieldValue;
-						}
+						incomingFrameWasDropped[adapter] = true;
+					}
+				}else {
+					// Parse components and store into main data structure
+					for(int fieldIndex = 0; fieldIndex < IN_FIELD_LAYOUT[adapter]; fieldIndex++) {
+						// Shift component index by one to account of the device identifier which takes up the first position
+						float fieldValue = Float.parseFloat(components[fieldIndex+1]);
+						inData[adapter][fieldIndex] = fieldValue;
 					}
 				}
 			}
+			
 			/*
 			 * Write outgoing data structure
 			 */

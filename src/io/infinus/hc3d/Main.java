@@ -27,6 +27,7 @@ public class Main{
 	private final static int DISP_HEIGHT = 480 - 0; // Substract OS status bar if present
 	private final static int TEMPERATURE_LABEL_HEIGHT = 40;
 	private final static Color MAIN_TEXT_COLOR = Color.white;
+	private final static boolean SELF_TEST_TEMPERATURE = false; // Verifies temperature calib and dumps to console
 	static JLabel[] temperatureLabels = new JLabel[Temperatures.SENSOR_COUNT];
 	static WebcamComponent webcamComponent;
 	
@@ -64,10 +65,11 @@ public class Main{
 	
 	public static void onError(String error) {
 		// TODO show on UI
-		System.out.print("Error encountered: " + error);
+		System.out.println("Error encountered: " + error);
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
+		System.out.println("Infinus HC3D 0.1 (c) Joel Meijering");
 		if(args.length == 0) {
 			throw new RuntimeException("Application folder argument must be supplied.");
 		}
@@ -122,6 +124,13 @@ public class Main{
 		}
 		
 		LLC.init();
+		
+		if(Main.SELF_TEST_TEMPERATURE) {
+			for(int voltage = 0; voltage < 1024; voltage++) {
+				System.out.println(Temperatures.temperatureFromThermistorVoltage(0, voltage));
+			}
+			System.exit(0);
+		}
 	}
 	
 	static void createAndShowGui() {
