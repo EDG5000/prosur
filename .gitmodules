@@ -1,0 +1,3 @@
+[submodule "v4l4j"]
+	path = v4l4j
+	url = https://bitbucket.org/joelmeijering/v4l4j
