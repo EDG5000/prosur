@@ -13,12 +13,15 @@
 
 #define DEBUG
 
-// Select target adapter before flashing
+
 #define ADAPTER_TEMP_CTRL 0
 #define ADAPTER_TEMP_SENSE 1
 #define INPUT_DEV_TYPE_IN_TEMP 0
 #define INPUT_DEV_TYPE_IN_TACH 1
 
+/*
+ * Select target adapter before flashing
+ */
 #define ADAPTER ADAPTER_TEMP_CTRL
 
 /*
@@ -26,12 +29,16 @@
  */
 
 #if ADAPTER == ADAPTER_TEMP_CTRL
+	#define ADAPTER_ID "TEMP_CTRL"
+
+	// Outputs configuration
 	#define OUTPUT_DEV_COUNT 1
 	float PWM_OUT_MIN[] = { .35f}; // Used as initial setpoint until data is received
 	float PWM_OUT_MAX[] = { 1.0f}; // Used for failsafe
-	#define INPUT_DEV_COUNT 0
+
+	// Inputs configuration
+	#define INPUT_DEV_COUNT 1
 	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_IN_TACH
-	#define ADAPTER_ID "TEMP_CTRL"
 #endif
 
 /*
@@ -46,23 +53,27 @@
  * End Per-Adapter config
  */
 
-String lineIn = "";
-const int PINS_OUTPUT[] = {3, 9, 10}; // HW PWM only available on these pins due to AVR design
+// HW PWM only available on these pins due to AVR design.
+// Pin 3 can be re-enabled, but make sure to enable max 1. tachometer input in those cases!
+// Make sure to also uncomment the PWM setup code for pin 3
+const int PINS_OUTPUT[] = {9, 10/*, 3*/};
 #if INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TEMP
 	const int [] = {2, 3, 7, 8, 12, 13}; // All other pins
 #elif INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TACH
-	const int PINS_INPUT[] = {2, 3};  // Availble on Nano/Pro Mini AVR for interrupt
+	// Tachometer input only availble on these pins for Nano/Pro Mini AVR for interrupt
+	const int PINS_INPUT[] = {2, 3};
 #endif
 
 //#define CMD_TIMEOUT 2000 // Application triggers max PWM failsafe for all outputs after inactivity on input
 #define CMD_TIMEOUT 2000000
+#define CMD_INPUT_LINE_MAX 100
 /*
  *  Used in stage when waiting for a full line to be received
  */
 const char* cmd_cur_segment;
 int cmd_char_buf;
 int cmd_char_buf_index = 0;
-char cmd_line_buf[100];
+char cmd_line_buf[CMD_INPUT_LINE_MAX];
 unsigned long cmd_time_ms_last_data_recv = 0;
 float cmd_in_buf[OUTPUT_DEV_COUNT];
 
@@ -108,8 +119,8 @@ void setup() {
 
 			pin 3 = OC2B (timer 2 PWM output B)
 			pin 11 = OC2A (timer 2 PWM output A)
-			pin 9 = OC1B (timer 1 PWM output B)
-			pin 10 = OC1A (timer 1 PWM output A)
+			pin 10 = OC1B (timer 1 PWM output B)
+			pin 9 = OC1A (timer 1 PWM output A)
 			pin 5 = OC0B (timer 0 PWM output B)
 			pin 6 = OC0A (timer 0 PWM output A)
 		*/
@@ -138,7 +149,9 @@ void setup() {
 			Should be ~25KHz
 			Changing PWM is done by setting the register to 0-79
 		*/
-
+		// Disabled for now to allow using pin 3 for tachometer
+		// Can be enabled anytime. Do not forget to also uncomment the pin in PINS_OUTPUT
+		/*
 		pinMode(3, OUTPUT); //OCR2B
 		TCCR2A = 0;                               // TC2 Control Register A
 		TCCR2B = 0;                               // TC2 Control Register B
@@ -148,6 +161,7 @@ void setup() {
 		TCCR2B |= (1 << WGM22) | (1 << CS21);     // prescaler 8
 		OCR2A = 79;                               // TOP overflow value (Hz)
 		OCR2B = 0;
+		*/
 
 		Serial.println("PWM registers set-up.");
 
@@ -168,7 +182,6 @@ void setup() {
 		/*
 		 * Setup interrupts for tachometers
 		 */
-		log("Attaching interrupts.");
 		for(int i = 0; i < INPUT_DEV_COUNT; i++){
 			switch(i){
 			case 0:
@@ -239,6 +252,10 @@ void loop() {
 				 * - Check if count matches with expected, otherwise enable failsafe
 				 * - Parse each segment into float
 				 */
+				if(cmd_char_buf_index > CMD_INPUT_LINE_MAX){
+					Serial.println("Input buffer size exceeded.");
+					enable_failsafe();
+				}
 				cmd_char_buf_index = 0;
 				Serial.print("Splitting: ");
 				Serial.println(cmd_line_buf);
@@ -378,9 +395,9 @@ void print_float_array(float* data, int length){
 			// Scale between 0-320
 			int registerValue = round(val * 320);
 
-			if(pin == 10){
+			if(pin == 9){
 				OCR1A = registerValue;
-			}else if(pin == 9){
+			}else if(pin == 10){
 				OCR1B = registerValue;
 			}
 		}else if(pin == 3){
