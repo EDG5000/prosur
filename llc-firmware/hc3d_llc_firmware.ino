@@ -38,7 +38,7 @@
 
 	// Inputs configuration
 	#define INPUT_DEV_COUNT 1
-	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_IN_TACH
+	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_IN_TEMP
 #endif
 
 /*
@@ -49,6 +49,7 @@
   // TODO
 #endif
 
+
 /*
  * End Per-Adapter config
  */
@@ -58,14 +59,14 @@
 // Make sure to also uncomment the PWM setup code for pin 3
 const int PINS_OUTPUT[] = {9, 10/*, 3*/};
 #if INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TEMP
-	const int [] = {2, 3, 7, 8, 12, 13}; // All other pins
+	const int PINS_INPUT[] = {2, 3, 7, 8, 12, 13}; // All other pins
 #elif INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TACH
 	// Tachometer input only availble on these pins for Nano/Pro Mini AVR for interrupt
 	const int PINS_INPUT[] = {2, 3};
 #endif
 
 //#define CMD_TIMEOUT 2000 // Application triggers max PWM failsafe for all outputs after inactivity on input
-#define CMD_TIMEOUT 2000000
+#define CMD_TIMEOUT 2000
 #define CMD_INPUT_LINE_MAX 100
 /*
  *  Used in stage when waiting for a full line to be received
@@ -95,8 +96,12 @@ float cmd_out_buf[INPUT_DEV_COUNT];
 
 	//TODO init OneWire using constructor OneWire(int pin)
 	// TODO init DallasTemperature using constructor DallasTemperature(OneWire& one_wire_ref)
-	OneWire* obj_one_wire[INPUT_DEV_COUNT]; // Tref0 on pin 2
-	DallasTemperature* obj_dallas_temp_sensor[INPUT_DEV_COUNT];
+	OneWire obj_one_wire[INPUT_DEV_COUNT]; // Tref0 on pin 2
+	DallasTemperature obj_dallas_temp_sensor[INPUT_DEV_COUNT];
+
+	//TODO test
+	//OneWire* obj_one_wire; // Tref0 on pin 2
+	//DallasTemperature* obj_dallas_temp_sensor;
 
 #endif
 
@@ -195,11 +200,11 @@ void setup() {
 		}
 
 	#elif INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TEMP
-		log("Instantiating temperature sensors");
+		Serial.println("Instantiating temperature sensors");
 		// Instantiate a OneWire and DallasTemperature object for each temperature sensing device
 		for(int i = 0; i < INPUT_DEV_COUNT; i++){
-			obj_one_wire[i](PINS_INPUT[i]);
-			obj_dallas_temp_sensor[i](&obj_one_wire[i]);
+			obj_one_wire[i] = OneWire(PINS_INPUT[i]);
+			obj_dallas_temp_sensor[i] = DallasTemperature(&obj_one_wire[i]);
 		}
 	#endif
 }

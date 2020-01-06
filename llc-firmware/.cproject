@@ -42,6 +42,10 @@
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/core/core}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/core/variant}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/libraries/DallasTemperature}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/libraries/OneWire}&quot;"/>
                                     								
                                 </option>
                                 								
@@ -56,6 +60,10 @@
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/core/core}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/core/variant}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/libraries/DallasTemperature}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/libraries/OneWire}&quot;"/>
                                     								
                                 </option>
                                 								
@@ -70,6 +78,10 @@
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/core/core}&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/core/variant}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/libraries/DallasTemperature}&quot;"/>
+                                    									
+                                    <listOptionValue builtIn="false" value="&quot;${workspace_loc:/hc3d_llc_firmware/libraries/OneWire}&quot;"/>
                                     								
                                 </option>
                                 								
@@ -91,7 +103,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="libraries/?*/**/?xamples/**|libraries/?*/**/?xtras/**|libraries/?*/**/test*/**|libraries/?*/**/third-party/**|libraries/**/._*|libraries/?*/utility/*/*" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+                        <entry excluding="libraries/OneWire/util|libraries/OneWire/docs|libraries/?*/**/?xamples/**|libraries/?*/**/?xtras/**|libraries/?*/**/test*/**|libraries/?*/**/third-party/**|libraries/**/._*|libraries/?*/utility/*/*" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
                         					
                     </sourceEntries>
                     				
