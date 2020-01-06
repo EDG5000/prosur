@@ -183,6 +183,7 @@ void setup() {
 		 * Setup interrupts for tachometers
 		 */
 		for(int i = 0; i < INPUT_DEV_COUNT; i++){
+			pinMode(PINS_INPUT[i], INPUT_PULLUP);
 			switch(i){
 			case 0:
 				attachInterrupt(digitalPinToInterrupt(PINS_INPUT[i]), itr_tach0_on_falling, FALLING);
@@ -306,10 +307,16 @@ void loop() {
 		// Reset counters afterwards
 		// Store results in tach_speed_rpm_calc
 		for(int i = 0; i < INPUT_DEV_COUNT; i++){
-			float freq = (1e6 / float(tach_total_duration[i]) * tach_total_ticks[i]) / 2;
-			cmd_out_buf[i] = freq * 60;
-			tach_total_ticks[i] = 0;
-			tach_total_duration[i] = 0;
+			float freq = 0;
+			if(tach_total_ticks[i] != 0){
+				freq = (1e6 / float(tach_total_duration[i]) * tach_total_ticks[i]) / 2;
+				cmd_out_buf[i] = freq * 60;
+				tach_total_ticks[i] = 0;
+				tach_total_duration[i] = 0;
+			}
+			Serial.println(freq);
+			Serial.println(tach_total_duration[i]);
+			Serial.println(tach_total_ticks[i]);
 		}
 
 	#elif INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TEMP
@@ -334,7 +341,7 @@ void loop() {
 			Serial.print(",");
 		}
 		// Send buffered output frame
-		print_float_array(cmd_out_buf, INPUT_DEV_COUNT);
+		print_float_array(&cmd_out_buf[0], INPUT_DEV_COUNT);
 	}
 
 	Serial.println();
