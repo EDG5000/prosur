@@ -13,32 +13,32 @@
 
 #define DEBUG
 
-
-#define ADAPTER_TEMP_CTRL 0
+#define ADAPTER_RECIR 0
 #define ADAPTER_TEMP_SENSE 1
+#define ADAPTER_HE_FAN 2
 #define INPUT_DEV_TYPE_IN_TEMP 0
 #define INPUT_DEV_TYPE_IN_TACH 1
 
 /*
  * Select target adapter before flashing
  */
-#define ADAPTER ADAPTER_TEMP_CTRL
+#define ADAPTER ADAPTER_HE_FAN
 
 /*
  * Temp ctrl adapter config
  */
 
-#if ADAPTER == ADAPTER_TEMP_CTRL
-	#define ADAPTER_ID "TEMP_CTRL"
+#if ADAPTER == ADAPTER_RECIR
+	#define ADAPTER_ID "RECIR"
 
 	// Outputs configuration
-	#define OUTPUT_DEV_COUNT 1
+	#define OUTPUT_DEV_COUNT 2
 	float PWM_OUT_MIN[] = { .35f}; // Used as initial setpoint until data is received
 	float PWM_OUT_MAX[] = { 1.0f}; // Used for failsafe
 
 	// Inputs configuration
-	#define INPUT_DEV_COUNT 1
-	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_IN_TEMP
+	#define INPUT_DEV_COUNT 2
+	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_IN_TACH
 #endif
 
 /*
@@ -46,9 +46,30 @@
 */
 
 #if ADAPTER == ADAPTER_TEMP_SENSE
-  // TODO
+	#define ADAPTER_ID "TEMP1"
+
+	// Outputs configuration
+	#define OUTPUT_DEV_COUNT 0
+	float PWM_OUT_MIN[] = { }; // Used as initial setpoint until data is received
+	float PWM_OUT_MAX[] = { }; // Used for failsafe
+
+	// Inputs configuration
+	#define INPUT_DEV_COUNT 2
+	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_IN_TEMP
 #endif
 
+#if ADAPTER == ADAPTER_HE_FAN
+	#define ADAPTER_ID "HE_FAN"
+
+	// Outputs configuration
+	#define OUTPUT_DEV_COUNT 1
+	float PWM_OUT_MIN[] = { .35f }; // Used as initial setpoint until data is received
+	float PWM_OUT_MAX[] = { 1.0f }; // Used for failsafe
+
+	// Inputs configuration
+	#define INPUT_DEV_COUNT 1
+	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_IN_TACH
+#endif
 
 /*
  * End Per-Adapter config
@@ -66,7 +87,7 @@ const int PINS_OUTPUT[] = {9, 10/*, 3*/};
 #endif
 
 //#define CMD_TIMEOUT 2000 // Application triggers max PWM failsafe for all outputs after inactivity on input
-#define CMD_TIMEOUT 2000
+#define CMD_TIMEOUT 200000
 #define CMD_INPUT_LINE_MAX 100
 /*
  *  Used in stage when waiting for a full line to be received
@@ -109,7 +130,7 @@ int heartbeat = 1;
 
 void setup() {
 	Serial.begin(115200);
-	Serial.println("Init.");
+	//Serial.println("Init.");
 	pinMode(13, OUTPUT); // LED
 
 	#if OUTPUT_DEV_COUNT > 0
@@ -168,7 +189,7 @@ void setup() {
 		OCR2B = 0;
 		*/
 
-		Serial.println("PWM registers set-up.");
+		//Serial.println("PWM registers set-up.");
 
 	    /*
 	     *  Populate initial cmd frame data and directly set intial PWM
@@ -179,7 +200,7 @@ void setup() {
 			set_pwm(PINS_OUTPUT[i], PWM_OUT_MIN[i]);
 		}
 
-		Serial.println("Initial PWM setpoints set.");
+		//Serial.println("Initial PWM setpoints set.");
 
 	#endif
 
@@ -200,7 +221,7 @@ void setup() {
 		}
 
 	#elif INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TEMP
-		Serial.println("Instantiating temperature sensors");
+		//Serial.println("Instantiating temperature sensors");
 		// Instantiate a OneWire and DallasTemperature object for each temperature sensing device
 		for(int i = 0; i < INPUT_DEV_COUNT; i++){
 			obj_one_wire[i] = OneWire(PINS_INPUT[i]);
@@ -210,7 +231,7 @@ void setup() {
 }
 
 void loop() {
-	Serial.println("Loop.");
+	//Serial.println("Loop.");
 	// Stage 1 and 2 are only activated when output devices are present
 	#if OUTPUT_DEV_COUNT > 0
 		/*
@@ -228,8 +249,8 @@ void loop() {
 			// Check if timeout is encountered
 			// Does not trigger when no initial frame was received yet
 			if(cmd_time_ms_last_data_recv != 0 && millis() - cmd_time_ms_last_data_recv > CMD_TIMEOUT){
-				Serial.print("Timeout of enabling failsafe. dT: ");
-				Serial.println(millis() - cmd_time_ms_last_data_recv);
+				//Serial.print("Timeout of enabling failsafe. dT: ");
+				//Serial.println(millis() - cmd_time_ms_last_data_recv);
 				// Reset last received data time
 				cmd_time_ms_last_data_recv = 0;
 				enable_failsafe();
@@ -248,7 +269,7 @@ void loop() {
 
 			if(cmd_char_buf != '\n'){
 				// Add character to receive buffer
-				Serial.println("Adding char:");
+				//Serial.println("Adding char:");
 				cmd_line_buf[cmd_char_buf_index] = cmd_char_buf;
 				cmd_char_buf_index++;
 			}else if(cmd_char_buf == '\n'){
@@ -259,12 +280,12 @@ void loop() {
 				 * - Parse each segment into float
 				 */
 				if(cmd_char_buf_index > CMD_INPUT_LINE_MAX){
-					Serial.println("Input buffer size exceeded.");
+					//Serial.println("Input buffer size exceeded.");
 					enable_failsafe();
 				}
 				cmd_char_buf_index = 0;
-				Serial.print("Splitting: ");
-				Serial.println(cmd_line_buf);
+				//Serial.print("Splitting: ");
+				//Serial.println(cmd_line_buf);
 
 				cmd_cur_segment = strtok(cmd_line_buf, ",");
 				int i = 0;
@@ -273,8 +294,8 @@ void loop() {
 					//float val = atof(cmd_cur_segment);
 					// Parse segment, copy into processed input buffer
 					cmd_in_buf[i] = atof(cmd_cur_segment);
-					Serial.print("Parsed segment: ");
-					Serial.println(cmd_in_buf[i]);
+					//Serial.print("Parsed segment: ");
+					//Serial.println(cmd_in_buf[i]);
 					cmd_cur_segment = strtok(NULL, ",");
 					i++;
 				}
@@ -284,9 +305,9 @@ void loop() {
 
 				// Check if the amount of processed segments is in line with expected field count
 				if(i != OUTPUT_DEV_COUNT){
-					Serial.print("Did not expect ");
-					Serial.print(i);
-					Serial.println(" frames in segment; enabling failsafe.");
+					//Serial.print("Did not expect ");
+					//Serial.print(i);
+					//Serial.println(" frames in segment; enabling failsafe.");
 					enable_failsafe();
 				}
 				// An input frame is now fully processed.
@@ -319,9 +340,9 @@ void loop() {
 				tach_total_ticks[i] = 0;
 				tach_total_duration[i] = 0;
 			}
-			Serial.println(freq);
-			Serial.println(tach_total_duration[i]);
-			Serial.println(tach_total_ticks[i]);
+			//Serial.println(freq);
+			//Serial.println(tach_total_duration[i]);
+			//Serial.println(tach_total_ticks[i]);
 		}
 
 	#elif INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TEMP

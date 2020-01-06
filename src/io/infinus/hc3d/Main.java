@@ -13,10 +13,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.UIManager;
+import javax.swing.table.AbstractTableModel;
 
 import org.ini4j.Ini;
 import org.ini4j.IniPreferences;
 import org.ini4j.InvalidFileFormatException;
+
+import com.formdev.flatlaf.FlatDarculaLaf;
 
 public class Main{
 	
@@ -25,7 +30,8 @@ public class Main{
 	 */
 	private final static int DISP_WIDTH = 800 - 0; // Develop with assumed window size matched with production display
 	private final static int DISP_HEIGHT = 480 - 0; // Substract OS status bar if present
-	private final static int TEMPERATURE_LABEL_HEIGHT = 40;
+	// TODO use layout which calculates this automtivally?
+	private final static int SENSOR_DATA_TABLE_HEIGHT = 100;
 	private final static Color MAIN_TEXT_COLOR = Color.white;
 	private final static boolean SELF_TEST_TEMPERATURE = false; // Verifies temperature calib and dumps to console
 	static JLabel[] temperatureLabels = new JLabel[Temperatures.SENSOR_COUNT];
@@ -69,6 +75,12 @@ public class Main{
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
+		try {
+		    UIManager.setLookAndFeel(new FlatDarculaLaf());
+		} catch( Exception ex ) {
+		    System.err.println( "Failed to initialize LaF" );
+		}
+
 		System.out.println("Infinus HC3D 0.1 (c) Joel Meijering");
 		if(args.length == 0) {
 			throw new RuntimeException("Application folder argument must be supplied.");
@@ -90,9 +102,9 @@ public class Main{
 			e.printStackTrace();
 		}
 		java.util.prefs.Preferences prefs = new IniPreferences(ini);
-		Config.serialPortIds[LLC.LLC_A] = prefs.node("main").get("serialPortIdA", "");
-		Config.serialPortIds[LLC.LLC_B] = prefs.node("main").get("serialPortIdB", "");
-		Config.serialPortIds[LLC.LLC_TREF] = prefs.node("main").get("serialPortIdTREF", "");
+		Config.serialPortIds[LLC.ADAPTER_TEMP1] = prefs.node("main").get("serialPortIdA", "");
+		Config.serialPortIds[LLC.ADAPTER_RECIR] = prefs.node("main").get("serialPortIdB", "");
+		Config.serialPortIds[LLC.ADAPTER_FAN_HE] = prefs.node("main").get("serialPortIdTREF", "");
 		Config.webcamEnabled = prefs.node("main").getBoolean("webcamEnabled", false);
 		Config.webcamDeviceName = prefs.node("main").get("webcamDeviceName", "");
 		Config.calibrationMode = prefs.node("main").getBoolean("calibrationMode", false);
@@ -152,20 +164,24 @@ public class Main{
 		containerPanel.setBackground(Color.cyan);
 		//containerPanel.setLayout(null); // Use absolute positioning for now (allows easily overlaying labels)
 		
-		// Temperature label panel
-		JPanel temperaturePanel = new JPanel(new GridLayout(1, Temperatures.SENSOR_COUNT));
 		
-		temperaturePanel.setBounds(0, 0, DISP_WIDTH, TEMPERATURE_LABEL_HEIGHT);
+		
+		
+		// Temperature label panel
+		JTable sensorDataTable = new JTable(new SensorDataTableModel());
+		
+		sensorDataTable.setBounds(0, 0, DISP_WIDTH, SENSOR_DATA_TABLE_HEIGHT);
 		//temperaturesPanel.setOpaque(false);
-		temperaturePanel.setBackground(new Color(0, 255, 0, 127)); // Semi transparent black
-		for(int i = 0; i < temperatureLabels.length; i++) {
+		//sensorDataTable.setBackground(new Color(0, 255, 0, 127)); // Semi transparent black
+		
+		/*for(int i = 0; i < temperatureLabels.length; i++) {
 			temperatureLabels[i] = new JLabel();
 			temperatureLabels[i].setText("-");
 			temperatureLabels[i].setFont(FONT_MAIN);
 			temperatureLabels[i].setForeground(MAIN_TEXT_COLOR);
 			temperatureLabels[i].setPreferredSize(new Dimension(DISP_WIDTH, DISP_HEIGHT));
 			temperaturePanel.add(temperatureLabels[i]);
-		}
+		}*/
 		
 		// Frame
 		System.out.println("Preparing frame");
@@ -185,7 +201,7 @@ public class Main{
 		if(Config.webcamEnabled) {
 			containerPanel.add(webcamComponent, JLayeredPane.DEFAULT_LAYER);
 		}
-		containerPanel.add(temperaturePanel, JLayeredPane.POPUP_LAYER);
+		containerPanel.add(sensorDataTable, JLayeredPane.POPUP_LAYER);
 		
 		frame.pack();
 		frame.setVisible(true);
@@ -193,5 +209,89 @@ public class Main{
 		
 		System.out.println("UI ready");
 		uiReady = true;
+	}
+	
+	public static class SensorDataTableModel extends AbstractTableModel{
+		
+		@Override
+		public int getRowCount() {
+			// TODO Auto-generated method stub
+			return 4;
+		}
+
+		@Override
+		public int getColumnCount() {
+			// TODO Auto-generated method stub
+			return 12;
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			int fieldIndex = -1;
+			// TODO Auto-generated method stub
+			switch(rowIndex) {
+				case 0:
+					return "TEMP" + (columnIndex+1);
+				case 1:
+					// Retrieve temperature value
+					if(columnIndex < Temperatures.SENSOR_COUNT) {
+						return Temperatures.getTemperature(columnIndex) + "°C";
+					}else {
+						return "?";
+					}
+					
+				case 2:
+					// TODO add pumps somewhere
+					// First 6 on this line will be fans
+					switch(columnIndex) {
+						case 0:
+							return "RECIR F";
+						case 1:
+							return "RECIR B";
+						case 2:
+							return "HE IN";
+						default:
+							return "-";
+					}
+				case 3: 
+					// TODO add pumps somewhere
+					// First 6 on this line will be fans
+					
+					switch(columnIndex) {
+						case 0:
+							fieldIndex = LLC.IN.PWM_FAN_RECIR_F;
+							break;
+						case 1:
+							fieldIndex = LLC.IN.PWM_FAN_RECIR_B;
+							break;
+						case 2:
+							fieldIndex = LLC.IN.PWM_FAN_HE_IN;
+							break;
+						default:
+							return "-";
+					}
+					return Math.round(LLC.getValue(fieldIndex)*100) + "%";
+				case 4:
+					// TODO add pumps somewhere
+					// First 6 on this line will be fans
+					switch(columnIndex) {
+						case 0:
+							fieldIndex = LLC.IN.TACH_FAN_RECIR_F;
+							break;
+						case 1:
+							fieldIndex = LLC.IN.TACH_FAN_RECIR_B;
+							break;
+						case 2:
+							fieldIndex = LLC.IN.TACH_FAN_HE_IN;
+							break;
+						default:
+							return "-";
+					}
+					return Math.round(LLC.getValue(fieldIndex)) + " RPM";
+			}
+			return null;
+		}
+	    //not necessary
+				
 	}
 }

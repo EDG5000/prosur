@@ -22,18 +22,8 @@ public class Temperatures {
 	
 	public static int SENSOR_COUNT;
 	public static final int[] SENSOR_FIELD_IDS = new int[] {
-			LLC.IN.TEMP_A0,
-			LLC.IN.TEMP_A1,
-			LLC.IN.TEMP_A2,
-			LLC.IN.TEMP_A3,
-			LLC.IN.TEMP_A4,
-			LLC.IN.TEMP_A5,
-			LLC.IN.TEMP_B0,
-			LLC.IN.TEMP_B1,
-			LLC.IN.TEMP_B2,
-			LLC.IN.TEMP_B3,
-			LLC.IN.TEMP_B4,
-			LLC.IN.TEMP_B5
+			LLC.IN.TEMP_1,
+			LLC.IN.TEMP_2
 	};
 	
 	static {
@@ -228,6 +218,8 @@ public class Temperatures {
 	/*
 	 * Only used when calibrating
 	 */
+	// TODO enable when thermistors are being used in the project
+	/*
 	public static void onLLCTickComplete() {
 		if(!calibrating) return;
 		if(samplesCollected == CALIB_SAMPLE_COUNT) {
@@ -257,4 +249,5 @@ public class Temperatures {
 			samplesCollected++;
 		}
 	}
+	*/
 }

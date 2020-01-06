@@ -29,25 +29,44 @@ public class LLC {
 	// Field IDs. Need to be in accordance with field layout so that they can be found when calling helper methods
 	// Only used for convenience access
 	public static class IN{
-		// A
-		public static final int TEMP_A0 = 0;
-		public static final int TEMP_A1 = 1;
-		public static final int TEMP_A2 = 2;
+		// TEMP1
+		public static final int TEMP_1 = 0;
+		public static final int TEMP_2 = 1;
+		/*public static final int TEMP_A2 = 2;
 		public static final int TEMP_A3 = 3;
 		public static final int TEMP_A4 = 4;
-		public static final int TEMP_A5 = 5;
+		public static final int TEMP_A5 = 5;*/
+		// TODO add  more
 		
-		// B
+		/*
+		// TEMP2
 		public static final int TEMP_B0 = 6;
 		public static final int TEMP_B1 = 7;
 		public static final int TEMP_B2 = 8;
 		public static final int TEMP_B3 = 9;
 		public static final int TEMP_B4 = 10;
 		public static final int TEMP_B5 = 11;
+		*/
 		
-		// TREF (module not always connected)
-		public static final int TEMP_TREF0 = 12;
-		public static final int TEMP_TREF1 = 13;
+		// PUMPS
+		// TODO uncomment
+		/*public static final int PWM_PUMP_HE = 2;
+		public static final int PWM_PUMP_THR_EXH = 3;
+		public static final int TACH_PUMP_HE = 4;
+		public static final int TACH_PUMP_THR_EXH = 5;*/
+		
+		// RECIR
+		public static final int PWM_FAN_RECIR_F = 2;
+		public static final int PWM_FAN_RECIR_B = 3;
+		public static final int TACH_FAN_RECIR_F = 4;
+		public static final int TACH_FAN_RECIR_B = 5;
+		
+		// FAN HE
+		public static final int PWM_FAN_HE_IN = 6;
+		public static final int TACH_FAN_HE_IN = 7;
+		// TODO uncomment
+		/*public static final int PWM_FAN_HE_OUT = 6;
+		public static final int TACH_FAN_HE_OUT = 7;*/
 	}
 	
 	public static class OUT{
@@ -55,14 +74,15 @@ public class LLC {
 	}
 	// Indexed by adapter, values represent field count per adapter
 	static final int[] IN_FIELD_LAYOUT = new int[]{
-			6, // A
-			6, // B
-			2 // TREF
+			2, // TEMP1
+			4, // RECIR
+			2 // PUMPS
 	};
 	
 	static final int[] OUT_FIELD_LAYOUT = new int[]{
-			0,
-			2 // TODO implement. 2 PWM outputs on adapter 2?
+			0, // TEMP1
+			2, // RECIR 
+			1 // PUMPS
 	};
 	
 	/*
@@ -72,9 +92,9 @@ public class LLC {
 	private static SerialConnection[] serialConnections = new SerialConnection[LLC_ADAPTER_COUNT];
 	
 	// LLC adapter identifiers
-	static final int LLC_A = 0;
-	static final int LLC_B = 1;
-	static final int LLC_TREF = 2; // temperature reference module, only connected/enabled on calibration runs
+	static final int ADAPTER_TEMP1 = 0;
+	static final int ADAPTER_RECIR = 1;
+	static final int ADAPTER_FAN_HE = 2;
 	
 	// Updated every frame
 	static float[][] inData = new float[LLC_ADAPTER_COUNT][];
@@ -155,7 +175,7 @@ public class LLC {
 	
 	private static void emitOnTickComplete() {
 		Main.onLLCTickComplete();
-		Temperatures.onLLCTickComplete();
+		//Temperatures.onLLCTickComplete();
 	}
 	
 	// Get value from incoming data by field ID

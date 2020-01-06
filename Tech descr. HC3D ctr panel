@@ -1,0 +1,11 @@
+- temp1 - 12
+- setpoint in % + actual RPM 1-6 + label, e.g. RECIR F, RECIR B, HE IN, HE OUT, THR EXH
+- pumps: in # + actual RPM 1-2 + label, e.g. HE, THR EXH
+
+- HC PID: P, I, D: +- buttons + label. (.01 increment, hold option)
+- HC TEMP SP: DEG C: +- buttons + label (1 increment, hold option)
+- JCheckbox: Active
+
+
+
+Note: Remember/persist all changes as they are made. Load on app init.
