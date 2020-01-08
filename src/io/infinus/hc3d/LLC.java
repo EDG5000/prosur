@@ -24,7 +24,13 @@ public class LLC {
 	 * LLC configuration
 	 */
 	
+	public static final int TICK_INTERVAL = 1000;
 	static final int LLC_ADAPTER_COUNT = 3;
+	
+	// LLC adapter identifiers
+	static final int ADAPTER_TEMP1 = 0;
+	static final int ADAPTER_RECIR = 1;
+	static final int ADAPTER_FAN_HE = 2;
 	
 	// Field IDs. Need to be in accordance with field layout so that they can be found when calling helper methods
 	// Only used for convenience access
@@ -48,13 +54,6 @@ public class LLC {
 		public static final int TEMP_B5 = 11;
 		*/
 		
-		// PUMPS
-		// TODO uncomment
-		/*public static final int PWM_PUMP_HE = 2;
-		public static final int PWM_PUMP_THR_EXH = 3;
-		public static final int TACH_PUMP_HE = 4;
-		public static final int TACH_PUMP_THR_EXH = 5;*/
-		
 		// RECIR
 		public static final int PWM_FAN_RECIR_F = 2;
 		public static final int PWM_FAN_RECIR_B = 3;
@@ -64,25 +63,36 @@ public class LLC {
 		// FAN HE
 		public static final int PWM_FAN_HE_IN = 6;
 		public static final int TACH_FAN_HE_IN = 7;
-		// TODO uncomment
-		/*public static final int PWM_FAN_HE_OUT = 6;
+		/*public static final int PWM_FAN_HE_OUT = 6;   TODO uncomment
 		public static final int TACH_FAN_HE_OUT = 7;*/
+		
+		
+		// PUMPS
+		// TODO uncomment
+		/*public static final int PWM_PUMP_HE = 2;
+		public static final int PWM_PUMP_THR_EXH = 3;
+		public static final int TACH_PUMP_HE = 4;
+		public static final int TACH_PUMP_THR_EXH = 5;*/
 	}
 	
 	public static class OUT{
-		
+		public static final int PWM_FAN_RECIR_F = 0;
+		public static final int PWM_FAN_RECIR_B = 1;
+		public static final int PWM_FAN_HE_IN = 1;
 	}
 	// Indexed by adapter, values represent field count per adapter
 	static final int[] IN_FIELD_LAYOUT = new int[]{
 			2, // TEMP1
 			4, // RECIR
-			2 // PUMPS
+			2 // FAN HE
+			//1 // PUMPS
 	};
 	
 	static final int[] OUT_FIELD_LAYOUT = new int[]{
 			0, // TEMP1
-			2, // RECIR 
-			1 // PUMPS
+			2, // RECIR
+			1 // FAN HE
+			//1 // PUMPS
 	};
 	
 	/*
@@ -90,11 +100,6 @@ public class LLC {
 	 */
 	
 	private static SerialConnection[] serialConnections = new SerialConnection[LLC_ADAPTER_COUNT];
-	
-	// LLC adapter identifiers
-	static final int ADAPTER_TEMP1 = 0;
-	static final int ADAPTER_RECIR = 1;
-	static final int ADAPTER_FAN_HE = 2;
 	
 	// Updated every frame
 	static float[][] inData = new float[LLC_ADAPTER_COUNT][];
@@ -143,7 +148,6 @@ public class LLC {
 				lookupTable[fieldId] = new int[] {adapter, fieldIndex};
 				fieldId++;
 			}
-			
 		}
 		return lookupTable;
 	}
@@ -170,11 +174,12 @@ public class LLC {
 				}
 				emitOnTickComplete();
 			}
-		}, 0, 1000);
+		}, 0, TICK_INTERVAL);
 	}
 	
 	private static void emitOnTickComplete() {
 		Main.onLLCTickComplete();
+		Control.onLLCTickComplete();
 		//Temperatures.onLLCTickComplete();
 	}
 	

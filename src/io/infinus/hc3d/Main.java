@@ -5,10 +5,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -34,15 +39,24 @@ public class Main{
 	private final static int SENSOR_DATA_TABLE_HEIGHT = 100;
 	private final static Color MAIN_TEXT_COLOR = Color.white;
 	private final static boolean SELF_TEST_TEMPERATURE = false; // Verifies temperature calib and dumps to console
-	static JLabel[] temperatureLabels = new JLabel[Temperatures.SENSOR_COUNT];
+	//static JLabel[] temperatureLabels = new JLabel[Temperatures.SENSOR_COUNT];
 	static WebcamComponent webcamComponent;
-	
+	public static java.util.prefs.Preferences prefs; // Used to populate Config class manually as well as a backing store for every ParamControl
 	private final static Font FONT_MAIN = new Font("RobotoMono-Regular", Font.PLAIN, 12);
+	
+	public static class Params{
+		public static Param P;
+		public static Param I;
+		public static Param D;
+		public static Param HC_TEMP_SET;		
+	}
 	
 	static {
 		System.setProperty("awt.useSystemAAFontSettings","on");
 		System.setProperty("swing.aatext", "true");
 		System.setProperty("java.awt.headless", "false"); // Required when running jar without desktop environment loaded
+		   System.setProperty("sun.java2d.uiScale", "1");
+
 	}
 		
 	static boolean uiReady = false;
@@ -54,6 +68,7 @@ public class Main{
 		public static String webcamDeviceName;
 		public static boolean webcamEnabled = false;
 		public static boolean calibrationMode;
+		public static boolean llcEnabled = false;
 	}
 
 	public static String applicationFolder;
@@ -64,8 +79,14 @@ public class Main{
 			return;
 		}
 		// Update temperature labels
-		for(int i = 0; i < Temperatures.SENSOR_COUNT; i++) {
+		/*for(int i = 0; i < Temperatures.SENSOR_COUNT; i++) {
 			temperatureLabels[i].setText(Temperatures.getTemperature(i) + "°C");
+		}*/
+		for(int i = 0; i < dataLabels.length; i++) {
+			int row = (int) Math.floor(i / 12f);
+			int column = i % 12; 
+			String value = getDataValueAt(row, column);
+			dataLabels[i].setText(value);
 		}
 	}
 	
@@ -101,13 +122,18 @@ public class Main{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		java.util.prefs.Preferences prefs = new IniPreferences(ini);
+		prefs = new IniPreferences(ini);
+		Params.P = new Param("P");
+		Params.I = new Param("I");
+		Params.D = new Param("D");
+		Params.HC_TEMP_SET = new Param("HC_TEMP");
 		Config.serialPortIds[LLC.ADAPTER_TEMP1] = prefs.node("main").get("serialPortIdA", "");
 		Config.serialPortIds[LLC.ADAPTER_RECIR] = prefs.node("main").get("serialPortIdB", "");
 		Config.serialPortIds[LLC.ADAPTER_FAN_HE] = prefs.node("main").get("serialPortIdTREF", "");
 		Config.webcamEnabled = prefs.node("main").getBoolean("webcamEnabled", false);
 		Config.webcamDeviceName = prefs.node("main").get("webcamDeviceName", "");
 		Config.calibrationMode = prefs.node("main").getBoolean("calibrationMode", false);
+		Config.llcEnabled = prefs.node("main").getBoolean("llcEnabled", false);
 		
 		/*
 		 * Load native library for v4l4j
@@ -135,7 +161,10 @@ public class Main{
 	        });
 		}
 		
-		LLC.init();
+		if(Config.llcEnabled) {
+			LLC.init();
+			Control.init();
+		}
 		
 		if(Main.SELF_TEST_TEMPERATURE) {
 			for(int voltage = 0; voltage < 1024; voltage++) {
@@ -145,153 +174,229 @@ public class Main{
 		}
 	}
 	
+	List<ParamControl> controls = new ArrayList<ParamControl>();
+	static JLabel[] dataLabels = null; 
+	
 	static void createAndShowGui() {
+
+		
 		/*
-		 * Create webcam component, which will initialize the webcam as well
+		 * Create UI
 		 */
+		System.out.println("Starting UI create");
+		
+		// Frame
+
+		JFrame frame = new JFrame("HC3D");
+		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		// Frame panel
+		JLayeredPane layeredPane = frame.getLayeredPane();
+		
+		//framePanel.setLayout(null);
+		//framePanel.setBounds(0, 0, DISP_WIDTH, DISP_HEIGHT);
+		
+		// Webcam component
 		if(Config.webcamEnabled) {
 			System.out.println("Starting webcam init");
 			webcamComponent = new WebcamComponent();
 			webcamComponent.setBounds(0, 0, DISP_WIDTH, DISP_HEIGHT);
 		}
 		
-		/*
-		 * Create UI
-		 */
-		System.out.println("Starting UI createy");
-		// Container
-		JLayeredPane containerPanel = new JLayeredPane();
-		containerPanel.setBackground(Color.cyan);
-		//containerPanel.setLayout(null); // Use absolute positioning for now (allows easily overlaying labels)
+		// UI Container
+		JPanel uiContainer = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		uiContainer.setBounds(0, 0, DISP_WIDTH, DISP_HEIGHT);
+		//uiContainer.setBackground(Color.cyan);
 		
+		// Activity switch
+		JCheckBoxMenuItem activeCheckbox = new JCheckBoxMenuItem("Active");
 		
+
 		
-		
-		// Temperature label panel
-		JTable sensorDataTable = new JTable(new SensorDataTableModel());
-		
-		sensorDataTable.setBounds(0, 0, DISP_WIDTH, SENSOR_DATA_TABLE_HEIGHT);
-		//temperaturesPanel.setOpaque(false);
-		//sensorDataTable.setBackground(new Color(0, 255, 0, 127)); // Semi transparent black
-		
-		/*for(int i = 0; i < temperatureLabels.length; i++) {
-			temperatureLabels[i] = new JLabel();
-			temperatureLabels[i].setText("-");
-			temperatureLabels[i].setFont(FONT_MAIN);
-			temperatureLabels[i].setForeground(MAIN_TEXT_COLOR);
-			temperatureLabels[i].setPreferredSize(new Dimension(DISP_WIDTH, DISP_HEIGHT));
-			temperaturePanel.add(temperatureLabels[i]);
-		}*/
-		
-		// Frame
-		System.out.println("Preparing frame");
-	      GraphicsEnvironment graphics =
-	    	      GraphicsEnvironment.getLocalGraphicsEnvironment();
-	    	      GraphicsDevice device = graphics.getDefaultScreenDevice();
-		
-		JFrame frame = new JFrame("Test webcam panel");
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-		frame.setUndecorated(true);
-		//frame.setBounds(0, 0, DISP_WIDTH, DISP_HEIGHT);
-		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		
 		// Create hierarchy
-		frame.add(containerPanel);
-		if(Config.webcamEnabled) {
-			containerPanel.add(webcamComponent, JLayeredPane.DEFAULT_LAYER);
-		}
-		containerPanel.add(sensorDataTable, JLayeredPane.POPUP_LAYER);
+		//frame.add(framePanel);
+		//frame.add(layeredPane);
 		
+		if(Config.webcamEnabled) {
+			layeredPane.add(webcamComponent, JLayeredPane.DEFAULT_LAYER);
+		}
+		layeredPane.add(uiContainer, JLayeredPane.POPUP_LAYER);
+			
+		
+			c.gridx = 0;
+			c.gridy = 0;
+			c.anchor = GridBagConstraints.NORTHEAST;
+			c.weighty = .2f;
+			c.fill = GridBagConstraints.NONE;
+			uiContainer.add(activeCheckbox, c);
+			
+			
+
+			JPanel testGrid = new JPanel(new GridLayout(4, 12));
+			testGrid.setPreferredSize(new Dimension(DISP_WIDTH, 200));
+			testGrid.setBackground(Color.blue);
+			dataLabels = new JLabel[4*12];
+			for(int i = 0; i < 4*12; i++) {
+				dataLabels[i] = new JLabel("A");
+				testGrid.add(dataLabels[i]);
+			}
+			c.gridx = 0;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			c.fill = GridBagConstraints.BOTH;
+			uiContainer.add(testGrid, c);
+			
+			JPanel testGrid2 = new JPanel(new GridLayout(1, 4));
+			testGrid2.setPreferredSize(new Dimension(DISP_WIDTH, 25));
+			testGrid2.setBackground(Color.blue);
+			
+			// Add controls for modifiing the runtime parameters
+			for(Param param : new Param[] {Params.P, Params.I, Params.D}) {
+				ParamControl control = new ParamControl(param, 0.01f, 2);
+				testGrid2.add(control);
+			}
+			testGrid2.add(new ParamControl(Params.HC_TEMP_SET, 1f, 0));
+			
+			c.gridx = 0;
+			c.gridy = 2;
+			c.gridwidth = 1;
+			c.fill = GridBagConstraints.BOTH;
+			uiContainer.add(testGrid2, c);
+			
+			/*
+			c.gridx = 3;
+			c.gridy = 1;
+			c.gridwidth = 1;
+			c.fill = GridBagConstraints.HORIZONTAL;
+			c.weightx = .25;
+			
+			*/
+			
+			
+		    //natural height, maximum width
+		/*
+		    c.fill = GridBagConstraints.HORIZONTAL;
+		    JButton button;
+		    button = new JButton("Button 1");
+		    c.weightx = 0.5;
+		    c.fill = GridBagConstraints.HORIZONTAL;
+		    c.gridx = 0;
+		    c.gridy = 0;
+		    uiContainer.add(button, c);
+		 
+		    button = new JButton("Button 2");
+		    c.fill = GridBagConstraints.HORIZONTAL;
+		    c.weightx = 0.5;
+		    c.gridx = 1;
+		    c.gridy = 0;
+		    uiContainer.add(button, c);
+		 
+		    button = new JButton("Button 3");
+		    c.fill = GridBagConstraints.HORIZONTAL;
+		    c.weightx = 0.5;
+		    c.gridx = 2;
+		    c.gridy = 0;
+		    uiContainer.add(button, c);
+		 
+		    button = new JButton("Long-Named Button 4");
+		    c.fill = GridBagConstraints.HORIZONTAL;
+		    c.ipady = 40;      //make this component tall
+		    c.weightx = 0.0;
+		    c.gridwidth = 3;
+		    c.gridx = 0;
+		    c.gridy = 1;
+		    uiContainer.add(button, c);
+		 
+		    button = new JButton("5");
+		    c.fill = GridBagConstraints.HORIZONTAL;
+		    c.ipady = 0;       //reset to default
+		    c.weighty = 1.0;   //request any extra vertical space
+		    c.anchor = GridBagConstraints.PAGE_END; //bottom of space
+		    c.insets = new Insets(10,0,0,0);  //top padding
+		    c.gridx = 1;       //aligned with button 2
+		    c.gridwidth = 2;   //2 columns wide
+		    c.gridy = 2;       //third row
+		    uiContainer.add(button, c);
+		    */
+				
 		frame.pack();
+		frame.setSize(DISP_WIDTH, DISP_HEIGHT);
 		frame.setVisible(true);
-		device.setFullScreenWindow(frame);
+	    GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
+	    GraphicsDevice device = graphics.getDefaultScreenDevice();
+		//device.setFullScreenWindow(frame);
 		
 		System.out.println("UI ready");
 		uiReady = true;
 	}
 	
-	public static class SensorDataTableModel extends AbstractTableModel{
-		
-		@Override
-		public int getRowCount() {
-			// TODO Auto-generated method stub
-			return 4;
-		}
-
-		@Override
-		public int getColumnCount() {
-			// TODO Auto-generated method stub
-			return 12;
-		}
-
-		@Override
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			int fieldIndex = -1;
-			// TODO Auto-generated method stub
-			switch(rowIndex) {
-				case 0:
-					return "TEMP" + (columnIndex+1);
-				case 1:
-					// Retrieve temperature value
-					if(columnIndex < Temperatures.SENSOR_COUNT) {
-						return Temperatures.getTemperature(columnIndex) + "°C";
-					}else {
-						return "?";
-					}
-					
-				case 2:
-					// TODO add pumps somewhere
-					// First 6 on this line will be fans
-					switch(columnIndex) {
-						case 0:
-							return "RECIR F";
-						case 1:
-							return "RECIR B";
-						case 2:
-							return "HE IN";
-						default:
-							return "-";
-					}
-				case 3: 
-					// TODO add pumps somewhere
-					// First 6 on this line will be fans
-					
-					switch(columnIndex) {
-						case 0:
-							fieldIndex = LLC.IN.PWM_FAN_RECIR_F;
-							break;
-						case 1:
-							fieldIndex = LLC.IN.PWM_FAN_RECIR_B;
-							break;
-						case 2:
-							fieldIndex = LLC.IN.PWM_FAN_HE_IN;
-							break;
-						default:
-							return "-";
-					}
-					return Math.round(LLC.getValue(fieldIndex)*100) + "%";
-				case 4:
-					// TODO add pumps somewhere
-					// First 6 on this line will be fans
-					switch(columnIndex) {
-						case 0:
-							fieldIndex = LLC.IN.TACH_FAN_RECIR_F;
-							break;
-						case 1:
-							fieldIndex = LLC.IN.TACH_FAN_RECIR_B;
-							break;
-						case 2:
-							fieldIndex = LLC.IN.TACH_FAN_HE_IN;
-							break;
-						default:
-							return "-";
-					}
-					return Math.round(LLC.getValue(fieldIndex)) + " RPM";
-			}
-			return null;
-		}
-	    //not necessary
+	private static String getDataValueAt(int rowIndex, int columnIndex) {
+		int fieldIndex = -1;
+		// TODO Auto-generated method stub
+		switch(rowIndex) {
+			case 0:
+				return "TEMP" + (columnIndex+1);
+			case 1:
+				// Retrieve temperature value
+				if(columnIndex < Temperatures.SENSOR_COUNT) {
+					return Temperatures.getTemperature(columnIndex) + "°C";
+				}else {
+					return "?";
+				}
 				
+			case 2:
+				// TODO add pumps somewhere
+				// First 6 on this line will be fans
+				switch(columnIndex) {
+					case 0:
+						return "RECIR F";
+					case 1:
+						return "RECIR B";
+					case 2:
+						return "HE IN";
+					default:
+						return "-";
+				}
+			case 3: 
+				// TODO add pumps somewhere
+				// First 6 on this line will be fans
+				
+				switch(columnIndex) {
+					case 0:
+						fieldIndex = LLC.IN.PWM_FAN_RECIR_F;
+						break;
+					case 1:
+						fieldIndex = LLC.IN.PWM_FAN_RECIR_B;
+						break;
+					case 2:
+						fieldIndex = LLC.IN.PWM_FAN_HE_IN;
+						break;
+					default:
+						return "-";
+				}
+				return Math.round(LLC.getValue(fieldIndex)*100) + "%";
+			case 4:
+				// TODO add pumps somewhere
+				// First 6 on this line will be fans
+				switch(columnIndex) {
+					case 0:
+						fieldIndex = LLC.IN.TACH_FAN_RECIR_F;
+						break;
+					case 1:
+						fieldIndex = LLC.IN.TACH_FAN_RECIR_B;
+						break;
+					case 2:
+						fieldIndex = LLC.IN.TACH_FAN_HE_IN;
+						break;
+					default:
+						return "-";
+				}
+				return Math.round(LLC.getValue(fieldIndex)) + " RPM";
+		}
+		return null;
 	}
 }
