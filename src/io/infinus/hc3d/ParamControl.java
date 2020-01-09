@@ -32,24 +32,30 @@ public class ParamControl extends JComponent {
 		setLayout(layout);
 		
 		JButton buttonMinus = new JButton("-");
+		buttonMinus.setFont(Main.FONT_MAIN);
 		buttonMinus.setSize(ELEMENT_SIZE, ELEMENT_SIZE);
 		buttonMinus.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setValue(param.getValue() - increment);
+				param.setValue(param.getValue() - increment);
+				updateLabel();
 			}
 		});
 		
 		JButton buttonPlus = new JButton("+");
+		buttonPlus.setFont(Main.FONT_MAIN);
 		buttonPlus.setSize(ELEMENT_SIZE, ELEMENT_SIZE);
 		buttonPlus.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				setValue(param.getValue() + increment);
+				param.setValue(param.getValue() + increment);
+				updateLabel();
 			}
 		});
 		
-		valueLabel = new JLabel(param.getName());
+		valueLabel = new JLabel();
+		updateLabel();
+		valueLabel.setFont(Main.FONT_MAIN);
 		valueLabel.setSize(ELEMENT_SIZE, ELEMENT_SIZE);
 		
 		// Add components
@@ -58,8 +64,7 @@ public class ParamControl extends JComponent {
 		add(buttonPlus);
 	}
 	
-	private void setValue(float pValue) {
-		param.setValue(pValue);
-		valueLabel.setText(param.getValue() + "");
+	private void updateLabel() {
+		valueLabel.setText("<html><div style='text-align: center'>" + param.getName() + ": <br>" + param.getValue() + "</div></html>");
 	}
 }

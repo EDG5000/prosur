@@ -13,11 +13,11 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="hc3d/lib/jssc/libs"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/v4l4j"/>
 	<classpathentry kind="lib" path="lib/flatlaf/flatlaf-0.23.1.jar" sourcepath="lib/flatlaf/flatlaf-0.23.1-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/hc3d/lib/flatlaf/flatlaf-0.23.1-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/v4l4j"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

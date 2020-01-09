@@ -1,13 +1,17 @@
 package io.infinus.hc3d;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +24,8 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 
 import org.ini4j.Ini;
@@ -42,13 +48,14 @@ public class Main{
 	//static JLabel[] temperatureLabels = new JLabel[Temperatures.SENSOR_COUNT];
 	static WebcamComponent webcamComponent;
 	public static java.util.prefs.Preferences prefs; // Used to populate Config class manually as well as a backing store for every ParamControl
-	private final static Font FONT_MAIN = new Font("RobotoMono-Regular", Font.PLAIN, 12);
+	public final static Font FONT_MAIN = new Font("RobotoMono-Regular", Font.PLAIN, 20);
 	
 	public static class Params{
 		public static Param P;
 		public static Param I;
 		public static Param D;
-		public static Param HC_TEMP_SET;		
+		public static Param HC_TEMP_SET;
+		public static Param ACTIVE;
 	}
 	
 	static {
@@ -127,6 +134,7 @@ public class Main{
 		Params.I = new Param("I");
 		Params.D = new Param("D");
 		Params.HC_TEMP_SET = new Param("HC_TEMP");
+		Params.ACTIVE = new Param("ACTIVE");
 		Config.serialPortIds[LLC.ADAPTER_TEMP1] = prefs.node("main").get("serialPortIdA", "");
 		Config.serialPortIds[LLC.ADAPTER_RECIR] = prefs.node("main").get("serialPortIdB", "");
 		Config.serialPortIds[LLC.ADAPTER_FAN_HE] = prefs.node("main").get("serialPortIdTREF", "");
@@ -178,157 +186,111 @@ public class Main{
 	static JLabel[] dataLabels = null; 
 	
 	static void createAndShowGui() {
-
-		
-		/*
-		 * Create UI
-		 */
 		System.out.println("Starting UI create");
 		
 		// Frame
-
 		JFrame frame = new JFrame("HC3D");
-		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		// Frame panel
-		JLayeredPane layeredPane = frame.getLayeredPane();
-		
-		//framePanel.setLayout(null);
-		//framePanel.setBounds(0, 0, DISP_WIDTH, DISP_HEIGHT);
+		JLayeredPane pane = frame.getLayeredPane();
 		
 		// Webcam component
 		if(Config.webcamEnabled) {
 			System.out.println("Starting webcam init");
 			webcamComponent = new WebcamComponent();
 			webcamComponent.setBounds(0, 0, DISP_WIDTH, DISP_HEIGHT);
+			pane.add(webcamComponent, JLayeredPane.DEFAULT_LAYER);
 		}
 		
 		// UI Container
-		JPanel uiContainer = new JPanel(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
+		JPanel uiContainer = new JPanel(new GridBagLayout()){
+	        @Override
+	        public void paint(Graphics g)
+	        {
+	            super.paint(g);
+	            int[][] dims = ((GridBagLayout) getLayout()).getLayoutDimensions();
+	            g.setColor(Color.BLUE);
+	            int x = 0;
+	            for (int add : dims[0])
+	            {
+	                x += add;
+	                g.drawLine(x, 0, x, getHeight());
+	            }
+	            int y = 0;
+	            for (int add : dims[1])
+	            {
+	                y += add;
+	                g.drawLine(0, y, getWidth(), y);
+	            }
+	        }	
+		};
+		uiContainer.setBackground(Color.CYAN);
 		uiContainer.setBounds(0, 0, DISP_WIDTH, DISP_HEIGHT);
-		//uiContainer.setBackground(Color.cyan);
+		GridBagConstraints c = new GridBagConstraints();
+		pane.add(uiContainer, JLayeredPane.POPUP_LAYER);
 		
 		// Activity switch
-		JCheckBoxMenuItem activeCheckbox = new JCheckBoxMenuItem("Active");
-		
+		JCheckBoxMenuItem activeCheckbox = new JCheckBoxMenuItem("Active", Params.ACTIVE.getValue() == 1f);
+		activeCheckbox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Params.ACTIVE.setValue(activeCheckbox.getState() ? 1 : 0);
+			}
+		});
+		activeCheckbox.setFont(FONT_MAIN);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.anchor = GridBagConstraints.NORTHEAST;
+		c.fill = GridBagConstraints.NONE;
+		c.gridheight = 1;
+		c.gridwidth = 1;
+		c.weighty = .1; // Required to make cellls use all the space available
+		uiContainer.add(activeCheckbox, c);
 
-		
-
-		
-		// Create hierarchy
-		//frame.add(framePanel);
-		//frame.add(layeredPane);
-		
-		if(Config.webcamEnabled) {
-			layeredPane.add(webcamComponent, JLayeredPane.DEFAULT_LAYER);
+		// Data able
+		JPanel testGrid = new JPanel(new GridLayout(4, 12));
+		testGrid.setPreferredSize(new Dimension(DISP_WIDTH, 50));
+		testGrid.setBackground(Color.blue);
+		dataLabels = new JLabel[4*12];
+		for(int i = 0; i < 4*12; i++) {
+			dataLabels[i] = new JLabel("A");
+			dataLabels[i].setFont(FONT_MAIN);
+			testGrid.add(dataLabels[i]);
 		}
-		layeredPane.add(uiContainer, JLayeredPane.POPUP_LAYER);
-			
-		
-			c.gridx = 0;
-			c.gridy = 0;
-			c.anchor = GridBagConstraints.NORTHEAST;
-			c.weighty = .2f;
-			c.fill = GridBagConstraints.NONE;
-			uiContainer.add(activeCheckbox, c);
-			
-			
+		c.gridx = 0;
+		c.gridy = 1;
+		c.anchor = GridBagConstraints.NORTH;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridheight = 1;
+		c.gridwidth = 1;
+		c.weighty = 6; // Required to make cellls use all the space available
+		uiContainer.add(testGrid, c);
 
-			JPanel testGrid = new JPanel(new GridLayout(4, 12));
-			testGrid.setPreferredSize(new Dimension(DISP_WIDTH, 200));
-			testGrid.setBackground(Color.blue);
-			dataLabels = new JLabel[4*12];
-			for(int i = 0; i < 4*12; i++) {
-				dataLabels[i] = new JLabel("A");
-				testGrid.add(dataLabels[i]);
-			}
-			c.gridx = 0;
-			c.gridy = 1;
-			c.gridwidth = 1;
-			c.fill = GridBagConstraints.BOTH;
-			uiContainer.add(testGrid, c);
-			
-			JPanel testGrid2 = new JPanel(new GridLayout(1, 4));
-			testGrid2.setPreferredSize(new Dimension(DISP_WIDTH, 25));
-			testGrid2.setBackground(Color.blue);
-			
-			// Add controls for modifiing the runtime parameters
-			for(Param param : new Param[] {Params.P, Params.I, Params.D}) {
-				ParamControl control = new ParamControl(param, 0.01f, 2);
-				testGrid2.add(control);
-			}
-			testGrid2.add(new ParamControl(Params.HC_TEMP_SET, 1f, 0));
-			
-			c.gridx = 0;
-			c.gridy = 2;
-			c.gridwidth = 1;
-			c.fill = GridBagConstraints.BOTH;
-			uiContainer.add(testGrid2, c);
-			
-			/*
-			c.gridx = 3;
-			c.gridy = 1;
-			c.gridwidth = 1;
-			c.fill = GridBagConstraints.HORIZONTAL;
-			c.weightx = .25;
-			
-			*/
-			
-			
-		    //natural height, maximum width
-		/*
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    JButton button;
-		    button = new JButton("Button 1");
-		    c.weightx = 0.5;
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.gridx = 0;
-		    c.gridy = 0;
-		    uiContainer.add(button, c);
-		 
-		    button = new JButton("Button 2");
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.weightx = 0.5;
-		    c.gridx = 1;
-		    c.gridy = 0;
-		    uiContainer.add(button, c);
-		 
-		    button = new JButton("Button 3");
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.weightx = 0.5;
-		    c.gridx = 2;
-		    c.gridy = 0;
-		    uiContainer.add(button, c);
-		 
-		    button = new JButton("Long-Named Button 4");
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.ipady = 40;      //make this component tall
-		    c.weightx = 0.0;
-		    c.gridwidth = 3;
-		    c.gridx = 0;
-		    c.gridy = 1;
-		    uiContainer.add(button, c);
-		 
-		    button = new JButton("5");
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.ipady = 0;       //reset to default
-		    c.weighty = 1.0;   //request any extra vertical space
-		    c.anchor = GridBagConstraints.PAGE_END; //bottom of space
-		    c.insets = new Insets(10,0,0,0);  //top padding
-		    c.gridx = 1;       //aligned with button 2
-		    c.gridwidth = 2;   //2 columns wide
-		    c.gridy = 2;       //third row
-		    uiContainer.add(button, c);
-		    */
-				
+		// Tuning controls
+		JPanel testGrid2 = new JPanel(new GridLayout(1, 4));
+		testGrid2.setPreferredSize(new Dimension(DISP_WIDTH, 50));
+		testGrid2.setBackground(Color.red);
+		for(Param param : new Param[] {Params.P, Params.I, Params.D}) {
+			ParamControl control = new ParamControl(param, 0.01f, 2);
+			testGrid2.add(control);
+		}
+		testGrid2.add(new ParamControl(Params.HC_TEMP_SET, 1f, 0));
+		c.gridx = 0;
+		c.gridy = 2;
+		c.anchor = GridBagConstraints.SOUTH;
+		c.fill = GridBagConstraints.BOTH;
+		c.gridheight = 1;
+		c.gridwidth = 1;
+		c.weighty = .3; // Required to make cellls use all the space available
+		uiContainer.add(testGrid2, c);
+		
+		// Wrap up UI		
 		frame.pack();
-		frame.setSize(DISP_WIDTH, DISP_HEIGHT);
+		frame.setSize(DISP_WIDTH, DISP_HEIGHT + 50);
 		frame.setVisible(true);
 	    GraphicsEnvironment graphics = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	    GraphicsDevice device = graphics.getDefaultScreenDevice();
-		//device.setFullScreenWindow(frame);
+		// TODO uncomment
+	    //device.setFullScreenWindow(frame);
 		
 		System.out.println("UI ready");
 		uiReady = true;
