@@ -1,8 +1,5 @@
 package io.infinus.hc3d;
 
-import java.io.IOException;
-import java.util.prefs.BackingStoreException;
-
 public class Param {
 	float value;
 	String name;

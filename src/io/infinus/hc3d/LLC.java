@@ -259,7 +259,7 @@ public class LLC {
 			String line = "";
 			for(int i = 0; i < outData[adapter].length; i++) {
 				line += outData[adapter][i];
-				if(i != outData.length-1) {
+				if(i != outData[adapter].length-1) {
 					line += ",";
 				}
 			}

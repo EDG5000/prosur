@@ -10,7 +10,7 @@ public class C {
 	public final static int DISP_HEIGHT = 480 - 0; // Substract OS status bar if present
 	public final static boolean SELF_TEST_TEMPERATURE = false; // Verifies temperature calib and dumps to console
 	public final static Font FONT_MAIN = new Font("Fira Code", Font.PLAIN, 16);
-	public final static Font FONT_MAIN_LARGE = new Font("Fira Code", Font.PLAIN, 30);
+	public final static Font FONT_MAIN_LARGE = new Font("Fira Code", Font.PLAIN, 25);
 	public final static Font FONT_MAIN_BOLD = new Font("Fira Code", Font.BOLD, 16);
 	public static final float UI_BG_OPACITY = .5f;
 	// Adjust Main.getDataValueAt accordingly

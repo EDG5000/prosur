@@ -11,13 +11,15 @@ public class SerialConnection{
 	SerialPort serialPort;
 	final static int BAUD = 115200;
 	boolean opened = false;
-	boolean closingConnection = false;
+	//boolean closingConnection = false;
+	boolean failedToSend = false;
 	
 	public SerialConnection(String pDeviceId){
 		deviceId = pDeviceId;
 	}
 	
 	public void openConnection() throws IOException {
+		/*
 		Main.log("SerialConnection: Adding shutdown hook.");
 		Runtime.getRuntime().addShutdownHook(new Thread(){
 		    @Override
@@ -26,6 +28,7 @@ public class SerialConnection{
 		    	closeConnection();
 		    }
 		});
+		*/
 		Main.log("SerialConnection: Opening device "+deviceId+" with baud rate "+BAUD);
     	serialPort = new jssc.SerialPort(deviceId);
     	try {
@@ -46,9 +49,12 @@ public class SerialConnection{
 		}
 
 	}
-	
+	/*
 	void waitForSerialConnected(){
 		long start = System.currentTimeMillis();
+		Main.log("SerialConnection: Connection failed to establish, .");
+		System.exit(0);
+		
 		while(!opened){
 			try {
 				Thread.sleep(200);
@@ -61,11 +67,12 @@ public class SerialConnection{
 			}
 		}
 	}
-	boolean failedToSend = false;
+	*/
+	
 
 	public Boolean sendData(byte[] buffer) {
-		if(closingConnection) return false;
-		waitForSerialConnected();
+		//if(closingConnection) return false;
+		//waitForSerialConnected();
 		try {
 			boolean result = serialPort.writeBytes(buffer);
 			if(!result){
@@ -82,24 +89,27 @@ public class SerialConnection{
 			return result;
 		} catch (SerialPortException e) {
 			//DATC.printStackTrace(e);
-			e.printStackTrace();
+			//e.printStackTrace();
+			Main.printStackTrace(e);
 		}
 		return false;
 	}
 	
 	public byte[] readDataBlock() throws IOException {
-		if(closingConnection) return null;
-		waitForSerialConnected();
+		//if(closingConnection) return null;
+		//waitForSerialConnected();
 		try {
 			return serialPort.readBytes();
 		} catch (SerialPortException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			Main.printStackTrace(e);
 			System.exit(0);
 		}
 		return null;
 	}
 
 	// Called at shutdown of application
+	/*
 	public void closeConnection(){
 		closingConnection = true;
 		// TODO test
@@ -114,7 +124,7 @@ public class SerialConnection{
 			e.printStackTrace();
 		}
 	}
-
+*/
 
 	
 //	long[] byteCount = new long[60]; // Total bytes of the last 60 seconds

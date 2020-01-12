@@ -2,10 +2,10 @@ package io.infinus.hc3d;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -18,19 +18,22 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.BackingStoreException;
 
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 
 import org.ini4j.Ini;
 import org.ini4j.IniPreferences;
 import org.ini4j.InvalidFileFormatException;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
-import com.infinus.datc.DATC;
 
 public class Main{
 	static {
@@ -52,6 +55,8 @@ public class Main{
 	public static String applicationFolder;
 	List<ParamControl> controls = new ArrayList<ParamControl>();
 	static JLabel[] dataLabels = null; 
+	static JRadioButton actToggleRadioOn = null;
+	static int blinkTick = -1; // Used to blink the ON label
 	
 	// Operational parameters
 	public static class Params{
@@ -77,6 +82,20 @@ public class Main{
 			// UI still initializing
 			return;
 		}
+		
+		if(Params.ACTIVE.getValue() == 1) {
+			blinkTick *= -1;
+			if(blinkTick == 1) {
+				actToggleRadioOn.setText("--");
+			}else {
+				actToggleRadioOn.setText("ON");
+			}
+		}else {
+			if(!actToggleRadioOn.getText().equals("ON")){
+				actToggleRadioOn.setText("ON");
+			}
+		}
+		
 		// Update temperature labels
 		for(int i = 0; i < dataLabels.length; i++) {
 			int row = i / 12;
@@ -242,23 +261,39 @@ public class Main{
 		uiContainer.setBackground(new Color(0,0,0,0));
 		pane.add(uiContainer, JLayeredPane.POPUP_LAYER);
 		
-		// Activity switch
-		JCheckBoxMenuItem activeCheckbox = new JCheckBoxMenuItem("ON", Params.ACTIVE.getValue() == 1f);
-		activeCheckbox.setBackground(new Color(0, 0, 0, C.UI_BG_OPACITY));
-		activeCheckbox.setForeground(Color.white);
-		activeCheckbox.addActionListener(new ActionListener() {
+		// Activity toggle
+		boolean actEnabled = Params.ACTIVE.getValue() == 1;
+		ButtonGroup actToggleBtnGroup = new ButtonGroup();
+		actToggleRadioOn = new JRadioButton("ON");
+		actToggleRadioOn.setForeground(Color.white);
+		actToggleRadioOn.setSelected(actEnabled);
+		actToggleRadioOn.setFont(C.FONT_MAIN_LARGE);
+		actToggleBtnGroup.add(actToggleRadioOn);
+		actToggleRadioOn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int active = activeCheckbox.getState() ? 1 : 0;
-				Params.ACTIVE.setValue(active);
-				if(active == 1) {
-					Control.on();
-				}else {
-					Control.off();
-				}
+				Params.ACTIVE.setValue(1);
+				Control.on();
 			}
 		});
-		activeCheckbox.setFont(C.FONT_MAIN_LARGE);
+		JRadioButton actToggleRadioOff = new JRadioButton("OFF");
+		//actToggleRadioOff.setMargin(new Insets(10, 10, 10, 10));
+		actToggleRadioOff.setFont(C.FONT_MAIN_LARGE);
+		actToggleRadioOff.setForeground(Color.white);
+		actToggleRadioOff.setSelected(!actEnabled);
+		actToggleBtnGroup.add(actToggleRadioOff);
+		actToggleRadioOff.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Params.ACTIVE.setValue(0);
+				Control.off();
+			}
+		});
+		SemiTransparentPanel actTogglePanel = new SemiTransparentPanel(new GridLayout(1, 2));
+		actTogglePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		
+		actTogglePanel.add(actToggleRadioOn);
+		actTogglePanel.add(actToggleRadioOff);
 		c.gridx = 0;
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.NORTHEAST;
@@ -266,7 +301,7 @@ public class Main{
 		c.gridheight = 1;
 		c.gridwidth = 1;
 		c.weighty = .1; // Required to make cells use all the space available
-		uiContainer.add(activeCheckbox, c);
+		uiContainer.add(actTogglePanel, c);
 
 		// Data table
 		JPanel dataGrid = new SemiTransparentPanel(new GridLayout(C.DATA_TABLE_ROWS, C.DATA_TABLE_COLS));
@@ -410,8 +445,10 @@ public class Main{
 	public static void log(String str) {
 		if (str == null)
 			return;
-		str = "[" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "] " + str;
-		System.out.println(str);
+		for(String segment: str.split("\n")){
+			segment = "[" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "] " + str;
+			System.out.println(segment);
+		}
 	}
 
 	public static void log(Object str) {

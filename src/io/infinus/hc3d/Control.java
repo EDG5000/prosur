@@ -17,12 +17,17 @@ public class Control {
 		// Closing application will make the adapter go into failsafe mode which
 		// will keep the PWM values at max
 		LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0);
+		LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, 0);
 		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, 0);
 		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, 0);
+		
+		LLC.setValue(LLC.OUT.RELAY_3DP_INTERLOCK_A, 0);
+		LLC.setValue(LLC.OUT.RELAY_3DP_INTERLOCK_B, 0);
 	}
 	
 	public static void on() {
 		LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 1);
+		LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, 1);
 		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, 1);
 		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, 1);
 		active = true;
@@ -35,6 +40,7 @@ public class Control {
 		integral = 0;
 		// Turn off fans and pumps
 		LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0);
+		LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, 0);
 		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, 0);
 		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, 0);
 	}

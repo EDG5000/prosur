@@ -25,7 +25,7 @@
 /*
  * Select target adapter before flashing
  */
-#define ADAPTER ADAPTER_RELAY
+#define ADAPTER ADAPTER_HE_FAN
 
 /*
  * Temp ctrl adapter config
@@ -342,7 +342,7 @@ void loop() {
 					enable_failsafe();
 				}
 				// An input frame is now fully processed.
-				// Proceed with next [hase. cmd_in_buf will be populated with the received line or failsafe values.
+				// Proceed with next phase. cmd_in_buf will be populated with the received line or failsafe values.
 				break;
 			}
 		}
@@ -375,6 +375,8 @@ void loop() {
 				cmd_out_buf[i] = freq * 60;
 				tach_total_ticks[i] = 0;
 				tach_total_duration[i] = 0;
+			}else{
+				cmd_out_buf[i] = 0;
 			}
 			//Serial.println(freq);
 			//Serial.println(tach_total_duration[i]);
