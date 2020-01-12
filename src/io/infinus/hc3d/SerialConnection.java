@@ -17,24 +17,33 @@ public class SerialConnection{
 	}
 	
 	public void openConnection() throws IOException {
-		System.out.println("SerialConnection: Opening device "+deviceId+" with baud rate "+BAUD);
+		Main.log("SerialConnection: Adding shutdown hook.");
+		Runtime.getRuntime().addShutdownHook(new Thread(){
+		    @Override
+		    public void run()
+		    {
+		    	closeConnection();
+		    }
+		});
+		Main.log("SerialConnection: Opening device "+deviceId+" with baud rate "+BAUD);
     	serialPort = new jssc.SerialPort(deviceId);
     	try {
 			boolean result = serialPort.openPort();
 			if(result){
 				opened = serialPort.setParams(BAUD, SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
 			}else{
-				System.out.println("SerialConnection: Unable to open serial port.");
+				Main.log("SerialConnection: Unable to open serial port.");
 				System.exit(0);
 			}
 			if(!opened){
-				System.out.println("SerialConnection: Unable to initialize serial port.");
+				Main.log("SerialConnection: Unable to initialize serial port.");
 				System.exit(0);
 			}
-			System.out.println("SerialConnection: Device opened.");
+			Main.log("SerialConnection: Device opened.");
 		} catch (SerialPortException e) {
 			e.printStackTrace();
 		}
+
 	}
 	
 	void waitForSerialConnected(){
@@ -45,8 +54,8 @@ public class SerialConnection{
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			if((System.currentTimeMillis() - start) > 5000){
-				System.out.println("SerialConnection: Error: Timing out while waiting for serial to come online.");
+			if((System.currentTimeMillis() - start) > 10000){
+				Main.log("SerialConnection: Error: Timing out while waiting for serial to come online.");
 				System.exit(0);
 			}
 		}
@@ -60,11 +69,11 @@ public class SerialConnection{
 			if(!result){
 				if(!failedToSend){
 					failedToSend = true;
-					System.out.println("SerialConnection: Unable to send "+buffer.length+ " bytes.");
+					Main.log("SerialConnection: Unable to send "+buffer.length+ " bytes.");
 				}
 			}else{
 				if(failedToSend){
-					System.out.println("SerialConnection: Device recovered.");
+					Main.log("SerialConnection: Device recovered.");
 					failedToSend = false;
 				}
 			}
@@ -87,8 +96,18 @@ public class SerialConnection{
 		return null;
 	}
 
-	public void closeConnection() throws IOException {
-		System.out.println("ULLC SerialConnection: Warning: closeConnection() not implemented!");
+	public void closeConnection(){
+		// TODO test
+		Main.Params.P.setValue((float) Math.random());
+		Main.flushPreferences();
+		
+		try {
+			Main.log("Closing serial connection " + deviceId + "..."); 
+			serialPort.closePort();
+			Main.log("Serial connection " + deviceId + " closed.");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 

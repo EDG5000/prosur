@@ -51,7 +51,7 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 	private boolean autoPack = false;
 
 	/** Whether to size the image to fit within the component's given size */
-	private boolean autoFit = false;
+	private boolean fillFit = true;
 
 	/** Gives the image-coord point in the centre of the image */
 	private double drawX = 0;
@@ -77,6 +77,9 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 	/** The last displayed image */
 	private BufferedImage displayedImage = null;
 
+	// TODO joel added
+	long yOffset;
+	
 	/**
 	 * Default constructor
 	 */
@@ -88,26 +91,26 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 		this.scaleFactorX = initialScale;
 		this.scaleFactorY = initialScale;
 		 */
-		autoResize = true;
-		autoFit = true;
 		
 		Runtime.getRuntime().addShutdownHook(new Thread()
 		{
 		    @Override
 		    public void run()
 		    {
-		    	System.out.println("Closing.");
+		    	Main.log("Closing.");
 		    	windowClosing();
 		    }
 		});
 		
 		device = Main.Config.webcamDeviceName; // See README to get persistent shortcut 
-		int w = 1280;
-		int h = 960;
-		//int w = 640;
-		//int h = 480;
-		width = (System.getProperty("test.width")!=null) ? Integer.parseInt(System.getProperty("test.width")) : w;
-		height = (System.getProperty("test.height")!=null) ? Integer.parseInt(System.getProperty("test.height")) : h;
+		int width = 1280;
+		//int height = 960; // Weird, does not seem to work when this var is used
+		
+		// Scaling is applied by matching height of webcam frame with height of display
+		double newHeight = this.scaleFactorY * 960d;
+		yOffset = Math.round((C.DISP_HEIGHT-newHeight) / 2f);
+		yOffset = 0;
+		
 		std = (System.getProperty("test.standard")!=null) ? Integer.parseInt(System.getProperty("test.standard")) : V4L4JConstants.STANDARD_WEBCAM;
 		channel = (System.getProperty("test.channel")!=null) ? Integer.parseInt(System.getProperty("test.channel")) : 0;
 		
@@ -137,6 +140,8 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 			System.err.println("Error starting the capture");
 			e.printStackTrace();
 		}
+		
+		
 	}
 
 	/**
@@ -163,7 +168,10 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 		cleanupCapture();
 
 		// close window
-		frame.dispose();            
+		if(frame != null) {
+			// Why is the frame null?
+			frame.dispose();  
+		}
 	}
 
 
@@ -177,7 +185,7 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 	
 	@Override
 	public synchronized void nextFrame(VideoFrame frame) {
-		System.out.println(count);
+		//Main.log(count);
 		count++;
 		if(count == 5) {
 			count = 0;
@@ -197,7 +205,7 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 	{
 		this.image = image;
 
-		if (this.autoFit)
+		if (this.fillFit)
 		{
 			this.calculateScaleFactorsToFit(image, this.getBounds());
 		}
@@ -247,11 +255,16 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 		if (image == null || bounds == null)
 			return;
 
-		if (this.autoFit)
+		if (this.fillFit)
 		{
+			/*
 				this.scaleFactorX = this.scaleFactorY = Math.min(
 						bounds.width / (double) image.getWidth(),
 						bounds.height / (double) image.getHeight());
+						*/
+			// TODO joel edit: scale by width to ensure filling of screen
+			this.scaleFactorX = this.scaleFactorY = 
+					bounds.width / (double) image.getWidth();
 		}
 	}
 
@@ -282,7 +295,7 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 		g.scale(1 / this.scaleFactorX, 1 / this.scaleFactorY);
 
 		// Blat our offscreen image to the screen
-		gfx.drawImage(img, 0, 0, null);
+		gfx.drawImage(img, 0, (int) yOffset, null);
 
 		// Store this displayed image
 		this.displayedImage = img;
@@ -299,7 +312,7 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 	 */
 	public void setAutoFit(final boolean tf)
 	{
-		this.autoFit = tf;
+		this.fillFit = tf;
 	}
 
 	/**

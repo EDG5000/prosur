@@ -14,15 +14,18 @@
 #define DEBUG
 
 #define ADAPTER_RECIR 0
-#define ADAPTER_TEMP_SENSE 1
+#define ADAPTER_TEMP_A 1
 #define ADAPTER_HE_FAN 2
-#define INPUT_DEV_TYPE_IN_TEMP 0
-#define INPUT_DEV_TYPE_IN_TACH 1
+#define ADAPTER_RELAY 3
+#define INPUT_DEV_TYPE_TEMP 0
+#define INPUT_DEV_TYPE_TACH 1
+#define OUTPUT_DEV_TYPE_PWM 0
+#define OUTPUT_DEV_TYPE_RELAY 1
 
 /*
  * Select target adapter before flashing
  */
-#define ADAPTER ADAPTER_HE_FAN
+#define ADAPTER ADAPTER_RELAY
 
 /*
  * Temp ctrl adapter config
@@ -33,42 +36,64 @@
 
 	// Outputs configuration
 	#define OUTPUT_DEV_COUNT 2
-	float PWM_OUT_MIN[] = { .35f}; // Used as initial setpoint until data is received
-	float PWM_OUT_MAX[] = { 1.0f}; // Used for failsafe
+	#define OUTPUT_DEV_TYPE OUTPUT_DEV_TYPE_PWM
+	float PWM_OUT_MIN[] = { .35f, .35f}; // Used as initial setpoint until data is received
+	float PWM_OUT_MAX[] = { 1.0f, 1.0f}; // Used for failsafe
 
 	// Inputs configuration
 	#define INPUT_DEV_COUNT 2
-	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_IN_TACH
+	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_TACH
 #endif
 
 /*
 * Temp sense adapter config
 */
 
-#if ADAPTER == ADAPTER_TEMP_SENSE
-	#define ADAPTER_ID "TEMP1"
+#if ADAPTER == ADAPTER_TEMP_A
+	#define ADAPTER_ID "TEMP_A"
 
 	// Outputs configuration
 	#define OUTPUT_DEV_COUNT 0
+	#define OUTPUT_DEV_TYPE OUTPUT_DEV_TYPE_PWM
 	float PWM_OUT_MIN[] = { }; // Used as initial setpoint until data is received
 	float PWM_OUT_MAX[] = { }; // Used for failsafe
 
 	// Inputs configuration
 	#define INPUT_DEV_COUNT 2
-	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_IN_TEMP
+	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_TEMP
 #endif
 
+/*
+ * HE fan adapter config
+ */
 #if ADAPTER == ADAPTER_HE_FAN
 	#define ADAPTER_ID "HE_FAN"
 
 	// Outputs configuration
 	#define OUTPUT_DEV_COUNT 1
+	#define OUTPUT_DEV_TYPE OUTPUT_DEV_TYPE_PWM
 	float PWM_OUT_MIN[] = { .35f }; // Used as initial setpoint until data is received
 	float PWM_OUT_MAX[] = { 1.0f }; // Used for failsafe
 
 	// Inputs configuration
 	#define INPUT_DEV_COUNT 1
-	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_IN_TACH
+	#define INPUT_DEV_TYPE INPUT_DEV_TYPE_TACH
+#endif
+
+/*
+ * Relay adapter config
+ */
+#if ADAPTER == ADAPTER_RELAY
+	#define ADAPTER_ID "RELAY"
+
+	// Outputs configuration
+	#define OUTPUT_DEV_COUNT 3
+	#define OUTPUT_DEV_TYPE OUTPUT_DEV_TYPE_RELAY
+	float PWM_OUT_MIN[] = { }; // Used as initial setpoint until data is received
+	float PWM_OUT_MAX[] = { }; // Used for failsafe
+
+	// Inputs configuration
+	#define INPUT_DEV_COUNT 0
 #endif
 
 /*
@@ -76,18 +101,18 @@
  */
 
 // HW PWM only available on these pins due to AVR design.
-// Pin 3 can be re-enabled, but make sure to enable max 1. tachometer input in those cases!
-// Make sure to also uncomment the PWM setup code for pin 3
-const int PINS_OUTPUT[] = {9, 10/*, 3*/};
-#if INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TEMP
+// Pin 3 is currently not setup for PWM. Do not forget uncomment the PWM setup code for pin 3.
+// This overlaps with tach 0 input pin, make sure to enable max 1. tachometer input in those cases!
+const int PINS_OUTPUT[] = {9, 10, 3};
+#if INPUT_DEV_TYPE == INPUT_DEV_TYPE_TEMP
 	const int PINS_INPUT[] = {2, 3, 7, 8, 12, 13}; // All other pins
-#elif INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TACH
+#elif INPUT_DEV_TYPE == INPUT_DEV_TYPE_TACH
 	// Tachometer input only availble on these pins for Nano/Pro Mini AVR for interrupt
 	const int PINS_INPUT[] = {2, 3};
 #endif
 
-//#define CMD_TIMEOUT 2000 // Application triggers max PWM failsafe for all outputs after inactivity on input
-#define CMD_TIMEOUT 200000
+#define CMD_TIMEOUT 2000 // Application triggers max PWM failsafe for all outputs after inactivity on input
+//#define CMD_TIMEOUT 200000
 #define CMD_INPUT_LINE_MAX 100
 /*
  *  Used in stage when waiting for a full line to be received
@@ -102,7 +127,7 @@ float cmd_in_buf[OUTPUT_DEV_COUNT];
 // Contains to-be-sent output data, sent in the last phase
 float cmd_out_buf[INPUT_DEV_COUNT];
 
-#if INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TACH
+#if INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_TACH
 	// Used for collecting tachometer readings
 	unsigned long tach_total_duration[INPUT_DEV_COUNT]; // accumulates pulse width
 	unsigned long tach_elaspsed_time_us_last[INPUT_DEV_COUNT];
@@ -110,7 +135,7 @@ float cmd_out_buf[INPUT_DEV_COUNT];
 	unsigned long tach_speed_rpm_calc[INPUT_DEV_COUNT];
 #endif
 
-#if INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TEMP
+#if INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_TEMP
 	// Include the libraries for reading temperature sensors
 	#include <OneWire.h>
 	#include <DallasTemperature.h>
@@ -133,7 +158,7 @@ void setup() {
 	//Serial.println("Init.");
 	pinMode(13, OUTPUT); // LED
 
-	#if OUTPUT_DEV_COUNT > 0
+	#if OUTPUT_DEV_COUNT > 0 && OUTPUT_DEV_TYPE == OUTPUT_DEV_TYPE_PWM
 		/*
 			Setup PWM output on pin 10 (OCR1A) and 9 (OCR1B) (both use timer1)
 			Should be ~25KHz
@@ -202,9 +227,15 @@ void setup() {
 
 		//Serial.println("Initial PWM setpoints set.");
 
+	#elif OUTPUT_DEV_COUNT > 0 && OUTPUT_DEV_TYPE == OUTPUT_DEV_TYPE_RELAY
+		// Set all relay outputs to low initially, until a setpoint is received from hlc
+		for(int i = 0; i < OUTPUT_DEV_COUNT; i++){
+			pinMode(PINS_OUTPUT[i], OUTPUT);
+			digitalWrite(PINS_OUTPUT[i], 0);
+		}
 	#endif
 
-	#if INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TACH
+	#if INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_TACH
 		/*
 		 * Setup interrupts for tachometers
 		 */
@@ -220,7 +251,7 @@ void setup() {
 			}
 		}
 
-	#elif INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TEMP
+	#elif INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_TEMP
 		//Serial.println("Instantiating temperature sensors");
 		// Instantiate a OneWire and DallasTemperature object for each temperature sensing device
 		for(int i = 0; i < INPUT_DEV_COUNT; i++){
@@ -317,18 +348,23 @@ void loop() {
 		}
 
 		/*
-		 * Stage 2: Apply the PWM setpoints defined in input_frame_processed
+		 * Stage 2: Apply the outputs defined in input_frame_processed
 		 */
-
-		for(int i = 0; i < OUTPUT_DEV_COUNT; i++){
-			set_pwm(PINS_OUTPUT[i], cmd_in_buf[i]);
-		}
+		#if OUTPUT_DEV_TYPE == OUTPUT_DEV_TYPE_PWM
+			for(int i = 0; i < OUTPUT_DEV_COUNT; i++){
+				set_pwm(PINS_OUTPUT[i], cmd_in_buf[i]);
+			}
+		#elif OUTPUT_DEV_TYPE == OUTPUT_DEV_TYPE_RELAY
+			for(int i = 0; i < OUTPUT_DEV_COUNT; i++){
+				digitalWrite(PINS_OUTPUT[i], ((int)cmd_in_buf[i]) == 1);
+			}
+		#endif
 	#endif
 
 	/*
 	* Stage 3: Read data from sensors/process tachometer data
 	*/
-	#if INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TACH
+	#if INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_TACH
 		// For each tachometric device, calculate average speed in RPM based on data gathered since the last calculation
 		// Reset counters afterwards
 		// Store results in tach_speed_rpm_calc
@@ -345,7 +381,7 @@ void loop() {
 			//Serial.println(tach_total_ticks[i]);
 		}
 
-	#elif INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TEMP
+	#elif INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_TEMP
 		for(int i = 0; i < INPUT_DEV_COUNT; i++){
 		  obj_dallas_temp_sensor[i].requestTemperatures();
 		  cmd_out_buf[i] = obj_dallas_temp_sensor[i].getTempCByIndex(0);
@@ -381,7 +417,6 @@ void loop() {
 }
 
 // Print array of floats in ASCII/CSV format
-
 void print_float_array(float* data, int length){
 	for(int i = 0; i < length; i++){
 		Serial.print(data[i]);
@@ -391,8 +426,7 @@ void print_float_array(float* data, int length){
 	}
 }
 
-
-#if INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_IN_TACH
+#if INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_TACH
 	/*
 	 * Tachometer interrupts
 	 */
@@ -415,7 +449,7 @@ void print_float_array(float* data, int length){
 	}
 #endif
 
-#if OUTPUT_DEV_COUNT > 0
+#if OUTPUT_DEV_COUNT > 0 && OUTPUT_DEV_TYPE == OUTPUT_DEV_TYPE_PWM
 	void enable_failsafe(){
 		// Set failsafe PWM setpoints
 		for(int i = 0; i < OUTPUT_DEV_COUNT; i++){
@@ -438,5 +472,9 @@ void print_float_array(float* data, int length){
 			int registerValue = round(val * 79);
 			OCR2B = registerValue;
 		}
+	}
+#elif OUTPUT_DEV_COUNT > 0 && OUTPUT_DEV_TYPE == OUTPUT_DEV_TYPE_RELAY
+	void enable_failsafe(){
+		// TODO set relay failsafe? high or low?
 	}
 #endif

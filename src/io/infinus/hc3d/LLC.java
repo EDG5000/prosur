@@ -25,34 +25,20 @@ public class LLC {
 	 */
 	
 	public static final int TICK_INTERVAL = 1000;
-	static final int LLC_ADAPTER_COUNT = 3;
+	static final int LLC_ADAPTER_COUNT = 4;
 	
 	// LLC adapter identifiers
-	static final int ADAPTER_TEMP1 = 0;
+	static final int ADAPTER_TEMP_A = 0;
 	static final int ADAPTER_RECIR = 1;
 	static final int ADAPTER_FAN_HE = 2;
+	static final int ADAPTER_RELAY = 3;
 	
 	// Field IDs. Need to be in accordance with field layout so that they can be found when calling helper methods
 	// Only used for convenience access
 	public static class IN{
-		// TEMP1
-		public static final int TEMP_1 = 0;
-		public static final int TEMP_2 = 1;
-		/*public static final int TEMP_A2 = 2;
-		public static final int TEMP_A3 = 3;
-		public static final int TEMP_A4 = 4;
-		public static final int TEMP_A5 = 5;*/
-		// TODO add  more
-		
-		/*
-		// TEMP2
-		public static final int TEMP_B0 = 6;
-		public static final int TEMP_B1 = 7;
-		public static final int TEMP_B2 = 8;
-		public static final int TEMP_B3 = 9;
-		public static final int TEMP_B4 = 10;
-		public static final int TEMP_B5 = 11;
-		*/
+		// TEMPA
+		public static final int TEMP_A1 = 0;
+		public static final int TEMP_A2 = 1;
 		
 		// RECIR
 		public static final int PWM_FAN_RECIR_F = 2;
@@ -66,7 +52,11 @@ public class LLC {
 		/*public static final int PWM_FAN_HE_OUT = 6;   TODO uncomment
 		public static final int TACH_FAN_HE_OUT = 7;*/
 		
-		
+		// RELAY
+		public static final int RELAY_3DP_INTERLOCK_A = 8;
+		public static final int RELAY_3DP_INTERLOCK_B = 9;
+		public static final int RELAY_RAIL_12V = 10; // Fans and pumps for 3DP cooling and chamber temperature regulation
+
 		// PUMPS
 		// TODO uncomment
 		/*public static final int PWM_PUMP_HE = 2;
@@ -76,23 +66,31 @@ public class LLC {
 	}
 	
 	public static class OUT{
+		// RECIR
 		public static final int PWM_FAN_RECIR_F = 0;
 		public static final int PWM_FAN_RECIR_B = 1;
-		public static final int PWM_FAN_HE_IN = 1;
+		
+		// FAN HE
+		public static final int PWM_FAN_HE_IN = 2;
+		
+		// RELAY
+		public static final int RELAY_3DP_INTERLOCK_A = 3;
+		public static final int RELAY_3DP_INTERLOCK_B = 4;
+		public static final int RELAY_RAIL_12V = 5; // Fans and pumps for 3DP cooling and chamber temperature regulation
 	}
 	// Indexed by adapter, values represent field count per adapter
 	static final int[] IN_FIELD_LAYOUT = new int[]{
-			2, // TEMP1
+			2, // TEMP_A
 			4, // RECIR
-			2 // FAN HE
-			//1 // PUMPS
+			2, // FAN HE
+			3 // RELAY
 	};
 	
 	static final int[] OUT_FIELD_LAYOUT = new int[]{
-			0, // TEMP1
+			0, // TEMP_A
 			2, // RECIR
-			1 // FAN HE
-			//1 // PUMPS
+			1, // FAN HE
+			3 // RELAY
 	};
 	
 	/*
@@ -122,10 +120,13 @@ public class LLC {
 		for(int adapter = 0; adapter < LLC_ADAPTER_COUNT; adapter++) {
 			serialReceiveBuffer[adapter] = "";
 			inData[adapter] = new float[IN_FIELD_LAYOUT[adapter]];
-			outData[adapter] = new float[IN_FIELD_LAYOUT[adapter]];
+			outData[adapter] = new float[OUT_FIELD_LAYOUT[adapter]];
 			incomingFrameWasDropped[adapter] = false;
 			for(int fieldIndex = 0; fieldIndex < IN_FIELD_LAYOUT[adapter]; fieldIndex++) {
 				inData[adapter][fieldIndex] = -1;
+			}
+			
+			for(int fieldIndex = 0; fieldIndex < OUT_FIELD_LAYOUT[adapter]; fieldIndex++) {
 				outData[adapter][fieldIndex] = -1;
 			}
 		}
@@ -153,7 +154,7 @@ public class LLC {
 	}
 
 	public static void init() {
-		
+		Main.log("Init LLC");
 		// Initialize serial connections
 		try {
 			for(int adapter = 0; adapter < LLC_ADAPTER_COUNT; adapter++) {
@@ -175,6 +176,7 @@ public class LLC {
 				emitOnTickComplete();
 			}
 		}, 0, TICK_INTERVAL);
+		Main.log("LLC ready.");
 	}
 	
 	private static void emitOnTickComplete() {
@@ -236,7 +238,7 @@ public class LLC {
 					// Dropping line. Can happen when application starts in the middle of frame transmission from LLC
 					// Should happen no more than max 1 times per sesssion
 					if(incomingFrameWasDropped[adapter]) {
-						Main.onError("Dropped more than one frame for adapter " + adapter);
+						Main.onError("Dropped more than one frame for adapter " + adapter + " Frame: " + dataToParse + " Expected component count:  " + (IN_FIELD_LAYOUT[adapter] + 1) + " Actual component count: " + components.length);
 					}else {
 						incomingFrameWasDropped[adapter] = true;
 					}
@@ -255,9 +257,13 @@ public class LLC {
 			 */
 			// Serialize data structure
 			String line = "";
-			for(float val: outData[adapter]) {
-				line += val;
+			for(int i = 0; i < outData.length; i++) {
+				line += outData[i];
+				if(i != outData.length-1) {
+					line += ",";
+				}
 			}
+			Main.log(adapter + ": " + line);
 			line += "\n";
 			serialConnections[adapter].sendData(line.getBytes());
 		} catch (IOException e1) {

@@ -1,5 +1,6 @@
 package io.infinus.hc3d;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +24,7 @@ public class ParamControl extends JComponent {
 	JLabel valueLabel;
 	
 	public ParamControl(Param pParam, float pIncrement, int pPrecision) {
+		super();
 		increment = pIncrement;
 		precision = pPrecision;
 		param = pParam;
@@ -32,7 +34,7 @@ public class ParamControl extends JComponent {
 		setLayout(layout);
 		
 		JButton buttonMinus = new JButton("-");
-		buttonMinus.setFont(Main.FONT_MAIN);
+		buttonMinus.setFont(C.FONT_MAIN);
 		buttonMinus.setSize(ELEMENT_SIZE, ELEMENT_SIZE);
 		buttonMinus.addActionListener(new ActionListener() {
 			@Override
@@ -43,7 +45,7 @@ public class ParamControl extends JComponent {
 		});
 		
 		JButton buttonPlus = new JButton("+");
-		buttonPlus.setFont(Main.FONT_MAIN);
+		buttonPlus.setFont(C.FONT_MAIN);
 		buttonPlus.setSize(ELEMENT_SIZE, ELEMENT_SIZE);
 		buttonPlus.addActionListener(new ActionListener() {
 			@Override
@@ -54,8 +56,10 @@ public class ParamControl extends JComponent {
 		});
 		
 		valueLabel = new JLabel();
+		valueLabel.setForeground(Color.WHITE);
+		valueLabel.setHorizontalAlignment(JLabel.CENTER);
 		updateLabel();
-		valueLabel.setFont(Main.FONT_MAIN);
+		valueLabel.setFont(C.FONT_MAIN);
 		valueLabel.setSize(ELEMENT_SIZE, ELEMENT_SIZE);
 		
 		// Add components
@@ -65,6 +69,7 @@ public class ParamControl extends JComponent {
 	}
 	
 	private void updateLabel() {
-		valueLabel.setText("<html><div style='text-align: center'>" + param.getName() + ": <br>" + param.getValue() + "</div></html>");
+		String roundedVal = String.format("%.2f", param.getValue());  //Math.round(param.getValue() * 100f) / 100f
+		valueLabel.setText("<html>" + param.getName() + "<br>" + roundedVal + "</div></html>");
 	}
 }

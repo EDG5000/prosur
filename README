@@ -1,10 +1,10 @@
 See lib/v4l4j for extra info.
 
+ --------- 1.
+
 Get fixed /dev/video0 device:
 
 SUBSYSTEM=="video4linux", ENV{ID_MODEL}=="'0825'", SYMLINK+="a4tech-camera", ENV{GENERATED}="1"
-
-
 
 I'm not sure it can be done; but you can create a persistent symlink based on a device attribute (for instance ID_MODEL).
 
@@ -24,21 +24,7 @@ When you plugin the camera, a symlink to the appropriate video* device will be c
 
 You can add a similar line to the same file for your capture card, assuming it shows in udevadm output and you can find an ID_MODEL or other attribute to identify it.
 
-
-
-
-
-
-
-
-SUBSYSTEM=="video4linux", ENV{ID_MODEL}=="'0825'", SYMLINK+="webcam", ENV{GENERATED}="1"
-
-
-
-
-
-
-
+ --------- 2.
 
 LIBJPEG TURBO DEV
 
@@ -54,3 +40,17 @@ LIBJPEG TURBO DEV
   157  sudo make install
     181  cd arm-linux-gnueabihf/
   182  sudo ln ../libjpeg.so.8 libjpeg.so.8
+  
+   --------- 3.
+   
+   Serial testing:
+   
+   picocom -b 115200 dev/relay --echo
+   stty --file=dev/relay --all
+   Symlinks: create folder hc3d/dev, add symlinks
+   
+   Udev permissions:
+   nano /etc/udev/rules.d/66-tty.rules => KERNEL=="ttyUSB*",MODE="0666"
+   
+   
+   

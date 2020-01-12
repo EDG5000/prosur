@@ -22,8 +22,8 @@ public class Temperatures {
 	
 	public static int SENSOR_COUNT;
 	public static final int[] SENSOR_FIELD_IDS = new int[] {
-			LLC.IN.TEMP_1,
-			LLC.IN.TEMP_2
+			LLC.IN.TEMP_A1,
+			LLC.IN.TEMP_A2
 	};
 	
 	static {
@@ -139,7 +139,7 @@ public class Temperatures {
 		// Add position percentage to base percentage of point A
 		double temperature = pointA.refTemp0 + positionTemperature;
 		
-		System.out.println("Interpolating for "+voltage+" between " +pointAVoltage + " and " + pointBVoltage + ". Result: " + temperature);
+		Main.log("Interpolating for "+voltage+" between " +pointAVoltage + " and " + pointBVoltage + ". Result: " + temperature);
 		
 		return Math.round(temperature * 10) / 10;
 	}
@@ -150,7 +150,7 @@ public class Temperatures {
 	}
 	
 	public static void startCalib() {
-		System.out.println("Starting thermistor calibration.");
+		Main.log("Starting thermistor calibration.");
 		samples = new ArrayList<Sample>();
 		
 		try {
@@ -195,14 +195,14 @@ public class Temperatures {
 						lastTemp = sample.refTemp0;
 					}
 				}
-				System.out.println("Generated calibration data: ");
+				Main.log("Generated calibration data: ");
 				// Write generated Java array initiliazer code to console
 				// If calibration data already exists, this also adds calculated temperatures based on existing calibration data at the end of each row
 				for(Sample sample : keptSamples) {
 					// Add f notation for java float initialisation as well as accolades
-					System.out.println("{" + sample.toString().replace(",", "f,") + "f},");
+					Main.log("{" + sample.toString().replace(",", "f,") + "f},");
 				}
-				System.out.println("Calibration baking complete. Exiting.");
+				Main.log("Calibration baking complete. Exiting.");
 				System.exit(0);
 			}else {
 				// Start calibrating
@@ -225,7 +225,7 @@ public class Temperatures {
 		if(samplesCollected == CALIB_SAMPLE_COUNT) {
 			//calibrating = false;
 			//samplesCollected = -1;
-			System.out.println("Calibration complete. Re-run to bake calibration data.");
+			Main.log("Calibration complete. Re-run to bake calibration data.");
 			System.exit(0);
 		}else {
 			Sample sample = new Sample();
@@ -239,7 +239,7 @@ public class Temperatures {
 			sample.refTemp1 = LLC.getValue(LLC.IN.TEMP_TREF1);
 			sample.time = (int)(System.currentTimeMillis() % (1000 * 60 * 60)); // Substract full days to obtain timestamp for today only
 			samples.add(sample);
-			System.out.println("Collected calibration sample " + samplesCollected + "/" + CALIB_SAMPLE_COUNT + ": " + sample.toString());
+			Main.log("Collected calibration sample " + samplesCollected + "/" + CALIB_SAMPLE_COUNT + ": " + sample.toString());
 			try {
 				calibDiagnosticFileWriter.write(sample.toString() + "\n");
 				calibDiagnosticFileWriter.flush();

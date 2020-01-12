@@ -1,1 +1,0 @@
-sudo xinit /usr/bin/java -jar main.jar $PWD
