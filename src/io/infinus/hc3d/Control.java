@@ -16,13 +16,15 @@ public class Control {
 		// Currenly RECIR is set to max on startup, and kept that way
 		// Closing application will make the adapter go into failsafe mode which
 		// will keep the PWM values at max
-		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, 1);
-		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, 1);
+		LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0);
+		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, 0);
+		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, 0);
 	}
 	
 	public static void on() {
-		LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, .1f); // Ensure a gradual start in case time to next tick is long
 		LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 1);
+		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, 1);
+		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, 1);
 		active = true;
 	}
 	
@@ -33,10 +35,16 @@ public class Control {
 		integral = 0;
 		// Turn off fans and pumps
 		LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0);
+		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, 0);
+		LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, 0);
 	}
 	
 	public static void onLLCTickComplete() {
 		if(!active) return;
+		
+		// TODO temp
+		LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, 1);
+		
 		/*
 		 * TODO if
 		 * 
@@ -50,13 +58,13 @@ public class Control {
 		// HC temp PID control
 		// Based on Temp1
 		// Currently only controlling HE_IN fan
-		error = Main.Params.HCT.getValue() - Temperatures.getTemperature(0);
+		/*error = Main.Params.HCT.getValue() - LLC.getValue(C.LLC_TEMP_SENSOR_OFFSET + 0);
 		integral += error * DT;
 		derrivative = (error - previousError) / DT;
 		output = Main.Params.P.getValue() * error + Main.Params.I.getValue() * integral + Main.Params.D.getValue() * derrivative;
 		previousError = error;
 		// Apply output
-		LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, output); // TODO min/max, anti windup
+		LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, output); */// TODO min/max, anti windup
 		
 		/*
 		    error := setpoint − measured_value

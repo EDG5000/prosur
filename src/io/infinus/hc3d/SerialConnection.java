@@ -11,6 +11,7 @@ public class SerialConnection{
 	SerialPort serialPort;
 	final static int BAUD = 115200;
 	boolean opened = false;
+	boolean closingConnection = false;
 	
 	public SerialConnection(String pDeviceId){
 		deviceId = pDeviceId;
@@ -63,6 +64,7 @@ public class SerialConnection{
 	boolean failedToSend = false;
 
 	public Boolean sendData(byte[] buffer) {
+		if(closingConnection) return false;
 		waitForSerialConnected();
 		try {
 			boolean result = serialPort.writeBytes(buffer);
@@ -86,6 +88,7 @@ public class SerialConnection{
 	}
 	
 	public byte[] readDataBlock() throws IOException {
+		if(closingConnection) return null;
 		waitForSerialConnected();
 		try {
 			return serialPort.readBytes();
@@ -96,7 +99,9 @@ public class SerialConnection{
 		return null;
 	}
 
+	// Called at shutdown of application
 	public void closeConnection(){
+		closingConnection = true;
 		// TODO test
 		Main.Params.P.setValue((float) Math.random());
 		Main.flushPreferences();

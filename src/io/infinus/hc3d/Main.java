@@ -30,6 +30,7 @@ import org.ini4j.IniPreferences;
 import org.ini4j.InvalidFileFormatException;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
+import com.infinus.datc.DATC;
 
 public class Main{
 	static {
@@ -95,9 +96,15 @@ public class Main{
 		    @Override
 		    public void run()
 		    {
-		    	Main.log("Infinus HC3D is closing.");
+		    	// Half the time closing the serial ports fails, triggering an error in dmesg
+		    	// Reset USB device to clean them up after running
+		    	Main.log("HC3D is closing.");
+		    	Main.log("Resetting USB devices...");
+		    	Main.log(Shell.shellCommandGetOutput("sh /home/pi/hc3d/reset-usb.sh", new File(applicationFolder)));
+		    	Main.log("USB devices reset.");
 		    }
 		});
+		
 		Main.log("Infinus HC3D 0.1 (c) Joel Meijering");
 		if(args.length == 0) {
 			throw new RuntimeException("Application folder argument must be supplied.");
@@ -129,7 +136,7 @@ public class Main{
 		Config.serialPortIds[LLC.ADAPTER_RELAY] = prefs.node("main").get("serialPortRelay", "");
 		Config.webcamEnabled = prefs.node("main").getBoolean("webcamEnabled", false);
 		Config.webcamDeviceName = prefs.node("main").get("webcamDeviceName", "");
-		Config.calibrationMode = prefs.node("main").getBoolean("calibrationMode", false);
+		//Config.calibrationMode = prefs.node("main").getBoolean("calibrationMode", false);
 		Config.llcEnabled = prefs.node("main").getBoolean("llcEnabled", false);
 		
 		/*
@@ -147,16 +154,16 @@ public class Main{
 			Main.log("Libraries loaded.");
 		}
 		
-		if(Config.calibrationMode) {
-			Temperatures.startCalib();
-		}else {
+		/*if(Config.calibrationMode) {
+			Thermistors.startCalib();
+		}else {*/
 			// Start UI init in other thread, not sure if beneficial, but is seems conventional
 	        javax.swing.SwingUtilities.invokeLater(new Runnable() {
 	            public void run() {
 	                Main.createAndShowGui();
 	            }
 	        });
-		}
+		//}
 		
 		if(Config.llcEnabled) {
 			LLC.init();
@@ -170,12 +177,14 @@ public class Main{
 			}
 		}
 		
+		/*
 		if(C.SELF_TEST_TEMPERATURE) {
 			for(int voltage = 0; voltage < 1024; voltage++) {
-				Main.log(Temperatures.temperatureFromThermistorVoltage(0, voltage));
+				Main.log(Thermistors.temperatureFromThermistorVoltage(0, voltage));
 			}
 			System.exit(0);
 		}
+		*/
 		
 		// Periodic flushing of changes to INI settings (used when modifing parameters
 		// Checks if dirty flag is high and flushes the buffer in that case
@@ -270,7 +279,7 @@ public class Main{
 			dataLabels[i].setHorizontalAlignment(JLabel.CENTER);
 			dataLabels[i].setVerticalAlignment(JLabel.CENTER);
 			// Even rows are headers and therefore displayed bold
-			if(i/C.DATA_TABLE_ROWS == 0 || i/C.DATA_TABLE_ROWS == 2) { // Layout: HDR, VAL, HDR, VAL, VAL
+			if(i/C.DATA_TABLE_COLS == 0 || i/C.DATA_TABLE_COLS == 2) { // Layout: HDR, VAL, HDR, VAL, VAL
 				dataLabels[i].setFont(C.FONT_MAIN_BOLD);
 			}else {
 				dataLabels[i].setFont(C.FONT_MAIN);
@@ -325,8 +334,8 @@ public class Main{
 			// Row 1: Temp Sensor Values
 			case 1:
 				// Retrieve temperature value
-				if(columnIndex < Temperatures.SENSOR_COUNT) {
-					return Temperatures.getTemperature(columnIndex) + "°C";
+				if(columnIndex < 2) {
+					return LLC.getValue(C.LLC_TEMP_SENSOR_OFFSET + columnIndex) + "°";
 				}else {
 					return "-";
 				}
@@ -422,13 +431,24 @@ public class Main{
 	public static void log(int val) {
 		log(String.valueOf(val));
 	}
+	
 	public static void log(float val) {
 		log(String.valueOf(val));
 	}
+	
 	public static void log(byte val) {
 		log(String.valueOf(val));
 	}
+	
 	public static void log(long val) {
 		log(String.valueOf(val));
+	}
+	
+	public static void printStackTrace(Exception e) {
+		String msg = "Exception: " + e.getLocalizedMessage() + "\n";
+		for(StackTraceElement el : e.getStackTrace()){
+			msg = msg + "\t" + el.getClassName()+"."+el.getMethodName() + " (" + el.getFileName() + ":" + el.getLineNumber() + ")\n";
+		}
+		Main.log(msg);
 	}
 }

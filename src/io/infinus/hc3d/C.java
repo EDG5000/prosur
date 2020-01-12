@@ -16,4 +16,5 @@ public class C {
 	// Adjust Main.getDataValueAt accordingly
 	public static final int DATA_TABLE_ROWS = 5;
 	public static final int DATA_TABLE_COLS = 12;
+	public static final int LLC_TEMP_SENSOR_OFFSET = 0; // Temp sensor LLC id = temp sensor index + LLC offset
 }

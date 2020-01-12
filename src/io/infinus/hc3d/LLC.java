@@ -230,7 +230,7 @@ public class LLC {
 				
 				// Reduce it to 1 line
 				dataToParse = lines[lines.length-1];
-				
+				Main.log("IN " + adapter + ": "+ dataToParse);
 				String[] components = dataToParse.split(",");
 				
 				// Check component count. Should be fieldCount + 1 (identifier is added at beginning)
@@ -245,7 +245,7 @@ public class LLC {
 				}else {
 					// Parse components and store into main data structure
 					for(int fieldIndex = 0; fieldIndex < IN_FIELD_LAYOUT[adapter]; fieldIndex++) {
-						// Shift component index by one to account of the device identifier which takes up the first position
+						// Shift component index by one to account for the device identifier which takes up the first position
 						float fieldValue = Float.parseFloat(components[fieldIndex+1]);
 						inData[adapter][fieldIndex] = fieldValue;
 					}
@@ -257,13 +257,13 @@ public class LLC {
 			 */
 			// Serialize data structure
 			String line = "";
-			for(int i = 0; i < outData.length; i++) {
-				line += outData[i];
+			for(int i = 0; i < outData[adapter].length; i++) {
+				line += outData[adapter][i];
 				if(i != outData.length-1) {
 					line += ",";
 				}
 			}
-			Main.log(adapter + ": " + line);
+			Main.log("OUT: " + adapter + ": " + line);
 			line += "\n";
 			serialConnections[adapter].sendData(line.getBytes());
 		} catch (IOException e1) {
