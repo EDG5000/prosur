@@ -115,6 +115,11 @@ public class LLC {
 	private static int[][] inFieldLookup;
 	private static int[][] outFieldLookup;
 	
+	private static boolean isSettled = false;
+	public static boolean getIsSettled() {
+		return isSettled;
+	}
+	
 	static {
 		// Initialize all structures with -1 or empty strings
 		for(int adapter = 0; adapter < LLC_ADAPTER_COUNT; adapter++) {
@@ -174,6 +179,25 @@ public class LLC {
 					serialTick(i);
 				}
 				emitOnTickComplete();
+				
+				// Check if data for all fields is now received
+				if(!isSettled) {
+					boolean foundEmptyField = false;
+					for(int adapter = 0; adapter < LLC_ADAPTER_COUNT; adapter++) {
+						for(int fieldIndex = 0; fieldIndex < inData[adapter].length; fieldIndex++) {
+							if(inData[adapter][fieldIndex] == -1) {
+								foundEmptyField = true;
+								break;
+							}
+						}
+						if(foundEmptyField) {
+							break;
+						}
+					}
+					if(!foundEmptyField) {
+						isSettled = true;
+					}
+				}
 			}
 		}, 0, TICK_INTERVAL);
 		Main.log("LLC ready.");

@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -20,14 +19,12 @@ import java.util.prefs.BackingStoreException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
 
 import org.ini4j.Ini;
 import org.ini4j.IniPreferences;
@@ -56,16 +53,9 @@ public class Main{
 	List<ParamControl> controls = new ArrayList<ParamControl>();
 	static JLabel[] dataLabels = null; 
 	static JRadioButton actToggleRadioOn = null;
+	static JRadioButton actToggleRadioOff = null;
+	static JRadioButton actToggleRadioManual = null;
 	static int blinkTick = -1; // Used to blink the ON label
-	
-	// Operational parameters
-	public static class Params{
-		public static Param P;
-		public static Param I;
-		public static Param D;
-		public static Param HCT;
-		public static Param ACTIVE;
-	}
 	
 	// INI Config
 	public static class Config{
@@ -83,7 +73,7 @@ public class Main{
 			return;
 		}
 		
-		if(Params.ACTIVE.getValue() == 1) {
+		if(Control.Params.MODE.getValue() == C.MODE_ON) {
 			blinkTick *= -1;
 			if(blinkTick == 1) {
 				actToggleRadioOn.setText("--");
@@ -144,11 +134,6 @@ public class Main{
 			e.printStackTrace();
 		}
 		prefs = new IniPreferences(prefsIni);
-		Params.P = new Param("P");
-		Params.I = new Param("I");
-		Params.D = new Param("D");
-		Params.HCT = new Param("HCT");
-		Params.ACTIVE = new Param("ACTIVE");
 		Config.serialPortIds[LLC.ADAPTER_TEMP_A] = prefs.node("main").get("serialPortTempA", "");
 		Config.serialPortIds[LLC.ADAPTER_RECIR] = prefs.node("main").get("serialPortRecir", "");
 		Config.serialPortIds[LLC.ADAPTER_FAN_HE] = prefs.node("main").get("serialPortFanHe", "");
@@ -173,28 +158,25 @@ public class Main{
 			Main.log("Libraries loaded.");
 		}
 		
+		if(Config.llcEnabled) {
+			LLC.init();
+
+		}
+		Control.init();
+		
+		// Start control, otherwise it will be started once the user switches it on
+		Control.setMode(Control.Params.MODE.getValue());
+		
 		/*if(Config.calibrationMode) {
 			Thermistors.startCalib();
 		}else {*/
-			// Start UI init in other thread, not sure if beneficial, but is seems conventional
-	        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-	            public void run() {
-	                Main.createAndShowGui();
-	            }
-	        });
+		// Start UI init in other thread, not sure if beneficial, but is seems conventional
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                Main.createAndShowGui();
+            }
+	    });
 		//}
-		
-		if(Config.llcEnabled) {
-			LLC.init();
-			Control.init();
-		
-			// Start control, otherwise it will be started once the user switches it on
-			if(Params.ACTIVE.getValue() == 1) {
-				Control.on();
-			}else {
-				Control.off();
-			}
-		}
 		
 		/*
 		if(C.SELF_TEST_TEMPERATURE) {
@@ -262,37 +244,53 @@ public class Main{
 		pane.add(uiContainer, JLayeredPane.POPUP_LAYER);
 		
 		// Activity toggle
-		boolean actEnabled = Params.ACTIVE.getValue() == 1;
+		float mode = Control.Params.MODE.getValue();
+		
 		ButtonGroup actToggleBtnGroup = new ButtonGroup();
+		
 		actToggleRadioOn = new JRadioButton("ON");
 		actToggleRadioOn.setForeground(Color.white);
-		actToggleRadioOn.setSelected(actEnabled);
+		actToggleRadioOn.setSelected(mode == C.MODE_ON);
 		actToggleRadioOn.setFont(C.FONT_MAIN_LARGE);
 		actToggleBtnGroup.add(actToggleRadioOn);
 		actToggleRadioOn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Params.ACTIVE.setValue(1);
-				Control.on();
+				Control.Params.MODE.setValue(C.MODE_ON);
+				Control.setMode(C.MODE_ON);
 			}
 		});
-		JRadioButton actToggleRadioOff = new JRadioButton("OFF");
-		//actToggleRadioOff.setMargin(new Insets(10, 10, 10, 10));
+		
+		actToggleRadioManual = new JRadioButton("MAN");
+		actToggleRadioManual.setForeground(Color.white);
+		actToggleRadioManual.setSelected(mode == C.MODE_MANUAL);
+		actToggleRadioManual.setFont(C.FONT_MAIN_LARGE);
+		actToggleBtnGroup.add(actToggleRadioManual);
+		actToggleRadioManual.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Control.Params.MODE.setValue(C.MODE_MANUAL);
+				Control.setMode(C.MODE_MANUAL);
+			}
+		});
+		
+		actToggleRadioOff = new JRadioButton("OFF");
 		actToggleRadioOff.setFont(C.FONT_MAIN_LARGE);
 		actToggleRadioOff.setForeground(Color.white);
-		actToggleRadioOff.setSelected(!actEnabled);
+		actToggleRadioOff.setSelected(mode == C.MODE_OFF);
 		actToggleBtnGroup.add(actToggleRadioOff);
 		actToggleRadioOff.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Params.ACTIVE.setValue(0);
-				Control.off();
+				Control.Params.MODE.setValue(C.MODE_OFF);
+				Control.setMode(C.MODE_OFF);
 			}
 		});
-		SemiTransparentPanel actTogglePanel = new SemiTransparentPanel(new GridLayout(1, 2));
-		actTogglePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
+		SemiTransparentPanel actTogglePanel = new SemiTransparentPanel(new GridLayout(1, 3));
+		actTogglePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		actTogglePanel.add(actToggleRadioOn);
+		actTogglePanel.add(actToggleRadioManual);
 		actTogglePanel.add(actToggleRadioOff);
 		c.gridx = 0;
 		c.gridy = 0;
@@ -333,19 +331,35 @@ public class Main{
 		// Tuning controls
 		JPanel tuningControlsGrid = new SemiTransparentPanel(new GridLayout(1, 4));
 		tuningControlsGrid.setPreferredSize(new Dimension(C.DISP_WIDTH, 50));
-		for(Param param : new Param[] {Params.P, Params.I, Params.D}) {
+		for(Param param : new Param[] {Control.Params.P, Control.Params.I, Control.Params.D}) {
 			ParamControl control = new ParamControl(param, 0.01f, 2);
 			tuningControlsGrid.add(control);
 		}
-		tuningControlsGrid.add(new ParamControl(Params.HCT, 1f, 0));
+		tuningControlsGrid.add(new ParamControl(Control.Params.HCT, 1f, 0));
 		c.gridx = 0;
 		c.gridy = 2;
 		c.anchor = GridBagConstraints.SOUTH;
 		c.fill = GridBagConstraints.BOTH;
 		c.gridheight = 1;
 		c.gridwidth = 1;
-		c.weighty = .3; // Required to make cells use all the space available
+		c.weighty = .25; // Required to make cells use all the space available
 		uiContainer.add(tuningControlsGrid, c);
+		
+		// Manual fan controls
+		JPanel fanControlsGrid = new SemiTransparentPanel(new GridLayout(1, 4));
+		fanControlsGrid.setPreferredSize(new Dimension(C.DISP_WIDTH, 50));
+		for(Param param : new Param[] {Control.Params.MANUAL_FAN_HE_I_PWM, Control.Params.MANUAL_FAN_RECIR_F_PWM, Control.Params.MANUAL_FAN_RECIR_B_PWM}) {
+			ParamControl control = new ParamControl(param, 0.01f, 2);
+			fanControlsGrid.add(control);
+		}
+		c.gridx = 0;
+		c.gridy = 3;
+		c.anchor = GridBagConstraints.SOUTH;
+		c.fill = GridBagConstraints.BOTH;
+		c.gridheight = 1;
+		c.gridwidth = 1;
+		c.weighty = .25; // Required to make cells use all the space available
+		uiContainer.add(fanControlsGrid, c);
 		
 		// Wrap up UI		
 		frame.pack();

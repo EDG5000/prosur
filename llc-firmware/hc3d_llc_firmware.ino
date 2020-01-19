@@ -25,7 +25,7 @@
 /*
  * Select target adapter before flashing
  */
-#define ADAPTER ADAPTER_HE_FAN
+#define ADAPTER ADAPTER_TEMP_A
 
 /*
  * Temp ctrl adapter config
@@ -111,8 +111,8 @@ const int PINS_OUTPUT[] = {9, 10, 3};
 	const int PINS_INPUT[] = {2, 3};
 #endif
 
-#define CMD_TIMEOUT 2000 // Application triggers max PWM failsafe for all outputs after inactivity on input
-//#define CMD_TIMEOUT 200000
+//#define CMD_TIMEOUT 2000 // Application triggers max PWM failsafe for all outputs after inactivity on input
+#define CMD_TIMEOUT 200000
 #define CMD_INPUT_LINE_MAX 100
 /*
  *  Used in stage when waiting for a full line to be received
@@ -369,10 +369,15 @@ void loop() {
 		// Reset counters afterwards
 		// Store results in tach_speed_rpm_calc
 		for(int i = 0; i < INPUT_DEV_COUNT; i++){
-			float freq = 0;
 			if(tach_total_ticks[i] != 0){
-				freq = (1e6 / float(tach_total_duration[i]) * tach_total_ticks[i]) / 2;
-				cmd_out_buf[i] = freq * 60;
+				cmd_out_buf[i] = tach_total_ticks[i];
+
+				//float seconds = float(tach_total_duration[i]) / float(1e6);
+				//float freq = (tach_total_ticks[i] / seconds) * .5f;
+
+
+				//freq = (1e6 / float(tach_total_duration[i]) * tach_total_ticks[i]) / 2;
+				//cmd_out_buf[i] = freq * 60;
 				tach_total_ticks[i] = 0;
 				tach_total_duration[i] = 0;
 			}else{
@@ -443,11 +448,13 @@ void print_float_array(float* data, int length){
 	void itr_on_falling(uint8_t dev){
 		volatile unsigned long current_time_us = micros();
 
-		if (current_time_us - tach_elaspsed_time_us_last[dev] > 20000){ // Prevent pulses less than 20k micros far.
-			tach_total_duration[dev] += current_time_us - tach_elaspsed_time_us_last[dev];
-			tach_elaspsed_time_us_last[dev] = current_time_us;
+		//if (current_time_us - tach_elaspsed_time_us_last[dev] > 20000){ // Prevent pulses less than 20k micros far.
+			//if(tach_elaspsed_time_us_last[dev] != 0){
+			//	tach_total_duration[dev] += current_time_us - tach_elaspsed_time_us_last[dev];
+			//}
+			//tach_elaspsed_time_us_last[dev] = current_time_us;
 			tach_total_ticks[dev]++;
-		}
+		//}
 	}
 #endif
 
