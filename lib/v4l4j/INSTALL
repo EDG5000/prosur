@@ -1,6 +1,0 @@
-TLDR:
-- Copy all libs-dependencies into /usr/lib/arm-linux-gnueabihf (or equi), or symlink them
-- Use -dev packages as alternative
-- When running from jar, ensure folder structure containing the v4l4j lib is maintained
-- Compile libv4l4j by running make inside src folder of v4l4j repo at https://github.com/mailmindlin/v4l4j
-- Commit 08faad3888a6e3a04d72a00bbb7d2c9fd3a5f526 was used (branch: beta)

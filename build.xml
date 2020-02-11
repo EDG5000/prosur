@@ -4,7 +4,7 @@
     <!--ANT 1.7 is required-->
     <!--define folder properties-->
     <property name="dir.buildfile" value="."/>
-    <property name="dir.workspace" value="/home/joel/eclipse-workspace"/>
+    <property name="dir.workspace" value="C:/Users/Joel/eclipse-workspace"/>
     <property name="dir.jarfile" value="${dir.buildfile}"/>
     <target name="create_run_jar">
         <jar destfile="${dir.jarfile}/main.jar">
@@ -12,15 +12,12 @@
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="io.infinus.hc3d.Main"/>
                 <attribute name="Class-Path" value="."/>
-                <attribute name="Rsrc-Class-Path" value="./ ini4j-0.5.4.jar jssc-2.8.0.jar flatlaf-0.23.1.jar junit-4.1.jar"/>
+                <attribute name="Rsrc-Class-Path" value="./ ini4j-0.5.4.jar jssc-2.8.0.jar"/>
             </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
             <fileset dir="${dir.jarfile}/bin"/>
             <zipfileset dir="${dir.jarfile}/lib/ini4j" includes="ini4j-0.5.4.jar"/>
             <zipfileset dir="${dir.jarfile}/lib/jssc" includes="jssc-2.8.0.jar"/>
-            <zipfileset dir="${dir.jarfile}/lib/flatlaf" includes="flatlaf-0.23.1.jar"/>
-            <fileset dir="${dir.jarfile}/v4l4j/bin"/>
-            <zipfileset dir="${dir.jarfile}/v4l4j/lib" includes="junit-4.1.jar"/>
         </jar>
     </target>
 </project>

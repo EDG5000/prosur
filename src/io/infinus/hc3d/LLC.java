@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.infinus.hc3d.modules.DataFileLogging;
+import io.infinus.hc3d.modules.Failsafe;
+
 
 /*
  * V1:
@@ -211,7 +214,9 @@ public class LLC {
 	
 	private static void emitOnTickComplete() {
 		Main.onLLCTickComplete();
-		Control.onLLCTickComplete();
+		DataFileLogging.onLLCTickComplete();
+		Failsafe.onLLCTickComplete();
+		//Control.onLLCTickComplete();
 		//Temperatures.onLLCTickComplete();
 	}
 	
@@ -260,7 +265,10 @@ public class LLC {
 				
 				// Reduce it to 1 line
 				dataToParse = lines[lines.length-1];
-				Main.log("IN " + adapter + ": "+ dataToParse);
+				if(C.LLC_RAW_LOGGING) {
+					Main.log("IN " + adapter + ": "+ dataToParse);
+				}
+				
 				String[] components = dataToParse.split(",");
 				
 				// Check component count. Should be fieldCount + 1 (identifier is added at beginning)
@@ -293,7 +301,9 @@ public class LLC {
 					line += ",";
 				}
 			}
-			Main.log("OUT: " + adapter + ": " + line);
+			if(C.LLC_RAW_LOGGING) {
+				Main.log("OUT: " + adapter + ": " + line);
+			}
 			line += "\n";
 			serialConnections[adapter].sendData(line.getBytes());
 		} catch (IOException e1) {

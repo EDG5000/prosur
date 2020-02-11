@@ -17,7 +17,17 @@ public class C {
 	public static final int DATA_TABLE_ROWS = 5;
 	public static final int DATA_TABLE_COLS = 12;
 	public static final int LLC_TEMP_SENSOR_OFFSET = 0; // Temp sensor LLC id = temp sensor index + LLC offset
+	public static final int LLC_TEMP_SENSOR_COUNT = 8;
 	public static final int MODE_OFF = 0;
 	public static final int MODE_MANUAL = 1;
 	public static final int MODE_ON = 2;
+	public static final float FAILSAFE_TEMP_MOT = 65;
+	public static final float FAILSAFE_TEMP_CHAMBER = 90;
+	public static final int TEMP_SENSOR_MOT_Z = 0;
+	public static final int TEMP_SENSOR_MOT_X = 1;
+	public static final int TEMP_SENSOR_MOT_Y = 2;
+	public static final int TEMP_SENSOR_MOT_E = 3;
+	public static final int TEMP_SENSOR_CHTR = 4;
+	public static final int TEMP_SENSOR_CHBR = 5;
+	public static final boolean LLC_RAW_LOGGING = false; // Dumps serial data to log
 }

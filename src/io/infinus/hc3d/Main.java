@@ -1,36 +1,20 @@
 package io.infinus.hc3d;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.BackingStoreException;
-
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.UIManager;
 
 import org.ini4j.Ini;
 import org.ini4j.IniPreferences;
 import org.ini4j.InvalidFileFormatException;
 
-import com.formdev.flatlaf.FlatDarculaLaf;
+import io.infinus.hc3d.modules.DataFileLogging;
+
+//import com.formdev.flatlaf.FlatDarculaLaf;
 
 public class Main{
 	static {
@@ -40,7 +24,6 @@ public class Main{
 		System.setProperty("sun.java2d.uiScale", "1");
 	}
 	
-	static WebcamComponent webcamComponent;
 	
 	// INI preferences
 	public static IniPreferences prefs; // Used to populate Config class manually as well as a backing store for every ParamControl
@@ -50,11 +33,10 @@ public class Main{
 	// Runtime fields
 	static boolean uiReady = false;
 	public static String applicationFolder;
-	List<ParamControl> controls = new ArrayList<ParamControl>();
-	static JLabel[] dataLabels = null; 
+	/*static JLabel[] dataLabels = null; 
 	static JRadioButton actToggleRadioOn = null;
 	static JRadioButton actToggleRadioOff = null;
-	static JRadioButton actToggleRadioManual = null;
+	static JRadioButton actToggleRadioManual = null;*/
 	static int blinkTick = -1; // Used to blink the ON label
 	
 	// INI Config
@@ -73,6 +55,7 @@ public class Main{
 			return;
 		}
 		
+		/*
 		if(Control.Params.MODE.getValue() == C.MODE_ON) {
 			blinkTick *= -1;
 			if(blinkTick == 1) {
@@ -85,7 +68,9 @@ public class Main{
 				actToggleRadioOn.setText("ON");
 			}
 		}
+		*/
 		
+		/*
 		// Update temperature labels
 		for(int i = 0; i < dataLabels.length; i++) {
 			int row = i / 12;
@@ -93,6 +78,7 @@ public class Main{
 			String value = getDataValueAt(row, column);
 			dataLabels[i].setText(value);
 		}
+		*/
 	}
 	
 	public static void onError(String error) {
@@ -108,13 +94,16 @@ public class Main{
 		    	// Half the time closing the serial ports fails, triggering an error in dmesg
 		    	// Reset USB device to clean them up after running
 		    	Main.log("HC3D is closing.");
+		    	DataFileLogging.close();
 		    	Main.log("Resetting USB devices...");
 		    	Main.log(Shell.shellCommandGetOutput("sh /home/pi/hc3d/reset-usb.sh", new File(applicationFolder)));
 		    	Main.log("USB devices reset.");
 		    }
 		});
 		
-		Main.log("Infinus HC3D 0.1 (c) Joel Meijering");
+		// 0.1: version with display and recir controls/manual fan controls/HE fan
+		// 0.2: version with no display but with data logging and failsafe
+		Main.log("Infinus HC3D 0.2 (c) Joel Meijering");
 		if(args.length == 0) {
 			throw new RuntimeException("Application folder argument must be supplied.");
 		}
@@ -138,14 +127,15 @@ public class Main{
 		Config.serialPortIds[LLC.ADAPTER_RECIR] = prefs.node("main").get("serialPortRecir", "");
 		Config.serialPortIds[LLC.ADAPTER_FAN_HE] = prefs.node("main").get("serialPortFanHe", "");
 		Config.serialPortIds[LLC.ADAPTER_RELAY] = prefs.node("main").get("serialPortRelay", "");
-		Config.webcamEnabled = prefs.node("main").getBoolean("webcamEnabled", false);
-		Config.webcamDeviceName = prefs.node("main").get("webcamDeviceName", "");
+		//Config.webcamEnabled = prefs.node("main").getBoolean("webcamEnabled", false);
+		//Config.webcamDeviceName = prefs.node("main").get("webcamDeviceName", "");
 		//Config.calibrationMode = prefs.node("main").getBoolean("calibrationMode", false);
 		Config.llcEnabled = prefs.node("main").getBoolean("llcEnabled", false);
 		
 		/*
 		 * Load native library for v4l4j
 		 */
+		/*
 		if(Config.webcamEnabled) {
 			Main.log("Loading v4lvj native libraries.");
 			if(System.getProperty("os.arch").equals("arm")) {
@@ -157,25 +147,26 @@ public class Main{
 			}
 			Main.log("Libraries loaded.");
 		}
+		*/
 		
 		if(Config.llcEnabled) {
 			LLC.init();
 
 		}
-		Control.init();
+		//Control.init();
 		
 		// Start control, otherwise it will be started once the user switches it on
-		Control.setMode(Control.Params.MODE.getValue());
+		//Control.setMode(Control.Params.MODE.getValue());
 		
 		/*if(Config.calibrationMode) {
 			Thermistors.startCalib();
 		}else {*/
 		// Start UI init in other thread, not sure if beneficial, but is seems conventional
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        /*javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 Main.createAndShowGui();
             }
-	    });
+	    });*/
 		//}
 		
 		/*
@@ -207,6 +198,7 @@ public class Main{
 		}
 	}
 	
+	/*
 	static void createAndShowGui() {
 		Main.log("Starting UI create");
 		try {
@@ -373,7 +365,8 @@ public class Main{
 		Main.log("UI ready");
 		uiReady = true;
 	}
-	
+	*/
+	/*
 	private static String getDataValueAt(int rowIndex, int columnIndex) {
 		int fieldIndex = -1;
 		switch(rowIndex) {
@@ -455,7 +448,8 @@ public class Main{
 		//Main.log("Error: No matching value found for row " + rowIndex + " Column: " + columnIndex);
 		return null;
 	}
-
+	*/
+	
 	public static void log(String str) {
 		if (str == null)
 			return;
