@@ -383,7 +383,7 @@ public class Main{
 			// Row 1: Temp Sensor Values
 			case 1:
 				// Retrieve temperature value
-				if(columnIndex < 2) {
+				if(columnIndex < 8) {
 					return LLC.getValue(C.LLC_TEMP_SENSOR_OFFSET + columnIndex) + "°";
 				}else {
 					return "-";

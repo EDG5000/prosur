@@ -39,23 +39,29 @@ public class LLC {
 		// TEMPA
 		public static final int TEMP_A1 = 0;
 		public static final int TEMP_A2 = 1;
+		public static final int TEMP_A3 = 2;
+		public static final int TEMP_A4 = 3;
+		public static final int TEMP_A5 = 4;
+		public static final int TEMP_A6 = 5;
+		public static final int TEMP_A7 = 6;
+		public static final int TEMP_A8 = 7;
 		
 		// RECIR
-		public static final int PWM_FAN_RECIR_F = 2;
-		public static final int PWM_FAN_RECIR_B = 3;
-		public static final int TACH_FAN_RECIR_F = 4;
-		public static final int TACH_FAN_RECIR_B = 5;
+		public static final int PWM_FAN_RECIR_F = 8;
+		public static final int PWM_FAN_RECIR_B = 9;
+		public static final int TACH_FAN_RECIR_F = 10;
+		public static final int TACH_FAN_RECIR_B = 11;
 		
 		// FAN HE
-		public static final int PWM_FAN_HE_IN = 6;
-		public static final int TACH_FAN_HE_IN = 7;
+		public static final int PWM_FAN_HE_IN = 12;
+		public static final int TACH_FAN_HE_IN = 13;
 		/*public static final int PWM_FAN_HE_OUT = 6;   TODO uncomment
 		public static final int TACH_FAN_HE_OUT = 7;*/
 		
 		// RELAY
-		public static final int RELAY_3DP_INTERLOCK_A = 8;
-		public static final int RELAY_3DP_INTERLOCK_B = 9;
-		public static final int RELAY_RAIL_12V = 10; // Fans and pumps for 3DP cooling and chamber temperature regulation
+		public static final int RELAY_3DP_INTERLOCK_A = 14;
+		public static final int RELAY_3DP_INTERLOCK_B = 15;
+		public static final int RELAY_RAIL_12V = 16; // Fans and pumps for 3DP cooling and chamber temperature regulation
 
 		// PUMPS
 		// TODO uncomment
@@ -80,7 +86,7 @@ public class LLC {
 	}
 	// Indexed by adapter, values represent field count per adapter
 	static final int[] IN_FIELD_LAYOUT = new int[]{
-			2, // TEMP_A
+			8, // TEMP_A
 			4, // RECIR
 			2, // FAN HE
 			3 // RELAY

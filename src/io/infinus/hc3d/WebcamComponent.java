@@ -119,7 +119,7 @@ public class WebcamComponent extends JComponent/*, WindowAdapter*/ implements Ca
 			// Init frame grabber
 			videoDevice = new VideoDevice(device);
 			frameGrabber = videoDevice.getJPEGFrameGrabber(width, width, channel, std, 80);
-			frameGrabber.setFrameInterval(1, 5);
+			frameGrabber.setFrameInterval(1, 30);
 			frameGrabber.setCaptureCallback(this);
 			width = frameGrabber.getWidth();
 			height = frameGrabber.getHeight();
