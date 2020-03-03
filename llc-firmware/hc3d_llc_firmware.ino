@@ -273,10 +273,11 @@ void loop() {
 		 */
 		while(true){
 			//log("Awaiting serial data.");
-			if(millis() < cmd_time_ms_last_data_recv){
+			/*if(millis() < cmd_time_ms_last_data_recv){
 				// Timer overflow after 50 days, delete invalidated old time stamp
 				cmd_time_ms_last_data_recv = millis();
 			}
+			// TODO failsafe/timeout commented out for now.
 			// Check if timeout is encountered
 			// Does not trigger when no initial frame was received yet
 			if(cmd_time_ms_last_data_recv != 0 && millis() - cmd_time_ms_last_data_recv > CMD_TIMEOUT){
@@ -287,7 +288,7 @@ void loop() {
 				enable_failsafe();
 				// Proceed to next stage
 				break;
-			}
+			}*/
 
 			// Keep waiting if no data is available
 			if(!Serial.available()){

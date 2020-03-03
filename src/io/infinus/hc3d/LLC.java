@@ -216,7 +216,8 @@ public class LLC {
 		Main.onLLCTickComplete();
 		DataFileLogging.onLLCTickComplete();
 		Failsafe.onLLCTickComplete();
-		//Control.onLLCTickComplete();
+		Temperature.onLLCTickComplete();
+		Control.onLLCTickComplete();
 		//Temperatures.onLLCTickComplete();
 	}
 	
