@@ -20,6 +20,8 @@ public class Control {
 	
 	static boolean initial = true;
 	
+	static int lastAction = -1;
+	
 	public static void onLLCTickComplete() {
 		if(Failsafe.failsafeActive) {
 			// Do not touch the relays when the failsafe was activated, the failsafe is to be permament
@@ -48,13 +50,17 @@ public class Control {
 			}
 		}
 		
-		if(action == ACTION_DISABLE) {
-			Main.log("Transitioning away from watercooling threshold temperature condition.");
-			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0f);
-		}else if(action == ACTION_ENABLE) {
-			Main.log("Transitioning to watercooling threshold temperature condition.");
-			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 1f);
+		if(action != lastAction) {
+			if(action == ACTION_DISABLE) {
+				Main.log("Watercooling threshold temperature exceeded.");
+				LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0f);
+			}else if(action == ACTION_ENABLE) {
+				Main.log("Dropped below watercooling threshold temperature condition.");
+				LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 1f);
+			}
 		}
+
+		lastAction = action;
 
 		// Store last temperatures
 		for(int i = 0; i < C.LLC_TEMP_SENSOR_COUNT; i++) {

@@ -12,7 +12,6 @@
  */
 
 #define DEBUG
-
 #define ADAPTER_RECIR 0
 #define ADAPTER_TEMP_A 1
 #define ADAPTER_HE_FAN 2
@@ -25,7 +24,7 @@
 /*
  * Select target adapter before flashing
  */
-#define ADAPTER ADAPTER_TEMP_A
+#define ADAPTER ADAPTER_RELAY
 
 /*
  * Temp ctrl adapter config
@@ -316,18 +315,13 @@ void loop() {
 					enable_failsafe();
 				}
 				cmd_char_buf_index = 0;
-				//Serial.print("Splitting: ");
-				//Serial.println(cmd_line_buf);
 
 				cmd_cur_segment = strtok(cmd_line_buf, ",");
 				int i = 0;
 				while (cmd_cur_segment != NULL)
 				{
-					//float val = atof(cmd_cur_segment);
 					// Parse segment, copy into processed input buffer
 					cmd_in_buf[i] = atof(cmd_cur_segment);
-					//Serial.print("Parsed segment: ");
-					//Serial.println(cmd_in_buf[i]);
 					cmd_cur_segment = strtok(NULL, ",");
 					i++;
 				}
@@ -372,21 +366,11 @@ void loop() {
 		for(int i = 0; i < INPUT_DEV_COUNT; i++){
 			if(tach_total_ticks[i] != 0){
 				cmd_out_buf[i] = tach_total_ticks[i];
-
-				//float seconds = float(tach_total_duration[i]) / float(1e6);
-				//float freq = (tach_total_ticks[i] / seconds) * .5f;
-
-
-				//freq = (1e6 / float(tach_total_duration[i]) * tach_total_ticks[i]) / 2;
-				//cmd_out_buf[i] = freq * 60;
 				tach_total_ticks[i] = 0;
 				tach_total_duration[i] = 0;
 			}else{
 				cmd_out_buf[i] = 0;
 			}
-			//Serial.println(freq);
-			//Serial.println(tach_total_duration[i]);
-			//Serial.println(tach_total_ticks[i]);
 		}
 
 	#elif INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_TEMP
@@ -448,14 +432,7 @@ void print_float_array(float* data, int length){
 
 	void itr_on_falling(uint8_t dev){
 		volatile unsigned long current_time_us = micros();
-
-		//if (current_time_us - tach_elaspsed_time_us_last[dev] > 20000){ // Prevent pulses less than 20k micros far.
-			//if(tach_elaspsed_time_us_last[dev] != 0){
-			//	tach_total_duration[dev] += current_time_us - tach_elaspsed_time_us_last[dev];
-			//}
-			//tach_elaspsed_time_us_last[dev] = current_time_us;
 			tach_total_ticks[dev]++;
-		//}
 	}
 #endif
 
@@ -485,6 +462,7 @@ void print_float_array(float* data, int length){
 	}
 #elif OUTPUT_DEV_COUNT > 0 && OUTPUT_DEV_TYPE == OUTPUT_DEV_TYPE_RELAY
 	void enable_failsafe(){
+		int a = 0; // Needed to prevent empty function from being stripped, preventing compilation
 		// TODO set relay failsafe? high or low?
 	}
 #endif

@@ -35,7 +35,11 @@ public class Temperature {
 				temp = -126;
 			}
 			*/
-			temperatures[i] = temp;
+			if(temp != 85f) {
+				// When exactly 85 is measured, do not update the value
+				temperatures[i] = temp;
+			}
+			
 		}
 	}
 

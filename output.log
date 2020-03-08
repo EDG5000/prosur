@@ -1,0 +1,2000 @@
+[2020-03-02 11:25:37] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-02 11:25:37] Init LLC
+[2020-03-02 11:25:37] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-02 11:25:37] SerialConnection: Device opened.
+[2020-03-02 11:25:37] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-02 11:25:37] SerialConnection: Device opened.
+[2020-03-02 11:25:37] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-02 11:25:37] SerialConnection: Device opened.
+[2020-03-02 11:25:37] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-02 11:25:37] SerialConnection: Device opened.
+[2020-03-02 11:25:37] LLC ready.
+[2020-03-02 11:25:37] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-02T11:25:37.566.csv
+[2020-03-02 11:28:01] HC3D is closing.
+[2020-03-02 11:28:01] Resetting USB devices...
+[2020-03-02 11:28:02] SerialConnection: Unable to send 1 bytes.
+[2020-03-02 11:28:02] SerialConnection: Unable to send 10 bytes.
+[2020-03-02 11:28:02] SerialConnection: Unable to send 5 bytes.
+[2020-03-02 11:28:02] SerialConnection: Unable to send 15 bytes.
+[2020-03-02 11:28:02] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 11:28:02] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 11:28:02] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 11:28:02] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 11:28:02] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 11:28:02] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 11:28:02] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 11:28:02] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 11:28:02] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 11:28:02] Resetting USB devices
+USB devices reset
+
+[2020-03-02 11:28:02] Resetting USB devices
+USB devices reset
+
+[2020-03-02 11:28:02] USB devices reset.
+Listening for transport dt_socket at address: 4000
+[2020-03-02 12:38:28] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-02 12:38:29] Init LLC
+[2020-03-02 12:38:29] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-02 12:38:29] SerialConnection: Device opened.
+[2020-03-02 12:38:29] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-02 12:38:29] SerialConnection: Device opened.
+[2020-03-02 12:38:29] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-02 12:38:29] SerialConnection: Device opened.
+[2020-03-02 12:38:29] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-02 12:38:29] SerialConnection: Device opened.
+[2020-03-02 12:38:29] LLC ready.
+[2020-03-02 12:38:29] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-02T12:38:29.501.csv
+[2020-03-02 12:57:04] HC3D is closing.
+[2020-03-02 12:57:04] Resetting USB devices...
+[2020-03-02 12:57:04] Resetting USB devices
+USB devices reset
+
+[2020-03-02 12:57:04] Resetting USB devices
+USB devices reset
+
+[2020-03-02 12:57:04] USB devices reset.
+[2020-03-02 12:57:17] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-02 12:57:17] Init LLC
+[2020-03-02 12:57:17] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-02 12:57:17] SerialConnection: Device opened.
+[2020-03-02 12:57:17] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-02 12:57:17] SerialConnection: Device opened.
+[2020-03-02 12:57:17] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-02 12:57:17] SerialConnection: Device opened.
+[2020-03-02 12:57:17] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-02 12:57:17] SerialConnection: Device opened.
+[2020-03-02 12:57:17] LLC ready.
+[2020-03-02 12:57:19] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-02T12:57:17.784.csv
+[2020-03-02 12:58:22] Transitioning to high temperature condition.
+[2020-03-02 12:58:54] Transitioning away from high temperature condition.
+[2020-03-02 13:00:58] HC3D is closing.
+[2020-03-02 13:00:58] Resetting USB devices...
+[2020-03-02 13:00:59] Resetting USB devices
+USB devices reset
+
+[2020-03-02 13:00:59] Resetting USB devices
+USB devices reset
+
+[2020-03-02 13:00:59] USB devices reset.
+[2020-03-02 13:01:07] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-02 13:01:07] Init LLC
+[2020-03-02 13:01:07] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-02 13:01:07] SerialConnection: Device opened.
+[2020-03-02 13:01:07] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-02 13:01:07] SerialConnection: Device opened.
+[2020-03-02 13:01:07] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-02 13:01:07] SerialConnection: Device opened.
+[2020-03-02 13:01:07] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-02 13:01:07] SerialConnection: Device opened.
+[2020-03-02 13:01:07] LLC ready.
+[2020-03-02 13:01:07] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-02T13:01:07.925.csv
+[2020-03-02 13:02:07] Transitioning to watercooling threshold temperature condition.
+[2020-03-02 13:02:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-02 12:34:20] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-02 12:34:20] Init LLC
+[2020-03-02 12:34:20] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-02 12:34:20] SerialConnection: Device opened.
+[2020-03-02 12:34:20] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-02 12:34:20] SerialConnection: Device opened.
+[2020-03-02 12:34:20] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-02 12:34:20] SerialConnection: Device opened.
+[2020-03-02 12:34:20] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-02 12:34:20] SerialConnection: Device opened.
+[2020-03-02 12:34:20] LLC ready.
+[2020-03-02 12:34:21] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-02T12:34:21.121.csv
+[2020-03-02 18:34:54] Transitioning to watercooling threshold temperature condition.
+[2020-03-02 18:35:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-02 18:43:58] Transitioning to watercooling threshold temperature condition.
+[2020-03-02 18:44:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-02 18:46:00] HC3D is closing.
+[2020-03-02 18:46:00] Resetting USB devices...
+[2020-03-02 18:46:00] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 18:46:00] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 18:46:00] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 18:46:00] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 18:46:00] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 18:46:00] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 18:46:00] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 18:46:00] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 18:46:00] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-02 18:46:00] Resetting USB devices
+USB devices reset
+
+[2020-03-02 18:46:00] Resetting USB devices
+USB devices reset
+
+[2020-03-02 18:46:00] USB devices reset.
+[2020-03-02 18:46:24] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-02 18:46:24] Init LLC
+[2020-03-02 18:46:24] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-02 18:46:24] SerialConnection: Device opened.
+[2020-03-02 18:46:24] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-02 18:46:24] SerialConnection: Device opened.
+[2020-03-02 18:46:24] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-02 18:46:24] SerialConnection: Device opened.
+[2020-03-02 18:46:24] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-02 18:46:24] SerialConnection: Device opened.
+[2020-03-02 18:46:24] LLC ready.
+[2020-03-02 18:46:25] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-02T18:46:25.211.csv
+[2020-03-02 18:46:31] Transitioning to watercooling threshold temperature condition.
+                                                                                                                                                 [2020-03-02 18:33:13] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-02 18:33:13] Init LLC
+[2020-03-02 18:33:13] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-02 18:33:13] SerialConnection: Device opened.
+[2020-03-02 18:33:13] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-02 18:33:13] SerialConnection: Device opened.
+[2020-03-02 18:33:13] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-02 18:33:13] SerialConnection: Device opened.
+[2020-03-02 18:33:13] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-02 18:33:13] SerialConnection: Device opened.
+[2020-03-02 18:33:13] LLC ready.
+[2020-03-02 18:33:14] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-02T18:33:14.059.csv
+[2020-03-02 22:39:53] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-02 22:39:53] Init LLC
+[2020-03-02 22:39:53] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-02 22:39:53] SerialConnection: Device opened.
+[2020-03-02 22:39:53] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-02 22:39:53] SerialConnection: Device opened.
+[2020-03-02 22:39:53] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-02 22:39:53] SerialConnection: Device opened.
+[2020-03-02 22:39:53] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-02 22:39:53] SerialConnection: Device opened.
+[2020-03-02 22:39:53] LLC ready.
+[2020-03-02 22:39:54] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-02T22:39:54.376.csv
+[2020-03-02 22:39:55] Error encountered: Dropped more than one frame for adapter 1 Frame: <R��j�pI��n,I��K�RECIR,0.35,0.35,0.00,0.00 Expected component count:  5 Actual component count: 6
+[2020-03-03 19:51:04] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-03 19:51:04] Init LLC
+[2020-03-03 19:51:04] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-03 19:51:04] SerialConnection: Device opened.
+[2020-03-03 19:51:04] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-03 19:51:04] SerialConnection: Device opened.
+[2020-03-03 19:51:04] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-03 19:51:04] SerialConnection: Device opened.
+[2020-03-03 19:51:04] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-03 19:51:04] SerialConnection: Device opened.
+[2020-03-03 19:51:04] LLC ready.
+[2020-03-03 19:51:05] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-03T19:51:05.291.csv
+[2020-03-03 19:51:06] Error encountered: Dropped more than one frame for adapter 1 Frame: :�,�A�j�j�Q�h�jRECIR,0.35,0.35,0.00,0.00 Expected component count:  5 Actual component count: 6
+[2020-03-03 20:00:21] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-03 20:00:22] Init LLC
+[2020-03-03 20:00:22] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-03 20:00:22] SerialConnection: Device opened.
+[2020-03-03 20:00:22] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-03 20:00:22] SerialConnection: Device opened.
+[2020-03-03 20:00:22] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-03 20:00:22] SerialConnection: Device opened.
+[2020-03-03 20:00:22] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-03 20:00:22] SerialConnection: Device opened.
+[2020-03-03 20:00:22] LLC ready.
+[2020-03-03 20:00:22] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-03T20:00:22.533.csv
+[2020-03-03 20:21:02] HC3D is closing.
+[2020-03-03 20:21:02] Resetting USB devices...
+[2020-03-03 20:21:02] Resetting USB devices
+USB devices reset
+
+[2020-03-03 20:21:02] Resetting USB devices
+USB devices reset
+
+[2020-03-03 20:21:02] USB devices reset.
+[2020-03-03 20:24:56] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-03 20:24:56] Init LLC
+[2020-03-03 20:24:56] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-03 20:24:57] SerialConnection: Device opened.
+[2020-03-03 20:24:57] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-03 20:24:57] SerialConnection: Device opened.
+[2020-03-03 20:24:57] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-03 20:24:57] SerialConnection: Device opened.
+[2020-03-03 20:24:57] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-03 20:24:57] SerialConnection: Device opened.
+[2020-03-03 20:24:57] LLC ready.
+[2020-03-03 20:24:57] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-03T20:24:57.290.csv
+[2020-03-03 20:25:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:25:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:25:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:25:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:25:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:25:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:25:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:25:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:26:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:26:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:27:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:27:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:27:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:27:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:27:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:27:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:27:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:27:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:27:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:27:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:28:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:28:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:28:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:28:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:28:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:28:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:29:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:29:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:29:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:29:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:29:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:29:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:30:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:30:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:30:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:30:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:30:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:30:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:30:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:31:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:31:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:31:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:31:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:31:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:31:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:31:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:31:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:32:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:32:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:32:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:32:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:32:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:32:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:32:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:32:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:33:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:34:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:34:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:34:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:34:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:34:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:35:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:36:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:36:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:37:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:37:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:37:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:37:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:37:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:37:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:37:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:38:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:38:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:38:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:38:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:39:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:39:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:39:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:39:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:39:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:39:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:40:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:40:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:40:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:40:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:40:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:40:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:40:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:41:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:41:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:41:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:41:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:41:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:41:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:41:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:41:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:41:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:41:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:41:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:42:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:42:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:42:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:42:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:42:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:42:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:42:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:43:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:43:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:43:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:43:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:43:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:43:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:44:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:44:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:44:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:44:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:44:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:45:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:45:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:45:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:45:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:45:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:46:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:46:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:47:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:47:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:47:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:47:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:47:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:48:10] Transitioning away from watercooling threshold temperature condition.
+                                                                                                                                                                                                                                      [2020-03-03 20:32:47] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-03 20:32:47] Init LLC
+[2020-03-03 20:32:47] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-03 20:32:47] SerialConnection: Device opened.
+[2020-03-03 20:32:47] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-03 20:32:47] SerialConnection: Device opened.
+[2020-03-03 20:32:47] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-03 20:32:47] SerialConnection: Device opened.
+[2020-03-03 20:32:47] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-03 20:32:47] SerialConnection: Device opened.
+[2020-03-03 20:32:47] LLC ready.
+[2020-03-03 20:32:48] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-03T20:32:48.117.csv
+[2020-03-03 20:32:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:50:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:50:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:50:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:51:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:51:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:51:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:51:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:51:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:52:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:52:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:52:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:52:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:52:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:52:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:52:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:52:44] Transitioning away from watercooling threshold temperature condition.
+                                                                                                                 [2020-03-03 20:53:13] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-03 20:53:13] Init LLC
+[2020-03-03 20:53:13] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-03 20:53:14] SerialConnection: Device opened.
+[2020-03-03 20:53:14] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-03 20:53:14] SerialConnection: Device opened.
+[2020-03-03 20:53:14] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-03 20:53:14] SerialConnection: Device opened.
+[2020-03-03 20:53:14] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-03 20:53:14] SerialConnection: Device opened.
+[2020-03-03 20:53:14] LLC ready.
+[2020-03-03 20:53:14] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-03T20:53:14.509.csv
+[2020-03-03 20:53:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:53:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:53:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:56:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:56:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:56:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:56:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:56:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:56:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:56:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:56:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:57:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:57:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:57:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:57:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:57:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:57:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:57:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:57:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:58:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:58:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:58:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:58:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:58:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:58:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:58:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:58:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:58:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:58:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:59:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:59:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:59:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:59:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:59:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:59:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 20:59:51] Transitioning away from watercooling threshold temperature condition.
+                                                                                                                                                                                                                                                                                                                                                                                [2020-03-03 20:59:48] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-03 20:59:48] Init LLC
+[2020-03-03 20:59:48] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-03 20:59:48] SerialConnection: Device opened.
+[2020-03-03 20:59:48] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-03 20:59:48] SerialConnection: Device opened.
+[2020-03-03 20:59:48] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-03 20:59:48] SerialConnection: Device opened.
+[2020-03-03 20:59:48] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-03 20:59:48] SerialConnection: Device opened.
+[2020-03-03 20:59:48] LLC ready.
+[2020-03-03 20:59:48] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-03T20:59:48.895.csv
+[2020-03-03 20:59:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 21:15:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 21:15:36] Transitioning to watercooling threshold temperature condition.
+[2020-03-03 21:15:37] Failsafe: Motor temperature limit of 65.0 for sensor 0 exceeded. Temp was: 85.0
+[2020-03-03 21:15:37] Activating failsafe.
+[2020-03-03 21:17:09] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-03 21:17:09] Init LLC
+[2020-03-03 21:17:09] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-03 21:17:09] SerialConnection: Device opened.
+[2020-03-03 21:17:09] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-03 21:17:09] SerialConnection: Device opened.
+[2020-03-03 21:17:09] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-03 21:17:09] SerialConnection: Device opened.
+[2020-03-03 21:17:09] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-03 21:17:10] SerialConnection: Device opened.
+[2020-03-03 21:17:10] LLC ready.
+[2020-03-03 21:17:10] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-03T21:17:10.437.csv
+[2020-03-03 21:17:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 21:31:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 21:32:10] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-03 21:32:11] Init LLC
+[2020-03-03 21:32:11] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-03 21:32:11] SerialConnection: Device opened.
+[2020-03-03 21:32:11] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-03 21:32:11] SerialConnection: Device opened.
+[2020-03-03 21:32:11] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-03 21:32:11] SerialConnection: Device opened.
+[2020-03-03 21:32:11] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-03 21:32:11] SerialConnection: Device opened.
+[2020-03-03 21:32:11] LLC ready.
+[2020-03-03 21:32:11] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-03T21:32:11.735.csv
+[2020-03-03 21:32:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 21:32:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 21:32:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-03 21:32:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:17:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:17:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:17:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:17:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:17:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:17:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:17:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:17:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:18:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:18:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:18:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:18:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:18:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:18:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:18:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:18:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:18:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:19:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:20:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:21:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:22:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:23:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:24:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:24:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:24:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:24:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:24:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:24:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:24:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:24:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:24:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:24:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:24:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:26:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:27:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:27:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:27:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:27:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:27:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:27:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:27:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:27:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:27:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:27:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:27:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:28:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:29:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:29:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:29:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:29:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:29:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:29:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:29:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:29:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:30:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:31:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:32:02] Transitioning away from watercooling threshold temperature condition.
+                                                                                                                                                                                                                                                                                    [2020-03-05 22:25:08] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-05 22:25:08] Init LLC
+[2020-03-05 22:25:08] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-05 22:25:08] SerialConnection: Device opened.
+[2020-03-05 22:25:08] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-05 22:25:08] SerialConnection: Device opened.
+[2020-03-05 22:25:08] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-05 22:25:08] SerialConnection: Device opened.
+[2020-03-05 22:25:08] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-05 22:25:08] SerialConnection: Device opened.
+[2020-03-05 22:25:08] LLC ready.
+[2020-03-05 22:25:09] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-05T22:25:09.126.csv
+[2020-03-05 22:25:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-05 22:25:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:51:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:51:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:51:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:51:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:51:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:51:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:51:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:51:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:51:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:51:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:52:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:53:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:54:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:55:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:56:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:56:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:56:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:56:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:56:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:56:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 06:56:15] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 06:56:16] Failsafe: Motor temperature limit of 65.0 for sensor 0 exceeded. Temp was: 85.0
+[2020-03-06 06:56:16] Activating failsafe.
+[2020-03-06 07:08:07] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-06 07:08:07] Init LLC
+[2020-03-06 07:08:07] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-06 07:08:07] SerialConnection: Device opened.
+[2020-03-06 07:08:07] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-06 07:08:07] SerialConnection: Device opened.
+[2020-03-06 07:08:07] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-06 07:08:07] SerialConnection: Device opened.
+[2020-03-06 07:08:07] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-06 07:08:07] SerialConnection: Device opened.
+[2020-03-06 07:08:07] LLC ready.
+[2020-03-06 07:08:08] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-06T07:08:08.108.csv
+[2020-03-06 07:08:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:08:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:08:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:08:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:21:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:21:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:21:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:21:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:21:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:21:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:21:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:21:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:21:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:21:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:21:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:22:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:23:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:24:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:25:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:25:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:25:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:25:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:25:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:25:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:25:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:25:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:26:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:26:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:26:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:26:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:26:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:26:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:26:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:26:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:26:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:26:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:27:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:28:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:29:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:29:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:29:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:29:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:29:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:29:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:29:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:29:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:29:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:29:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:29:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:30:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:30:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:30:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:30:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:30:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:30:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:30:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:30:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:31:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:31:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:31:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:31:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:31:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:31:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:31:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:31:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:31:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:31:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:31:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:32:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:32:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:32:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:32:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:32:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:32:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:32:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:32:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:32:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:33:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:34:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:34:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:34:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:34:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:34:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:34:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:34:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:34:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:35:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:35:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:35:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:35:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:35:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:35:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 07:35:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 08:23:49] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 08:23:53] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 08:23:55] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 08:23:58] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 08:24:00] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 08:24:02] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 08:24:03] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 08:24:07] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 08:24:09] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 08:24:14] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 08:17:10] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-06 08:17:10] Init LLC
+[2020-03-06 08:17:10] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-06 08:17:10] SerialConnection: Device opened.
+[2020-03-06 08:17:10] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-06 08:17:10] SerialConnection: Device opened.
+[2020-03-06 08:17:10] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-06 08:17:10] SerialConnection: Device opened.
+[2020-03-06 08:17:10] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-06 08:17:10] SerialConnection: Device opened.
+[2020-03-06 08:17:10] LLC ready.
+[2020-03-06 08:17:10] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-06T08:17:10.872.csv
+[2020-03-06 08:17:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 19:43:24] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:28] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:32] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:36] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:36] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:37] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:39] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:41] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:43] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:46] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 19:43:50] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:51] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:53] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:55] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:43:57] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:00] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:02] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:04] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:07] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:09] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:11] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:12] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:14] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:19] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:21] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:25] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:30] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:37] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:44:42] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:45:03] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 19:45:47] Transitioning to watercooling threshold temperature condition.
+[2020-03-06 20:01:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-06 20:03:15] HC3D is closing.
+[2020-03-06 20:03:15] Resetting USB devices...
+[2020-03-06 20:03:15] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-06 20:03:15] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-06 20:03:15] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-06 20:03:15] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-06 20:03:15] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-06 20:03:15] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-06 20:03:15] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-06 20:03:15] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-06 20:03:15] Exception: Stream Closed
+	java.io.FileOutputStream.writeBytes (FileOutputStream.java:-2)
+	java.io.FileOutputStream.write (FileOutputStream.java:313)
+	io.infinus.hc3d.modules.DataFileLogging.onLLCTickComplete (DataFileLogging.java:63)
+	io.infinus.hc3d.LLC.emitOnTickComplete (LLC.java:217)
+	io.infinus.hc3d.LLC.access$1 (LLC.java:215)
+	io.infinus.hc3d.LLC$1.run (LLC.java:190)
+	java.util.TimerThread.mainLoop (Timer.java:555)
+	java.util.TimerThread.run (Timer.java:505)
+
+[2020-03-06 20:03:15] Resetting USB devices
+USB devices reset
+
+[2020-03-06 20:03:15] Resetting USB devices
+USB devices reset
+
+[2020-03-06 20:03:15] USB devices reset.
+[2020-03-07 08:17:10] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-07 08:17:11] Init LLC
+[2020-03-07 08:17:11] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-07 08:17:11] SerialConnection: Device opened.
+[2020-03-07 08:17:11] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-07 08:17:11] SerialConnection: Device opened.
+[2020-03-07 08:17:11] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-07 08:17:11] SerialConnection: Device opened.
+[2020-03-07 08:17:11] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-07 08:17:11] SerialConnection: Device opened.
+[2020-03-07 08:17:11] LLC ready.
+[2020-03-07 08:17:11] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-07T08:17:11.592.csv
+[2020-03-07 08:17:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 08:17:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 08:17:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 08:17:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 08:17:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 08:17:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 08:17:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 08:17:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:34:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:35:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:36:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:37:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:38:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:39:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:40:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:41:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:42:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:43:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:44:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:45:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:46:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:47:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:48:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:49:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:50:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:51:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:52:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:53:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:54:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:55:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:56:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:05] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:57:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:58:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:09] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 10:59:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:00:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:01:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:40] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:02:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:01] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:03:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:38] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:45] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:54] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:04:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:05:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:05:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:05:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:05:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:05:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:05:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:05:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:05:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:05:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:05:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:05:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:20] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:06:56] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:36] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:47] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:07:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:15] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:34] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:41] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:53] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:08:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:16] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:32] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:44] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:09:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:14] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:21] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:28] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:33] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:35] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:37] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:42] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:46] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:49] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:10:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:11:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:11:08] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:11:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:11:19] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:11:22] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:11:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:11:29] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:11:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:11:48] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:11:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:12:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:12:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:12:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:12:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:12:13] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:12:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:12:25] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:12:27] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:12:30] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:12:39] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:13:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:13:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:13:12] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:13:17] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:13:23] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:13:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:13:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:13:31] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:13:50] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:14:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:14:11] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:14:18] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:14:24] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:14:43] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:14:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:14:55] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:15:00] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:15:02] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:15:04] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:15:26] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:43:46] Infinus HC3D 0.2 (c) Joel Meijering
+[2020-03-07 11:43:46] Init LLC
+[2020-03-07 11:43:46] SerialConnection: Opening device /home/pi/hc3d/dev/temp-a with baud rate 115200
+[2020-03-07 11:43:46] SerialConnection: Device opened.
+[2020-03-07 11:43:46] SerialConnection: Opening device /home/pi/hc3d/dev/recir with baud rate 115200
+[2020-03-07 11:43:46] SerialConnection: Device opened.
+[2020-03-07 11:43:46] SerialConnection: Opening device /home/pi/hc3d/dev/he-fan with baud rate 115200
+[2020-03-07 11:43:46] SerialConnection: Device opened.
+[2020-03-07 11:43:46] SerialConnection: Opening device /home/pi/hc3d/dev/relay with baud rate 115200
+[2020-03-07 11:43:46] SerialConnection: Device opened.
+[2020-03-07 11:43:46] LLC ready.
+[2020-03-07 11:43:47] DataFileLog: Created file /home/pi/hc3d/datalog/2020-03-07T11:43:47.243.csv
+[2020-03-07 11:43:52] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:43:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:43:58] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:44:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:44:06] Transitioning away from watercooling threshold temperature condition.
+[2020-03-07 11:44:10] Transitioning away from watercooling threshold temperature condition.
+[2020-03-08 07:24:51] Transitioning away from watercooling threshold temperature condition.
+[2020-03-08 07:24:57] Transitioning away from watercooling threshold temperature condition.
+[2020-03-08 07:24:59] Transitioning away from watercooling threshold temperature condition.
+[2020-03-08 07:25:03] Transitioning away from watercooling threshold temperature condition.
+[2020-03-08 07:25:07] Transitioning away from watercooling threshold temperature condition.
+[2020-03-08 07:25:12] Transitioning away from watercooling threshold temperature condition.
