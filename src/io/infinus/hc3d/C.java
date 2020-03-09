@@ -31,5 +31,6 @@ public class C {
 	public static final int TEMP_SENSOR_CHBR = 5;
 	public static final boolean LLC_RAW_LOGGING = false; // Dumps serial data to log
 	public static final float TEMP_PUMP_THRESHOLD = 38;
-	public static final float TEMP_PUMP_DEADBAND = 4;
+	public static final float TEMP_PUMP_DEADBAND = 2;
+	public static int LLC_TICK_INTERVAL = 1000;
 }

@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import io.infinus.hc3d.C;
 import io.infinus.hc3d.LLC;
 import io.infinus.hc3d.Main;
+import io.infinus.hc3d.Main.Config;
 import io.infinus.hc3d.Util;
 
 /*
@@ -24,6 +25,7 @@ public class DataFileLogging {
 	static String line;
 	
 	public static void onLLCTickComplete() {
+		if(Config.sitlMode) return;
 		if(file == null) {
 			File folder = new File(Main.applicationFolder + "/datalog");
 			if(!folder.exists()) {

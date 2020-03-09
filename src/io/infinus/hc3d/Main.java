@@ -47,6 +47,7 @@ public class Main{
 		public static boolean webcamEnabled = false;
 		public static boolean calibrationMode;
 		public static boolean llcEnabled = false;
+		public static boolean sitlMode = false;
 	}
 	
 	public static void onLLCTickComplete() {
@@ -86,20 +87,22 @@ public class Main{
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
-		Runtime.getRuntime().addShutdownHook(new Thread()
-		{
-		    @Override
-		    public void run()
-		    {
-		    	// Half the time closing the serial ports fails, triggering an error in dmesg
-		    	// Reset USB device to clean them up after running
-		    	Main.log("HC3D is closing.");
-		    	DataFileLogging.close();
-		    	Main.log("Resetting USB devices...");
-		    	Main.log(Shell.shellCommandGetOutput("sh /home/pi/hc3d/reset-usb.sh", new File(applicationFolder)));
-		    	Main.log("USB devices reset.");
-		    }
-		});
+		if(!Config.sitlMode) {
+			Runtime.getRuntime().addShutdownHook(new Thread()
+			{
+			    @Override
+			    public void run()
+			    {
+			    	// Half the time closing the serial ports fails, triggering an error in dmesg
+			    	// Reset USB device to clean them up after running
+			    	Main.log("HC3D is closing.");
+			    	DataFileLogging.close();
+			    	Main.log("Resetting USB devices...");
+			    	Main.log(Shell.shellCommandGetOutput("sh /home/pi/hc3d/reset-usb.sh", new File(applicationFolder)));
+			    	Main.log("USB devices reset.");
+			    }
+			});
+		}
 		
 		// 0.1: version with display and recir controls/manual fan controls/HE fan
 		// 0.2: version with no display but with data logging and failsafe
@@ -131,6 +134,7 @@ public class Main{
 		//Config.webcamDeviceName = prefs.node("main").get("webcamDeviceName", "");
 		//Config.calibrationMode = prefs.node("main").getBoolean("calibrationMode", false);
 		Config.llcEnabled = prefs.node("main").getBoolean("llcEnabled", false);
+		Config.sitlMode = prefs.node("main").getBoolean("sitlMode", false);
 		
 		/*
 		 * Load native library for v4l4j
@@ -180,6 +184,7 @@ public class Main{
 		
 		// Periodic flushing of changes to INI settings (used when modifing parameters
 		// Checks if dirty flag is high and flushes the buffer in that case
+		/*
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
@@ -187,8 +192,10 @@ public class Main{
 				flushPreferences();
 			}
 		}, 0, 5000);
+		*/
 	}
 	
+	/*
 	public static void flushPreferences() {
 		try {
 			Main.prefs.node("main").flush();
@@ -197,6 +204,7 @@ public class Main{
 			e.printStackTrace();
 		}
 	}
+	*/
 	
 	/*
 	static void createAndShowGui() {

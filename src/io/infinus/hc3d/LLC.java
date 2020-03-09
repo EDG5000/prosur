@@ -3,6 +3,7 @@ package io.infinus.hc3d;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Logger;
 
 import io.infinus.hc3d.modules.DataFileLogging;
 import io.infinus.hc3d.modules.Failsafe;
@@ -27,7 +28,7 @@ public class LLC {
 	 * LLC configuration
 	 */
 	
-	public static final int TICK_INTERVAL = 1000;
+	
 	static final int LLC_ADAPTER_COUNT = 4;
 	
 	// LLC adapter identifiers
@@ -167,26 +168,65 @@ public class LLC {
 		return lookupTable;
 	}
 
+	static int sitlTick = 0;
+	static int sitlTickDirection = 1;
+	static int sitlTickTotal = 0;
+	
 	public static void init() {
 		Main.log("Init LLC");
 		// Initialize serial connections
-		try {
-			for(int adapter = 0; adapter < LLC_ADAPTER_COUNT; adapter++) {
-				serialConnections[adapter] = new SerialConnection(Main.Config.serialPortIds[adapter]);
-				serialConnections[adapter].openConnection();
+		if(!Main.Config.sitlMode) {
+			try {
+				for(int adapter = 0; adapter < LLC_ADAPTER_COUNT; adapter++) {
+					serialConnections[adapter] = new SerialConnection(Main.Config.serialPortIds[adapter]);
+					serialConnections[adapter].openConnection();
+				}
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				System.exit(1);
 			}
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			System.exit(1);
+		}
+		
+		int tickInterval;
+		if(Main.Config.sitlMode) {
+			tickInterval = 1;
+		}else {
+			tickInterval = C.LLC_TICK_INTERVAL;
 		}
 		
 		// LLC tick (.1hz)
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
-				for(int i = 0; i < LLC_ADAPTER_COUNT; i++) {
-					serialTick(i);
+				if(Main.Config.sitlMode) {
+					sitlTickTotal += 1;
+					if(sitlTickTotal == 1000) {
+						Main.log("SITL completed 1000 cycles, stopping.");
+						System.exit(0);
+					}
+					// Perform simulated tick
+					// Increase sitl tick counter
+					sitlTick += sitlTickDirection;
+					if(sitlTick == 45) {
+						sitlTickDirection = -1;
+					}else if(sitlTick == -1) {
+						sitlTickDirection = 1;
+					}
+					// Update fake temperature values
+					for(int i = 0; i < C.LLC_TEMP_SENSOR_COUNT; i++) {
+						int fieldId = C.LLC_TEMP_SENSOR_OFFSET + i;
+						inData
+							[inFieldLookup[fieldId][0]]
+							[inFieldLookup[fieldId][1]] = sitlTick;
+					}
+					Main.log("SITL: Setting temps to " + sitlTick);
+				}else {
+					// Perform real tick
+					for(int i = 0; i < LLC_ADAPTER_COUNT; i++) {
+						serialTick(i);
+					}	
 				}
+
 				emitOnTickComplete();
 				
 				// Check if data for all fields is now received
@@ -208,7 +248,7 @@ public class LLC {
 					}
 				}
 			}
-		}, 0, TICK_INTERVAL);
+		}, 0, tickInterval);
 		Main.log("LLC ready.");
 	}
 	
