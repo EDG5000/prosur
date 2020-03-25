@@ -14,9 +14,9 @@ public class Control {
 		}
 	}
 	
-	final static int ACTION_NOTHING = 0;
+	/*final static int ACTION_NOTHING = 0;
 	final static int ACTION_DISABLE = 1;
-	final static int ACTION_ENABLE = 2;
+	final static int ACTION_ENABLE = 2;*/
 	
 	static boolean initial = true;
 	
@@ -33,35 +33,53 @@ public class Control {
 			// Will be set to 1 again if a high temperature is detected
 			initial = false;
 			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0f);
+			
+			// Fix cooling pump (assinged to HE_FAN) to 35% duty cycle to reduce noise. Tested to provide enough cooling
+			LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, .35f); //TODO test this statement, should work fine. (enable LLC logging to see PWM vlaues?)
 		}
 		
-		int action = ACTION_NOTHING;
+		 
+		
+		
+		/*for(int i = 0; i < C.LLC_TEMP_SENSOR_COUNT; i++) {
+			
+		}*/
+		
+		
+		boolean riserFound = false;
+		//boolean dropperFound = false;
+		boolean allTempsLow = true;
+		
+		//int action = ACTION_NOTHING;
 		for(int i = 0; i < C.LLC_TEMP_SENSOR_COUNT; i++) {
+			if(Temperature.temperatures[i] > TEMP_DEADBAND_LOWER) {
+				// Not all temps are below lower deadband boundary
+				allTempsLow = false;
+			}
+			
 			if(Temperature.temperatures[i] > TEMP_DEADBAND_UPPER && lastTemperatures[i] <= TEMP_DEADBAND_UPPER){
 				// Temp just increased to above the upper deadband limit
-				action = ACTION_ENABLE;
-				break;
-			}else if(Temperature.temperatures[i] < TEMP_DEADBAND_LOWER && lastTemperatures[i] >= TEMP_DEADBAND_LOWER) {
-				// Temp just dropped to below the lower deadband limit
-				// Set desired action to DISABLE, unless it was requested to be enabled for another sensor
-				if(action != ACTION_ENABLE) {
-					action = ACTION_DISABLE;
-				}
+				riserFound = true;
 			}
 		}
 		
-		//if(action != lastAction) {
-			if(action == ACTION_DISABLE) {
-				Main.log("Dropped below watercooling threshold temperature condition.");
-				LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0f);
-			}else if(action == ACTION_ENABLE) {
-				Main.log("Watercooling threshold temperature exceeded.");
-				LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 1f);
-			}
-		//}
+		if(riserFound) {
+			Main.log("Watercooling threshold temperature exceeded.");
+			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 1f);
+		}else if(allTempsLow) {
+			Main.log("Dropped below watercooling threshold temperature condition.");
+			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0f);
+		}
 
-		//lastAction = action;
+		/////////// !!!!!!!!!!!!!!
+		// TODO add explanation: why did the system drop below temp thresh? Log which sensor and which value
+		
+		/*if(action == ACTION_DISABLE) {
 
+		}else if(action == ACTION_ENABLE) {
+
+		}*/
+		
 		// Store last temperatures
 		for(int i = 0; i < C.LLC_TEMP_SENSOR_COUNT; i++) {
 			lastTemperatures[i] = Temperature.temperatures[i];

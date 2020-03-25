@@ -1,0 +1,7 @@
+- bevestigen watertank
+- geluidsisolatie pomp
+- pomp pwm?
+- consider only logging to datalog when 12v rail is active?
+- 12v rail ging aan op onverwacht moment
+	- failsafe van relay adapter?
+	- incorrect algoritme?

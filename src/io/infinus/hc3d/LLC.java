@@ -198,6 +198,8 @@ public class LLC {
 		new Timer().schedule(new TimerTask() {
 			@Override
 			public void run() {
+				if(Main.stopping) return;
+				
 				if(Main.Config.sitlMode) {
 					sitlTickTotal += 1;
 					if(sitlTickTotal == 1000) {
@@ -254,11 +256,12 @@ public class LLC {
 	
 	private static void emitOnTickComplete() {
 		Main.onLLCTickComplete();
-		DataFileLogging.onLLCTickComplete();
+		if(Main.Config.dataLogEnabled) {
+			DataFileLogging.onLLCTickComplete();
+		}
 		Failsafe.onLLCTickComplete();
 		Temperature.onLLCTickComplete();
 		Control.onLLCTickComplete();
-		//Temperatures.onLLCTickComplete();
 	}
 	
 	// Get value from incoming data by field ID

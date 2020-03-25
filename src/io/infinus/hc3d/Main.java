@@ -17,6 +17,7 @@ import io.infinus.hc3d.modules.DataFileLogging;
 //import com.formdev.flatlaf.FlatDarculaLaf;
 
 public class Main{
+	public static boolean stopping = false; // Set high when application is being killed
 	static {
 		System.setProperty("awt.useSystemAAFontSettings","on");
 		System.setProperty("swing.aatext", "true");
@@ -48,6 +49,7 @@ public class Main{
 		public static boolean calibrationMode;
 		public static boolean llcEnabled = false;
 		public static boolean sitlMode = false;
+		public static boolean dataLogEnabled = false;
 	}
 	
 	public static void onLLCTickComplete() {
@@ -130,6 +132,7 @@ public class Main{
 		Config.serialPortIds[LLC.ADAPTER_RECIR] = prefs.node("main").get("serialPortRecir", "");
 		Config.serialPortIds[LLC.ADAPTER_FAN_HE] = prefs.node("main").get("serialPortFanHe", "");
 		Config.serialPortIds[LLC.ADAPTER_RELAY] = prefs.node("main").get("serialPortRelay", "");
+		Config.dataLogEnabled = prefs.node("main").getBoolean("dataLogEnabled", false);
 		//Config.webcamEnabled = prefs.node("main").getBoolean("webcamEnabled", false);
 		//Config.webcamDeviceName = prefs.node("main").get("webcamDeviceName", "");
 		//Config.calibrationMode = prefs.node("main").getBoolean("calibrationMode", false);

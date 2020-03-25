@@ -1,56 +1,36 @@
-See lib/v4l4j for extra info.
+sudo apt install default-jre picocom
 
- --------- 1.
+--
 
-Get fixed /dev/video0 device:
+MJPG STREAMER
 
-SUBSYSTEM=="video4linux", ENV{ID_MODEL}=="'0825'", SYMLINK+="a4tech-camera", ENV{GENERATED}="1"
+sudo apt install libjpeg8-dev
+cd mjpg_streamer inside hc3d project folder
+cmake .
+make install
 
-I'm not sure it can be done; but you can create a persistent symlink based on a device attribute (for instance ID_MODEL).
+- make sure libjpeg-dev is installed
 
-Plug in your e.g. camera and run
-
-udevadm info --export-db > file.txt
-
-then look at file.txt to locate the camera (perhaps search for A4Tech?) and find the ID_MODEL attribute.
-
-Then create a file called /target/etc/udev/rules.d/70-persistent-capture-device.rules and put stuff like this in it:
-
-SUBSYSTEM=="video4linux", ENV{ID_MODEL}=="'YOUR_ID_MODEL'", SYMLINK+="a4tech-camera", ENV{GENERATED}="1"
-
-Obviously, substitute YOUR_ID_MODEL with the value you found by looking at udevadm output.
-
-When you plugin the camera, a symlink to the appropriate video* device will be created as /dev/a4tech-camera.
-
-You can add a similar line to the same file for your capture card, assuming it shows in udevadm output and you can find an ID_MODEL or other attribute to identify it.
-
- --------- 2.
-
-LIBJPEG TURBO DEV
-
-
-  146  sudo apt-get remove libjpeg8-dev
-  147  sudo apt-get remove libjpeg8
-  148  wget http://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-1.5.1.tar.gz
-  149  tar -xzf libjpeg-turbo-1.5.1.tar.gz libjpeg-turbo-1.5.1/
-  150  cd libjpeg-turbo-1.5.1/
-  151  ./configure --prefix=/usr                       --mandir=/usr/share/man             --with-jpeg8                        --disable-static                    --docdir=/usr/share/doc/libjpeg-turbo-1.5.1
-  152  ;
-  153  make -j4
-  157  sudo make install
-    181  cd arm-linux-gnueabihf/
-  182  sudo ln ../libjpeg.so.8 libjpeg.so.8
-  
-   --------- 3.
+--------- 3.
    
-   Serial testing:
+Serial testing:
+
+picocom -b 115200 dev/relay --echo
+stty --file=dev/relay --all
+Symlinks: create folder hc3d/dev, add symlinks
+
+Udev permissions:
+nano /etc/udev/rules.d/66-tty.rules => KERNEL=="ttyUSB*",MODE="0666"
+
    
-   picocom -b 115200 dev/relay --echo
-   stty --file=dev/relay --all
-   Symlinks: create folder hc3d/dev, add symlinks
-   
-   Udev permissions:
-   nano /etc/udev/rules.d/66-tty.rules => KERNEL=="ttyUSB*",MODE="0666"
-   
-   
-   
+--------- 4.
+
+Get fixed TTY devices:
+
+- make symlinks to /home/pi/hc3d/dev/<path> from /dev/serial/by-path/<path>
+
+--------- 
+
+Get fixed webcam device:
+
+- make symlink to  /dev/v4l/by-path/<path> in /home/pi/hc3d/dev/webca,

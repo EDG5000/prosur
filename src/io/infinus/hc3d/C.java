@@ -14,8 +14,8 @@ public class C {
 	public final static Font FONT_MAIN_BOLD = new Font("Fira Code", Font.BOLD, 16);
 	public static final float UI_BG_OPACITY = .5f;
 	// Adjust Main.getDataValueAt accordingly
-	public static final int DATA_TABLE_ROWS = 5;
-	public static final int DATA_TABLE_COLS = 12;
+	//public static final int DATA_TABLE_ROWS = 5;
+	//public static final int DATA_TABLE_COLS = 12;
 	public static final int LLC_TEMP_SENSOR_OFFSET = 0; // Temp sensor LLC id = temp sensor index + LLC offset
 	public static final int LLC_TEMP_SENSOR_COUNT = 8;
 	public static final int MODE_OFF = 0;

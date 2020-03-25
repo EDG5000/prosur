@@ -64,7 +64,9 @@ public class DataFileLogging {
 		try {
 			outputStream.write(line.getBytes());
 		} catch (IOException e) {
+			Main.log("Unable to write to datalog file at " + file.getAbsolutePath());
 			Main.printStackTrace(e);
+			System.exit(1);
 		}
 	}
 	

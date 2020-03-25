@@ -6,4 +6,3 @@ for i in /sys/bus/pci/drivers/[uoex]hci_hcd/*:*; do
   echo "${i##*/}" > "${i%/*}/bind"
 done
 echo "USB devices reset"
-echo "POP" >> /home/pi/poep.txt

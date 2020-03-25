@@ -24,7 +24,7 @@
 /*
  * Select target adapter before flashing
  */
-#define ADAPTER ADAPTER_RELAY
+#define ADAPTER ADAPTER_HE_FAN
 
 /*
  * Temp ctrl adapter config
@@ -310,10 +310,10 @@ void loop() {
 				 * - Check if count matches with expected, otherwise enable failsafe
 				 * - Parse each segment into float
 				 */
-				if(cmd_char_buf_index > CMD_INPUT_LINE_MAX){
+				/*if(cmd_char_buf_index > CMD_INPUT_LINE_MAX){
 					//Serial.println("Input buffer size exceeded.");
 					enable_failsafe();
-				}
+				}*/
 				cmd_char_buf_index = 0;
 
 				cmd_cur_segment = strtok(cmd_line_buf, ",");
@@ -330,12 +330,12 @@ void loop() {
 				cmd_line_buf[0] = '\0';
 
 				// Check if the amount of processed segments is in line with expected field count
-				if(i != OUTPUT_DEV_COUNT){
+				/*if(i != OUTPUT_DEV_COUNT){
 					//Serial.print("Did not expect ");
 					//Serial.print(i);
 					//Serial.println(" frames in segment; enabling failsafe.");
 					enable_failsafe();
-				}
+				}*/
 				// An input frame is now fully processed.
 				// Proceed with next phase. cmd_in_buf will be populated with the received line or failsafe values.
 				break;
@@ -437,12 +437,12 @@ void print_float_array(float* data, int length){
 #endif
 
 #if OUTPUT_DEV_COUNT > 0 && OUTPUT_DEV_TYPE == OUTPUT_DEV_TYPE_PWM
-	void enable_failsafe(){
+	/*void enable_failsafe(){
 		// Set failsafe PWM setpoints
 		for(int i = 0; i < OUTPUT_DEV_COUNT; i++){
 			cmd_in_buf[i] = PWM_OUT_MAX[i];
 		}
-	}
+	}*/
 
 	void set_pwm(int pin, float val){
 		if(pin == 9 || pin == 10){
@@ -460,9 +460,10 @@ void print_float_array(float* data, int length){
 			OCR2B = registerValue;
 		}
 	}
-#elif OUTPUT_DEV_COUNT > 0 && OUTPUT_DEV_TYPE == OUTPUT_DEV_TYPE_RELAY
+#endif
+/*#elif OUTPUT_DEV_COUNT > 0 && OUTPUT_DEV_TYPE == OUTPUT_DEV_TYPE_RELAY
 	void enable_failsafe(){
 		int a = 0; // Needed to prevent empty function from being stripped, preventing compilation
 		// TODO set relay failsafe? high or low?
 	}
-#endif
+#endif*/

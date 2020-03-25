@@ -34,7 +34,7 @@ environment/project/io.sloeber.core.toolChain.release.1456045327/A.BUILD.ARCH/op
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.BUILD.ARCH/value=AVR
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.BUILD.BOARD/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.BUILD.BOARD/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1456045327/A.BUILD.BOARD/value=AVR_PRO
+environment/project/io.sloeber.core.toolChain.release.1456045327/A.BUILD.BOARD/value=AVR_NANO
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.BUILD.CORE.PATH/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.BUILD.CORE.PATH/operation=replace
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.BUILD.CORE.PATH/value=C\:\\Sloeber\\arduinoPlugin\\packages\\arduino\\hardware\\avr\\1.8.2\\cores\\arduino
@@ -160,7 +160,7 @@ environment/project/io.sloeber.core.toolChain.release.1456045327/A.ESP8266.NETWO
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.ESP8266.NETWORK.UPLOAD.TOOL/value=esp8266OTA
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.NAME/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.NAME/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1456045327/A.NAME/value=Arduino Pro or Pro Mini
+environment/project/io.sloeber.core.toolChain.release.1456045327/A.NAME/value=Arduino Nano
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.PACKAGES/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.PACKAGES/operation=replace
 environment/project/io.sloeber.core.toolChain.release.1456045327/A.PACKAGES/value=${eclipse_home}/arduinoPlugin/packages
@@ -433,13 +433,13 @@ environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARDS_F
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARDS_FILE/value=C\:\\Sloeber\\arduinoPlugin\\packages\\arduino\\hardware\\avr\\1.8.2\\boards.txt
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARD_ID/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARD_ID/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARD_ID/value=pro
+environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARD_ID/value=nano
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARD_NAME/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARD_NAME/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARD_NAME/value=Arduino Pro or Pro Mini
+environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARD_NAME/value=Arduino Nano
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.COM_PORT/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.COM_PORT/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.COM_PORT/value=COM5
+environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.COM_PORT/value=COM3
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.ECLIPSE_LOCATION/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.ECLIPSE_LOCATION/operation=replace
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.ECLIPSE_LOCATION/value=C\:\\Sloeber\\
@@ -469,7 +469,7 @@ environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.MAKE_LOC
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.MAKE_LOCATION/value=C\:\\Sloeber\\arduinoPlugin\\tools\\make\\
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.MENU/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.MENU/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.MENU/value=cpu\=16MHzatmega328
+environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.MENU/value=cpu\=atmega328old
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.OBJCOPY/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.OBJCOPY/operation=replace
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.OBJCOPY/value=${A.RECIPE.OBJCOPY.EEP.PATTERN}\n\t${A.RECIPE.OBJCOPY.HEX.PATTERN}
