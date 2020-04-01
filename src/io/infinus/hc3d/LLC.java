@@ -274,6 +274,7 @@ public class LLC {
 	
 	// Store value in outgoing data structure by field ID and value
 	public static void setValue(int fieldId, float value) {
+		Main.log("Setting value for field " + fieldId + " to " + value);
 		 outData
 			[outFieldLookup[fieldId][0]]
 			[outFieldLookup[fieldId][1]]

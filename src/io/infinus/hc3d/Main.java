@@ -50,6 +50,7 @@ public class Main{
 		public static boolean llcEnabled = false;
 		public static boolean sitlMode = false;
 		public static boolean dataLogEnabled = false;
+		public static String dataLogFolder = null;
 	}
 	
 	public static void onLLCTickComplete() {
@@ -138,6 +139,7 @@ public class Main{
 		//Config.calibrationMode = prefs.node("main").getBoolean("calibrationMode", false);
 		Config.llcEnabled = prefs.node("main").getBoolean("llcEnabled", false);
 		Config.sitlMode = prefs.node("main").getBoolean("sitlMode", false);
+		Config.dataLogFolder = prefs.node("main").get("dataLogFolder", applicationFolder);
 		
 		/*
 		 * Load native library for v4l4j

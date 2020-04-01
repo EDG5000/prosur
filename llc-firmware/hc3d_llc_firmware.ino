@@ -24,7 +24,7 @@
 /*
  * Select target adapter before flashing
  */
-#define ADAPTER ADAPTER_HE_FAN
+#define ADAPTER ADAPTER_RELAY
 
 /*
  * Temp ctrl adapter config

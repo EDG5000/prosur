@@ -14,13 +14,7 @@ public class Control {
 		}
 	}
 	
-	/*final static int ACTION_NOTHING = 0;
-	final static int ACTION_DISABLE = 1;
-	final static int ACTION_ENABLE = 2;*/
-	
 	static boolean initial = true;
-	
-	//static int lastAction = ACTION_NOTHING;
 	
 	public static void onLLCTickComplete() {
 		if(Failsafe.failsafeActive) {
@@ -38,47 +32,27 @@ public class Control {
 			LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, .35f); //TODO test this statement, should work fine. (enable LLC logging to see PWM vlaues?)
 		}
 		
-		 
-		
-		
-		/*for(int i = 0; i < C.LLC_TEMP_SENSOR_COUNT; i++) {
-			
-		}*/
-		
-		
 		boolean riserFound = false;
-		//boolean dropperFound = false;
 		boolean allTempsLow = true;
 		
-		//int action = ACTION_NOTHING;
 		for(int i = 0; i < C.LLC_TEMP_SENSOR_COUNT; i++) {
 			if(Temperature.temperatures[i] > TEMP_DEADBAND_LOWER) {
 				// Not all temps are below lower deadband boundary
 				allTempsLow = false;
 			}
-			
 			if(Temperature.temperatures[i] > TEMP_DEADBAND_UPPER && lastTemperatures[i] <= TEMP_DEADBAND_UPPER){
 				// Temp just increased to above the upper deadband limit
 				riserFound = true;
 			}
 		}
 		
-		if(riserFound) {
+		if(riserFound && LLC.getValue(LLC.OUT.RELAY_RAIL_12V) != 1f) {
 			Main.log("Watercooling threshold temperature exceeded.");
 			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 1f);
-		}else if(allTempsLow) {
+		}else if(allTempsLow && LLC.getValue(LLC.OUT.RELAY_RAIL_12V) == 1f) {
 			Main.log("Dropped below watercooling threshold temperature condition.");
 			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0f);
 		}
-
-		/////////// !!!!!!!!!!!!!!
-		// TODO add explanation: why did the system drop below temp thresh? Log which sensor and which value
-		
-		/*if(action == ACTION_DISABLE) {
-
-		}else if(action == ACTION_ENABLE) {
-
-		}*/
 		
 		// Store last temperatures
 		for(int i = 0; i < C.LLC_TEMP_SENSOR_COUNT; i++) {

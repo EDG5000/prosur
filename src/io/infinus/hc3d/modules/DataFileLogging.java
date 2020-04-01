@@ -26,13 +26,22 @@ public class DataFileLogging {
 	
 	public static void onLLCTickComplete() {
 		if(Config.sitlMode) return;
+		if(LLC.getValue(LLC.OUT.RELAY_RAIL_12V) != 1f) {
+			// When 12V relay is off, Control.java has turned of the pump because all temps are low. Only log when there are high temps.
+			if(file != null) {
+				file = null;
+			}
+			return;
+		}
+		
 		if(file == null) {
-			File folder = new File(Main.applicationFolder + "/datalog");
+			String dataLogFolder = Main.Config.dataLogFolder + "/datalog";
+			File folder = new File(dataLogFolder);
 			if(!folder.exists()) {
 				Main.log("Creating datalog folder...");
-				new File(Main.applicationFolder + "/datalog").mkdirs();
+				folder.mkdirs();
 			}
-			String dataLogFilePath = Main.applicationFolder + "/datalog/" + Util.getDateString() + ".csv";
+			String dataLogFilePath = dataLogFolder + "/" + Util.getDateString() + ".csv";
 			file = new File(dataLogFilePath);
 			// I thought this was not needed, but I am getting exceptions
 			try {
@@ -72,7 +81,9 @@ public class DataFileLogging {
 	
 	public static void close() {
 		try {
-			outputStream.close();
+			if(outputStream != null) {
+				outputStream.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			Main.printStackTrace(e);
