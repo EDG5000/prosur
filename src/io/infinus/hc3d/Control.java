@@ -28,8 +28,14 @@ public class Control {
 			initial = false;
 			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0f);
 			
+			/*
+			 * The following values are constant and (currently) not adjusted under any condition by Control
+			 */
 			// Fix cooling pump (assinged to HE_FAN) to 35% duty cycle to reduce noise. Tested to provide enough cooling
-			LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, .35f); //TODO test this statement, should work fine. (enable LLC logging to see PWM vlaues?)
+			LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, .35f); //TODO test this statement, should work fine. (enable LLC logging to see PWM value?)
+			// Watercooling heatsink fans
+			LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, .35f); 
+			LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, .35f);
 		}
 		
 		boolean riserFound = false;
@@ -46,10 +52,10 @@ public class Control {
 			}
 		}
 		
-		if(riserFound && LLC.getValue(LLC.OUT.RELAY_RAIL_12V) != 1f) {
+		if(riserFound && LLC.getValue(LLC.IN.RELAY_RAIL_12V) < 0.5f) {
 			Main.log("Watercooling threshold temperature exceeded.");
 			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 1f);
-		}else if(allTempsLow && LLC.getValue(LLC.OUT.RELAY_RAIL_12V) == 1f) {
+		}else if(allTempsLow && LLC.getValue(LLC.IN.RELAY_RAIL_12V) > 0.5f) {
 			Main.log("Dropped below watercooling threshold temperature condition.");
 			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0f);
 		}
