@@ -34,3 +34,18 @@ Get fixed TTY devices:
 Get fixed webcam device:
 
 - make symlink to  /dev/v4l/by-path/<path> in /home/pi/hc3d/dev/webca,
+
+
+---------
+
+Get ramdisk for datalog:
+
+sudo mkdir /mnt/ramdisk
+sudo nano /etc/rc.local
+
+Add to that file:
+#Joel: Ramdisk for HC3D datalogging
+mount -t tmpfs -o size=16M,mode=700 tmpfs /mnt/ramdisk
+/bin/chown pi:root /mnt/ramdisk
+/bin/chmod 0750 /mnt/ramdisk
+

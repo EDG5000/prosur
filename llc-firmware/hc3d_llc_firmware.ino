@@ -24,7 +24,7 @@
 /*
  * Select target adapter before flashing
  */
-#define ADAPTER ADAPTER_RELAY
+#define ADAPTER ADAPTER_RECIR
 
 /*
  * Temp ctrl adapter config
@@ -126,6 +126,10 @@ float cmd_in_buf[OUTPUT_DEV_COUNT];
 // Contains to-be-sent output data, sent in the last phase
 float cmd_out_buf[INPUT_DEV_COUNT];
 
+int heartbeat = 1;
+
+//boolean awaiting_newline = false; // Initial state or after failsafe
+
 #if INPUT_DEV_COUNT > 0 && INPUT_DEV_TYPE == INPUT_DEV_TYPE_TACH
 	// Used for collecting tachometer readings
 	unsigned long tach_total_duration[INPUT_DEV_COUNT]; // accumulates pulse width
@@ -149,8 +153,6 @@ float cmd_out_buf[INPUT_DEV_COUNT];
 	//DallasTemperature* obj_dallas_temp_sensor;
 
 #endif
-
-int heartbeat = 1;
 
 void setup() {
 	Serial.begin(115200);
@@ -272,22 +274,6 @@ void loop() {
 		 */
 		while(true){
 			//log("Awaiting serial data.");
-			/*if(millis() < cmd_time_ms_last_data_recv){
-				// Timer overflow after 50 days, delete invalidated old time stamp
-				cmd_time_ms_last_data_recv = millis();
-			}
-			// TODO failsafe/timeout commented out for now.
-			// Check if timeout is encountered
-			// Does not trigger when no initial frame was received yet
-			if(cmd_time_ms_last_data_recv != 0 && millis() - cmd_time_ms_last_data_recv > CMD_TIMEOUT){
-				//Serial.print("Timeout of enabling failsafe. dT: ");
-				//Serial.println(millis() - cmd_time_ms_last_data_recv);
-				// Reset last received data time
-				cmd_time_ms_last_data_recv = 0;
-				enable_failsafe();
-				// Proceed to next stage
-				break;
-			}*/
 
 			// Keep waiting if no data is available
 			if(!Serial.available()){
@@ -298,22 +284,29 @@ void loop() {
 			cmd_time_ms_last_data_recv = millis();
 			cmd_char_buf = Serial.read();
 
-			if(cmd_char_buf != '\n'){
+			if(cmd_char_buf != '\n'/* && !awaiting_newline*/){
 				// Add character to receive buffer
+				if(cmd_char_buf_index + 2 > CMD_INPUT_LINE_MAX){
+					// Discard character. Once host sends newline data will be accepted again.
+					Serial.println("Input buffer size exceeded.");
+					break;
+					//enable_failsafe();
+				}
+
 				//Serial.println("Adding char:");
 				cmd_line_buf[cmd_char_buf_index] = cmd_char_buf;
+				cmd_line_buf[cmd_char_buf_index + 1] = '\n';
 				cmd_char_buf_index++;
 			}else if(cmd_char_buf == '\n'){
+
+				//awaiting_newline = false;
+
 				// End of input line, process it
 				/*
 				 * - Split into segments
 				 * - Check if count matches with expected, otherwise enable failsafe
 				 * - Parse each segment into float
 				 */
-				/*if(cmd_char_buf_index > CMD_INPUT_LINE_MAX){
-					//Serial.println("Input buffer size exceeded.");
-					enable_failsafe();
-				}*/
 				cmd_char_buf_index = 0;
 
 				cmd_cur_segment = strtok(cmd_line_buf, ",");
@@ -330,12 +323,13 @@ void loop() {
 				cmd_line_buf[0] = '\0';
 
 				// Check if the amount of processed segments is in line with expected field count
-				/*if(i != OUTPUT_DEV_COUNT){
-					//Serial.print("Did not expect ");
-					//Serial.print(i);
-					//Serial.println(" frames in segment; enabling failsafe.");
-					enable_failsafe();
-				}*/
+				if(i != OUTPUT_DEV_COUNT){
+					Serial.print("Did not expect ");
+					Serial.print(i);
+					Serial.println(" frames in segment.");
+					//enable_failsafe();
+					break;
+				}
 				// An input frame is now fully processed.
 				// Proceed with next phase. cmd_in_buf will be populated with the received line or failsafe values.
 				break;
@@ -461,9 +455,10 @@ void print_float_array(float* data, int length){
 		}
 	}
 #endif
-/*#elif OUTPUT_DEV_COUNT > 0 && OUTPUT_DEV_TYPE == OUTPUT_DEV_TYPE_RELAY
-	void enable_failsafe(){
-		int a = 0; // Needed to prevent empty function from being stripped, preventing compilation
-		// TODO set relay failsafe? high or low?
-	}
-#endif*/
+
+	/*
+void enable_failsafe(){
+	awaiting_newline = true;
+}
+*/
+

@@ -32,12 +32,16 @@ public class Control {
 			 * The following values are constant and (currently) not adjusted under any condition by Control
 			 */
 			// Fix cooling pump (assinged to HE_FAN) to 35% duty cycle to reduce noise. Tested to provide enough cooling
-			LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, .35f); //TODO test this statement, should work fine. (enable LLC logging to see PWM value?)
+			LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, .5f); //TODO test this statement, should work fine. (enable LLC logging to see PWM value?)
 			// Watercooling heatsink fans
-			LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, .35f); 
-			LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, .35f);
+			LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, .5f); 
+			LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, .5f);
+			
+			// Relay (and thus pumps and fans) are always on
+			// Below lines are commented out because sensors are reporting junk values too frequently
+			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 1f);
 		}
-		
+		/*
 		boolean riserFound = false;
 		boolean allTempsLow = true;
 		
@@ -64,5 +68,6 @@ public class Control {
 		for(int i = 0; i < C.LLC_TEMP_SENSOR_COUNT; i++) {
 			lastTemperatures[i] = Temperature.temperatures[i];
 		}
+		*/
 	}
 }

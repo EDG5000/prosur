@@ -259,7 +259,10 @@ public class LLC {
 		if(Main.Config.dataLogEnabled) {
 			DataFileLogging.onLLCTickComplete();
 		}
-		Failsafe.onLLCTickComplete();
+		if(C.ENABLE_TEMPERATURE_FAILSAFE) {
+			Failsafe.onLLCTickComplete();
+		}
+		
 		Temperature.onLLCTickComplete();
 		Control.onLLCTickComplete();
 	}
