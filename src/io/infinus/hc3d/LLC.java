@@ -5,7 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
 
-import io.infinus.hc3d.modules.DataFileLogging;
+import io.infinus.hc3d.modules.DataLog;
 import io.infinus.hc3d.modules.Failsafe;
 
 
@@ -255,9 +255,9 @@ public class LLC {
 	}
 	
 	private static void emitOnTickComplete() {
-		Main.onLLCTickComplete();
+		//Main.onLLCTickComplete();
 		if(Main.Config.dataLogEnabled) {
-			DataFileLogging.onLLCTickComplete();
+			DataLog.onLLCTickComplete();
 		}
 		if(C.ENABLE_TEMPERATURE_FAILSAFE) {
 			Failsafe.onLLCTickComplete();
@@ -278,10 +278,12 @@ public class LLC {
 	// Store value in outgoing data structure by field ID and value
 	public static void setValue(int fieldId, float value) {
 		Main.log("Setting value for field " + fieldId + " to " + value);
+		int adapter = outFieldLookup[fieldId][0];
 		 outData
-			[outFieldLookup[fieldId][0]]
+			[adapter]
 			[outFieldLookup[fieldId][1]]
 		 = value;
+		 writeOutgoingData(adapter);
 	}
 	
 	/*
@@ -338,24 +340,33 @@ public class LLC {
 				}
 			}
 			
-			/*
-			 * Write outgoing data structure
-			 */
-			// Serialize data structure
-			String line = "";
-			for(int i = 0; i < outData[adapter].length; i++) {
-				line += outData[adapter][i];
-				if(i != outData[adapter].length-1) {
-					line += ",";
-				}
-			}
-			if(C.LLC_RAW_LOGGING) {
-				Main.log("OUT: " + adapter + ": " + line);
-			}
-			line += "\n";
-			serialConnections[adapter].sendData(line.getBytes());
+
 		} catch (IOException e1) {
 			e1.printStackTrace();
+		}
+	}
+	
+	private static void writeOutgoingData(int adapter) {
+		/*
+		 * Write outgoing data structure
+		 */
+		// Serialize data structure
+		String line = "";
+		for(int i = 0; i < outData[adapter].length; i++) {
+			line += outData[adapter][i];
+			if(i != outData[adapter].length-1) {
+				line += ",";
+			}
+		}
+		if(C.LLC_RAW_LOGGING) {
+			Main.log("OUT: " + adapter + ": " + line);
+		}
+		line += "\n";
+		serialConnections[adapter].sendData(line.getBytes());
+		try {
+			Thread.sleep(1000); // Not sure if LLC can handle rapid data. Hacky "fix"
+		}catch(InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 }

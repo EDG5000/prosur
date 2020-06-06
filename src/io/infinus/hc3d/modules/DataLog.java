@@ -19,20 +19,23 @@ import io.infinus.hc3d.Util;
  * Every line in the log file has a 
  */
 
-public class DataFileLogging {
+public class DataLog {
 	static File file;
 	static FileOutputStream outputStream;
 	static String line;
 	
 	public static void onLLCTickComplete() {
 		if(Config.sitlMode) return;
-		if(LLC.getValue(LLC.OUT.RELAY_RAIL_12V) != 1f) {
-			// When 12V relay is off, Control.java has turned of the pump because all temps are low. Only log when there are high temps.
+		
+		// Because the system recieves erroneous temp under threshold events, lots of files were being generated
+		// For now, always perform data loggin
+		/*if(LLC.getValue(LLC.IN.RELAY_RAIL_12V) != 1f) {
+			// When 12V relay is off, Control.java has turned off the pump because all temps are low. Only log when there are high temps.
 			if(file != null) {
 				file = null;
 			}
 			return;
-		}
+		}*/
 		
 		if(file == null) {
 			String dataLogFolder = Main.Config.dataLogFolder + "/datalog";
@@ -59,7 +62,6 @@ public class DataFileLogging {
 				System.exit(1);
 			}
 		}
-		
 		line = Util.getDateString() + "\t";
 		for(int i = 0; i < C.LLC_TEMP_SENSOR_COUNT; i++) {
 			float val = LLC.getValue(C.LLC_TEMP_SENSOR_OFFSET + i);

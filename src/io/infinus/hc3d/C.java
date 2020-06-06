@@ -29,9 +29,9 @@ public class C {
 	public static final int TEMP_SENSOR_MOT_E = 3;
 	public static final int TEMP_SENSOR_CHTR = 4;
 	public static final int TEMP_SENSOR_CHBR = 5;
-	public static final boolean LLC_RAW_LOGGING = true; // Dumps serial data to log
+	public static final boolean LLC_RAW_LOGGING = false; // Dumps serial data to log
 	public static final float TEMP_PUMP_THRESHOLD = 38;
 	public static final float TEMP_PUMP_DEADBAND = 2;
 	public static int LLC_TICK_INTERVAL = 1000;
-	public static final boolean ENABLE_TEMPERATURE_FAILSAFE = false;
+	public static final boolean ENABLE_TEMPERATURE_FAILSAFE = false; // Disabled due to random high temperature readings. Attempts to filter these erroneuoes values were unsuccessful.
 }

@@ -12,7 +12,7 @@ import org.ini4j.Ini;
 import org.ini4j.IniPreferences;
 import org.ini4j.InvalidFileFormatException;
 
-import io.infinus.hc3d.modules.DataFileLogging;
+import io.infinus.hc3d.modules.DataLog;
 
 //import com.formdev.flatlaf.FlatDarculaLaf;
 
@@ -53,11 +53,11 @@ public class Main{
 		public static String dataLogFolder = null;
 	}
 	
-	public static void onLLCTickComplete() {
-		if(!uiReady) {
+	//public static void onLLCTickComplete() {
+		/*if(!uiReady) {
 			// UI still initializing
 			return;
-		}
+		}*/
 		
 		/*
 		if(Control.Params.MODE.getValue() == C.MODE_ON) {
@@ -83,13 +83,14 @@ public class Main{
 			dataLabels[i].setText(value);
 		}
 		*/
-	}
+	//}
 	
 	public static void onError(String error) {
 		Main.log("Error encountered: " + error);
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
+		
 		if(!Config.sitlMode) {
 			Runtime.getRuntime().addShutdownHook(new Thread()
 			{
@@ -99,7 +100,7 @@ public class Main{
 			    	// Half the time closing the serial ports fails, triggering an error in dmesg
 			    	// Reset USB device to clean them up after running
 			    	Main.log("HC3D is closing.");
-			    	DataFileLogging.close();
+			    	DataLog.close();
 			    	Main.log("Resetting USB devices...");
 			    	Main.log(Shell.shellCommandGetOutput("sh /home/pi/hc3d/reset-usb.sh", new File(applicationFolder)));
 			    	Main.log("USB devices reset.");
@@ -139,7 +140,7 @@ public class Main{
 		//Config.calibrationMode = prefs.node("main").getBoolean("calibrationMode", false);
 		Config.llcEnabled = prefs.node("main").getBoolean("llcEnabled", false);
 		Config.sitlMode = prefs.node("main").getBoolean("sitlMode", false);
-		Config.dataLogFolder = prefs.node("main").get("dataLogFolder", applicationFolder);
+		Config.dataLogFolder = prefs.node("main").get("dataLogFolder", prefs.node("main").get("dataLogFolder", ""));
 		
 		/*
 		 * Load native library for v4l4j

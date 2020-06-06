@@ -26,7 +26,7 @@ public class Control {
 			// In case relay is still set to 1 when HLC is rebooted, set LLC value to 0 just in case
 			// Will be set to 1 again if a high temperature is detected
 			initial = false;
-			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0f);
+			//LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 0f);
 			
 			/*
 			 * The following values are constant and (currently) not adjusted under any condition by Control
