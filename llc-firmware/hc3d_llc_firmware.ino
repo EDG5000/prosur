@@ -12,9 +12,9 @@
  */
 
 #define DEBUG
-#define ADAPTER_RECIR 0
+#define ADAPTER_RAD_FANS 0
 #define ADAPTER_TEMP_A 1
-#define ADAPTER_HE_FAN 2
+#define ADAPTER_PUMP 2
 #define ADAPTER_RELAY 3
 #define INPUT_DEV_TYPE_TEMP 0
 #define INPUT_DEV_TYPE_TACH 1
@@ -24,19 +24,19 @@
 /*
  * Select target adapter before flashing
  */
-#define ADAPTER ADAPTER_RECIR
+#define ADAPTER ADAPTER_RAD_FANS
 
 /*
  * Temp ctrl adapter config
  */
 
-#if ADAPTER == ADAPTER_RECIR
-	#define ADAPTER_ID "RECIR"
+#if ADAPTER == ADAPTER_RAD_FANS
+	#define ADAPTER_ID "RAD_FANS"
 
 	// Outputs configuration
 	#define OUTPUT_DEV_COUNT 2
 	#define OUTPUT_DEV_TYPE OUTPUT_DEV_TYPE_PWM
-	float PWM_OUT_MIN[] = { .35f, .35f}; // Used as initial setpoint until data is received
+	float PWM_OUT_MIN[] = { .7f, .7f}; // Used as initial setpoint until data is received
 	float PWM_OUT_MAX[] = { 1.0f, 1.0f}; // Used for failsafe
 
 	// Inputs configuration
@@ -65,13 +65,13 @@
 /*
  * HE fan adapter config
  */
-#if ADAPTER == ADAPTER_HE_FAN
-	#define ADAPTER_ID "HE_FAN"
+#if ADAPTER == ADAPTER_PUMP
+	#define ADAPTER_ID "HE_PUMP"
 
 	// Outputs configuration
 	#define OUTPUT_DEV_COUNT 1
 	#define OUTPUT_DEV_TYPE OUTPUT_DEV_TYPE_PWM
-	float PWM_OUT_MIN[] = { .35f }; // Used as initial setpoint until data is received
+	float PWM_OUT_MIN[] = { 1.0f }; // Used as initial setpoint until data is received
 	float PWM_OUT_MAX[] = { 1.0f }; // Used for failsafe
 
 	// Inputs configuration

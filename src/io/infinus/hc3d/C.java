@@ -33,5 +33,4 @@ public class C {
 	public static final float TEMP_PUMP_THRESHOLD = 38;
 	public static final float TEMP_PUMP_DEADBAND = 2;
 	public static int LLC_TICK_INTERVAL = 1000;
-	public static final boolean ENABLE_TEMPERATURE_FAILSAFE = false; // Disabled due to random high temperature readings. Attempts to filter these erroneuoes values were unsuccessful.
 }

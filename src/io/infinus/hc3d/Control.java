@@ -30,12 +30,15 @@ public class Control {
 			
 			/*
 			 * The following values are constant and (currently) not adjusted under any condition by Control
+			 * TODO the following values do not work; after some time USB seems to reset itself causing the values to reset on LLC
+			 * Also values of -1 are written causing problems!
 			 */
+			
 			// Fix cooling pump (assinged to HE_FAN) to 35% duty cycle to reduce noise. Tested to provide enough cooling
-			LLC.setValue(LLC.OUT.PWM_FAN_HE_IN, .5f); //TODO test this statement, should work fine. (enable LLC logging to see PWM value?)
+			//LLC.setValue(LLC.OUT.PWM_PUMP, 1f); //TODO test this statement, should work fine. (enable LLC logging to see PWM value?)
 			// Watercooling heatsink fans
-			LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, .5f); 
-			LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, .5f);
+			//LLC.setValue(LLC.OUT.PWM_FAN_RECIR_B, 1f); 
+			//LLC.setValue(LLC.OUT.PWM_FAN_RECIR_F, 1f);
 			
 			// Relay (and thus pumps and fans) are always on
 			// Below lines are commented out because sensors are reporting junk values too frequently

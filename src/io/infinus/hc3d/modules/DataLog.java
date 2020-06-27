@@ -63,6 +63,9 @@ public class DataLog {
 			}
 		}
 		line = Util.getDateString() + "\t";
+		
+		/*
+		// Get temperatures
 		for(int i = 0; i < C.LLC_TEMP_SENSOR_COUNT; i++) {
 			float val = LLC.getValue(C.LLC_TEMP_SENSOR_OFFSET + i);
 			//val = Math.round(val/100) * 100; // Round to 2 digits
@@ -71,6 +74,17 @@ public class DataLog {
 				line += "\t";
 			}
 		}
+		*/
+		
+		for(int adapter = 0; adapter < LLC.ADAPTER_COUNT; adapter++) {
+			for(int field = 0; field < LLC.IN_FIELD_LAYOUT[adapter]; field++) {
+				// Bypassing the LLC.getValue function and directly obtaning the value
+				float val = LLC.inData[adapter][field];
+				line += String.format("%05.2f", val);
+				line += "\t";
+			}
+		}
+		
 		line += "\n";
 		try {
 			outputStream.write(line.getBytes());

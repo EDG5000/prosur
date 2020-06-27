@@ -12,6 +12,13 @@ import org.ini4j.Ini;
 import org.ini4j.IniPreferences;
 import org.ini4j.InvalidFileFormatException;
 
+/*
+ * TODO
+ * - proper filteren van temp waarden zodat de gebruikt kunntn worden
+ * - auto pump speed based on temp
+ * - failsafe
+ */
+
 import io.infinus.hc3d.modules.DataLog;
 
 //import com.formdev.flatlaf.FlatDarculaLaf;
@@ -42,7 +49,7 @@ public class Main{
 	
 	// INI Config
 	public static class Config{
-		public static String[] serialPortIds = new String[LLC.LLC_ADAPTER_COUNT];
+		public static String[] serialPortIds = new String[LLC.ADAPTER_COUNT];
 		public static int webcamIndex = -1;
 		public static String webcamDeviceName;
 		public static boolean webcamEnabled = false;
@@ -132,7 +139,7 @@ public class Main{
 		prefs = new IniPreferences(prefsIni);
 		Config.serialPortIds[LLC.ADAPTER_TEMP_A] = prefs.node("main").get("serialPortTempA", "");
 		Config.serialPortIds[LLC.ADAPTER_RECIR] = prefs.node("main").get("serialPortRecir", "");
-		Config.serialPortIds[LLC.ADAPTER_FAN_HE] = prefs.node("main").get("serialPortFanHe", "");
+		Config.serialPortIds[LLC.ADAPTER_PUMP] = prefs.node("main").get("serialPortFanHe", "");
 		Config.serialPortIds[LLC.ADAPTER_RELAY] = prefs.node("main").get("serialPortRelay", "");
 		Config.dataLogEnabled = prefs.node("main").getBoolean("dataLogEnabled", false);
 		//Config.webcamEnabled = prefs.node("main").getBoolean("webcamEnabled", false);

@@ -29,12 +29,12 @@ public class LLC {
 	 */
 	
 	
-	static final int LLC_ADAPTER_COUNT = 4;
+	public static final int ADAPTER_COUNT = 4;
 	
 	// LLC adapter identifiers
 	static final int ADAPTER_TEMP_A = 0;
 	static final int ADAPTER_RECIR = 1;
-	static final int ADAPTER_FAN_HE = 2;
+	static final int ADAPTER_PUMP = 2;
 	static final int ADAPTER_RELAY = 3;
 	
 	// Field IDs. Need to be in accordance with field layout so that they can be found when calling helper methods
@@ -56,9 +56,9 @@ public class LLC {
 		public static final int TACH_FAN_RECIR_F = 10;
 		public static final int TACH_FAN_RECIR_B = 11;
 		
-		// FAN HE
-		public static final int PWM_FAN_HE_IN = 12;
-		public static final int TACH_FAN_HE_IN = 13;
+		// PUMP
+		public static final int PWM_PUMP = 12;
+		public static final int TACH_PUMP = 13;
 		/*public static final int PWM_FAN_HE_OUT = 6;   TODO uncomment
 		public static final int TACH_FAN_HE_OUT = 7;*/
 		
@@ -66,13 +66,6 @@ public class LLC {
 		public static final int RELAY_3DP_INTERLOCK_A = 14;
 		public static final int RELAY_3DP_INTERLOCK_B = 15;
 		public static final int RELAY_RAIL_12V = 16; // Fans and pumps for 3DP cooling and chamber temperature regulation
-
-		// PUMPS
-		// TODO uncomment
-		/*public static final int PWM_PUMP_HE = 2;
-		public static final int PWM_PUMP_THR_EXH = 3;
-		public static final int TACH_PUMP_HE = 4;
-		public static final int TACH_PUMP_THR_EXH = 5;*/
 	}
 	
 	public static class OUT{
@@ -80,8 +73,8 @@ public class LLC {
 		public static final int PWM_FAN_RECIR_F = 0;
 		public static final int PWM_FAN_RECIR_B = 1;
 		
-		// FAN HE
-		public static final int PWM_FAN_HE_IN = 2;
+		// PUMP
+		public static final int PWM_PUMP = 2;
 		
 		// RELAY
 		public static final int RELAY_3DP_INTERLOCK_A = 3;
@@ -89,14 +82,14 @@ public class LLC {
 		public static final int RELAY_RAIL_12V = 5; // Fans and pumps for 3DP cooling and chamber temperature regulation
 	}
 	// Indexed by adapter, values represent field count per adapter
-	static final int[] IN_FIELD_LAYOUT = new int[]{
+	public static final int[] IN_FIELD_LAYOUT = new int[]{
 			8, // TEMP_A
 			4, // RECIR
 			2, // FAN HE
 			3 // RELAY
 	};
 	
-	static final int[] OUT_FIELD_LAYOUT = new int[]{
+	public static final int[] OUT_FIELD_LAYOUT = new int[]{
 			0, // TEMP_A
 			2, // RECIR
 			1, // FAN HE
@@ -107,19 +100,19 @@ public class LLC {
 	 * End LLC configuration
 	 */
 	
-	private static SerialConnection[] serialConnections = new SerialConnection[LLC_ADAPTER_COUNT];
+	private static SerialConnection[] serialConnections = new SerialConnection[ADAPTER_COUNT];
 	
 	// Updated every frame
-	static float[][] inData = new float[LLC_ADAPTER_COUNT][];
+	public static float[][] inData = new float[ADAPTER_COUNT][];
 	// Stored partially received lines
-	static String[] serialReceiveBuffer = new String[LLC_ADAPTER_COUNT];
+	static String[] serialReceiveBuffer = new String[ADAPTER_COUNT];
 	
 	// Sent every frame
-	static float[][] outData = new float[LLC_ADAPTER_COUNT][];
+	static float[][] outData = new float[ADAPTER_COUNT][];
 	
 	// First time an error is encountered, it is tolerated (could be because application started in the middle of frame transmission)
 	// Otherwise, generate error application
-	static boolean[] incomingFrameWasDropped = new boolean[LLC_ADAPTER_COUNT];
+	static boolean[] incomingFrameWasDropped = new boolean[ADAPTER_COUNT];
 	
 	// Index by field id, containing pair of adapter id and field index
 	private static int[][] inFieldLookup;
@@ -132,7 +125,7 @@ public class LLC {
 	
 	static {
 		// Initialize all structures with -1 or empty strings
-		for(int adapter = 0; adapter < LLC_ADAPTER_COUNT; adapter++) {
+		for(int adapter = 0; adapter < ADAPTER_COUNT; adapter++) {
 			serialReceiveBuffer[adapter] = "";
 			inData[adapter] = new float[IN_FIELD_LAYOUT[adapter]];
 			outData[adapter] = new float[OUT_FIELD_LAYOUT[adapter]];
@@ -177,7 +170,7 @@ public class LLC {
 		// Initialize serial connections
 		if(!Main.Config.sitlMode) {
 			try {
-				for(int adapter = 0; adapter < LLC_ADAPTER_COUNT; adapter++) {
+				for(int adapter = 0; adapter < ADAPTER_COUNT; adapter++) {
 					serialConnections[adapter] = new SerialConnection(Main.Config.serialPortIds[adapter]);
 					serialConnections[adapter].openConnection();
 				}
@@ -224,7 +217,7 @@ public class LLC {
 					Main.log("SITL: Setting temps to " + sitlTick);
 				}else {
 					// Perform real tick
-					for(int i = 0; i < LLC_ADAPTER_COUNT; i++) {
+					for(int i = 0; i < ADAPTER_COUNT; i++) {
 						serialTick(i);
 					}	
 				}
@@ -234,7 +227,7 @@ public class LLC {
 				// Check if data for all fields is now received
 				if(!isSettled) {
 					boolean foundEmptyField = false;
-					for(int adapter = 0; adapter < LLC_ADAPTER_COUNT; adapter++) {
+					for(int adapter = 0; adapter < ADAPTER_COUNT; adapter++) {
 						for(int fieldIndex = 0; fieldIndex < inData[adapter].length; fieldIndex++) {
 							if(inData[adapter][fieldIndex] == -1) {
 								foundEmptyField = true;
@@ -255,16 +248,15 @@ public class LLC {
 	}
 	
 	private static void emitOnTickComplete() {
-		//Main.onLLCTickComplete();
 		if(Main.Config.dataLogEnabled) {
 			DataLog.onLLCTickComplete();
 		}
-		if(C.ENABLE_TEMPERATURE_FAILSAFE) {
-			Failsafe.onLLCTickComplete();
-		}
-		
-		Temperature.onLLCTickComplete();
 		Control.onLLCTickComplete();
+		/*
+		Failsafe.onLLCTickComplete();
+		Temperature.onLLCTickComplete();
+		
+		*/
 	}
 	
 	// Get value from incoming data by field ID
@@ -358,9 +350,9 @@ public class LLC {
 				line += ",";
 			}
 		}
-		if(C.LLC_RAW_LOGGING) {
+		//if(C.LLC_RAW_LOGGING) {
 			Main.log("OUT: " + adapter + ": " + line);
-		}
+		//}
 		line += "\n";
 		serialConnections[adapter].sendData(line.getBytes());
 		try {
