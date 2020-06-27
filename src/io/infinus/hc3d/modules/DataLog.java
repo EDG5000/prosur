@@ -80,7 +80,7 @@ public class DataLog {
 			for(int field = 0; field < LLC.IN_FIELD_LAYOUT[adapter]; field++) {
 				// Bypassing the LLC.getValue function and directly obtaning the value
 				float val = LLC.inData[adapter][field];
-				line += String.format("%05.2f", val);
+				line += String.format("%07.2f", val);
 				line += "\t";
 			}
 		}

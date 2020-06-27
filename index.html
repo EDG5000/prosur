@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+	<title>HC3D</title>
+	<script src="jquery.js"></script>
+	<script>
+		$(document).ready(function(){
+			var container = $("#value-container");
+			setInterval(function(){
+				$.get("get_llc_values.php", function(data){
+					container.html(data);
+				});
+			}, 1000);
+		});
+	</script>
+	<style type="text/css">
+		body{
+			padding: 0;
+			margin: 0;
+		}
+	</style>
+</head>
+<body>
+
+<div style="position: absolute; color: white; font-weight: bold; font-family: monospace; background: rgba(0,0,0,0.5); padding: 5px;" id="value-container"></div>
+<img src="http://192.168.1.185:8080/?action=stream" alt="http://192.168.1.185:8080/?action=stream" width="100%" />
+
+</body>
+</html>
