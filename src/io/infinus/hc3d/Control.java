@@ -43,6 +43,8 @@ public class Control {
 			// Relay (and thus pumps and fans) are always on
 			// Below lines are commented out because sensors are reporting junk values too frequently
 			LLC.setValue(LLC.OUT.RELAY_RAIL_12V, 1f);
+			LLC.setValue(LLC.OUT.RELAY_3DP_INTERLOCK_A, 1f);
+			LLC.setValue(LLC.OUT.RELAY_3DP_INTERLOCK_B, 1f);
 		}
 		/*
 		boolean riserFound = false;

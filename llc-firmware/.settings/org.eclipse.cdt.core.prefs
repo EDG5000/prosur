@@ -439,7 +439,7 @@ environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARD_NA
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.BOARD_NAME/value=Arduino Nano
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.COM_PORT/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.COM_PORT/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.COM_PORT/value=COM3
+environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.COM_PORT/value=COM4
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.ECLIPSE_LOCATION/delimiter=;
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.ECLIPSE_LOCATION/operation=replace
 environment/project/io.sloeber.core.toolChain.release.1456045327/JANTJE.ECLIPSE_LOCATION/value=C\:\\Sloeber\\

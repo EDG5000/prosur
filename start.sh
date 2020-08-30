@@ -1,5 +1,5 @@
 # Joel: Ramdisk for HC3D datalogging
-sudo mount -t tmpfs -o size=16M,mode=700 tmpfs /mnt/ramdisk
+sudo mount -t tmpfs -o size=50M,mode=700 tmpfs /mnt/ramdisk
 sudo /bin/chown pi:root /mnt/ramdisk
 sudo /bin/chmod 0777 /mnt/ramdisk
 

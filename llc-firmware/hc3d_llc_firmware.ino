@@ -36,7 +36,7 @@
 	// Outputs configuration
 	#define OUTPUT_DEV_COUNT 2
 	#define OUTPUT_DEV_TYPE OUTPUT_DEV_TYPE_PWM
-	float PWM_OUT_MIN[] = { .7f, .7f}; // Used as initial setpoint until data is received
+	float PWM_OUT_MIN[] = { 1.0f, 1.0f}; // Used as initial setpoint until data is received
 	float PWM_OUT_MAX[] = { 1.0f, 1.0f}; // Used for failsafe
 
 	// Inputs configuration
@@ -66,7 +66,7 @@
  * HE fan adapter config
  */
 #if ADAPTER == ADAPTER_PUMP
-	#define ADAPTER_ID "HE_PUMP"
+	#define ADAPTER_ID "PUMP"
 
 	// Outputs configuration
 	#define OUTPUT_DEV_COUNT 1
