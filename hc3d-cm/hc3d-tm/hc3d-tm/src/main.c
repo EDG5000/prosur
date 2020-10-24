@@ -72,7 +72,7 @@
 #include "drivers/driver_uart.h"
 #include "libraries/avr-ds80b20/ds18b20.h"
 #include "libraries/avr-ds80b20/ds18b20.h"
-#include "delay.h"
+#include "drivers/driver_sleep.h"
 
 int main (void)
 {
@@ -89,7 +89,7 @@ int main (void)
 
 		//Delay (sensor needs time to perform conversion)
 		//_delay_ms( 1000 );
-		delay_ms(1000);
+		driver_sleep_sleep(1000);
 
 		//Read temperature (without ROM matching)
 		ds18b20read( &PORTB, &DDRB, &PINB, ( 1 << 0 ), NULL, &temp );

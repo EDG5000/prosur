@@ -10,9 +10,11 @@
 
 #define DRIVER_RELAY_PIN 
 
-#ifndef UNIT_TEST
+#ifndef HC3D_TM_UNIT_TEST
 
-void driver_relay_init(){
+#include "drivers/driver_relay.h" 
+
+void driver_relay_init(void){
 	ioport_init();
 	ioport_set_pin_dir(HC3D_TM_CONFIG_PIN_RELAY, IOPORT_DIR_OUTPUT);
 	ioport_set_pin_level(HC3D_TM_CONFIG_PIN_RELAY, false);

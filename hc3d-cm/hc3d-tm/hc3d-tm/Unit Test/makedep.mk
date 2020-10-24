@@ -12,9 +12,19 @@ src\ASF\common\utils\unit_test\suite.c
 
 src\ASF\mega\drivers\usart\usart_mega.c
 
+src\business_logic\data_reader.c
+
+src\business_logic\pump_controller.c
+
+src\business_logic\temp_watchdog.c
+
 src\drivers\drivers_hw\driver_relay.c
 
 src\drivers\drivers_test\driver_relay.c
+
+src\drivers\drivers_test\driver_sleep.c
+
+src\drivers\drivers_test\driver_temp.c
 
 src\drivers\drivers_test\driver_uart.c
 

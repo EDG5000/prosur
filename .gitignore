@@ -1,1 +1,10 @@
 /bin/
+.o
+.d
+.elf
+.eep
+.lss
+.map
+.srec
+.mk
+Makefile

@@ -85,10 +85,12 @@
         <board id="board.user_board.mega" value="Add" config="" content-id="Atmel.ASF" />
       </framework-data>
     </AsfFrameworkConfig>
-    <avrtool>com.atmel.avrdbg.tool.ispmk2</avrtool>
-    <avrtoolserialnumber>008F5B78163A</avrtoolserialnumber>
+    <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
+    <avrtoolserialnumber>
+    </avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x1E950F</avrdeviceexpectedsignature>
-    <avrtoolinterface>ISP</avrtoolinterface>
+    <avrtoolinterface>
+    </avrtoolinterface>
     <avrtoolinterfaceclock>125000</avrtoolinterfaceclock>
     <com_atmel_avrdbg_tool_ispmk2>
       <ToolOptions>
@@ -281,7 +283,7 @@
       <Value>BOARD=USER_BOARD</Value>
       <Value>TEST_SUITE_DEFINE_ASSERT_MACRO</Value>
       <Value>_ASSERT_ENABLE_</Value>
-      <Value>UNIT_TEST</Value>
+      <Value>HC3D_TM_UNIT_TEST</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
@@ -371,6 +373,8 @@
     <Folder Include="src\libraries" />
     <Folder Include="src\libraries\avr-ds80b20" />
     <Folder Include="src\drivers" />
+    <Folder Include="src\business_logic" />
+    <Folder Include="src\unit_test_dataset" />
     <Folder Include="src\scripts" />
   </ItemGroup>
   <ItemGroup>
@@ -389,6 +393,24 @@
     <Compile Include="src\ASF\mega\drivers\usart\usart_mega.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\business_logic\data_reader.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\business_logic\data_reader.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\business_logic\pump_controller.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\business_logic\pump_controller.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\business_logic\temp_watchdog.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\business_logic\temp_watchdog.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\config.h">
       <SubType>compile</SubType>
     </Compile>
@@ -398,10 +420,25 @@
     <Compile Include="src\drivers\drivers_test\driver_relay.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\drivers\drivers_test\driver_sleep.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\drivers\drivers_test\driver_temp.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\drivers\drivers_test\driver_uart.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\drivers\driver_pwm.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\drivers\driver_relay.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\drivers\driver_sleep.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\drivers\driver_temp.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\drivers\driver_uart.h">
@@ -426,6 +463,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\old.txt">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\unit_test_dataset\temperature_dataset.h">
       <SubType>compile</SubType>
     </Compile>
     <None Include="src\ASF\mega\drivers\usart\usart_mega.h">
