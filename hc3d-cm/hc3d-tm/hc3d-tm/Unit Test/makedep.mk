@@ -14,6 +14,8 @@ src\ASF\mega\drivers\usart\usart_mega.c
 
 src\business_logic\data_reader.c
 
+src\business_logic\failsafe.c
+
 src\business_logic\pump_controller.c
 
 src\business_logic\temp_watchdog.c

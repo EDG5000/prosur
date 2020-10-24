@@ -54,8 +54,9 @@ static safety_state_t check_safety_state(uint16_t value, uint8_t sensor_index){
 	return value > sensor_safety_limit[sensor_index] ? UNSAFE : SAFE;
 }
 
-void temp_watchdog_tick(void){
-	// Check each sensor.
+// Returns false when one ore more channels has an unsafe value
+bool temp_watchdog_tick(void){
+	// Update sensor_safety_state
 	for(int sensor_index = 0; sensor_index < HC3D_TM_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
 		// Start checking the second-to-oldest sample, since we will be comparing it with the prevous sample
 		for(int sample_index = 1; sample_index<HC3D_TM_CONFIG_TEMP_BUF_SIZE; sample_index++){
@@ -78,4 +79,13 @@ void temp_watchdog_tick(void){
 			}
 		}
 	}
+
+	// Trigger failsafe when a sensor is in INVALID or UNSAFE state
+	for(int i = 0; i < HC3D_TM_CONFIG_TEMP_SENSOR_COUNT; i++){
+		if(sensor_safety_state[i] != SAFE){
+			return false;
+		}
+	}
+
+	return true;
 }

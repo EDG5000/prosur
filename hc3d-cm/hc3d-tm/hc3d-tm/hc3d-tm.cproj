@@ -399,6 +399,12 @@
     <Compile Include="src\business_logic\data_reader.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\business_logic\failsafe.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\business_logic\failsafe.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\business_logic\pump_controller.c">
       <SubType>compile</SubType>
     </Compile>

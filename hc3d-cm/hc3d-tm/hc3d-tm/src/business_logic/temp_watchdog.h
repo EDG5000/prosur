@@ -10,4 +10,4 @@
 #include "stdint.h"
 
 void temp_watchdog_init(void);
-void temp_watchdog_tick(void);
+bool temp_watchdog_tick(void);
