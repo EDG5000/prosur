@@ -9,15 +9,12 @@
 #include "stdint.h"
 #include "config.h"
 #include "drivers/driver_temp.h"
-#include "unit_test_dataset/temperature_dataset.h"
-extern uint16_t temperature_dataset[][HC3D_TM_CONFIG_PIN_TEMP_COUNT];
 
 // Moving buffer keeping the last 10 values.
-uint16_t last_temperatures[HC3D_TM_TEMPERATURE_DATASET_SIZE][HC3D_TM_CONFIG_PIN_TEMP_COUNT];
+uint16_t last_temperatures[HC3D_TM_CONFIG_TEMP_BUF_SIZE][HC3D_TM_CONFIG_TEMP_SENSOR_COUNT];
 
 void data_reader_init(void){
 	// NOP as of yet
-
 }
 
 // Poll latest temperatures from driver_temp.
@@ -26,20 +23,20 @@ void data_reader_init(void){
 void data_reader_tick(void){
 	// Copy values over to buffer and back to shift them all one back.
 	// Start at position 1. Copy to position before it.
-	for(int frame_index = 1; frame_index < HC3D_TM_TEMPERATURE_DATASET_SIZE; frame_index++){
+	for(int frame_index = 1; frame_index < HC3D_TM_CONFIG_TEMP_BUF_SIZE; frame_index++){
 		// Copy each value from this frame to the preceding frame
-		for(int sensor_index = 0; sensor_index < HC3D_TM_CONFIG_PIN_TEMP_COUNT; sensor_index++){
-			temperature_dataset[frame_index-1][sensor_index] = temperature_dataset[frame_index][sensor_index];
+		for(int sensor_index = 0; sensor_index < HC3D_TM_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
+			last_temperatures[frame_index-1][sensor_index] = last_temperatures[frame_index][sensor_index];
 		}	
 	}
 
 	// Get a new value for each sensor.
-	uint16_t new_reading[HC3D_TM_CONFIG_PIN_TEMP_COUNT];
-	driver_temp_read(new_reading, HC3D_TM_CONFIG_PIN_TEMP_COUNT);
+	uint16_t new_reading[HC3D_TM_CONFIG_TEMP_SENSOR_COUNT];
+	driver_temp_read(new_reading, HC3D_TM_CONFIG_TEMP_SENSOR_COUNT);
 
 	// Overwrite last frame, which is already copied to the frame preceding it.
 	// Write the newly retrieved data to it.
-	for(int sensor_index = 0; sensor_index < HC3D_TM_CONFIG_PIN_TEMP_COUNT; sensor_index++){
-		temperature_dataset[HC3D_TM_TEMPERATURE_DATASET_SIZE-1][sensor_index] = new_reading[sensor_index];
+	for(int sensor_index = 0; sensor_index < HC3D_TM_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
+		last_temperatures[HC3D_TM_CONFIG_TEMP_BUF_SIZE-1][sensor_index] = new_reading[sensor_index];
 	}
 }

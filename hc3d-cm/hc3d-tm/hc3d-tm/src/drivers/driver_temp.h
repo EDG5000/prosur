@@ -10,5 +10,5 @@
 #include "stdint.h"
 
 void driver_temp_init(void);
-uint16_t* driver_temp_read(uint16_t* arr, uint8_t length);
+void driver_temp_read(uint16_t* arr, uint8_t length);
 

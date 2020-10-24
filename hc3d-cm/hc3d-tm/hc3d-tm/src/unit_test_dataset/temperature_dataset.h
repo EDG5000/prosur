@@ -9,7 +9,7 @@
 
 #define HC3D_TM_TEMPERATURE_DATASET_SIZE 50
 
-uint16_t temperature_dataset[][] = {
+uint16_t temperature_dataset[][HC3D_TM_CONFIG_TEMP_SENSOR_COUNT] = {
 	/* 00 */ {20, 20, 20, 20, 20, 20, 20, 20},
 	/* 01 */ {20, 20, 20, 20, 20, 20, 20, 20},
 	/* 02 */ {20, 20, 20, 20, 20, 20, 20, 20},
@@ -60,4 +60,4 @@ uint16_t temperature_dataset[][] = {
 	/* 47 */ {20, 20, 20, 20, 20, 20, 20, 20},
 	/* 48 */ {20, 20, 20, 20, 20, 20, 20, 20},
 	/* 49 */ {20, 20, 20, 20, 20, 20, 20, 20},
-}
+};
