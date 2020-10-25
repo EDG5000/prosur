@@ -36,8 +36,8 @@ void pump_controller_tick(void){
 	int error = highest_temp - HC3D_TM_CONFIG_CONTROLLER_TEMP_SETPOINT; // TODO check if it needs to be inverted
 	
 	// Obtain pump PWM control output from PI controller
-	int setpoint = pi_control(&pi_control_state, error);
+	int control_output = pi_control(&pi_control_state, error);
 	
 	// Send control output to PWM driver
-	driver_pwm_set_pwm(setpoint);
+	driver_pwm_set_pwm(control_output);
 }
