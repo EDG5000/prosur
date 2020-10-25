@@ -8,11 +8,11 @@
 	Uses pin configuration set in config.h
  */ 
 
-#define DRIVER_RELAY_PIN 
-
 #ifndef HC3D_TM_UNIT_TEST
 
 #include "drivers/driver_relay.h" 
+#include "ioport.h"
+#include "config.h"
 
 void driver_relay_init(void){
 	ioport_init();

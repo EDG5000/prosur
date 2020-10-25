@@ -12,12 +12,12 @@
 
 // NOP, special breakpoint logs to debug console and resumes excecution
 void driver_uart_init(void){
-	
+	// NOP
 }
 
 // NOP, special breakpoint logs parameter to debug console and resumes excecution
 void driver_uart_write(char* val){
-	
+	// NOP (inspecting this data would be good, breakpoints could be used)
 }
 
 #endif

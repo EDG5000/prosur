@@ -10,4 +10,4 @@
 
 #include "stdint.h"
 
-void driver_sleep_sleep(uint32_t time);
+void driver_sleep(uint32_t time);

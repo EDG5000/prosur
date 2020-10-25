@@ -7,4 +7,5 @@
 *.map
 *.srec
 *.mk
+*.hex
 *Makefile

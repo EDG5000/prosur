@@ -6,4 +6,6 @@
  */ 
 
 #pragma once
-
+ 
+void pump_controller_init(void);
+void pump_controller_tick(void);

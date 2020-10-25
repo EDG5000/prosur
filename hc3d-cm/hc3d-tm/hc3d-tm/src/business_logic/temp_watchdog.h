@@ -8,6 +8,7 @@
 #pragma once
 
 #include "stdint.h"
+#include "stdbool.h"
 
 void temp_watchdog_init(void);
 bool temp_watchdog_tick(void);

@@ -9,7 +9,7 @@
 
 #include "drivers/driver_sleep.h"
 
-void driver_sleep_sleep(uint32_t time){
+void driver_sleep(uint32_t time){
 	// Sleep is for the weak (not sleeping in HC3D_TM_UNIT_TEST mode)
 }
 

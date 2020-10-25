@@ -50,7 +50,9 @@
 				- Keep steppers below target temperature
 				- Use PID; send PWM command to PWM driver
 				- Read Tach from Data Reader
-			
+		Data Reporter
+				- Reports temperature data, tach data
+				- Events related to safety are also reported as string messages over serial (not handled by serial writer)	
 		
 		HW Drivers & Test Drivers
 			Tach Driver
@@ -65,36 +67,84 @@
 				- Allows performing init() and read() calls on sensors
 			Sleep Driver
 				- Provides sleep(uint ms) function
+	Test Stategy
+		- Compile test drivers instead of hardware drivers when running in unit test mode
+		- Temp Driver in test mode will generate fake data when requesting data
+		- Relay driver will print operations in console
+		- UART driver will print written data in console
+		
+
 */
 
 #include <asf.h>
 #include <stdbool.h>
 #include "drivers/driver_uart.h"
-#include "libraries/avr-ds80b20/ds18b20.h"
-#include "libraries/avr-ds80b20/ds18b20.h"
 #include "drivers/driver_sleep.h"
+#include "drivers/driver_relay.h"
+#include "drivers/driver_temp.h"
+#include "drivers/driver_pwm.h"
+#include "drivers/driver_tach.h"
 
-int main (void)
-{
+#include "business_logic/failsafe.h"
+#include "business_logic/data_reader.h"
+#include "business_logic/data_reporter.h"
+#include "business_logic/temp_watchdog.h"
+#include "business_logic/clock.h"
+#include "business_logic/pump_controller.h"
+
+int main (void){
+	// Call ASF bootstrap functions. Not sure if needed.
 	sysclk_init();
 	board_init();
-	
+
+	// Init drivers
+	driver_relay_init(); // Relay should be off after power cycle and stay off during initialisation of the relay driver
 	driver_uart_init();
+	driver_temp_init();
+	driver_pwm_init();
+	driver_tach_init();
 	
-	int temp;
-
+	// Init business logic modules
+	clock_init();
+	pump_controller_init();
+	temp_watchdog_init();
+	
 	while(true){
-		//Start conversion (without ROM matching)
-		ds18b20convert( &PORTB, &DDRB, &PINB, ( 1 << 0 ), NULL );
-
-		//Delay (sensor needs time to perform conversion)
-		//_delay_ms( 1000 );
-		driver_sleep_sleep(1000);
-
-		//Read temperature (without ROM matching)
-		ds18b20read( &PORTB, &DDRB, &PINB, ( 1 << 0 ), NULL, &temp );
-
-		//Somehow use data stored in `temp` variable
+		// Record tick start time to later calculate the correct sleep time
+		uint32_t time_start = clock_time();
+	
+		// This will fetch temperature data from driver_temp and store it in a buffer
+		data_reader_tick();
+		
+		// Run temp_watchdog, which also calculates validated temperatures used later
+		if(!temp_watchdog_tick()){
+			// Temp_watchdog has invoked the failsafe
+			// Abort excecution of program
+			break;
+		}
+		
+		// Run pump controller. Uses data calculated by temp_watchdog
+		// Results from pump_controller will be reported by data_reporter
+		// along with other data points.
+		pump_controller_init();
+		
+		// Report measured temperatures to serial
+		data_reporter_tick();
+		
+		uint32_t time_taken = clock_time() - time_start;
+		if(time_taken > 1000){
+			// Will be in the case of slow processing or timer wrap around
+			// To confidently ensure at least 1Hz is used between frames, default to 
+			// sleeping the full 1s in these unsure cases.
+			time_taken = 0;
+		}
+		driver_sleep(1000 - time_taken); // 1 sec delay + data reader time duration
+	}
+	
+	// Prevent AVR from resetting
+	// This section will only be reached when the failsafe is triggered
+	while(true){
+		driver_sleep(1000);
 	}
 
 	return 0;

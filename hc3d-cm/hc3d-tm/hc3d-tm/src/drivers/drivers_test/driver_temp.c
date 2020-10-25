@@ -5,6 +5,8 @@
  *  Author: Joel
  */ 
 
+#ifdef HC3D_TM_UNIT_TEST
+
 #include "drivers/driver_temp.h"
 #include "config.h"
 #include "stdint.h"
@@ -33,3 +35,5 @@ void driver_temp_read(uint16_t* arr, uint8_t length){
 
 	unit_test_data_frame++;
 }
+
+#endif

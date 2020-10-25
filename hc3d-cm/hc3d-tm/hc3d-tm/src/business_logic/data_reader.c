@@ -13,9 +13,8 @@
 // Moving buffer keeping the last 10 values.
 uint16_t last_temperatures[HC3D_TM_CONFIG_TEMP_BUF_SIZE][HC3D_TM_CONFIG_TEMP_SENSOR_COUNT];
 
-void data_reader_init(void){
-	// NOP as of yet
-}
+
+
 
 // Poll latest temperatures from driver_temp.
 // Insert frame into moving buffer.

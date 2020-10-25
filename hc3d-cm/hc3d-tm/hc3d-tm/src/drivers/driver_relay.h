@@ -19,3 +19,4 @@ void driver_relay_init(void);
 // Set pin LOW or HIGH
 void driver_relay_set(bool val);
 
+bool driver_relay_get(void);
