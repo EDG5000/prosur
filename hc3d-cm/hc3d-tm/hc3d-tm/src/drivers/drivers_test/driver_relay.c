@@ -8,7 +8,8 @@
 	Uses pin configuration set in config.h
  */ 
 
-#ifdef HC3D_TM_UNIT_TEST
+#include "config.h"
+#if HC3D_USE_TEST_DRIVERS==1
 
 #include "drivers/driver_uart.h"
 #include "stdbool.h"

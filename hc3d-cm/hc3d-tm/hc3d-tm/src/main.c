@@ -76,8 +76,9 @@
 
 */
 
-#include <asf.h>
-#include <stdbool.h>
+#include "config.h"
+#include "asf.h"
+#include "stdbool.h"
 #include "drivers/driver_uart.h"
 #include "drivers/driver_sleep.h"
 #include "drivers/driver_relay.h"
@@ -92,6 +93,7 @@
 #include "business_logic/clock.h"
 #include "business_logic/pump_controller.h"
 
+#if HC3D_UNIT_TEST == HC3D_UNIT_TEST_OFF
 int main (void){
 	// Call ASF bootstrap functions. Not sure if needed.
 	sysclk_init();
@@ -115,18 +117,20 @@ int main (void){
 	
 		// This will fetch temperature data from driver_temp and store it in a buffer
 		data_reader_tick();
-		
+
+/*
 		// Run temp_watchdog, which also calculates validated temperatures used later
 		if(!temp_watchdog_tick()){
 			// Temp_watchdog has invoked the failsafe
 			// Abort excecution of program
 			break;
 		}
+*/
 		
 		// Run pump controller. Uses data calculated by temp_watchdog
 		// Results from pump_controller will be reported by data_reporter
 		// along with other data points.
-		pump_controller_init();
+		pump_controller_tick();
 		
 		// Report measured temperatures to serial
 		data_reporter_tick();
@@ -149,3 +153,4 @@ int main (void){
 
 	return 0;
 }
+#endif

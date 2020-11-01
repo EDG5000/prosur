@@ -5,7 +5,8 @@
  *  Author: Joel
  */ 
 
-#ifndef HC3D_TM_UNIT_TEST
+#include "config.h"
+#if HC3D_USE_TEST_DRIVERS==0
 
 #include "drivers/driver_temp.h"
 #include "libraries/avr-ds80b20/ds18b20.h"

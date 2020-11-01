@@ -8,7 +8,8 @@
 	Uses pin configuration set in config.h
  */ 
 
-#ifndef HC3D_TM_UNIT_TEST
+#include "config.h"
+#if HC3D_USE_TEST_DRIVERS==0
 
 #include "drivers/driver_relay.h" 
 #include "ioport.h"
@@ -16,13 +17,16 @@
 
 void driver_relay_init(void){
 	ioport_init();
-	ioport_set_pin_dir(HC3D_TM_CONFIG_PIN_RELAY, IOPORT_DIR_OUTPUT);
-	ioport_set_pin_level(HC3D_TM_CONFIG_PIN_RELAY, false);
-	//ioport_set_pin_mode(HC3D_TM_CONFIG_PIN_RELAY, IOPORT_MODE_); ???
+	
+	// TODO; use registers directly for consistency?
+	//ioport_set_pin_dir(HC3D_CONFIG_PIN_RELAY, IOPORT_DIR_OUTPUT);
+	//ioport_set_pin_level(HC3D_CONFIG_PIN_RELAY, false);
+	//ioport_set_pin_mode(HC3D_CONFIG_PIN_RELAY, IOPORT_MODE_); ???
 }
 
 void driver_relay_set(bool val){
-	ioport_set_pin_level(HC3D_TM_CONFIG_PIN_RELAY, val);
+	// TODO
+	//ioport_set_pin_level(HC3D_CONFIG_PIN_RELAY, val);
 }
 
 #endif

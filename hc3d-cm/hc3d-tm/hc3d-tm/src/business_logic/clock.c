@@ -15,6 +15,7 @@ volatile uint32_t time;
 void clock_init(void){
 	// Note: Be carefull as to ensure not to interfere with Tach and PWM interrupt (driver_pwm, driver_tach).
 	// Note: Interference will not occur in UNIT_TEST mode!
+	// TODO check!!
 	OCR1A = 15999;
 }
 

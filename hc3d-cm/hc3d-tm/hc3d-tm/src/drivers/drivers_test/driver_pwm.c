@@ -6,7 +6,8 @@
  *  Author: Joel
  */ 
 
-#ifdef HC3D_TM_UNIT_TEST
+#include "config.h"
+#if HC3D_USE_TEST_DRIVERS==1
 
 #include "drivers/driver_pwm.h"
 

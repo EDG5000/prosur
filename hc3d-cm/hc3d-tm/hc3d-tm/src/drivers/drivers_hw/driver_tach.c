@@ -6,9 +6,13 @@
  *  Author: Joel
  */ 
 
+#include "config.h"
 #include "asf.h"
+#include "drivers/driver_tach.h"
 
-#ifndef HC3D_TM_UNIT_TEST
+#if HC3D_USE_TEST_DRIVERS==0
+
+uint32_t ticks = 0; 
 
 void driver_tach_init(void){
 	// Set up interrupts
@@ -20,13 +24,28 @@ void driver_tach_init(void){
 	EIMSK |= (1 << INT0);
 }
 
+/// Has to be called at exactly 1Hz
 uint32_t driver_tach_get(void){
 	return 1; // TODO
+	/*
+			// For each tachometric device, calculate average speed in RPM based on data gathered since the last calculation
+			// Reset counters afterwards
+			// Store results in tach_speed_rpm_calc
+			for(int i = 0; i < INPUT_DEV_COUNT; i++){
+				if(tach_total_ticks[i] != 0){
+					cmd_out_buf[i] = tach_total_ticks[i];
+					tach_total_ticks[i] = 0;
+					tach_total_duration[i] = 0;
+					}else{
+					cmd_out_buf[i] = 0;
+				}
+			}
+			*/
 }
 
 // External Interrupt Request 0
 ISR(INT0_vect){
-
+	ticks++;
 };
 
 
