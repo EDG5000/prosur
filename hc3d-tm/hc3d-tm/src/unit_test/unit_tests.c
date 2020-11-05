@@ -1,10 +1,14 @@
 /*
+	ALL
 	SERIAL
 		SLEEP	
 			CLOCK
 				DRIVER_TACH
 			DRIVER_PWM
+				PWM_AND_CLOCK
 			DRIVER_RELAY	
+			TEMP
+			TACH
  */ 
 
 #include "config.h"
@@ -14,6 +18,7 @@
 #include "drivers/driver_relay.h"
 #include "drivers/driver_clock.h"
 #include "drivers/driver_temp.h"
+#include "drivers/driver_tach.h"
 
 #include "libraries/avr_printf/avr_printf.h"
 #include "stdio.h"
@@ -133,13 +138,27 @@ int main(void){
 	uint16_t temperatures[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 	
 	while(true){
-		driver_temp_read(temperatures, HC3D_CONFIG_TEMP_SENSOR_COUNT);
+		driver_temp_read(temperatures);
 		printf("Temperatures");
 		for(int i = 0; i < HC3D_CONFIG_TEMP_SENSOR_COUNT; i++){
 			printf(" | %i", temperatures[i]);
 		}
 		driver_sleep(1000);
 		printf("\n");
+	}
+}
+
+#elif HC3D_UNIT_TEST==HC3D_UNIT_TEST_TACH
+
+int main(void){
+	avr_printf_init();
+	printf("HC3D_UNIT_TEST_TACH");
+	
+	uint32_t val;
+	while(true){
+		val = driver_tach_get();
+		printf("Tach value: %lu.\n", val);
+		driver_sleep(1000);
 	}
 }
 

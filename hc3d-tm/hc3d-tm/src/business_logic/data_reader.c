@@ -28,7 +28,7 @@ void data_reader_tick(void){
 
 	// Get a new value for each sensor.
 	uint16_t new_reading[HC3D_CONFIG_TEMP_SENSOR_COUNT];
-	driver_temp_read(new_reading, HC3D_CONFIG_TEMP_SENSOR_COUNT);
+	driver_temp_read(new_reading);
 
 	// Overwrite last frame, which is already copied to the frame preceding it.
 	// Write the newly retrieved data to it.

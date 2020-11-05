@@ -11,25 +11,18 @@
 #include "drivers/driver_temp.h"
 #include "libraries/avr-ds80b20/ds18b20.h"
 #include "stdint.h"
-
-/*
-
-	while(true){
-
-
-		//Somehow use data stored in `temp` variable
-	}
-
-*/
+#include "avr/io.h"
 
 void driver_temp_init(void){
 	// TODO
+	
 }
 
 // For array length HC3D_TEMP_SENSOR_SOUND is used
 void driver_temp_read(uint16_t* arr){
+	uint32_t temp;
 	
-	
+	/*
 	// TODO
 	for(int i = 0; i < HC3D_CONFIG_TEMP_SENSOR_COUNT; i++){
 		arr[i] = i;
@@ -44,7 +37,7 @@ void driver_temp_read(uint16_t* arr){
 		// Read temperature (without ROM matching)
 		ds18b20read( &PORTB, &DDRB, &PINB, ( 1 << 0 ), NULL, &temp );
 	}
-			
+	*/
 			
 
 }
