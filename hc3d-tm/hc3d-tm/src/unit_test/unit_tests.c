@@ -153,11 +153,12 @@ int main(void){
 int main(void){
 	avr_printf_init();
 	printf("HC3D_UNIT_TEST_TACH");
-	
+	driver_tach_init();
 	uint32_t val;
 	while(true){
 		val = driver_tach_get();
 		printf("Tach value: %lu.\n", val);
+		
 		driver_sleep(1000);
 	}
 }
