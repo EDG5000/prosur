@@ -48,7 +48,7 @@
 // Unit testing and mock drivers
 #define HC3D_USE_TEST_DRIVERS							0			// (on/off: 1/0) Use fake software-only testing drivers instead of hardware drivers									
 																	// Select specific unit test or all unit tests
-#define HC3D_UNIT_TEST									HC3D_UNIT_TEST_TACH
+#define HC3D_UNIT_TEST									HC3D_UNIT_TEST_DRIVER_TEMP
 
 // Temperature driver setup
 //#define HC3D_CONFIG_PIN_TEMP_START					2			// TODO currently hardcoded, see driver_temp// Pin of temperature sensor 0. Other sensors will be assigned the pins following it
@@ -94,7 +94,7 @@
 #define HC3D_UNIT_TEST_DRIVER_RELAY						5
 #define HC3D_UNIT_TEST_DRIVER_CLOCK						6
 #define HC3D_UNIT_TEST_PWM_AND_CLOCK					7
-#define HC3D_UNIT_TEST_TEMP								8
+#define HC3D_UNIT_TEST_DRIVER_TEMP						8
 #define HC3D_UNIT_TEST_TACH								9
 
 

@@ -73,6 +73,12 @@
 		- Relay driver will print operations in console
 		- UART driver will print written data in console
 		
+	Pin Reservations
+		driver_tach: 2 (D2)
+		driver_pwm: 9 (B1) + 10 reserved (B2)
+		driver_relay: 8 (B0)
+		driver_temp 3 (D3), 4 (D4), 5 (D5), 6 (D6) , 7 (D7), 11 (B3), 12 (B4)
+		
 
 */
 

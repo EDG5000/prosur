@@ -127,11 +127,11 @@ int main(void){
 	}
 }
 
-#elif HC3D_UNIT_TEST==HC3D_UNIT_TEST_TEMP
+#elif HC3D_UNIT_TEST==HC3D_UNIT_TEST_DRIVER_TEMP
 
 int main(void){
 	avr_printf_init();
-	printf("HC3D_UNIT_TEST_TEMP");
+	printf("HC3D_UNIT_TEST_DRIVER_TEMP");
 	
 	driver_temp_init();
 	
