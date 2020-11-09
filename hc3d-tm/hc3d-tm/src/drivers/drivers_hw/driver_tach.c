@@ -13,7 +13,7 @@
 #include "drivers/driver_tach.h"
 #include "avr/interrupt.h"
 
-#if HC3D_USE_TEST_DRIVERS==0
+#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL
 
 uint32_t ticks = 0; 
 

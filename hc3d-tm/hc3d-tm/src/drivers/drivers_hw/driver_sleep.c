@@ -6,7 +6,7 @@
  */ 
 
 #include "config.h"
-#if HC3D_USE_TEST_DRIVERS==0
+#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL
 
 
 #define __DELAY_BACKWARD_COMPATIBLE__

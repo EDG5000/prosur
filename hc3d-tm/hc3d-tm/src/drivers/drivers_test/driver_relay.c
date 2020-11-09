@@ -9,18 +9,18 @@
  */ 
 
 #include "config.h"
-#if HC3D_USE_TEST_DRIVERS==1
+#if HC3D_TEST_MODE==HC3D_TEST_MODE_SITL
 
-#include "drivers/driver_uart.h"
+#include "stdio.h"
 #include "stdbool.h"
 #include "drivers/driver_relay.h"
 
 void driver_relay_init(void){
-	driver_uart_write("Driver uart INIT.");
+	printf("Driver relay INIT.");
 }
 
 void driver_relay_set(bool val){
-	volatile int a = 0;
+	;
 }
 
 #endif

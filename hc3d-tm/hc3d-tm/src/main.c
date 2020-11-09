@@ -2,12 +2,28 @@
 	HC3D-TM
 	Infinus I/O HC3D Temperature Management
 	
+	TODO expand temperature algorythm: no reading for 100 frames, trigger invalid reading
+	
 	Purpose
 		- Monitor stepper motor temperature; kill power to Duet when limits exceeded.
 		- Monitor chamber temperature; kill power to duet when limits exceeded
-		- Report all temperatures to UART
+		- Report to UART:  raw and processed temperatures, pump tachometer reading, pump pi controller state, failsafe events (detailed reason)
+		- Control stepper motor temperature by controlling pump
 		
-		(future)- Control stepper motor temperature by controlling pump PWM (optionally with tach as feedback/sanity check)
+	Envisioned scenarios:
+		failsafe triggered due to
+			invalid reading detected
+			chamber temperature reached critical level
+			motor temperature reached critical level
+		pump controller is
+			not cooling due to motors still at safe temperature, chamber still heating
+			keeping motors stable at setpoint of 60 deg, ambient temperature 70, motors inactive
+			keeping motors table at setppoint of 60 deg, ambient temperature 70, motors active
+			motors have exceeded 60 deg c, controller is experiencing slight overshoot and attempting to reach setpoint and recovers
+			motors under 60 deg c, controller is experiencing slight undershoot and recovers
+			cooling system failure; cooling setpoint 100%, motor temperature exceeding setpoint approaching critical level
+		reporting during long print
+			data reported, no failsafe triggered, pump controller operational
 		
 	Startup Sequence
 		- Board init
@@ -86,7 +102,7 @@
 #include "stdbool.h"
 #include "libraries/avr_printf/avr_printf.h"
 
-#include "drivers/driver_uart.h"
+#include "stdio.h"
 #include "drivers/driver_sleep.h"
 #include "drivers/driver_relay.h"
 #include "drivers/driver_temp.h"
@@ -100,7 +116,7 @@
 #include "business_logic/temp_watchdog.h"
 #include "business_logic/pump_controller.h"
 
-#if HC3D_UNIT_TEST == HC3D_UNIT_TEST_OFF
+#if HC3D_TEST_MODE == 0 || HC3D_TEST_MODE == HC3D_TEST_MODE_SITL
 int main (void){
 
 	avr_printf_init();
@@ -108,19 +124,17 @@ int main (void){
 
 	// Init drivers
 	driver_relay_init(); // Relay should be off after power cycle and stay off during initialisation of the relay driver
-	driver_uart_init();
-	driver_temp_init();
 	driver_pwm_init();
 	driver_tach_init();
+	driver_clock_init();
 	
 	// Init business logic modules
-	clock_init();
 	pump_controller_init();
 	temp_watchdog_init();
 	
 	while(true){
 		// Record tick start time to later calculate the correct sleep time
-		uint32_t time_start = clock_time();
+		uint32_t time_start = driver_clock_time();
 	
 		// This will fetch temperature data from driver_temp and store it in a buffer
 		data_reader_tick();
@@ -140,7 +154,7 @@ int main (void){
 		// Report measured temperatures to serial
 		data_reporter_tick();
 		
-		uint32_t time_taken = clock_time() - time_start;
+		uint32_t time_taken = driver_clock_time() - time_start;
 		if(time_taken > 1000){
 			// Will be in the case of slow processing or timer wrap around
 			// To confidently ensure at least 1Hz is used between frames, default to 

@@ -3,14 +3,27 @@
  *
  * Created: 2020-10-23 10:41:27 PM
  *  Author: Joel
- */ 
+ 
+ Features:
+	- Handles single out-of-valid-range events gracefully, as well as sensors permanently entering out-of-valid-range state
+	
+ Shortcomings
+	- Does not detect failure when sensors oscillate in and out of valid ranges within a 10-sec (10-frame) timeframe
+	- Does not detect single in-valid-range high-delta event; emits new "valid" reading on such an event
+	
+ New Concept
+							   ->		   [FAILSAFE]
+ [RAW] -> =1Hz -> [VALIDATION] -> =<1Hz -> [TIMEOUT] -> [FAILSAFE]
+ 
+ - Somehow detect the aforementioned shortcomings and trigger failsafe on such occasions
+ 
+ */  
 
 #include "stdint.h"
 #include "config.h"
 #include "stdbool.h"
 
 #include "stdio.h"
-#include "drivers/driver_uart.h"
 #include "business_logic/temp_watchdog.h"
 #include "business_logic/failsafe.h"
 #include "business_logic/data_reader.h"
@@ -97,14 +110,12 @@ bool temp_watchdog_tick(void){
 			// There was an unsafe sensor. This means the failsafe was tripped
 			// Report details about the sensor to UART for diag. purposes
 			// Report details about why the failsafe tripped
-			driver_uart_write("Sensor ");
-			char str_sensor_index[10];
-			sprintf(str_sensor_index, "%d", sensor_index);
-			driver_uart_write(str_sensor_index);
+			printf("Sensor ");
+			printf("%i", sensor_index);
 			if(sensor_safety_state[sensor_index] == UNSAFE){
-				driver_uart_write("has state UNSAFE.");
+				printf("has state UNSAFE.");
 			}else if(sensor_safety_state == INVALID){
-				driver_uart_write("has state INVALID.");
+				printf("has state INVALID.");
 			}
 		}else{
 			// Update last valid temperature for each sensor considered safe

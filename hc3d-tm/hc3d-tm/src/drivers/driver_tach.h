@@ -11,4 +11,4 @@
 #include "stdint.h"
 
 void driver_tach_init(void);
-uint32_t driver_tach_get(void);
+uint8_t driver_tach_get(void);

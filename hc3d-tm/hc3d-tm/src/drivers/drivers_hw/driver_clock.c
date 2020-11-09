@@ -7,7 +7,7 @@
  */ 
 
 #include "config.h"
-#if HC3D_USE_TEST_DRIVERS==0
+#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL
 
 #include "drivers/driver_clock.h"
 #include "stdint.h"

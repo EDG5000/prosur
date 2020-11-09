@@ -45,20 +45,21 @@
 	Configuration
 */
 
+#pragma once
+
+#include "stdint.h"
+#include "avr/io.h"
+
 // Unit testing and mock drivers
 #define HC3D_USE_TEST_DRIVERS							0			// (on/off: 1/0) Use fake software-only testing drivers instead of hardware drivers									
-																	// Select specific unit test or all unit tests
-#define HC3D_UNIT_TEST									HC3D_UNIT_TEST_DRIVER_TEMP
+#define HC3D_TEST_MODE									HC3D_TEST_MODE_SITL // Select specific unit test or all unit tests
 
 // Temperature driver setup
-//#define HC3D_CONFIG_PIN_TEMP_START					2			// TODO currently hardcoded, see driver_temp// Pin of temperature sensor 0. Other sensors will be assigned the pins following it
 #define HC3D_CONFIG_TEMP_SENSOR_COUNT					8			// Amount of temperature sensors. Note: Also used by other temperature-related modules.
-
-// Tach driver setup
-//#define HC3D_CONFIG_DRIVER_TACH_PIN								// TODO currently hardcoded, see driver_tach
+#define HC3D_TEMP_PINS									{3, 4, 5, 6, 7, 11, 12, 13} // Pins used for temperature sensors
 
 // Relay driver setup
-//#define HC3D_CONFIG_PIN_RELAY										// TODO currently hardcoded, see driver_relay // Pin for failsafe output pin. Relay is LOW when failsafe is active.
+#define HC3D_CONFIG_PIN_RELAY							8			// Pin for failsafe output pin. Relay is LOW when failsafe is active.
 
 // Safety-related limit of each sensor
 #define HC3D_CONFIG_TEMP_SENSOR_X_LIMIT					65			// Temp sensor safe limit for X motor stepper
@@ -82,21 +83,32 @@
 #define HC3D_CONFIG_CONTROLLER_TEMP_SETPOINT			60			// Try to keep stepper motor surface temperature under 60
 
 /*
-	Constants
+	Constants and helpers
 */
 
-// Unit test
-#define HC3D_UNIT_TEST_OFF								0
-#define HC3D_UNIT_TEST_ALL								1
-#define HC3D_UNIT_TEST_SERIAL							2
-#define HC3D_UNIT_TEST_DRIVER_SLEEP						3
-#define HC3D_UNIT_TEST_DRIVER_PWM						4
-#define HC3D_UNIT_TEST_DRIVER_RELAY						5
-#define HC3D_UNIT_TEST_DRIVER_CLOCK						6
-#define HC3D_UNIT_TEST_PWM_AND_CLOCK					7
-#define HC3D_UNIT_TEST_DRIVER_TEMP						8
-#define HC3D_UNIT_TEST_TACH								9
+// Obtain PORTX, PINX, DDRX register pointers based on supplied arduino-compatible digital pin number (0-13, 13=led)
+// Analog pins could be supported by introducing an analog pin offset and defines for the analog pins
+volatile uint8_t* config_port(uint8_t* pin);
+volatile uint8_t* config_pin(uint8_t* pin);
+volatile uint8_t* config_ddr(uint8_t* pin); 
+uint8_t config_mask(uint8_t* pin);
 
+// Set bit low or high for given arduino-compatible pin and register
+// TODO when there are problems, use regular function
+#define HC3D_SET_LOW(reg, pin) (*reg &= ~(1 << (*pin % 8)))
+#define HC3D_SET_HIGH(reg, pin) (*reg |= (1 << (*pin % 8)))
+
+// Unit test
+#define HC3D_TEST_MODE_SITL								1			// Can be done in AVR simulator. Run through scenario involving all aspects of business logic. PI control runs against simulated model.
+#define HC3D_TEST_MODE_SERIAL							2
+#define HC3D_TEST_MODE_DRIVER_SLEEP						3
+#define HC3D_TEST_MODE_DRIVER_PWM						4
+#define HC3D_TEST_MODE_DRIVER_RELAY						5
+#define HC3D_TEST_MODE_DRIVER_CLOCK						6
+#define HC3D_TEST_MODE_PWM_AND_CLOCK					7
+#define HC3D_TEST_MODE_DRIVER_TEMP						8
+#define HC3D_TEST_MODE_TACH								9
+#define HC3D_TEST_MODE_TEMP_FAILSAFE					10
 
 
 // Temperature Sensors

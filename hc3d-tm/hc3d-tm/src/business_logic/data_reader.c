@@ -3,6 +3,9 @@
  *
  * Created: 2020-10-23 10:42:58 PM
  *  Author: Joel
+ 
+	Maintains moving buffer of temperatures
+	Temp watchdog needs this buffer to assert sensor reading validity
  */ 
 
 #include "data_reader.h"
@@ -11,7 +14,7 @@
 #include "drivers/driver_temp.h"
 
 // Moving buffer keeping the last 10 values.
-uint16_t last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE][HC3D_CONFIG_TEMP_SENSOR_COUNT];
+int16_t last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE][HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 // Poll latest temperatures from driver_temp.
 // Insert frame into moving buffer.
@@ -27,7 +30,7 @@ void data_reader_tick(void){
 	}
 
 	// Get a new value for each sensor.
-	uint16_t new_reading[HC3D_CONFIG_TEMP_SENSOR_COUNT];
+	int16_t new_reading[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 	driver_temp_read(new_reading);
 
 	// Overwrite last frame, which is already copied to the frame preceding it.

@@ -6,41 +6,37 @@
  */ 
 
 #include "config.h"
-#if HC3D_USE_TEST_DRIVERS==0
+#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL
 
 #include "drivers/driver_temp.h"
+#include "drivers/driver_sleep.h"
+
 #include "libraries/avr-ds80b20/ds18b20.h"
 #include "stdint.h"
+#include "stdlib.h"
 #include "avr/io.h"
 
-void driver_temp_init(void){
-	// TODO
-	
-}
+uint8_t pins[] = HC3D_TEMP_PINS;
 
 // For array length HC3D_TEMP_SENSOR_SOUND is used
-void driver_temp_read(uint16_t* arr){
-	uint32_t temp;
-	
-	/*
-	// TODO
+void driver_temp_read(int16_t* return_arr){
 	for(int i = 0; i < HC3D_CONFIG_TEMP_SENSOR_COUNT; i++){
-		arr[i] = i;
 		// Start conversion (without ROM matching)
-		ds18b20convert( &PORTB, &DDRB, &PINB, ( 1 << 0 ), NULL );
+		if(ds18b20convert(config_port(&pins[i]), config_ddr(&pins[i]), config_pin(&pins[i]), config_mask(&pins[i]), NULL) != 1){
+			// TODO, errc non-zero
+		}
 	}
 	
 	// Delay (sensor needs time to perform conversion)
-	driver_sleep(1000);
+	// Cannot be too close to 1000, because the main loop tries to keep 1hz pace
+	driver_sleep(800);
 	
 	for(int i = 0; i < HC3D_CONFIG_TEMP_SENSOR_COUNT; i++){
 		// Read temperature (without ROM matching)
-		ds18b20read( &PORTB, &DDRB, &PINB, ( 1 << 0 ), NULL, &temp );
+		if(ds18b20read(&PORTB, &DDRB, &PINB, (1 << 0), NULL, &return_arr[i]) != 0){
+			// TODO, errc non-zero
+		}
 	}
-	*/
-			
-
 }
-
 
 #endif

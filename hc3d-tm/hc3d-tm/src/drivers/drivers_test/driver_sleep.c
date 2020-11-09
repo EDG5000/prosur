@@ -6,12 +6,12 @@
  */ 
 
 #include "config.h"
-#if HC3D_USE_TEST_DRIVERS==1
+#if HC3D_TEST_MODE==HC3D_TEST_MODE_SITL
 
 #include "drivers/driver_sleep.h"
 
-void driver_sleep(uint32_t time){
-	// Sleep is for the weak (not sleeping in HC3D_UNIT_TEST mode)
+void driver_sleep(double time){
+	; // Sleep is for the weak; NOP in test mode
 }
 
 #endif

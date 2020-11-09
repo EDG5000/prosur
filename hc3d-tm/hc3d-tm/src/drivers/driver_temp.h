@@ -9,6 +9,6 @@
 
 #include "stdint.h"
 
-void driver_temp_init(void);
-void driver_temp_read(uint16_t* arr);
+
+void driver_temp_read(int16_t* arr);
 

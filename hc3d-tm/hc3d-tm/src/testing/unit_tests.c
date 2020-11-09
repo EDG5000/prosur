@@ -24,16 +24,16 @@
 #include "stdio.h"
 #include "stdbool.h"
 
-#if HC3D_UNIT_TEST==HC3D_UNIT_TEST_SERIAL
+#if HC3D_TEST_MODE==HC3D_TEST_MODE_SERIAL
 
 int main(void){
 	avr_printf_init();
-	printf("HC3D_UNIT_TEST_SERIAL");
+	printf("HC3D_TEST_MODE_SERIAL");
 	printf("%i", 69);
 	printf("%f", 101.1005);
 }
 
-#elif HC3D_UNIT_TEST==HC3D_UNIT_TEST_DRIVER_SLEEP
+#elif HC3D_TEST_MODE==HC3D_TEST_MODE_DRIVER_SLEEP
 
 int main(void){
 	avr_printf_init();
@@ -47,7 +47,7 @@ int main(void){
 	}
 }
 
-#elif HC3D_UNIT_TEST==HC3D_UNIT_TEST_DRIVER_CLOCK
+#elif HC3D_TEST_MODE==HC3D_TEST_MODE_DRIVER_CLOCK
 
 int main(void){
 	avr_printf_init();
@@ -64,11 +64,11 @@ int main(void){
 	}
 }
 
-#elif HC3D_UNIT_TEST==HC3D_UNIT_TEST_DRIVER_PWM
+#elif HC3D_TEST_MODE==HC3D_TEST_MODE_DRIVER_PWM
 
 int main(void){
 	avr_printf_init();
-	printf("HC3D_UNIT_TEST_DRIVER_PWM");
+	printf("HC3D_TEST_MODE_DRIVER_PWM");
 	driver_pwm_init();
 	while(true){
 		driver_pwm_set_pwm(15);
@@ -80,11 +80,11 @@ int main(void){
 	}
 }
 
-#elif HC3D_UNIT_TEST==HC3D_UNIT_TEST_DRIVER_RELAY
+#elif HC3D_TEST_MODE==HC3D_TEST_MODE_DRIVER_RELAY
 
 int main(void){
 	avr_printf_init();
-	printf("HC3D_UNIT_TEST_DRIVER_RELAY");
+	printf("HC3D_TEST_MODE_DRIVER_RELAY");
 	
 	driver_relay_init();
 	
@@ -97,11 +97,11 @@ int main(void){
 	}
 }
 
-#elif HC3D_UNIT_TEST==HC3D_UNIT_TEST_PWM_AND_CLOCK
+#elif HC3D_TEST_MODE==HC3D_TEST_MODE_PWM_AND_CLOCK
 
 int main(void){
 	avr_printf_init();
-	printf("HC3D_UNIT_TEST_PWM_AND_CLOCK");
+	printf("HC3D_TEST_MODE_PWM_AND_CLOCK");
 	
 	driver_relay_init();
 	driver_pwm_init();
@@ -127,15 +127,14 @@ int main(void){
 	}
 }
 
-#elif HC3D_UNIT_TEST==HC3D_UNIT_TEST_DRIVER_TEMP
+#elif HC3D_TEST_MODE==HC3D_TEST_MODE_DRIVER_TEMP
 
 int main(void){
 	avr_printf_init();
-	printf("HC3D_UNIT_TEST_DRIVER_TEMP");
+	printf("HC3D_TEST_MODE_DRIVER_TEMP");
 	
-	driver_temp_init();
 	
-	uint16_t temperatures[HC3D_CONFIG_TEMP_SENSOR_COUNT];
+	int16_t temperatures[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 	
 	while(true){
 		driver_temp_read(temperatures);
@@ -148,11 +147,11 @@ int main(void){
 	}
 }
 
-#elif HC3D_UNIT_TEST==HC3D_UNIT_TEST_TACH
+#elif HC3D_TEST_MODE==HC3D_TEST_MODE_TACH
 
 int main(void){
 	avr_printf_init();
-	printf("HC3D_UNIT_TEST_TACH");
+	printf("HC3D_TEST_MODE_TACH");
 	driver_tach_init();
 	uint32_t val;
 	while(true){
@@ -161,6 +160,13 @@ int main(void){
 		
 		driver_sleep(1000);
 	}
+}
+
+#elif HC3D_TEST_MODE==HC3D_TEST_MODE_TEMP_FAILSAFE
+
+int main(void){
+	avr_printf_init();
+	printf("HC3D_TEST_MODE_TACH");
 }
 
 #endif
