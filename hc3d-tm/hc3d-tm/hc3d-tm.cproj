@@ -138,51 +138,51 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGcc>
-        <avrgcc.common.Device>-mmcu=atmega328p -B "%24(PackRepoDir)\Atmel\ATmega_DFP\1.5.362\gcc\dev\atmega328p"</avrgcc.common.Device>
-        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-        <avrgcc.compiler.symbols.DefSymbols>
-          <ListValues>
-            <Value>DEBUG</Value>
-            <Value>BOARD=USER_BOARD</Value>
-            <Value>F_CPU=16000000</Value>
-          </ListValues>
-        </avrgcc.compiler.symbols.DefSymbols>
-        <avrgcc.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>../src/ASF/common/boards/user_board</Value>
-            <Value>../src</Value>
-            <Value>../src/config</Value>
-            <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.5.362\include\</Value>
-          </ListValues>
-        </avrgcc.compiler.directories.IncludePaths>
-        <avrgcc.compiler.optimization.level>Optimize debugging experience (-Og)</avrgcc.compiler.optimization.level>
-        <avrgcc.compiler.optimization.OtherFlags>-fdata-sections</avrgcc.compiler.optimization.OtherFlags>
-        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-        <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
-        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-        <avrgcc.compiler.miscellaneous.OtherFlags>-std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax</avrgcc.compiler.miscellaneous.OtherFlags>
-        <avrgcc.linker.libraries.Libraries>
-          <ListValues>
-            <Value>libm</Value>
-          </ListValues>
-        </avrgcc.linker.libraries.Libraries>
-        <avrgcc.linker.miscellaneous.LinkerFlags>-Wl,--relax</avrgcc.linker.miscellaneous.LinkerFlags>
-        <avrgcc.assembler.general.AssemblerFlags>-mrelax -DBOARD=USER_BOARD</avrgcc.assembler.general.AssemblerFlags>
-        <avrgcc.assembler.general.IncludePaths>
-          <ListValues>
-            <Value>../src/ASF/common/boards/user_board</Value>
-            <Value>../src</Value>
-            <Value>../src/config</Value>
-            <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.5.362\include\</Value>
-          </ListValues>
-        </avrgcc.assembler.general.IncludePaths>
-        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
-      </AvrGcc>
+  <avrgcc.common.Device>-mmcu=atmega328p -B "%24(PackRepoDir)\Atmel\ATmega_DFP\1.5.362\gcc\dev\atmega328p"</avrgcc.common.Device>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+  <avrgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>DEBUG</Value>
+      <Value>BOARD=USER_BOARD</Value>
+      <Value>F_CPU=16000000</Value>
+    </ListValues>
+  </avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>../src/ASF/common/boards/user_board</Value>
+      <Value>../src</Value>
+      <Value>../src/config</Value>
+      <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.5.362\include\</Value>
+    </ListValues>
+  </avrgcc.compiler.directories.IncludePaths>
+  <avrgcc.compiler.optimization.level>Optimize debugging experience (-Og)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.OtherFlags>-fdata-sections</avrgcc.compiler.optimization.OtherFlags>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcc.compiler.miscellaneous.OtherFlags>-std=gnu99 -fno-strict-aliasing -Wstrict-prototypes -Wmissing-prototypes -Werror-implicit-function-declaration -Wpointer-arith -mrelax</avrgcc.compiler.miscellaneous.OtherFlags>
+  <avrgcc.linker.libraries.Libraries>
+    <ListValues>
+      <Value>libm</Value>
+    </ListValues>
+  </avrgcc.linker.libraries.Libraries>
+  <avrgcc.linker.miscellaneous.LinkerFlags>-Wl,--relax</avrgcc.linker.miscellaneous.LinkerFlags>
+  <avrgcc.assembler.general.AssemblerFlags>-mrelax -DBOARD=USER_BOARD</avrgcc.assembler.general.AssemblerFlags>
+  <avrgcc.assembler.general.IncludePaths>
+    <ListValues>
+      <Value>../src/ASF/common/boards/user_board</Value>
+      <Value>../src</Value>
+      <Value>../src/config</Value>
+      <Value>%24(PackRepoDir)\Atmel\ATmega_DFP\1.5.362\include\</Value>
+    </ListValues>
+  </avrgcc.assembler.general.IncludePaths>
+  <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+</AvrGcc>
     </ToolchainSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Unit Test' ">
@@ -240,7 +240,7 @@
   <ItemGroup>
     <Folder Include="src\" />
     <Folder Include="src\drivers\drivers_hw" />
-    <Folder Include="src\drivers\drivers_test" />
+    <Folder Include="src\drivers\drivers_sitl" />
     <Folder Include="src\libraries" />
     <Folder Include="src\libraries\avr-ds80b20" />
     <Folder Include="src\drivers" />
@@ -281,13 +281,19 @@
     <Compile Include="src\business_logic\temp_watchdog.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\business_logic\temp_validator.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\business_logic\temp_validator.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\config.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\config.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\drivers\drivers_test\driver_clock.c">
+    <Compile Include="src\drivers\drivers_sitl\driver_clock.c.old">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\drivers\driver_clock.h">
@@ -311,19 +317,19 @@
     <Compile Include="src\drivers\drivers_hw\driver_temp.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\drivers\drivers_test\driver_pwm.c">
+    <Compile Include="src\drivers\drivers_sitl\driver_pwm.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\drivers\drivers_test\driver_relay.c">
+    <Compile Include="src\drivers\drivers_sitl\driver_relay.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\drivers\drivers_test\driver_sleep.c">
+    <Compile Include="src\drivers\drivers_sitl\driver_sleep.c.old">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\drivers\drivers_test\driver_tach.c">
+    <Compile Include="src\drivers\drivers_sitl\driver_tach.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\drivers\drivers_test\driver_temp.c">
+    <Compile Include="src\drivers\drivers_sitl\driver_temp.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\drivers\driver_pwm.h">
@@ -384,6 +390,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\util.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\util.h">
       <SubType>compile</SubType>
     </Compile>
     <None Include="src\libraries\avr-ds80b20\info.txt">

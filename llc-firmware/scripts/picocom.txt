@@ -1,1 +1,0 @@
-picocom /dev/ttyUSB-HC3D-DEV-0 --baud 115200 --omap crcrlf --echo

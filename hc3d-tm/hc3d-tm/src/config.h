@@ -50,9 +50,8 @@
 #include "stdint.h"
 #include "avr/io.h"
 
-// Unit testing and mock drivers
-#define HC3D_USE_TEST_DRIVERS							0			// (on/off: 1/0) Use fake software-only testing drivers instead of hardware drivers									
-#define HC3D_TEST_MODE									HC3D_TEST_MODE_SITL // Select specific unit test or all unit tests
+// Unit testing and mock drivers							
+#define HC3D_TEST_MODE									HC3D_TEST_MODE_TEMP_FAILSAFE		// 0=OFF; Select specific unit test or all unit tests
 
 // Temperature driver setup
 #define HC3D_CONFIG_TEMP_SENSOR_COUNT					8			// Amount of temperature sensors. Note: Also used by other temperature-related modules.
@@ -69,10 +68,11 @@
 #define HC3D_CONFIG_TEMP_SENSOR_CHAMBER0_LIMIT			80			// Temp sensor safe limit for chamber sensor 0
 #define HC3D_CONFIG_TEMP_SENSOR_CHAMBER1_LIMIT			80			// Temp sensor safe limit for chamber sensor 1
 
-// Temperature failsafe configuration
+// Temperature validation configuration
 #define HC3D_CONFIG_TEMP_BUF_SIZE						10			// Keep last N temperature readings in buffer. EntireS range for confirming validity of readings (filtering out noise)
 #define HC3D_CONFIG_TEMP_VALID_MIN						3			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_VALID_MAX						120			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
+#define HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT				10000		// (ms) When no valid readings are produced for this amount of time by temp_validator, failsafe will trigger
 
 // Pump controller configuration
 #define HC3D_CONFIG_CONTROLLER_KI						1			// See libraries/pi_control/pi_control.h
@@ -99,7 +99,7 @@ uint8_t config_mask(uint8_t* pin);
 #define HC3D_SET_HIGH(reg, pin) (*reg |= (1 << (*pin % 8)))
 
 // Unit test
-#define HC3D_TEST_MODE_SITL								1			// Can be done in AVR simulator. Run through scenario involving all aspects of business logic. PI control runs against simulated model.
+#define HC3D_TEST_MODE_SITL								1		// Can be done in AVR simulator. Run through scenario involving all aspects of business logic. PI control runs against simulated model.
 #define HC3D_TEST_MODE_SERIAL							2
 #define HC3D_TEST_MODE_DRIVER_SLEEP						3
 #define HC3D_TEST_MODE_DRIVER_PWM						4

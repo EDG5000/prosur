@@ -4,10 +4,14 @@
  *
  * Created: 2020-10-25 7:45:10 AM
  *  Author: Joel
+	
+	Allows fetching current time in ms
+	Time is accurate at 4ms
+	Note: Time wraps around, make sure to check for this
  */ 
 
 #include "config.h"
-#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL
+//#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL 
 
 #include "drivers/driver_clock.h"
 #include "stdint.h"
@@ -17,7 +21,6 @@
 volatile uint32_t time = 0;
 
 void driver_clock_init(void){
-
 	// This code sets up a timer0 for 4ms @ 16Mhz clock cycle
 	// An interrupt is triggered each time the interval occurs.
 
@@ -35,7 +38,6 @@ void driver_clock_init(void){
 
 	// Set prescaler to 256 and start the timer
 	TCCR0B |= (1 << CS02);
-
 }
 
 // Will always be multiples of 4
@@ -48,7 +50,4 @@ ISR(TIMER0_COMPA_vect){
 	time+=4;
 }
 
-
-
-
-#endif
+//#endif

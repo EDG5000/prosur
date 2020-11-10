@@ -6,8 +6,7 @@
  */ 
 
 #include "config.h"
-#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL
-
+//#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL 
 
 #define __DELAY_BACKWARD_COMPATIBLE__
 #include <avr/io.h>
@@ -21,4 +20,4 @@ void driver_sleep(double time){
 	_delay_ms( time);
 }
 
-#endif
+//#endif

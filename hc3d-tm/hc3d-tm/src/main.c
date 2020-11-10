@@ -53,24 +53,27 @@
 		
 	Architecture
 		Business Logic
+			Failsafe
+				- Invoke relay driver
 			Data Reader
 				- Periodically invoke Tach and Temp driver.
 				- For Temp, store last 10 values
-			Temperature Watchdog
-				- For Temp, check for at least 10 values when checking for limit exceeded/not exceeded condition
-				- Trigger failsafe when needed
-					- Invoke Relay driver
+				Temperature Watchdog
+					- For Temp, check for at least 10 values when checking for limit exceeded/not exceeded condition
+					- Trigger failsafe when needed
+					- Invoke failsafe
 					- Send message to UART
 					- Abort program excecution
-			(future) Pump Controller
+					Data Reporter
+					- Reports temperature data, tach data
+					- Events related to safety are also reported as string messages over serial (not handled by serial writer)
+			Pump Controller
 				- Keep steppers below target temperature
-				- Use PID; send PWM command to PWM driver
+				- Use PI; send PWM command to PWM driver
 				- Read Tach from Data Reader
-		Data Reporter
-				- Reports temperature data, tach data
-				- Events related to safety are also reported as string messages over serial (not handled by serial writer)	
+
 		
-		HW Drivers & Test Drivers
+		HW Drivers & SITL Drivers
 			Tach Driver
 				- Configure interrupt
 				- Store latest calculated RPM value
@@ -81,8 +84,14 @@
 				- Allows reading of current pin state (last value sent is stored)
 			Temp Driver
 				- Allows performing init() and read() calls on sensors
-			Sleep Driver
+			Sleep Driver (No SITL driver used)
 				- Provides sleep(uint ms) function
+			Clock Driver (No SITL driver used)
+				- Provides system clock
+				
+		Unit Tests
+			Provides unit tests for all modules, both drivers and business logic
+			
 	Test Stategy
 		- Compile test drivers instead of hardware drivers when running in unit test mode
 		- Temp Driver in test mode will generate fake data when requesting data
@@ -99,6 +108,7 @@
 */
 
 #include "config.h"
+#include "util.h"
 #include "stdbool.h"
 #include "libraries/avr_printf/avr_printf.h"
 
@@ -113,6 +123,7 @@
 #include "business_logic/failsafe.h"
 #include "business_logic/data_reader.h"
 #include "business_logic/data_reporter.h"
+#include "business_logic/temp_validator.h"
 #include "business_logic/temp_watchdog.h"
 #include "business_logic/pump_controller.h"
 
@@ -130,23 +141,28 @@ int main (void){
 	
 	// Init business logic modules
 	pump_controller_init();
+	temp_validator_init();
 	temp_watchdog_init();
-	
+
 	while(true){
 		// Record tick start time to later calculate the correct sleep time
-		uint32_t time_start = driver_clock_time();
+		uint32_t time_tick_start = driver_clock_time();
 	
 		// This will fetch temperature data from driver_temp and store it in a buffer
 		data_reader_tick();
 
-		// Run temp_watchdog, which also calculates validated temperatures used later
+		// This will assess validity of sensor readings and store the results
+		temp_validator_init();
+
+		// Will check for invalid readings, limit exceedings or validation timeouts
+		// Will trigger failsafe if any issue is encountered
 		if(!temp_watchdog_tick()){
-			// Temp_watchdog has invoked the failsafe
+			// temp_validator has invoked the failsafe
 			// Abort excecution of program
 			break;
 		}
 
-		// Run pump controller. Uses data calculated by temp_watchdog
+		// Run pump controller. Uses data calculated by temp_validator
 		// Results from pump_controller will be reported by data_reporter
 		// along with other data points.
 		pump_controller_tick();
@@ -154,14 +170,8 @@ int main (void){
 		// Report measured temperatures to serial
 		data_reporter_tick();
 		
-		uint32_t time_taken = driver_clock_time() - time_start;
-		if(time_taken > 1000){
-			// Will be in the case of slow processing or timer wrap around
-			// To confidently ensure at least 1Hz is used between frames, default to 
-			// sleeping the full 1s in these unsure cases.
-			time_taken = 0;
-		}
-		driver_sleep(1000 - time_taken); // 1 sec delay + data reader time duration
+		uint32_t time_taken = util_time_offset(time_tick_start, driver_clock_time());
+		driver_sleep(1000 - time_taken); // Sleep as such to ensure loop running at 1Hz
 	}
 	
 	// Prevent AVR from resetting

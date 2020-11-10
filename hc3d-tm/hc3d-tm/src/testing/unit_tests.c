@@ -24,6 +24,13 @@
 #include "stdio.h"
 #include "stdbool.h"
 
+#include "business_logic/temp_validator.h"
+#include "business_logic/data_reader.h"
+extern uint16_t last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE][HC3D_CONFIG_TEMP_SENSOR_COUNT];
+
+#include "temperature_dataset.h"
+extern int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT];
+
 #if HC3D_TEST_MODE==HC3D_TEST_MODE_SERIAL
 
 int main(void){
@@ -167,6 +174,67 @@ int main(void){
 int main(void){
 	avr_printf_init();
 	printf("HC3D_TEST_MODE_TACH");
+	
+	driver_clock_init();
+	
+	temp_validator_init();
+	temp_watchdog_init();
+	
+	// Use last_temperatures from data_reader to inject input in what driver_temp is reading
+	//last_temperatures;
+		
+	/*
+	 Features:
+	 - Handles single out-of-valid-range events gracefully, as well as sensors permanently entering out-of-valid-range state
+	 
+	 Shortcomings
+	 - Does not detect failure when sensors oscillate in and out of valid ranges within a 10-sec (10-frame) timeframe
+	 - Does not detect single in-valid-range high-delta event; emits new "valid" reading on such an event
+	 */
+	
+	uint16_t test_data_frame = 0;
+	
+	while(true){
+		// Record tick start time to later calculate the correct sleep time
+		uint32_t time_start = driver_clock_time();
+			
+		// Manually move the rotating input buffer (last_temperatures) used by temp watchdog one tick forward
+		// Normally data_reader is performing this operation as well as invoking driver_temp
+		for(int frame_index = 1; frame_index < HC3D_CONFIG_TEMP_BUF_SIZE; frame_index++){
+			// Copy each value from this frame to the preceding frame
+			for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
+				last_temperatures[frame_index-1][sensor_index] = last_temperatures[frame_index][sensor_index];
+			}	
+		}
+		
+		// Copy next value from test dataset into moving buffer, unless it is 0, in which case, we use the last available value for that sensor
+		for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
+			int16_t value = temperature_dataset[test_data_frame][sensor_index];
+			if(value == 0 && test_data_frame > 0){
+				// Use previous value from dataset when a zero value is provided
+				value = temperature_dataset[test_data_frame-1][sensor_index];
+			}
+			last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][sensor_index] = value;
+		}
+		
+		// Run temp validator
+		temp_validator_tick();
+		
+		volatile int a = 0;
+		// Run temp_validator, which also calculates validated temperatures used later
+		if(!temp_watchdog_tick()){
+			// temp_validator has invoked the failsafe
+			// Abort excecution of program
+			while(true){
+				;
+			}
+		}
+
+		uint32_t time_taken = util_time_offset(time_start, driver_clock_time());
+		driver_sleep(1000 - time_taken); // 1 sec delay + data reader time duration
+		
+		test_data_frame++;
+	}	
 }
 
 #endif

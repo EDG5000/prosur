@@ -13,7 +13,7 @@
 #include "drivers/driver_tach.h"
 #include "avr/interrupt.h"
 
-#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL
+#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL 
 
 uint32_t ticks = 0; 
 
@@ -32,7 +32,7 @@ void driver_tach_init(void){
 }
 
 /// Has to be called at exactly 1Hz
-uint32_t driver_tach_get(void){
+uint8_t driver_tach_get(void){
 	uint32_t ticks_old = ticks;
 	ticks = 0;
 	return ticks_old;

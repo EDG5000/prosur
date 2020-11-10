@@ -6,7 +6,7 @@
  */ 
 
 #include "config.h"
-#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL
+#if HC3D_TEST_MODE!=HC3D_TEST_MODE_SITL 
 
 #include "drivers/driver_temp.h"
 #include "drivers/driver_sleep.h"

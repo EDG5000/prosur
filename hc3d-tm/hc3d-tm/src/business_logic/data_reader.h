@@ -9,6 +9,8 @@
 
 #include "business_logic/data_reader.h"
 #include "stdint.h"
+#include "stdbool.h"
 
-
-void data_reader_tick(void);
+// Returns true when all sensors are settled, false otherwise
+// Reads out all sensors and update the moving buffer found 
+bool data_reader_tick(void);

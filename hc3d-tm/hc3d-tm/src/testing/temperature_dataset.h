@@ -4,7 +4,7 @@
  * Created: 2020-10-24 6:58:59 AM
  *  Author: Joel
  
-	When temperatures are 0, a simulated temperature is calculated by drivers_test/driver_temp.c
+	When temperatures are 0, a simulated temperature is calculated by drivers_sitl/driver_temp.c
 	Simulated values are based on driver_pwm setpoint, which is pump_control output which is based on temperature readings.
 	When a temperature is specified, this temperature overrides the would-be calculated value
 	
