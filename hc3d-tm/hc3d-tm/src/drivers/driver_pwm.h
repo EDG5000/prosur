@@ -10,5 +10,7 @@
 
 #include "stdint.h"
 
+extern uint8_t last_percentage;
+
 void driver_pwm_init(void);
 void driver_pwm_set_pwm(uint8_t percentage);

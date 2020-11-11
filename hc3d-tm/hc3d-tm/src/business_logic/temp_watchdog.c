@@ -15,8 +15,9 @@
 #include "temp_validator.h"
 #include "stdio.h"
 #include "stdbool.h"
-extern uint16_t sensor_last_valid_temperature[HC3D_CONFIG_TEMP_SENSOR_COUNT];
-extern uint32_t sensor_last_update_time[HC3D_CONFIG_TEMP_SENSOR_COUNT];
+#include "config.h"
+
+#include "temp_validator.h"
 
 void temp_watchdog_init(void){
 	; // NOP for now
@@ -43,9 +44,9 @@ bool temp_watchdog_tick(void){
 	// Check for timeouts
 	uint32_t time = driver_clock_time();
 	for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
-		uint32_t age = util_time_offset(sensor_last_update_time, time);
+		uint32_t age = util_time_offset(temp_validator_sensor_last_update_time[sensor_index], time);
 		if(age > HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT){
-			printf("Sensor %i has timed out. Age: %lu");
+			printf("Sensor %i has timed out. Age: %lu", sensor_index, age);
 			failure = true;
 		}
 	}

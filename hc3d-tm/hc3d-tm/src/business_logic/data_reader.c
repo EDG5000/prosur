@@ -14,7 +14,7 @@
 #include "drivers/driver_temp.h"
 
 // Moving buffer keeping the last 10 values.
-int16_t last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE][HC3D_CONFIG_TEMP_SENSOR_COUNT];
+int16_t data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE][HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 // Poll latest temperatures from driver_temp.
 // Insert frame into moving buffer.
@@ -25,7 +25,7 @@ bool data_reader_tick(void){
 	for(int frame_index = 1; frame_index < HC3D_CONFIG_TEMP_BUF_SIZE; frame_index++){
 		// Copy each value from this frame to the preceding frame
 		for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
-			last_temperatures[frame_index-1][sensor_index] = last_temperatures[frame_index][sensor_index];
+			data_reader_last_temperatures[frame_index-1][sensor_index] = data_reader_last_temperatures[frame_index][sensor_index];
 		}	
 	}
 
@@ -36,7 +36,7 @@ bool data_reader_tick(void){
 	// Overwrite last frame, which is already copied to the frame preceding it.
 	// Write the newly retrieved data to it.
 	for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
-		last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][sensor_index] = new_reading[sensor_index];
+		data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][sensor_index] = new_reading[sensor_index];
 	}
 		
 	return true;

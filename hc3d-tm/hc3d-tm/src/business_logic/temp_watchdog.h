@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "stdbool.h"
 #include "temp_watchdog.h"
 
 void temp_watchdog_init(void);

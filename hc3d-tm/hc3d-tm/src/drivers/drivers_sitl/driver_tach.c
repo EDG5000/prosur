@@ -15,7 +15,7 @@
 
 #include "drivers/driver_tach.h"
 #include "drivers/driver_pwm.h"
-extern uint8_t last_percentage;
+
 
 void driver_tach_init(void){
 	; // NOP in test mode	

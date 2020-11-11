@@ -53,6 +53,8 @@
 
 #define HC3D_TEMPERATURE_DATASET_SIZE 50
 
+extern int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT];
+
 int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 	/* 00 */ {20, 20, 20, 20, 20, 20, 20, 20}, // driver_temp: fake heater on, temp ramping up
 	/* 01 */ {00, 00, 00, 00, 00, 00, 00, 00},

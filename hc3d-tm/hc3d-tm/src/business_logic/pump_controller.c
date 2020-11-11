@@ -10,7 +10,7 @@
 #include "libraries/pi_control/pi_control.h"
 struct PIControl pi_control_state;
 #include "business_logic/temp_validator.h"
-uint16_t sensor_last_valid_temperature[HC3D_CONFIG_TEMP_SENSOR_COUNT];
+uint16_t temp_validator_sensor_last_valid_temperature[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 #include "drivers/driver_pwm.h"
 #include "drivers/driver_tach.h"
 
@@ -27,8 +27,8 @@ void pump_controller_tick(void){
 	// Use the validated temperatures from temp_validator
 	uint16_t highest_temp = 0;
 	for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
-		if(sensor_last_valid_temperature[sensor_index] > highest_temp){
-			highest_temp = sensor_last_valid_temperature[sensor_index];
+		if(temp_validator_sensor_last_valid_temperature[sensor_index] > highest_temp){
+			highest_temp = temp_validator_sensor_last_valid_temperature[sensor_index];
 		}
 	}
 	

@@ -11,15 +11,14 @@
 #if HC3D_TEST_MODE==HC3D_TEST_MODE_SITL
 
 #include "drivers/driver_temp.h"
-extern uint8_t last_percentage;
 #include "config.h"
 #include "stdint.h"
 #include "string.h"
 #include "stdbool.h"
 #include "drivers/driver_pwm.h"
-extern uint8_t last_percentage;
+
 #include "testing/temperature_dataset.h"
-extern int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT];
+
 
 int16_t previous_value[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
