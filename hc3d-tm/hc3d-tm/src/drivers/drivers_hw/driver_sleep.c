@@ -16,7 +16,7 @@
 
 // Max delay is 6.5535s
 // Internally the value is converted to 32-bit float, losing precision, also losing precision due to prescaler etc.
-void driver_sleep(double time){
+void driver_sleep(uint32_t time){
 	_delay_ms( time);
 }
 
