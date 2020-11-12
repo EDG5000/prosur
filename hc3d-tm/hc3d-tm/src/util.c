@@ -10,7 +10,7 @@
 #include "stdint.h"
 
 uint32_t util_time_offset(uint32_t start, uint32_t end){
-	if(end > start){
+	if(end >= start){
 		return end-start;
 	}else{
 		// Handle timer wraparound correctly

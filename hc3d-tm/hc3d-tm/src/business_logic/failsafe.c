@@ -12,4 +12,5 @@
 void failsafe_trigger(void){
 	driver_relay_set(false);
 	printf("Failsafe activated.");
+	while(1); // Stop further code excecution. Hardware devices stay as they are. (PWM, timers, clock, IO-out)
 }

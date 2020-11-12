@@ -152,15 +152,11 @@ int main (void){
 		data_reader_tick();
 
 		// This will assess validity of sensor readings and store the results
-		temp_validator_init();
+		temp_validator_tick();
 
 		// Will check for invalid readings, limit exceedings or validation timeouts
 		// Will trigger failsafe if any issue is encountered
-		if(!temp_watchdog_tick()){
-			// temp_validator has invoked the failsafe
-			// Abort excecution of program
-			break;
-		}
+		temp_watchdog_tick();
 
 		// Run pump controller. Uses data calculated by temp_validator
 		// Results from pump_controller will be reported by data_reporter
@@ -176,9 +172,7 @@ int main (void){
 	
 	// Prevent AVR from resetting
 	// This section will only be reached when the failsafe is triggered
-	while(true){
-		driver_sleep(1000);
-	}
+	while(1);
 
 	return 0;
 }

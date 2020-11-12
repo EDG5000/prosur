@@ -3,47 +3,32 @@
  *
  * Created: 2020-10-23 10:41:27 PM
  *  Author: Joel
+	Optionally produces new valid temperatures each tick
+	Temperatures published at temp_validator_sensor_last_valid_temperature, timestamp at
+	temp_validator_sensor_last_update_time.
  
- Features:
-	- Handles single out-of-valid-range events gracefully, as well as sensors permanently entering out-of-valid-range state
+	Flow diagram:
+	RAW (1Hz)-> VALID (opt) -> UNSAFE (OPT) -> FAILSAFE
+							-> TIMEOUT (OPT) -> FAILSAFE
+ 
+	Validation critera:
+	- No zeroes in buffer
+	- No values outside VALID_MIN & VALID_MAX
+	- At least one value changed in the buffer
+	- Current reading delta with last valid reading does not exceed 0.5 (arb. val.)
 	
-TODO
- Shortcomings
-	- Does not detect failure when sensors oscillate in and out of valid ranges within a 10-sec (10-frame) timeframe
-	- Does not detect single in-valid-range high-delta event; emits new "valid" reading on such an event
-	
- New Concept
-							   ->		   [FAILSAFE]
- [RAW] -> =1Hz -> [VALIDATION] -> =<1Hz -> [TIMEOUT] -> [FAILSAFE]
- 
- - Somehow detect the aforementioned shortcomings and trigger failsafe on such occasions
- 
- 
- Current algo:
- 
- 1. Define safe limit, such as 2-120
- 2. When all last 10 values are within this limit, the current value is deemed valid
- 
- 
  */  
 
 #include "config.h"
 #include "stdint.h"
 #include "stdbool.h"
+#include "stdlib.h"
 #include "stdio.h"
 #include "drivers/driver_clock.h"
 
 #include "business_logic/temp_validator.h"
 #include "business_logic/failsafe.h"
 #include "business_logic/data_reader.h"
-
-// Store safety state per sensor
-// Primary output of temp_validator
-safety_state_t sensor_safety_state[HC3D_CONFIG_TEMP_SENSOR_COUNT]; 
-
-// Safety limit per sensor, copied from config constants
-// Used for dyanmic access from loop
-uint16_t sensor_safety_limit[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 // Secondary outputs: Store last valid temperature per sensor
 // Will stay at 0 and will only change when a new valid value is detected
@@ -54,79 +39,56 @@ uint16_t temp_validator_sensor_last_valid_temperature[HC3D_CONFIG_TEMP_SENSOR_CO
 uint32_t temp_validator_sensor_last_update_time[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 void temp_validator_init(void){
-	// Copy safety limits to array
-	sensor_safety_limit[HC3D_TEMP_SENSOR_X] = HC3D_CONFIG_TEMP_SENSOR_X_LIMIT;
-	sensor_safety_limit[HC3D_TEMP_SENSOR_Y] = HC3D_CONFIG_TEMP_SENSOR_Y_LIMIT;
-	sensor_safety_limit[HC3D_TEMP_SENSOR_Z] = HC3D_CONFIG_TEMP_SENSOR_Z_LIMIT;
-	sensor_safety_limit[HC3D_TEMP_SENSOR_E] = HC3D_CONFIG_TEMP_SENSOR_E_LIMIT;
-	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER0] = HC3D_CONFIG_TEMP_SENSOR_CHAMBER0_LIMIT;
-	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER1] = HC3D_CONFIG_TEMP_SENSOR_CHAMBER1_LIMIT;
-
-	// Set all channels to state INITIAL
-	for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
-		sensor_safety_state[sensor_index] =  INITIAL;
-	}
-}
-
-static safety_state_t check_safety_state(uint16_t value, uint8_t sensor_index){
-	// Check if the current reading is invalid
-	if(value < HC3D_CONFIG_TEMP_VALID_MIN || value > HC3D_CONFIG_TEMP_VALID_MAX){
-		// Sample is invalid, mark it as such
-		return INVALID;
-	}
-
-	// Sample is valid, check if it exceeds the saffety limit
-	return value > sensor_safety_limit[sensor_index] ? UNSAFE : SAFE;
+	;
 }
 
 // Returns false when one ore more channels has an unsafe value
 void temp_validator_tick(void){
+	uint32_t time = driver_clock_time();
+	
 	// Update sensor_safety_state for all sensors
 	for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
-		
-		// Check if any uninitialized values are found
-		// If that is the case, skip this channel for now
-		// If a sensor would never get settled, temp_watchdog will trigger a timeout
-		bool skip_sensor = false;
-		for(int sample_index = 0; sample_index<HC3D_CONFIG_TEMP_BUF_SIZE; sample_index++){
-			if(data_reader_last_temperatures[sample_index][sensor_index] == 0){
-				skip_sensor = true;
-				break;
+		// Validate each sensors' buffer
+		for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
+			// At least one delta has to be observed in the buffer. Set high when found.
+			bool delta_found = false;
+			// Set high when an invalid condition is detected and the sensor is to be skipped for further checking
+			bool sensor_invalidated = false;
+			// All fields need to be non-zero and be within valid range. (2-120, defined in config)
+			for(int sample_index = 0; sample_index < HC3D_CONFIG_TEMP_BUF_SIZE; sample_index++){
+				int16_t val = data_reader_last_temperatures[sample_index][sensor_index];
+				if(val == 0 || val < HC3D_CONFIG_TEMP_VALID_MIN || val > HC3D_CONFIG_TEMP_VALID_MAX){
+					// Do not emit new value for this sensor, continue checking next sensor
+					sensor_invalidated = true;
+					break;
+				}
+				if(sample_index > 0 && val != data_reader_last_temperatures[sample_index-1][sensor_index]){
+					delta_found = true;
+				}
 			}
-		}
-		if(skip_sensor){
-			// Check the next sensor. Do not produce a new reading for this channel (yet).
-			continue;
-		}
-		
-		// Start checking the second-to-oldest sample, since we will be comparing it with the prevous sample
-		for(int sample_index = 1; sample_index<HC3D_CONFIG_TEMP_BUF_SIZE; sample_index++){
-			safety_state_t current_sample_safety_state = check_safety_state(data_reader_last_temperatures[sample_index][sensor_index], sensor_index);
-			safety_state_t last_sample_safety_state = check_safety_state(data_reader_last_temperatures[sample_index-1][sensor_index], sensor_index);
-
-			if(current_sample_safety_state != last_sample_safety_state){
-				// The state is inconsistent for the last X samples, consider the state safe for now and stop checking newer samples for this sensor
-				// NOTE: If the sensor would oscillate between safe/unsafe/invalid states, this will be considered safe.
-				// NOTE: If the sensor is faulty as such that it will report invalid data every few readings, the state will be considered safe
-				sensor_safety_state[sensor_index] = SAFE;
-				break;			
+			if(!delta_found){
+				// When no single delta was found, invalidate sensor channel
+				sensor_invalidated = true;
 			}
-
-			if(sample_index == HC3D_CONFIG_TEMP_BUF_SIZE-1){
-				// Last sample reached. The samples must have had a consistent safety state
-				// Copy whatever state the last reading had
-				sensor_safety_state[sensor_index] = current_sample_safety_state;
+			
+			// Check delta between last value and last valid value; has to be below the limit
+			int16_t last_valid_value = temp_validator_sensor_last_valid_temperature[sensor_index];
+			bool last_valid_delta_acceptable = last_valid_value == 0 || abs(last_valid_value - data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][sensor_index]) < HC3D_CONFIG_TEMP_MAX_DELTA;
+			
+			if(!last_valid_delta_acceptable){
+				sensor_invalidated = true;
 			}
-		}
-	}
-	
-	uint32_t time = driver_clock_time();
-	for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
-		if(sensor_safety_state[sensor_index] == SAFE){
-			// Update last valid temperature for each sensor considered safe
-			temp_validator_sensor_last_valid_temperature[sensor_index] = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][sensor_index];
-			// Update timestamp
-			temp_validator_sensor_last_update_time[sensor_index] = time;
+			
+			// Check when sensor was invalid or no delta
+			if(sensor_invalidated){
+				// Do not emit new value for this sensor, continue checking next sensor
+				continue;
+			}else{
+				// Sensor is considered valid, emit new value
+				temp_validator_sensor_last_valid_temperature[sensor_index] = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][sensor_index];
+				// Update timestamp
+				temp_validator_sensor_last_update_time[sensor_index] = time;
+			}
 		}
 	}
 }

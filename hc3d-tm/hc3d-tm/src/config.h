@@ -72,7 +72,8 @@
 #define HC3D_CONFIG_TEMP_BUF_SIZE						10			// Keep last N temperature readings in buffer. EntireS range for confirming validity of readings (filtering out noise)
 #define HC3D_CONFIG_TEMP_VALID_MIN						3			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_VALID_MAX						120			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
-#define HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT				10000		// (ms) When no valid readings are produced for this amount of time by temp_validator, failsafe will trigger
+#define HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT				3000		// TODO increase timeout! (ms) When no valid readings are produced for this amount of time by temp_validator, failsafe will trigger
+#define HC3D_CONFIG_TEMP_MAX_DELTA						1			// Higher temperature deltas observed between valid value and potential valid value will cause rejection of the new value
 
 // Pump controller configuration
 #define HC3D_CONFIG_CONTROLLER_KI						1			// See libraries/pi_control/pi_control.h

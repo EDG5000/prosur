@@ -175,7 +175,7 @@ int main(void){
 
 int main(void){
 	avr_printf_init();
-	printf("HC3D_TEST_MODE_TACH");
+	printf("HC3D_TEST_MODE_TEMP_FAILSAFE");
 	
 	driver_clock_init();
 	
@@ -210,20 +210,16 @@ int main(void){
 		// Run temp validator
 		temp_validator_tick();
 
-		// Run temp_validator, which also calculates validated temperatures used later
-		if(!temp_watchdog_tick()){
-			// temp_validator has invoked the failsafe
-			// Abort excecution of program
-			while(true){
-				;
-			}
-		}
+		temp_watchdog_tick();
 
 		uint32_t time_taken = util_time_offset(time_start, driver_clock_time());
 		driver_sleep(1000 - time_taken); // 1 sec delay + data reader time duration
 		
 		test_data_frame++;
 	}	
+	
+	// Turn off MCU, PWM, etc. Test session over. Debugger will be detached.
+	asm("break"::);
 }
 
 #endif
