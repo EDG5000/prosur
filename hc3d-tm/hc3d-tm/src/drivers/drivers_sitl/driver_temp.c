@@ -26,7 +26,6 @@ int16_t previous_value[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 uint8_t test_data_frame = 0;
 
 // Generate fake data. Use the config value to determine the amount of temperature sensors present.
-// TODO feed crafted data set as part of unit test. With the dataset, watchdog should trigger at a certain time
 void driver_temp_read(int16_t* arr){
 	if(test_data_frame == HC3D_TEMPERATURE_DATASET_SIZE-1){
 		// Wrap around frame counter

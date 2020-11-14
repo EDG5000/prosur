@@ -53,6 +53,8 @@
 // Unit testing and mock drivers							
 #define HC3D_TEST_MODE									HC3D_TEST_MODE_TEMP_FAILSAFE		// 0=OFF; Select specific unit test or all unit tests
 
+#define HC3D_INTERVAL									10			// (ms) All code runs lockstep at this interval. Ensure enough time to communicate with all temp sensors, report data over UART and any calculations.
+
 // Temperature driver setup
 #define HC3D_CONFIG_TEMP_SENSOR_COUNT					8			// Amount of temperature sensors. Note: Also used by other temperature-related modules.
 #define HC3D_TEMP_PINS									{3, 4, 5, 6, 7, 11, 12, 13} // Pins used for temperature sensors

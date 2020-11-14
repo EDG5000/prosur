@@ -167,7 +167,7 @@ int main (void){
 		data_reporter_tick();
 		
 		uint32_t time_taken = util_time_offset(time_tick_start, driver_clock_time());
-		driver_sleep(1000 - time_taken); // Sleep as such to ensure loop running at 1Hz
+		driver_sleep(HC3D_INTERVAL - time_taken); // Sleep as such to ensure loop running at 1Hz
 	}
 	
 	// Prevent AVR from resetting

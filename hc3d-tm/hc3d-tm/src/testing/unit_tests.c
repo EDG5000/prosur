@@ -213,7 +213,18 @@ int main(void){
 		temp_watchdog_tick();
 
 		uint32_t time_taken = util_time_offset(time_start, driver_clock_time());
-		driver_sleep(1000 - time_taken); // 1 sec delay + data reader time duration
+		driver_sleep(HC3D_INTERVAL - time_taken); // Ensure constant interval
+		
+		volatile uint16_t value0 = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][0];
+		volatile uint16_t value1 = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][1];
+		volatile uint16_t value2 = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][2];
+		volatile uint16_t value3 = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][3];
+		volatile uint16_t value4 = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][4];
+		volatile uint16_t value5 = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][5];
+		volatile uint16_t value6 = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][6];
+		volatile uint16_t value7 = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][7];
+		volatile uint16_t value8 = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][8];
+		
 		
 		test_data_frame++;
 	}	
