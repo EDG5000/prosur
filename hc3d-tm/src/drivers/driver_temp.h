@@ -9,6 +9,6 @@
 
 #include "stdint.h"
 
+extern uint8_t driver_temp_last_readings[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
-void driver_temp_read(int16_t* arr);
-
+void driver_temp_read(void);

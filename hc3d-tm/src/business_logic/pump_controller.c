@@ -26,7 +26,7 @@ void pump_controller_init(void){
 void pump_controller_tick(void){
 	// Find the temperature of the hottest stepper motor
 	// Use the validated temperatures from temp_validator
-	uint16_t highest_temp = 0;
+	uint8_t highest_temp = 0;
 	for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
 		if(temp_validator_sensor_last_valid_temperature[sensor_index] > highest_temp){
 			highest_temp = temp_validator_sensor_last_valid_temperature[sensor_index];

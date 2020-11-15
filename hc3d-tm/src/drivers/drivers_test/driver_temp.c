@@ -1,9 +1,5 @@
 /*
- * driver_temp.h
- *
- * Created: 2020-10-23 11:14:40 PM
- *  Author: Joel
- 
+	driver_temp
 	Steals driver_pwm last PWM setpoint to simulate changes in temperature sensors using a "model"
  */ 
 
@@ -19,14 +15,15 @@
 
 #include "testing/temperature_dataset.h"
 
+uint8_t previous_value[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
-int16_t previous_value[HC3D_CONFIG_TEMP_SENSOR_COUNT];
+uint8_t driver_temp_last_readings[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 // Wraps around at HC3D_TEMPERATURE_DATASET_SIZE
 uint8_t test_data_frame = 0;
 
 // Generate fake data. Use the config value to determine the amount of temperature sensors present.
-void driver_temp_read(int16_t* arr){
+void driver_temp_read(void){
 	if(test_data_frame == HC3D_TEMPERATURE_DATASET_SIZE-1){
 		// Wrap around frame counter
 		test_data_frame = 0;
@@ -41,14 +38,12 @@ void driver_temp_read(int16_t* arr){
 			last_pump_setpoint -= 50;
 			last_pump_setpoint /= 20; // +-2.5
 			// Apply model
-			previous_value[sensor_index] += (heater_on * 1) - ((uint16_t) last_pump_setpoint);
+			previous_value[sensor_index] += (heater_on * 1) - ((uint8_t) last_pump_setpoint);
 		}
-
 	}else{
 		// Copy data from dataset table into supplied array
-		memcpy(arr, temperature_dataset[test_data_frame], HC3D_CONFIG_TEMP_SENSOR_COUNT);
+		memcpy(driver_temp_last_readings, temperature_dataset[test_data_frame], HC3D_CONFIG_TEMP_SENSOR_COUNT);
 	}
-
 
 	test_data_frame++;
 }

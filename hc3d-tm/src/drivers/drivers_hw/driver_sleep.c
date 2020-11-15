@@ -1,6 +1,5 @@
 /*
- driver_sleep
- Contrary to other drivers, this driver does not have a separate test implementation
+	driver_sleep
  */
 
 #include "config.h"
@@ -12,9 +11,10 @@
 #include "stdint.h"
 
 // Max delay is 6.5535s
-// Internally the value is converted to 32-bit float, losing precision, also losing precision due to prescaler etc.
-void driver_sleep(uint32_t time){
-	_delay_ms( time);
+void driver_sleep(uint16_t time){
+	while(time--) {
+		_delay_ms(1);
+	}
 }
 
 #endif

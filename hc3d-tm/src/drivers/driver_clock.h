@@ -11,4 +11,4 @@
 #include "stdint.h"
 
 void driver_clock_init(void);
-uint32_t driver_clock_time(void);
+uint16_t driver_clock_time(void);

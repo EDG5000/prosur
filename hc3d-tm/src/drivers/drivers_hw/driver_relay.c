@@ -1,33 +1,29 @@
-
 /*
- * driver_relay.c
- *
- * Created: 2020-10-23 9:12:04 PM
- *  Author: Joel
- 
-	Uses pin configuration set in config.h
+	driver_relay
+
+	Set digital pin high or low
+	Uses pinout as described in main.c comment.
  */ 
 
 #include "config.h"
 #if HC3D_USE_TEST_DRIVERS==0
 
-#include "driver_relay.h" 
-#include "driver_reg.h"
-
+#include "drivers/driver_relay.h"
+#include "libraries/str/str.h"
 #include "config.h"
 #include "avr/io.h"
 
-uint8_t relay_pin = HC3D_driver_reg_pin_RELAY;
+#define B0 0
 
 void driver_relay_init(void){
-	HC3D_SET_HIGH(driver_reg_ddr(&relay_pin), &relay_pin);  // Set relay pin to output
+	HC3D_SBI(DDRB, B0);
 }
 
 void driver_relay_set(bool val){
 	if(val){
-		HC3D_SET_HIGH(driver_reg_port(&relay_pin), &relay_pin);
+		HC3D_SBI(PORTB, B0);
 	}else{
-		HC3D_SET_LOW(driver_reg_port(&relay_pin), &relay_pin);
+		HC3D_CBI(PORTB, B0);
 	}
 }
 

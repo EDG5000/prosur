@@ -22,7 +22,7 @@
 #include "drivers/driver_tach.h"
 #include "drivers/driver_uart.h"
 
-#include "stdio.h"
+#include "libraries/str/str.h"
 #include "stdbool.h"
 
 #include "business_logic/temp_validator.h"
@@ -31,25 +31,27 @@
 
 #include "temperature_dataset.h"
 
+#include "stdio.h"
+
 #if HC3D_TEST_MODE==HC3D_TEST_MODE_SERIAL
 
 int main(void){
 	driver_uart_init();
-	printf("HC3D_TEST_MODE_SERIAL");
-	printf("%i", 69);
-	printf("%f", 101.1005);
+	str("HC3D_TEST_MODE_SERIAL");
+	str("%i", 69);
+	str("%f", 101.1005);
 }
 
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_DRIVER_SLEEP
 
 int main(void){
 	driver_uart_init();
-	printf("HC3D_UNIT_TEST_SLEEP");
+	str("HC3D_UNIT_TEST_SLEEP");
 	
 	int time = 0;
 	while(true){
 		time += 100;
-		printf("Sleeping %i ms.\n", time);
+		str("Sleeping %i ms.\n", time);
 		driver_sleep(time);
 	}
 }
@@ -58,15 +60,15 @@ int main(void){
 
 int main(void){
 	driver_uart_init();
-	printf("HC3D_UNIT_TEST_CLOCK");
+	str("HC3D_UNIT_TEST_CLOCK");
 	driver_clock_init();
 	double sleep = 0;
-	uint32_t time = 0;
+	uint16_t time = 0;
 	while(true){
 		sleep += 500;
-		uint32_t last_time = time;
+		uint16_t last_time = time;
 		time = driver_clock_time();
-		printf("Sleeping %i ms. Time: %lu. Delta: %lu\n", (int) sleep, time, time-last_time);
+		str("Sleeping %i ms. Time: %lu. Delta: %lu\n", (int) sleep, time, time-last_time);
 		driver_sleep(sleep);
 	}
 }
@@ -75,7 +77,7 @@ int main(void){
 
 int main(void){
 	driver_uart_init();
-	printf("HC3D_TEST_MODE_DRIVER_PWM");
+	str("HC3D_TEST_MODE_DRIVER_PWM");
 	driver_pwm_init();
 	while(true){
 		driver_pwm_set_pwm(15);
@@ -91,14 +93,14 @@ int main(void){
 
 int main(void){
 	driver_uart_init();
-	printf("HC3D_TEST_MODE_DRIVER_RELAY");
+	str("HC3D_TEST_MODE_DRIVER_RELAY");
 	
 	driver_relay_init();
 	
 	int8_t toggle = 1;
 	while(true){
 		toggle *= -1;
-		printf("Setting relay to %i\n", toggle == 1);
+		str("Setting relay to %i\n", toggle == 1);
 		driver_relay_set(toggle == 1);
 		driver_sleep(1000);
 	}
@@ -108,7 +110,7 @@ int main(void){
 
 int main(void){
 	driver_uart_init();
-	printf("HC3D_TEST_MODE_PWM_AND_CLOCK");
+	str("HC3D_TEST_MODE_PWM_AND_CLOCK");
 	
 	driver_relay_init();
 	driver_pwm_init();
@@ -120,13 +122,13 @@ int main(void){
 		
 
 		toggle *= -1;
-		uint32_t time = driver_clock_time();
+		uint16_t time = driver_clock_time();
 		if(toggle == 1){
 			driver_pwm_set_pwm(15);
-			printf("Setting pwm to %i. Time: %lu.\n", 15, time);
+			str("Setting pwm to %i. Time: %lu.\n", 15, time);
 		}else{
 			driver_pwm_set_pwm(75);
-			printf("Setting pwm to %i. Time: %lu.\n", 75, time);
+			str("Setting pwm to %i. Time: %lu.\n", 75, time);
 		}
 		
 		driver_relay_set(toggle == 1);	
@@ -138,19 +140,19 @@ int main(void){
 
 int main(void){
 	driver_uart_init();
-	printf("HC3D_TEST_MODE_DRIVER_TEMP");
+	str("HC3D_TEST_MODE_DRIVER_TEMP");
 	
 	
 	int16_t temperatures[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 	
 	while(true){
 		driver_temp_read(temperatures);
-		printf("Temperatures");
+		str("Temperatures");
 		for(int i = 0; i < HC3D_CONFIG_TEMP_SENSOR_COUNT; i++){
-			printf(" | %i", temperatures[i]);
+			str(" | %i", temperatures[i]);
 		}
 		driver_sleep(1000);
-		printf("\n");
+		str("\n");
 	}
 }
 
@@ -158,12 +160,12 @@ int main(void){
 
 int main(void){
 	driver_uart_init();
-	printf("HC3D_TEST_MODE_TACH");
+	str("HC3D_TEST_MODE_TACH");
 	driver_tach_init();
-	uint32_t val;
+	uint16_t val;
 	while(true){
 		val = driver_tach_get();
-		printf("Tach value: %lu.\n", val);
+		str("Tach value: %lu.\n", val);
 		
 		driver_sleep(1000);
 	}
@@ -173,8 +175,8 @@ int main(void){
 
 int main(void){
    	driver_uart_init();
-	printf("HC3D_TEST_MODE_TEMP_FAILSAFE\n");
-
+	str("HC3D_TEST_MODE_TEMP_FAILSAFE\n");
+	fflush(stdout);
 	driver_clock_init();
 	
 	temp_validator_init();
@@ -184,7 +186,7 @@ int main(void){
 	
 	while(test_data_frame < HC3D_TEMPERATURE_DATASET_SIZE){
 		// Record tick start time to later calculate the correct sleep time
-		uint32_t time_start = driver_clock_time();
+		uint16_t time_start = driver_clock_time();
 			
 		// Manually move the rotating input buffer (data_reader_last_temperatures) used by temp watchdog one tick forward
 		// Normally data_reader is performing this operation as well as invoking driver_temp
@@ -210,16 +212,16 @@ int main(void){
 
 		temp_watchdog_tick();
 
-		uint32_t time_taken = util_time_offset(time_start, driver_clock_time());
+		uint16_t time_taken = util_time_offset(time_start, driver_clock_time());
 		driver_sleep(HC3D_INTERVAL - time_taken); // Ensure constant interval
 
         // Dump troubelshooting info
-        printf("[%i] ", test_data_frame);
+        str("[%i] ", test_data_frame);
         for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
             int16_t val = data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][sensor_index];
-            printf("%i ", val);
+            str("%i ", val);
         }
-        printf("\n");
+        str("\n");
         
 		test_data_frame++;
   	}	

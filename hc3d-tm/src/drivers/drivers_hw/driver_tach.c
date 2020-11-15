@@ -10,12 +10,12 @@
 #if HC3D_USE_TEST_DRIVERS==0
 
 #include "avr/io.h"
-#include "stdio.h"
+#include "libraries/str/str.h"
 
 #include "drivers/driver_tach.h"
 #include "avr/interrupt.h"
 
-uint32_t ticks = 0; 
+uint8_t ticks = 0;
 
 void driver_tach_init(void){
 	// Set D2 to input
@@ -33,7 +33,7 @@ void driver_tach_init(void){
 
 /// Has to be called at exactly 1Hz
 uint8_t driver_tach_get(void){
-	uint32_t ticks_old = ticks;
+	uint8_t ticks_old = ticks;
 	ticks = 0;
 	return ticks_old;
 }

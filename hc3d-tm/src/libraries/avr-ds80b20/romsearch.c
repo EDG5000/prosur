@@ -23,11 +23,11 @@
 #include <libraries/avr-ds80b20/romsearch.h>
 
 //! Searches for connected sensors
-uint8_t ds18b20search( volatile uint8_t *port, volatile uint8_t *direction, volatile uint8_t *portin, uint8_t mask, uint8_t *romcnt, uint8_t *roms, uint16_t buflen )
+uint16_t ds18b20search( volatile uint16_t *port, volatile uint16_t *direction, volatile uint16_t *portin, uint16_t mask, uint16_t *romcnt, uint16_t *roms, uint16_t buflen )
 {
-	uint8_t bit, currom = 0;
+	uint16_t bit, currom = 0;
 	uint64_t i, junction = 0, rom;
-	uint8_t sreg = SREG;
+	uint16_t sreg = SREG;
 
 	//romcnt is crucial
 	if ( romcnt == NULL ) return DS18B20_ERROR_OTHER;

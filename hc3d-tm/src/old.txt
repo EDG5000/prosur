@@ -430,7 +430,7 @@ void print_float_array(float* data, int length){
 		itr_on_falling(1);
 	}
 
-	void itr_on_falling(uint8_t dev){
+	void itr_on_falling(uint16_t dev){
 		volatile unsigned long current_time_us = micros();
 			tach_total_ticks[dev]++;
 	}

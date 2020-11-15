@@ -11,12 +11,12 @@
 #include "config.h"
 #if HC3D_USE_TEST_DRIVERS==1
 
-#include "stdio.h"
+#include "libraries/str/str.h"
 #include "stdbool.h"
 #include "drivers/driver_relay.h"
 
 void driver_relay_init(void){
-	printf("Driver relay INIT.");
+	str("Driver relay INIT.");
 }
 
 void driver_relay_set(bool val){

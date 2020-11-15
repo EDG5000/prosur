@@ -9,7 +9,7 @@
 #include "util.h"
 #include "stdint.h"
 
-uint32_t util_time_offset(uint32_t start, uint32_t end){
+uint16_t util_time_offset(uint16_t start, uint16_t end){
 	if(end >= start){
 		return end-start;
 	}else{

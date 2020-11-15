@@ -57,16 +57,15 @@
 
 // Unit testing and mock drivers							
 #define HC3D_TEST_MODE									HC3D_TEST_MODE_TEMP_FAILSAFE		// 0=OFF; Select specific unit test or all unit tests
-#define HC3D_USE_TEST_DRIVERS                           1
 
 #define HC3D_INTERVAL									10			// (ms) All code runs lockstep at this interval. Ensure enough time to communicate with all temp sensors, report data over UART and any calculations.
 
 // Temperature driver setup
 #define HC3D_CONFIG_TEMP_SENSOR_COUNT					8			// Amount of temperature sensors. Note: Also used by other temperature-related modules.
-#define HC3D_TEMP_PINS									{3, 4, 5, 6, 7, 11, 12, 13} // Pins used for temperature sensors
+//#define HC3D_TEMP_PINS								{3, 4, 5, 6, 7, 11, 12, 13} // Pins used for temperature sensors
 
 // Relay driver setup
-#define HC3D_driver_reg_pin_RELAY							8			// Pin for failsafe output pin. Relay is LOW when failsafe is active.
+//#define HC3D_driver_reg_pin_RELAY						8			// Pin for failsafe output pin. Relay is LOW when failsafe is active.
 
 // Safety-related limit of each sensor
 #define HC3D_CONFIG_TEMP_SENSOR_X_LIMIT					65			// Temp sensor safe limit for X motor stepper
@@ -95,10 +94,9 @@
 	Constants and helpers
 */
 
-// Set bit low or high for given arduino-compatible pin and register
-// TODO when there are problems, use regular function
-#define HC3D_SET_LOW(reg, pin) (*reg &= ~(1 << (*pin % 8)))
-#define HC3D_SET_HIGH(reg, pin) (*reg |= (1 << (*pin % 8)))
+// Set bit low or high
+#define HC3D_SBI(a, b) (a) |= (1 << (b))
+#define HC3D_CBI(a, b) (a) &= ~(1 << (b))
 
 // Unit test
 #define HC3D_TEST_MODE_SERIAL							2

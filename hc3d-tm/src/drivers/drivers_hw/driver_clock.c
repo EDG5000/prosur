@@ -19,9 +19,9 @@
 #include "stdint.h"
 #include "avr/io.h"
 #include "avr/interrupt.h"
-#include "stdio.h"
+#include "libraries/str/str.h"
 
-volatile uint32_t time = 0;
+volatile uint16_t time = 0;
 
 void driver_clock_init(void){
 	// This code sets up a timer0 for 4ms @ 16Mhz clock cycle
@@ -44,7 +44,7 @@ void driver_clock_init(void){
 }
 
 // Will always be multiples of 4
-uint32_t driver_clock_time(void){
+uint16_t driver_clock_time(void){
 	return time;
 }
 

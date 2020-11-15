@@ -12,4 +12,4 @@
 
 // Check time offset, taking into accounr the possibility of timer wraparound events
 // Use only when end is more recent than start
-uint32_t util_time_offset(uint32_t start, uint32_t end);
+uint16_t util_time_offset(uint16_t start, uint16_t end);

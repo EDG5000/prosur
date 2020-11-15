@@ -112,7 +112,7 @@
 #include "stdbool.h"
 #include "drivers/driver_uart.h"
 
-#include "stdio.h"
+#include "libraries/str/str.h"
 #include "drivers/driver_sleep.h"
 #include "drivers/driver_relay.h"
 #include "drivers/driver_temp.h"
@@ -131,7 +131,7 @@
 int main (void){
 
 	driver_uart_init();
-	printf("Infinus I/O HC3D-TM 0.0.1 (c) Joel Meijering\n");
+	str("Infinus I/O HC3D-TM 0.0.1 (c) Joel Meijering\n");
 
 	// Init drivers
 	driver_relay_init(); // Relay should be off after power cycle and stay off during initialisation of the relay driver
@@ -146,7 +146,7 @@ int main (void){
 
 	while(true){
 		// Record tick start time to later calculate the correct sleep time
-		uint32_t time_tick_start = driver_clock_time();
+		uint16_t time_tick_start = driver_clock_time();
 	
 		// This will fetch temperature data from driver_temp and store it in a buffer
 		data_reader_tick();
@@ -166,7 +166,7 @@ int main (void){
 		// Report measured temperatures to serial
 		data_reporter_tick();
 		
-		uint32_t time_taken = util_time_offset(time_tick_start, driver_clock_time());
+		uint16_t time_taken = util_time_offset(time_tick_start, driver_clock_time());
 		driver_sleep(HC3D_INTERVAL - time_taken); // Sleep as such to ensure loop running at 1Hz
 	}
 	

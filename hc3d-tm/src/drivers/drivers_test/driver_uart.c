@@ -10,10 +10,11 @@
 #if HC3D_USE_TEST_DRIVERS==1
 
 #include "drivers/driver_uart.h"
+#include "stdio.h"
 
 // NOP, special breakpoint logs to debug console and resumes excecution
 void driver_uart_init(void){
-	; // NOP, ok for SITL
+	setvbuf(stdout, NULL, _IONBF, 0); // changes stdout to unbuffered (_IONBF) mode; no fflush needed
 }
 
 
