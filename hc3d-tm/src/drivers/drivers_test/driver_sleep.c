@@ -11,14 +11,13 @@
 #include <errno.h>
 
 void driver_sleep(uint16_t time){
-	int64_t time_long = (int64_t) time;
-    struct timespec ts;
-    int res;
-    ts.tv_sec = time_long / 1000;
-    ts.tv_nsec = (time_long % 1000) * 1000000;
-    do {
-        res = nanosleep(&ts, &ts);
-    } while (res && errno == EINTR);
+  uint16_t ms_remaining = time % 1000;
+  long usec = ms_remaining * 1000;
+  struct timespec ts_sleep;
+
+  ts_sleep.tv_sec = (int32_t) (time/1000);
+  ts_sleep.tv_nsec = (int32_t) (1000*usec);
+  nanosleep(&ts_sleep, NULL);
 }
 
 #endif

@@ -18,4 +18,4 @@
 
 void temp_watchdog_init(void);
 // Return false when failsafe was triggered. Checks output fields of temp_validator
-bool temp_watchdog_tick(void);
+void temp_watchdog_tick(void);

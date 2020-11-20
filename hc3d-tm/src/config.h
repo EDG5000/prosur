@@ -62,10 +62,6 @@
 
 // Temperature driver setup
 #define HC3D_CONFIG_TEMP_SENSOR_COUNT					8			// Amount of temperature sensors. Note: Also used by other temperature-related modules.
-//#define HC3D_TEMP_PINS								{3, 4, 5, 6, 7, 11, 12, 13} // Pins used for temperature sensors
-
-// Relay driver setup
-//#define HC3D_driver_reg_pin_RELAY						8			// Pin for failsafe output pin. Relay is LOW when failsafe is active.
 
 // Safety-related limit of each sensor
 #define HC3D_CONFIG_TEMP_SENSOR_X_LIMIT					65			// Temp sensor safe limit for X motor stepper
@@ -79,8 +75,8 @@
 #define HC3D_CONFIG_TEMP_BUF_SIZE						10			// Keep last N temperature readings in buffer. EntireS range for confirming validity of readings (filtering out noise)
 #define HC3D_CONFIG_TEMP_VALID_MIN						3			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_VALID_MAX						120			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
-#define HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT				3000		// TODO increase timeout! (ms) When no valid readings are produced for this amount of time by temp_validator, failsafe will trigger
-#define HC3D_CONFIG_TEMP_MAX_DELTA						1			// Higher temperature deltas observed between valid value and potential valid value will cause rejection of the new value
+#define HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT				(15*HC3D_INTERVAL)	// When no valid values are produced for n ticks, trigger failsafe
+#define HC3D_CONFIG_TEMP_MAX_DELTA						5		// Higher temperature deltas observed between valid value and potential valid value will cause rejection of the new value
 
 // Pump controller configuration
 #define HC3D_CONFIG_CONTROLLER_KI						1			// See libraries/pi_control/pi_control.h
@@ -108,7 +104,6 @@
 #define HC3D_TEST_MODE_DRIVER_TEMP						8
 #define HC3D_TEST_MODE_TACH								9
 #define HC3D_TEST_MODE_TEMP_FAILSAFE					10
-
 
 // Temperature Sensors
 #define HC3D_TEMP_SENSOR_X								0			// Temp sensor handle for X motor stepper

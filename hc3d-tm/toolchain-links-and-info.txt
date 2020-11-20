@@ -1,0 +1,21 @@
+Old eclipse neon is used.
+Recent Sun Java JRE is used.
+Windows 10, oct 2020 is used.
+
+Instruction:
+
+1. Install WinAVR, patch msys dll inside WinAVR install dir.
+2. Unpack Eclipse
+3. Update Eclipse CDT using builtin updater
+4. Inststall Eclipse AVR plugin using offline repository ZIP which is provided
+5. Restart Eclipse. Configure Eclipse to use the separately shipped avrdude.
+6. Use zadig to properly install winUSB driver needed by avrdude? Not sure. For using of programmer such as AVRISPMKII
+
+https://github.com/mariusgreuel/avrdude/releases/tag/v6.3.1.0-windows
+
+https://sourceforge.net/projects/winavr/
+
+https://sourceforge.net/projects/avr-eclipse/files/latest/download
+
+https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers
+

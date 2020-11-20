@@ -9,6 +9,11 @@
 		int16_t		i
 		uint16_t	u
 
+
+		TODO uint8_t
+		TODO int8_t
+
+
 ?
 x	Unsigned hexadecimal integer	7fa
 X	Unsigned hexadecimal integer (uppercase)	7FA

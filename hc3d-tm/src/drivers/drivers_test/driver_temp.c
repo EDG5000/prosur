@@ -12,24 +12,17 @@
 #include "string.h"
 #include "stdbool.h"
 #include "drivers/driver_pwm.h"
-
+#include "business_logic/data_reader.h"
 #include "testing/temperature_dataset.h"
 
 uint8_t previous_value[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 uint8_t driver_temp_last_readings[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
-// Wraps around at HC3D_TEMPERATURE_DATASET_SIZE
-uint8_t test_data_frame = 0;
 
 // Generate fake data. Use the config value to determine the amount of temperature sensors present.
 void driver_temp_read(void){
-	if(test_data_frame == HC3D_TEMPERATURE_DATASET_SIZE-1){
-		// Wrap around frame counter
-		test_data_frame = 0;
-	}
-	
-	if(temperature_dataset[test_data_frame] == 0){
+	/*if(temperature_dataset[test_data_frame] == 0){
 		// No data provided by test dataset, run the model
 		for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
 			// Determine wether fake heater should be on
@@ -40,12 +33,10 @@ void driver_temp_read(void){
 			// Apply model
 			previous_value[sensor_index] += (heater_on * 1) - ((uint8_t) last_pump_setpoint);
 		}
-	}else{
+	}else{*/
 		// Copy data from dataset table into supplied array
-		memcpy(driver_temp_last_readings, temperature_dataset[test_data_frame], HC3D_CONFIG_TEMP_SENSOR_COUNT);
-	}
-
-	test_data_frame++;
+		memcpy(driver_temp_last_readings, temperature_dataset[data_reader_frame], HC3D_CONFIG_TEMP_SENSOR_COUNT);
+	//}
 }
 
 #endif

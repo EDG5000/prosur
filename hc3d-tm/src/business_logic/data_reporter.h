@@ -8,5 +8,5 @@
 #pragma once
 
 
-void data_reporter_tick(void);
+void data_reporter_tick(uint16_t time);
 

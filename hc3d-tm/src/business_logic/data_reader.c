@@ -16,10 +16,13 @@
 // Moving buffer keeping the last 10 values.
 uint8_t data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE][HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
+uint16_t data_reader_frame = 0;
+bool data_reader_settled = false;
+
 // Poll latest temperatures from driver_temp.
 // Insert frame into moving buffer.
 // Note: Caller should take processing time of 1 call to driver_temp into account when timing this call.
-bool data_reader_tick(void){
+data_reader_tick(void){
 	// Copy values over to buffer and back to shift them all one back.
 	// Start at position 1. Copy to position before it.
 	for(int frame_index = 1; frame_index < HC3D_CONFIG_TEMP_BUF_SIZE; frame_index++){
@@ -36,6 +39,11 @@ bool data_reader_tick(void){
 	for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
 		data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][sensor_index] = driver_temp_last_readings[sensor_index];
 	}
-		
-	return true;
+
+	if(data_reader_frame+1 == HC3D_CONFIG_TEMP_BUF_SIZE && !data_reader_settled){
+		// Buffer is now full
+		data_reader_settled = true;
+	}
+
+	data_reader_frame++;
 }

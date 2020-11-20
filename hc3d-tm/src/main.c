@@ -58,15 +58,16 @@
 			Data Reader
 				- Periodically invoke Tach and Temp driver.
 				- For Temp, store last 10 values
-				Temperature Watchdog
-					- For Temp, check for at least 10 values when checking for limit exceeded/not exceeded condition
-					- Trigger failsafe when needed
-					- Invoke failsafe
-					- Send message to UART
-					- Abort program excecution
-					Data Reporter
-					- Reports temperature data, tach data
-					- Events related to safety are also reported as string messages over serial (not handled by serial writer)
+				Temperature Validator
+					Temperature Watchdog
+						- For Temp, check for at least 10 values when checking for limit exceeded/not exceeded condition
+						- Trigger failsafe when needed
+						- Invoke failsafe
+						- Send message to UART
+						- Abort program excecution
+						Data Reporter
+						- Reports temperature data, tach data
+						- Events related to safety are also reported as string messages over serial (not handled by serial writer)
 			Pump Controller
 				- Keep steppers below target temperature
 				- Use PI; send PWM command to PWM driver
@@ -84,9 +85,9 @@
 				- Allows reading of current pin state (last value sent is stored)
 			Temp Driver
 				- Allows performing init() and read() calls on sensors
-			Sleep Driver (No SITL driver used)
+			Sleep Driver
 				- Provides sleep(uint ms) function
-			Clock Driver (No SITL driver used)
+			Clock Driver
 				- Provides system clock
 				
 		Unit Tests
