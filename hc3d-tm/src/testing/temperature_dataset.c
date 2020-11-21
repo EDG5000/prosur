@@ -1,13 +1,20 @@
 #include "testing/temperature_dataset.h"
 
-#define SELECTED_DATASET 5
+void temperature_dataset_init(){
+	for(int frame = 0; frame < HC3D_TEMPERATURE_DATASET_SIZE; frame++){
+		for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
+			temperature_dataset[frame][sensor_index] *= 16;
+		}
+	}
+}
 
+#define SELECTED_DATASET 5
 
 #if SELECTED_DATASET == 0
 
 // 1. all values stay at initial 0		no valid values published			10
 
-int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
+uint16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 	/* 00 */ {00, 00, 00, 00, 00, 00, 00, 00},
 	/* 01 */ {00, 00, 00, 00, 00, 00, 00, 00},
 	/* 02 */ {00, 00, 00, 00, 00, 00, 00, 00},
@@ -115,7 +122,7 @@ int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 
 // 2. sudden change to 60. fail at
 
-int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
+uint16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 	/* 00 */ {20, 00, 00, 00, 00, 00, 00, 00},
 	/* 01 */ {20, 00, 00, 00, 00, 00, 00, 00},
 	/* 02 */ {21, 00, 00, 00, 00, 00, 00, 00},
@@ -224,7 +231,7 @@ int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 
 // 3. abruptly stuck at erroneous value	last valid value mained for 10 frame		10 frames after 1st 0
 
-int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
+uint16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 	/* 00 */ {20, 00, 00, 00, 00, 00, 00, 00},
 	/* 01 */ {21, 00, 00, 00, 00, 00, 00, 00},
 	/* 02 */ {20, 00, 00, 00, 00, 00, 00, 00},
@@ -333,7 +340,7 @@ int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 
 // 4. gradually raise to exceed ceiling
 
-int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
+uint16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 	/* 00 */ {20, 00, 00, 00, 00, 00, 00, 00},
 	/* 01 */ {21, 00, 00, 00, 00, 00, 00, 00},
 	/* 02 */ {22, 00, 00, 00, 00, 00, 00, 00},
@@ -443,7 +450,7 @@ int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 // 5. abruptly reports zeroes and stays	last valid value mained for 10 frame 10 frames after 1st 0
 // Zeroes at 34. Fail at 34 + 10
 
-int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
+uint16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 	/* 00 */ {40, 00, 00, 00, 00, 00, 00, 00},
 	/* 01 */ {40, 00, 00, 00, 00, 00, 00, 00},
 	/* 02 */ {40, 00, 00, 00, 00, 00, 00, 00},
@@ -553,7 +560,7 @@ int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 // 6. intermittent garbage values (128)	garbage values are filtered out.
 // Zeroes at 77. Fail at 77 + 10.
 
-int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
+uint16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 	/* 00 */ {33, 00, 00, 00, 00, 00, 00, 00},
 	/* 01 */ {32, 00, 00, 00, 00, 00, 00, 00},
 	/* 02 */ {33, 00, 00, 00, 00, 00, 00, 00},

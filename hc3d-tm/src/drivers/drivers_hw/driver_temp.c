@@ -24,15 +24,15 @@
 #include "stdlib.h"
 #include "avr/io.h"
 
-uint8_t driver_temp_last_readings[HC3D_CONFIG_TEMP_SENSOR_COUNT];
+uint16_t driver_temp_last_readings[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 // Reading is supposed to be 16x the value in celcius
 // For now, round to whole celcius, treat any sub-zero temperature as 0
 // Store in uint8_t
+
 void process_raw_reading(uint8_t* sensor_index, int16_t* raw_reading_p){
-	uint16_t raw_reading = raw_reading_p < 0 ? 0 : raw_reading_p;
-	raw_reading = raw_reading - (raw_reading % 16) + ((raw_reading % 16 > 8) ? 1 : 0);
-	driver_temp_last_readings[sensor_index] = (uint8_t) raw_reading;
+	uint16_t value = raw_reading_p < 0 ? 0 : raw_reading_p;
+	driver_temp_last_readings[sensor_index] = value;
 }
 
 // For array length HC3D_TEMP_SENSOR_SOUND is used

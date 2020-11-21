@@ -17,20 +17,20 @@
 #include "libraries/str/str.h"
 #include "stdbool.h"
 #include "config.h"
-
+#include "util.h"
 
 // Safety limit per sensor, copied from config constants
 // Used for dyanmic access from loop
-uint8_t sensor_safety_limit[HC3D_CONFIG_TEMP_SENSOR_COUNT];
+uint16_t sensor_safety_limit[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 void temp_watchdog_init(void){
 	// Copy safety limits to array
-	sensor_safety_limit[HC3D_TEMP_SENSOR_X] = HC3D_CONFIG_TEMP_SENSOR_X_LIMIT;
-	sensor_safety_limit[HC3D_TEMP_SENSOR_Y] = HC3D_CONFIG_TEMP_SENSOR_Y_LIMIT;
-	sensor_safety_limit[HC3D_TEMP_SENSOR_Z] = HC3D_CONFIG_TEMP_SENSOR_Z_LIMIT;
-	sensor_safety_limit[HC3D_TEMP_SENSOR_E] = HC3D_CONFIG_TEMP_SENSOR_E_LIMIT;
-	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER0] = HC3D_CONFIG_TEMP_SENSOR_CHAMBER0_LIMIT;
-	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER1] = HC3D_CONFIG_TEMP_SENSOR_CHAMBER1_LIMIT;
+	sensor_safety_limit[HC3D_TEMP_SENSOR_X] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_X_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_Y] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_Y_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_Z] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_Z_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_E] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_E_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER0] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_CHAMBER0_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER1] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_CHAMBER1_LIMIT);
 }
 
 void temp_watchdog_tick(void){
@@ -42,9 +42,9 @@ void temp_watchdog_tick(void){
 	// Check if any sensors are currently exceeding their maximum temperature limit
 	bool failure = false;
 	uint16_t time = driver_clock_time();
-	for(uint8_t sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
-		uint8_t val = temp_validator_sensor_last_valid_temperature[sensor_index];
-		uint8_t limit = sensor_safety_limit[sensor_index];
+	for(uint8_t sensor_index = 0; sensor_index < HC3D_CONFIG_WATCHDOG_CHANNELS; sensor_index++){
+		uint16_t val = temp_validator_sensor_last_valid_temperature[sensor_index];
+		uint16_t limit = sensor_safety_limit[sensor_index];
 		uint16_t last_time = temp_validator_sensor_last_update_time[sensor_index];
 		uint16_t age = util_time_offset(last_time, time);
 
@@ -57,7 +57,7 @@ void temp_watchdog_tick(void){
 			failure = true;
 		}else if(last_time == 0 || age > HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT){
 			// If the previous timestamp is 0, then
-			str("Sensor %u has timed out. Age: %u ms.\n", (uint16_t) sensor_index, age);
+			str("Sensor %u has timed out. Age: %u ms.\n", sensor_index, age);
 			failure = true;
 		}
 	}

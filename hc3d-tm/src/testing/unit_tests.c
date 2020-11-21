@@ -178,6 +178,7 @@ int main(void){
    	driver_uart_init();
 	str("HC3D_TEST_MODE_TEMP_FAILSAFE\n");
 	fflush(stdout);
+	temperature_dataset_init();
 	driver_clock_init();
 	
 	temp_validator_init();

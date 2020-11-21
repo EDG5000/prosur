@@ -76,7 +76,8 @@
 #define HC3D_CONFIG_TEMP_VALID_MIN						3			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_VALID_MAX						120			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT				(15*HC3D_INTERVAL)	// When no valid values are produced for n ticks, trigger failsafe
-#define HC3D_CONFIG_TEMP_MAX_DELTA						5		// Higher temperature deltas observed between valid value and potential valid value will cause rejection of the new value
+#define HC3D_CONFIG_WATCHDOG_CHANNELS					1			// 1st N channels will be monitored. All data always reported.
+#define HC3D_CONFIG_TEMP_MAX_DELTA						5			// Higher temperature deltas observed between valid value and potential valid value will cause rejection of the new value
 
 // Pump controller configuration
 #define HC3D_CONFIG_CONTROLLER_KI						1			// See libraries/pi_control/pi_control.h
@@ -89,6 +90,8 @@
 /*
 	Constants and helpers
 */
+
+#define HC3D_TEMP (temp) (16*temp)
 
 // Set bit low or high
 #define HC3D_SBI(a, b) (a) |= (1 << (b))

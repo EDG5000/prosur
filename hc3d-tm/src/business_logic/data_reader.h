@@ -13,7 +13,7 @@
 #include "config.h"
 
 // Moving buffer of raw data
-extern uint8_t data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE][HC3D_CONFIG_TEMP_SENSOR_COUNT];
+extern uint16_t data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE][HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 // Frame counter
 extern uint16_t data_reader_frame;

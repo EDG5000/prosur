@@ -54,5 +54,8 @@
 #include "config.h"
 #define HC3D_TEMPERATURE_DATASET_SIZE 100
 
-extern int16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT];
+// Will  turn all values into their raw equivalents
+void temperature_dataset_init();
+
+extern uint16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT];
 

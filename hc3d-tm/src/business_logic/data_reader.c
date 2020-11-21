@@ -14,7 +14,7 @@
 #include "drivers/driver_temp.h"
 
 // Moving buffer keeping the last 10 values.
-uint8_t data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE][HC3D_CONFIG_TEMP_SENSOR_COUNT];
+uint16_t data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE][HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 uint16_t data_reader_frame = 0;
 bool data_reader_settled = false;

@@ -17,8 +17,7 @@
 
 uint8_t previous_value[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
-uint8_t driver_temp_last_readings[HC3D_CONFIG_TEMP_SENSOR_COUNT];
-
+uint16_t driver_temp_last_readings[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 // Generate fake data. Use the config value to determine the amount of temperature sensors present.
 void driver_temp_read(void){

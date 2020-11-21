@@ -23,6 +23,7 @@
 #include "stdint.h"
 #include "stdbool.h"
 #include "stdlib.h"
+#include "util.h"
 #include "libraries/str/str.h"
 #include "drivers/driver_clock.h"
 
@@ -33,7 +34,7 @@
 // Secondary outputs: Store last valid temperature per sensor
 // Will stay at 0 and will only change when a new valid value is detected
 // Only used for reporting to other modules
-uint8_t temp_validator_sensor_last_valid_temperature[HC3D_CONFIG_TEMP_SENSOR_COUNT];
+uint16_t temp_validator_sensor_last_valid_temperature[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 // Output timestamps of when new reading were received
 uint16_t temp_validator_sensor_last_update_time[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
@@ -46,15 +47,15 @@ void temp_validator_tick(void){
 	uint16_t time = driver_clock_time();
 	
 	// Update sensor_safety_state for all sensors
-	for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
+	for(uint8_t sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
 		// At least one delta has to be observed in the buffer. Set high when found.
 		bool delta_found = false;
 		// Set high when an invalid condition is detected and the sensor is to be skipped for further checking
 		bool sensor_invalidated = false;
 		// All fields need to be non-zero and be within valid range. (2-120, defined in config)
 		for(int sample_index = 0; sample_index < HC3D_CONFIG_TEMP_BUF_SIZE; sample_index++){
-			uint8_t val = data_reader_last_temperatures[sample_index][sensor_index];
-			if(val == 0 || val < HC3D_CONFIG_TEMP_VALID_MIN || val > HC3D_CONFIG_TEMP_VALID_MAX){
+			uint16_t val = data_reader_last_temperatures[sample_index][sensor_index];
+			if(val == 0 || val < util_temp_raw(HC3D_CONFIG_TEMP_VALID_MIN) || val > util_temp_raw(HC3D_CONFIG_TEMP_VALID_MAX)){
 				// Do not emit new value for this sensor, continue checking next sensor
 				sensor_invalidated = true;
 				break;
@@ -69,8 +70,8 @@ void temp_validator_tick(void){
 		}
 
 		// Check delta between last value and last valid value; has to be below the limit
-		uint8_t last_valid_value = temp_validator_sensor_last_valid_temperature[sensor_index];
-		bool last_valid_delta_acceptable = last_valid_value == 0 || abs(last_valid_value - data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][sensor_index]) < HC3D_CONFIG_TEMP_MAX_DELTA;
+		uint16_t last_valid_value = temp_validator_sensor_last_valid_temperature[sensor_index];
+		bool last_valid_delta_acceptable = last_valid_value == 0 || abs(last_valid_value - data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE-1][sensor_index]) < util_temp_raw(HC3D_CONFIG_TEMP_MAX_DELTA);
 
 		if(!last_valid_delta_acceptable){
 			sensor_invalidated = true;
