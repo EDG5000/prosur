@@ -23,7 +23,7 @@ void driver_tach_init(void){
 // Simulated tach RPM is 10+- of the pump PWM duty cycle percentage
 // 50% pump = ~50RPM tach
 uint8_t driver_tach_get(void){
-	return last_percentage - 5 + (rand() % 10);
+	return driver_pwm_value - 5 + (rand() % 10);
 }
 
 #endif

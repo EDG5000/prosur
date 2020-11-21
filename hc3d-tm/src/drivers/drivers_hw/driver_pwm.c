@@ -14,6 +14,8 @@
 #include "drivers/driver_pwm.h"
 #include "avr/io.h"
 
+uint8_t driver_pwm_value = 0;
+
 void driver_pwm_init(void){
 		/*
 			Setup PWM output on pin 9 (OCR1A) and 10 (OCR1B) (both use timer1)
@@ -43,11 +45,12 @@ void driver_pwm_init(void){
 		TCCR1A |= _BV(WGM11);  //WGM13:WGM10 set 1010
 }
 
-void driver_pwm_set_pwm(uint8_t percentage){
+void driver_pwm_set(uint8_t percentage){
 	// 0-320 = 0-100% duty cycle
 	// Scale percentage to desired range. Will discard fractional part
 	// Only change PWM for pin 9
 	OCR1A = (percentage * 32) / 10;
+	driver_pwm_value = percentage;
 }
 
 #endif

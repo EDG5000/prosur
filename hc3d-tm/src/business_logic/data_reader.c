@@ -22,7 +22,7 @@ bool data_reader_settled = false;
 // Poll latest temperatures from driver_temp.
 // Insert frame into moving buffer.
 // Note: Caller should take processing time of 1 call to driver_temp into account when timing this call.
-data_reader_tick(void){
+void data_reader_tick(void){
 	// Copy values over to buffer and back to shift them all one back.
 	// Start at position 1. Copy to position before it.
 	for(int frame_index = 1; frame_index < HC3D_CONFIG_TEMP_BUF_SIZE; frame_index++){

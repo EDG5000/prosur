@@ -13,14 +13,14 @@
 #include "drivers/driver_pwm.h"
 #include "drivers/driver_tach.h"
 
-struct PIControl pi_control_state;
+struct PIControl pump_controller_state;
 
 void pump_controller_init(void){
-	pi_control_state.ki = HC3D_CONFIG_CONTROLLER_KI;
-	pi_control_state.kp = HC3D_CONFIG_CONTROLLER_KP;
-	pi_control_state.min = HC3D_CONFIG_CONTROLLER_MIN;
-	pi_control_state.max = HC3D_CONFIG_CONTROLLER_MAX;
-	pi_control_state.shift = HC3D_CONFIG_CONTROLLER_SHIFT;
+	pump_controller_state.ki = HC3D_CONFIG_CONTROLLER_KI;
+	pump_controller_state.kp = HC3D_CONFIG_CONTROLLER_KP;
+	pump_controller_state.min = HC3D_CONFIG_CONTROLLER_MIN;
+	pump_controller_state.max = HC3D_CONFIG_CONTROLLER_MAX;
+	pump_controller_state.shift = HC3D_CONFIG_CONTROLLER_SHIFT;
 }
 
 void pump_controller_tick(void){
@@ -37,8 +37,8 @@ void pump_controller_tick(void){
 	int error = highest_temp - HC3D_CONFIG_CONTROLLER_TEMP_SETPOINT; // TODO check if it needs to be inverted
 	
 	// Obtain pump PWM control output from PI controller
-	int control_output = pi_control(&pi_control_state, error);
+	int control_output = pi_control(&pump_controller_state, error);
 	
 	// Send control output to PWM driver
-	driver_pwm_set_pwm(control_output);
+	driver_pwm_set(control_output);
 }

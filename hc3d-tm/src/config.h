@@ -56,7 +56,7 @@
 
 
 // Unit testing and mock drivers							
-#define HC3D_TEST_MODE									HC3D_TEST_MODE_TEMP_FAILSAFE		// 0=OFF; Select specific unit test or all unit tests
+#define HC3D_TEST_MODE									HC3D_TEST_MODE_PUMP_CONTROLLER		// 0=OFF; Select specific unit test or all unit tests
 
 #define HC3D_INTERVAL									10			// (ms) All code runs lockstep at this interval. Ensure enough time to communicate with all temp sensors, report data over UART and any calculations.
 
@@ -64,10 +64,10 @@
 #define HC3D_CONFIG_TEMP_SENSOR_COUNT					8			// Amount of temperature sensors. Note: Also used by other temperature-related modules.
 
 // Safety-related limit of each sensor
-#define HC3D_CONFIG_TEMP_SENSOR_X_LIMIT					65			// Temp sensor safe limit for X motor stepper
-#define HC3D_CONFIG_TEMP_SENSOR_Y_LIMIT					65			// Temp sensor safe limit for Y motor stepper
-#define HC3D_CONFIG_TEMP_SENSOR_Z_LIMIT					65			// Temp sensor safe limit for Z motor stepper
-#define HC3D_CONFIG_TEMP_SENSOR_E_LIMIT					65			// Temp sensor safe limit for E motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_X_LIMIT					67			// Temp sensor safe limit for X motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_Y_LIMIT					67			// Temp sensor safe limit for Y motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_Z_LIMIT					67			// Temp sensor safe limit for Z motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_E_LIMIT					67			// Temp sensor safe limit for E motor stepper
 #define HC3D_CONFIG_TEMP_SENSOR_CHAMBER0_LIMIT			80			// Temp sensor safe limit for chamber sensor 0
 #define HC3D_CONFIG_TEMP_SENSOR_CHAMBER1_LIMIT			80			// Temp sensor safe limit for chamber sensor 1
 
@@ -80,12 +80,12 @@
 #define HC3D_CONFIG_TEMP_MAX_DELTA						5			// Higher temperature deltas observed between valid value and potential valid value will cause rejection of the new value
 
 // Pump controller configuration
+#define HC3D_CONFIG_CONTROLLER_KP						20			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_KI						1			// See libraries/pi_control/pi_control.h
-#define HC3D_CONFIG_CONTROLLER_KP						1			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_MIN						0			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_MAX						100			// See libraries/pi_control/pi_control.h
-#define HC3D_CONFIG_CONTROLLER_SHIFT					0			// See libraries/pi_control/pi_control.h
-#define HC3D_CONFIG_CONTROLLER_TEMP_SETPOINT			60			// Try to keep stepper motor surface temperature under 60
+#define HC3D_CONFIG_CONTROLLER_SHIFT					8			// See libraries/pi_control/pi_control.h
+#define HC3D_CONFIG_CONTROLLER_TEMP_SETPOINT			57			// Try to keep stepper motor surface temperature under 60
 
 /*
 	Constants and helpers
@@ -107,6 +107,7 @@
 #define HC3D_TEST_MODE_DRIVER_TEMP						8
 #define HC3D_TEST_MODE_TACH								9
 #define HC3D_TEST_MODE_TEMP_FAILSAFE					10
+#define HC3D_TEST_MODE_PUMP_CONTROLLER					11
 
 // Temperature Sensors
 #define HC3D_TEMP_SENSOR_X								0			// Temp sensor handle for X motor stepper

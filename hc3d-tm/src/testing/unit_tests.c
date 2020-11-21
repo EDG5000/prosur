@@ -6,8 +6,10 @@
 				DRIVER_TACH
 			DRIVER_PWM
 				PWM_AND_CLOCK
+					TEMP_FAILSAFE
 			DRIVER_RELAY	
-			TEMP
+			DRIVER_TEMP
+			PUMP_CONTROLLER
 			TACH
  */ 
 
@@ -21,7 +23,7 @@
 #include "drivers/driver_temp.h"
 #include "drivers/driver_tach.h"
 #include "drivers/driver_uart.h"
-
+#include "drivers/driver_system.h"
 #include "libraries/str/str.h"
 #include "stdbool.h"
 
@@ -29,9 +31,10 @@
 #include "business_logic/temp_watchdog.h"
 #include "business_logic/data_reader.h"
 #include "business_logic/data_reporter.h"
+#include "business_logic/pump_controller.h"
 
 #include "temperature_dataset.h"
-
+#include "stdlib.h"
 #include "stdio.h"
 
 #if HC3D_TEST_MODE==HC3D_TEST_MODE_SERIAL
@@ -41,6 +44,8 @@ int main(void){
 	str("HC3D_TEST_MODE_SERIAL");
 	str("%i", 69);
 	str("%f", 101.1005);
+
+	driver_system_halt();
 }
 
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_DRIVER_SLEEP
@@ -55,6 +60,8 @@ int main(void){
 		str("Sleeping %i ms.\n", time);
 		driver_sleep(time);
 	}
+
+	driver_system_halt();
 }
 
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_DRIVER_CLOCK
@@ -72,6 +79,8 @@ int main(void){
 		driver_sleep(sleep);
 		last_time = time;
 	}
+
+	driver_system_halt();
 }
 
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_DRIVER_PWM
@@ -88,6 +97,8 @@ int main(void){
 		driver_pwm_set_pwm(75);
 		driver_sleep(1000);
 	}
+
+	driver_system_halt();
 }
 
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_DRIVER_RELAY
@@ -105,6 +116,8 @@ int main(void){
 		driver_relay_set(toggle == 1);
 		driver_sleep(1000);
 	}
+
+	driver_system_halt();
 }
 
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_PWM_AND_CLOCK
@@ -120,8 +133,6 @@ int main(void){
 	int8_t toggle = 1;
 
 	while(true){ // Every 1000ms. 
-		
-
 		toggle *= -1;
 		uint16_t time = driver_clock_time();
 		if(toggle == 1){
@@ -135,6 +146,8 @@ int main(void){
 		driver_relay_set(toggle == 1);	
 		driver_sleep(1000);
 	}
+
+	driver_system_halt();
 }
 
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_DRIVER_TEMP
@@ -155,6 +168,8 @@ int main(void){
 		driver_sleep(1000);
 		str("\n");
 	}
+
+	driver_system_halt();
 }
 
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_TACH
@@ -170,6 +185,8 @@ int main(void){
 		
 		driver_sleep(1000);
 	}
+
+	driver_system_halt();
 }
 
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_TEMP_FAILSAFE
@@ -197,8 +214,44 @@ int main(void){
 		driver_sleep(HC3D_INTERVAL - time_taken); // Ensure constant interval
   	}	
 	
-	// Turn off MCU, PWM, etc. Test session over. Debugger will be detached.
-	while(1);
+	driver_system_halt();
+}
+
+#elif HC3D_TEST_MODE==HC3D_TEST_MODE_PUMP_CONTROLLER
+
+int main(void){
+	driver_uart_init();
+	str("HC3D_TEST_MODE_PUMP_CONTROLLER\n");
+	fflush(stdout);
+	driver_clock_init();
+	pump_controller_init();
+
+	for(uint8_t sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
+		temp_validator_sensor_last_valid_temperature[sensor_index] = util_temp_raw(40);
+	}
+
+	uint16_t test_frame = 0;
+	while(test_frame < 10000){
+		for(uint8_t sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
+			// Up to 8-16 of heating added when motors on
+			int16_t heating = 8 + (rand() % 8);
+			// 0-16 cooling substracted
+			int16_t cooling = driver_pwm_value / 6;
+			// Get delta
+			int16_t delta = heating - cooling;
+			// Cast to apply delta confidently
+			int16_t temp_signed = ((int16_t) temp_validator_sensor_last_valid_temperature[sensor_index]) + delta;
+			// Cast back to signed value to store new temperature
+			temp_validator_sensor_last_valid_temperature[sensor_index] = (uint16_t) temp_signed;
+		}
+		// Report state
+		data_reporter_tick(0);
+
+		pump_controller_tick();
+		test_frame++;
+	}
+
+	driver_system_halt();
 }
 
 #endif

@@ -6,6 +6,8 @@
  */ 
 
 #pragma once
- 
+
+extern struct PIControl pump_controller_state;
+
 void pump_controller_init(void);
 void pump_controller_tick(void);
