@@ -27,14 +27,14 @@
     an integration accumulator (the PI controller's state variable). */
 struct PIControl
 {
-  int kp;              /**< Proportional gain constant */
-  int ki;              /**< Integral gain constant */
-  unsigned char shift; /**< Right shift to divide */
-  int max;             /**< Maximum value */
-  int min;             /**< Minimum value */
-  long i;              /**< Current integrator value */
+  int16_t kp;          /**< Proportional gain constant */
+  int16_t ki;          /**< Integral gain constant */
+  uint8_t shift; 	   /**< Right shift to divide */
+  int16_t max;         /**< Maximum value */
+  int16_t min;         /**< Minimum value */
+  int32_t i;           /**< Current integrator value */
 };
 
 /* Prototypes */
-int pi_control (struct PIControl *p, int e);
+int16_t pi_control (struct PIControl *p, int16_t e);
 void pi_control_init (struct PIControl *p);

@@ -76,17 +76,17 @@
 #define HC3D_CONFIG_TEMP_VALID_MIN						3			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_VALID_MAX						120			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT				(15*HC3D_INTERVAL)	// When no valid values are produced for n ticks, trigger failsafe
-#define HC3D_CONFIG_WATCHDOG_CHANNELS					1			// 1st N channels will be monitored. All data always reported.
+#define HC3D_CONFIG_WATCHDOG_CHANNELS					1			// 1st N channels will be monitored by watchdog. All data always reported.
 #define HC3D_CONFIG_TEMP_MAX_DELTA						5			// Higher temperature deltas observed between valid value and potential valid value will cause rejection of the new value
 
 // Pump controller configuration
-#define HC3D_CONFIG_CONTROLLER_KP						20			// See libraries/pi_control/pi_control.h
+#define HC3D_CONFIG_CONTROLLER_KP						160			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_KI						1			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_MIN						0			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_MAX						100			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_SHIFT					8			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_TEMP_SETPOINT			57			// Try to keep stepper motor surface temperature under 60
-
+#define HC3D_CONFIG_PUMP_CONTROL_SENSOR_COUNT			1			// Use 1st N sensors as feedback when controlling pump speed
 /*
 	Constants and helpers
 */

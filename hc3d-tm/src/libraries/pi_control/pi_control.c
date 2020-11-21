@@ -19,6 +19,7 @@
  */
 
 #include <stdbool.h>
+#include "stdint.h"
 #include "libraries/pi_control/pi_control.h"
 
 /**
@@ -29,15 +30,15 @@
  *
  * @return              control output <code>u</code>
  */
-int pi_control (struct PIControl *p, int e)
+int16_t pi_control (struct PIControl *p, int16_t e)
 {
   bool int_ok;      /* Whether or not the integrator should update */
-  long new_i;       /* Proposed new integrator value */
-  long u;           /* Control output */
+  int32_t new_i;    /* Proposed new integrator value */
+  int32_t u;        /* Control output */
   
   /* Compute new integrator and the final control output. */
   new_i = p->i + e;
-  u = (p->kp * (long)e + p->ki * new_i) >> p->shift;
+  u = (p->kp * (int32_t)e + p->ki * new_i) >> p->shift;
 
   /* Check for saturation.  In the event of saturation in any one direction,
      inhibit saving the integrator if doing so would deepen the saturation. */
@@ -72,7 +73,7 @@ int pi_control (struct PIControl *p, int e)
     p->i = new_i;
   }
 
-  return (int)u;
+  return (int16_t) u;
 }
 
 /**

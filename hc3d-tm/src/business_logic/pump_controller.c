@@ -9,6 +9,7 @@
 #include "business_logic/pump_controller.h"
 #include "libraries/pi_control/pi_control.h"
 #include "business_logic/temp_validator.h"
+#include "util.h"
 
 #include "drivers/driver_pwm.h"
 #include "drivers/driver_tach.h"
@@ -26,19 +27,19 @@ void pump_controller_init(void){
 void pump_controller_tick(void){
 	// Find the temperature of the hottest stepper motor
 	// Use the validated temperatures from temp_validator
-	uint8_t highest_temp = 0;
-	for(int sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
+	int16_t highest_temp = 0;
+	for(int sensor_index = 0; sensor_index < HC3D_CONFIG_PUMP_CONTROL_SENSOR_COUNT; sensor_index++){
 		if(temp_validator_sensor_last_valid_temperature[sensor_index] > highest_temp){
-			highest_temp = temp_validator_sensor_last_valid_temperature[sensor_index];
+			highest_temp = (int16_t) temp_validator_sensor_last_valid_temperature[sensor_index];
 		}
 	}
 	
 	// Calculate error based on the highest measured temperature and the target temperature
-	int error = highest_temp - HC3D_CONFIG_CONTROLLER_TEMP_SETPOINT; // TODO check if it needs to be inverted
+	int16_t error = highest_temp - util_temp_raw(HC3D_CONFIG_CONTROLLER_TEMP_SETPOINT); // TODO check if it needs to be inverted
 	
 	// Obtain pump PWM control output from PI controller
-	int control_output = pi_control(&pump_controller_state, error);
+	int16_t control_output = pi_control(&pump_controller_state, error);
 	
 	// Send control output to PWM driver
-	driver_pwm_set(control_output);
+	driver_pwm_set((uint8_t) control_output);
 }
