@@ -35,6 +35,7 @@ NEW: 3-7, 11-13
 #include "libraries/avr-ds80b20/ds18b20.h"
 #include "stdint.h"
 #include "stdlib.h"
+#include "libraries/str/str.h"
 #include "avr/io.h"
 
 uint16_t driver_temp_last_readings[HC3D_CONFIG_TEMP_SENSOR_COUNT];
@@ -72,11 +73,14 @@ void driver_temp_read(void){
 	for(uint8_t i = 3; i < 7; i++){
 		ds18b20read(&PORTD, &DDRD, &PIND, 1 << i, NULL, &raw_reading);
 		process_raw_reading(&sensor_index, &raw_reading);
+		sensor_index++;
+
 	}
 	// B3-B5
 	for(uint8_t i = 3; i < 5; i++){
 		ds18b20read(&PORTB, &DDRB, &PINB, 1 << i, NULL, &raw_reading);
 		process_raw_reading(&sensor_index, &raw_reading);
+		sensor_index++;
 	}
 }
 

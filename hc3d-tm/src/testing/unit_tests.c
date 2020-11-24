@@ -156,7 +156,8 @@ int main(void){
 int main(void){
 	driver_uart_init();
 	str("HC3D_TEST_MODE_DRIVER_TEMP\n");
-	/*
+
+
 	while(true){
 		driver_temp_read();
 		str("Temperatures");
@@ -168,7 +169,7 @@ int main(void){
 	}
 
 	driver_system_halt();
-	*/
+
 }
 
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_TACH
