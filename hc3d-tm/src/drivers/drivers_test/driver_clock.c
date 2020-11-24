@@ -4,7 +4,7 @@
  */
 
 #include "config.h"
-#if HC3D_USE_TEST_DRIVERS==1
+#if HC3D_SITL_MODE==1
 
 #define _POSIX_C_SOURCE 200809L
 #include "drivers/driver_clock.h"

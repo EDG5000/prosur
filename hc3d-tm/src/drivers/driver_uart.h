@@ -9,4 +9,3 @@
 #pragma once
 
 void driver_uart_init(void);
-int driver_uart_get_byte(void);

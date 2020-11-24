@@ -9,7 +9,7 @@
  */ 
 
 #include "config.h"
-#if HC3D_USE_TEST_DRIVERS==1
+#if HC3D_SITL_MODE==1
 
 #include "libraries/str/str.h"
 #include "stdbool.h"

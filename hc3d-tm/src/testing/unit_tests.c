@@ -41,9 +41,10 @@
 
 int main(void){
 	driver_uart_init();
-	str("HC3D_TEST_MODE_SERIAL");
-	str("%i", 69);
-	str("%f", 101.1005);
+	str("HC3D_TEST_MODE_SERIAL\n");
+	fflush(stdout);
+	str("%u", (uint16_t) 4534534);
+	str("%u", (uint8_t) 213);
 
 	driver_system_halt();
 }
@@ -154,22 +155,20 @@ int main(void){
 
 int main(void){
 	driver_uart_init();
-	str("HC3D_TEST_MODE_DRIVER_TEMP");
-	
-	
-	int16_t temperatures[HC3D_CONFIG_TEMP_SENSOR_COUNT];
-	
+	str("HC3D_TEST_MODE_DRIVER_TEMP\n");
+	/*
 	while(true){
-		driver_temp_read(temperatures);
+		driver_temp_read();
 		str("Temperatures");
 		for(int i = 0; i < HC3D_CONFIG_TEMP_SENSOR_COUNT; i++){
-			str(" | %i", temperatures[i]);
+			str(" | %u", driver_temp_last_readings[i]);
 		}
 		driver_sleep(1000);
 		str("\n");
 	}
 
 	driver_system_halt();
+	*/
 }
 
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_TACH
@@ -232,9 +231,7 @@ int main(void){
 
 	uint16_t test_frame = 0;
 	while(test_frame < 10000){
-
 		for(uint8_t sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
-
 			// Up to 8-16 of heating added when motors on
 			int16_t heating = 8 + (rand() % 8);
 			// 0-16 cooling substracted
@@ -247,14 +244,11 @@ int main(void){
 			temp_validator_sensor_last_valid_temperature[sensor_index] = (uint16_t) temp_signed;
 		}
 
-
 		// Report state
 		data_reporter_tick(0);
-
 		pump_controller_tick();
 		test_frame++;
 	}
-
 	driver_system_halt();
 }
 

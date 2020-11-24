@@ -49,14 +49,43 @@
 
 #include "stdint.h"
 
+/*
+	Constants and helpers
+*/
+
+#define HC3D_TEMP (temp) (16*temp)
+
+// Set bit low or high
+#define HC3D_SBI(a, b) (a) |= (1 << (b))
+#define HC3D_CBI(a, b) (a) &= ~(1 << (b))
+
+// Unit test
+#define HC3D_TEST_MODE_SERIAL							2
+#define HC3D_TEST_MODE_DRIVER_SLEEP						3
+#define HC3D_TEST_MODE_DRIVER_PWM						4
+#define HC3D_TEST_MODE_DRIVER_RELAY						5
+#define HC3D_TEST_MODE_DRIVER_CLOCK						6
+#define HC3D_TEST_MODE_PWM_AND_CLOCK					7
+#define HC3D_TEST_MODE_DRIVER_TEMP						8
+#define HC3D_TEST_MODE_TACH								9
+#define HC3D_TEST_MODE_TEMP_FAILSAFE					10
+#define HC3D_TEST_MODE_PUMP_CONTROLLER					11
+
+// Temperature Sensors
+#define HC3D_TEMP_SENSOR_X								0			// Temp sensor handle for X motor stepper
+#define HC3D_TEMP_SENSOR_Y								1			// Temp sensor handle for Y motor stepper
+#define HC3D_TEMP_SENSOR_Z								2			// Temp sensor handle for Z motor stepper
+#define HC3D_TEMP_SENSOR_E								3			// Temp sensor handle for E motor stepper
+#define HC3D_TEMP_SENSOR_CHAMBER0						4			// Temp sensor handle for chamber sensor 0
+#define HC3D_TEMP_SENSOR_CHAMBER1						5			// Temp sensor handle for chamber sensor 1
+
 
 /*
 	Configuration
 */
 
-
 // Unit testing and mock drivers							
-#define HC3D_TEST_MODE									HC3D_TEST_MODE_PUMP_CONTROLLER		// 0=OFF; Select specific unit test or all unit tests
+#define HC3D_TEST_MODE									HC3D_TEST_MODE_DRIVER_TEMP	// 0=OFF; Select specific unit test or all unit tests
 
 #define HC3D_INTERVAL									10			// (ms) All code runs lockstep at this interval. Ensure enough time to communicate with all temp sensors, report data over UART and any calculations.
 
@@ -87,32 +116,4 @@
 #define HC3D_CONFIG_CONTROLLER_SHIFT					8			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_TEMP_SETPOINT			57			// Try to keep stepper motor surface temperature under 60
 #define HC3D_CONFIG_PUMP_CONTROL_SENSOR_COUNT			1			// Use 1st N sensors as feedback when controlling pump speed
-/*
-	Constants and helpers
-*/
 
-#define HC3D_TEMP (temp) (16*temp)
-
-// Set bit low or high
-#define HC3D_SBI(a, b) (a) |= (1 << (b))
-#define HC3D_CBI(a, b) (a) &= ~(1 << (b))
-
-// Unit test
-#define HC3D_TEST_MODE_SERIAL							2
-#define HC3D_TEST_MODE_DRIVER_SLEEP						3
-#define HC3D_TEST_MODE_DRIVER_PWM						4
-#define HC3D_TEST_MODE_DRIVER_RELAY						5
-#define HC3D_TEST_MODE_DRIVER_CLOCK						6
-#define HC3D_TEST_MODE_PWM_AND_CLOCK					7
-#define HC3D_TEST_MODE_DRIVER_TEMP						8
-#define HC3D_TEST_MODE_TACH								9
-#define HC3D_TEST_MODE_TEMP_FAILSAFE					10
-#define HC3D_TEST_MODE_PUMP_CONTROLLER					11
-
-// Temperature Sensors
-#define HC3D_TEMP_SENSOR_X								0			// Temp sensor handle for X motor stepper
-#define HC3D_TEMP_SENSOR_Y								1			// Temp sensor handle for Y motor stepper
-#define HC3D_TEMP_SENSOR_Z								2			// Temp sensor handle for Z motor stepper
-#define HC3D_TEMP_SENSOR_E								3			// Temp sensor handle for E motor stepper
-#define HC3D_TEMP_SENSOR_CHAMBER0						4			// Temp sensor handle for chamber sensor 0
-#define HC3D_TEMP_SENSOR_CHAMBER1						5			// Temp sensor handle for chamber sensor 1

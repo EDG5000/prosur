@@ -1,3 +1,5 @@
+#if HC3D_SITL_MODE==1
+
 #include "testing/temperature_dataset.h"
 
 void temperature_dataset_init(){
@@ -666,3 +668,5 @@ uint16_t temperature_dataset[][HC3D_CONFIG_TEMP_SENSOR_COUNT] = {
 
 
 #endif
+
+#endif // HC3D_SITL_MODE==1

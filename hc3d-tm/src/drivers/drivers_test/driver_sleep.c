@@ -4,7 +4,7 @@
  */
 
 #include "drivers/driver_sleep.h"
-#if HC3D_USE_TEST_DRIVERS==1
+#if HC3D_SITL_MODE==1
 
 #include "stdint.h"
 #include <time.h>
