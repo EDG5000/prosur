@@ -102,71 +102,67 @@
 
 #include "config.h"
 #include "util.h"
-#include "stdbool.h"
-#include "drivers/driver_uart.h"
 
-#include "libraries/str/str.h"
+#include "drivers/driver_pwm.h"
 #include "drivers/driver_sleep.h"
 #include "drivers/driver_relay.h"
-#include "drivers/driver_temp.h"
-#include "drivers/driver_pwm.h"
-#include "drivers/driver_tach.h"
 #include "drivers/driver_clock.h"
+#include "drivers/driver_temp.h"
+#include "drivers/driver_tach.h"
+#include "drivers/driver_uart.h"
+#include "drivers/driver_system.h"
+#include "libraries/str/str.h"
+#include "stdbool.h"
 
-#include "business_logic/failsafe.h"
-#include "business_logic/data_reader.h"
-#include "business_logic/data_reporter.h"
 #include "business_logic/temp_validator.h"
 #include "business_logic/temp_watchdog.h"
+#include "business_logic/data_reader.h"
+#include "business_logic/data_reporter.h"
 #include "business_logic/pump_controller.h"
+
+#include "stdlib.h"
+#include "stdio.h"
 
 #if HC3D_TEST_MODE == 0 || HC3D_TEST_MODE == HC3D_TEST_MODE_SITL
 int main (void){
-
 	driver_uart_init();
 	str("Infinus I/O HC3D-TM 0.0.1 (c) Joel Meijering\n");
 
 	// Init drivers
 	driver_relay_init(); // Relay should be off after power cycle and stay off during initialisation of the relay driver
+	driver_relay_set(true);
 	driver_pwm_init();
 	driver_tach_init();
 	driver_clock_init();
-	
 	// Init business logic modules
 	pump_controller_init();
 	temp_validator_init();
 	temp_watchdog_init();
 
+	uint16_t time_tick_start = 0;
+
 	while(true){
 		// Record tick start time to later calculate the correct sleep time
-		uint16_t time_tick_start = driver_clock_time();
-	
-		// This will fetch temperature data from driver_temp and store it in a buffer
+		time_tick_start = driver_clock_time();
+		// Read values from all stemperature sensors
+		driver_temp_read();
+		// Fetch temperature data from driver_temp and store it in a buffer
 		data_reader_tick();
-
 		// This will assess validity of sensor readings and store the results
 		temp_validator_tick();
-
-		// Will check for invalid readings, limit exceedings or validation timeouts
 		// Will trigger failsafe if any issue is encountered
 		temp_watchdog_tick();
-
-		// Run pump controller. Uses data calculated by temp_validator
-		// Results from pump_controller will be reported by data_reporter
-		// along with other data points.
+		// Run pump controller. Uses data calculated by temp_validator.
 		pump_controller_tick();
-		
-		// Report measured temperatures to serial
-		data_reporter_tick();
-		
+		// Report current state to serial
+		data_reporter_tick(time_tick_start);
+		// Ensure 1Hz tick frquency
 		uint16_t time_taken = util_time_offset(time_tick_start, driver_clock_time());
-		driver_sleep(HC3D_INTERVAL - time_taken); // Sleep as such to ensure loop running at 1Hz
+		str("Sleeping %u", time_taken);
+		driver_sleep(HC3D_INTERVAL - time_taken);
 	}
 	
-	// Prevent AVR from resetting
-	// This section will only be reached when the failsafe is triggered
-	while(1);
-
+	driver_system_halt();
 	return 0;
 }
 #endif

@@ -51,7 +51,7 @@ void driver_temp_read(void){
 	
 	// Delay (sensor needs time to perform conversion)
 	// Cannot be too close to 1000, because the main loop tries to keep 1hz pace
-	driver_sleep(800);
+	driver_sleep(400);
 	
 	// Read values
 	uint8_t sensor_index = 0;

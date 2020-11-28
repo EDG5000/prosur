@@ -64,7 +64,7 @@ void temp_validator_tick(void){
 				delta_found = true;
 			}
 		}
-		if(!delta_found){
+		if(!delta_found && HC3D_VALIDATE_TEMPERATURE_DELTA == 1){
 			// When no single delta was found, invalidate sensor channel
 			sensor_invalidated = true;
 		}

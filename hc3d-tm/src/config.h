@@ -86,9 +86,9 @@
 */
 
 // Unit testing and mock drivers							
-#define HC3D_TEST_MODE									HC3D_TEST_MODE_DRIVER_RELAY	// 0=OFF; Select specific unit test or all unit tests
+#define HC3D_TEST_MODE									0			// 0=OFF; Select specific unit test or all unit tests
 
-#define HC3D_INTERVAL									10			// (ms) All code runs lockstep at this interval. Ensure enough time to communicate with all temp sensors, report data over UART and any calculations.
+#define HC3D_INTERVAL									1000			// (ms) All code runs lockstep at this interval. Ensure enough time to communicate with all temp sensors, report data over UART and any calculations.
 
 // Temperature driver setup
 #define HC3D_CONFIG_TEMP_SENSOR_COUNT					8			// Amount of temperature sensors. Note: Also used by other temperature-related modules.
@@ -106,9 +106,9 @@
 #define HC3D_CONFIG_TEMP_VALID_MIN						3			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_VALID_MAX						120			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT				(15*HC3D_INTERVAL)	// When no valid values are produced for n ticks, trigger failsafe
-#define HC3D_CONFIG_WATCHDOG_CHANNELS					1			// 1st N channels will be monitored by watchdog. All data always reported.
+#define HC3D_CONFIG_WATCHDOG_CHANNELS					8			// 1st N channels will be monitored by watchdog. All data always reported.
 #define HC3D_CONFIG_TEMP_MAX_DELTA						5			// Higher temperature deltas observed between valid value and potential valid value will cause rejection of the new value
-
+#define HC3D_VALIDATE_TEMPERATURE_DELTA					0			// When ON (1), the system will perform an additional validation check. Sensor readings need to change at least by 1/16 of a degree in the l last BUFFER_SIZE samples
 // Pump controller configuration
 #define HC3D_CONFIG_CONTROLLER_KP						160			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_KI						1			// See libraries/pi_control/pi_control.h

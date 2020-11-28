@@ -207,12 +207,11 @@ int main(void){
 
 	uint8_t pwm = 0;
 	while(true){
-		/*if(pwm != 100){
+		if(pwm != 100){
 			pwm += 1;
 		}else{
 			pwm = 0;
-		}*/
-
+		}
 		driver_pwm_set(pwm);
 		driver_sleep(500);
 		data_reporter_tick(0); // Will fetch tach reading and display it
