@@ -70,6 +70,7 @@
 #define HC3D_TEST_MODE_TACH								9
 #define HC3D_TEST_MODE_TEMP_FAILSAFE					10
 #define HC3D_TEST_MODE_PUMP_CONTROLLER					11
+#define HC3D_TEST_MODE_DATA_REPORTER					12
 
 // Temperature Sensors
 #define HC3D_TEMP_SENSOR_X								0			// Temp sensor handle for X motor stepper
@@ -85,7 +86,7 @@
 */
 
 // Unit testing and mock drivers							
-#define HC3D_TEST_MODE									HC3D_TEST_MODE_DRIVER_TEMP	// 0=OFF; Select specific unit test or all unit tests
+#define HC3D_TEST_MODE									HC3D_TEST_MODE_DRIVER_RELAY	// 0=OFF; Select specific unit test or all unit tests
 
 #define HC3D_INTERVAL									10			// (ms) All code runs lockstep at this interval. Ensure enough time to communicate with all temp sensors, report data over UART and any calculations.
 

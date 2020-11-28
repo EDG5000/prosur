@@ -7,22 +7,8 @@
 	Uses pinout as described in main.c
 
 	SENSOR		00	01	02	03	04	05	06	07
-	AVR PIN		D3  D4  D5  D6  D7  B3  B4  B5
-	BOARD PIN	03  04  05  06  07  11  12  13
-
-
-
-OLD-VS-NEW
-
-
-OLD: 2-9
-NEW: 3-7, 11-13
-
-2: 11
-8: 12
-9: 3
-
-
+	AVR PIN		D3  D4  D5  D6  D7  B3  B4  C0
+	BOARD PIN	03  04  05  06  07  11  12  A0
 
  */ 
 
@@ -53,13 +39,15 @@ void process_raw_reading(uint8_t* sensor_index, int16_t* raw_reading_p){
 void driver_temp_read(void){
 	// Initiate conversion
 	// D3-D7
-	for(uint8_t i = 3; i < 7; i++){
+	for(uint8_t i = 3; i <= 7; i++){
 		ds18b20convert(&PORTD, &DDRD, &PIND, 1 << i, NULL);
 	}
-	// B3-B5
-	for(uint8_t i = 3; i < 5; i++){
+	// B3-B4
+	for(uint8_t i = 3; i <= 4; i++){
 		ds18b20convert(&PORTB, &DDRB, &PINB, 1 << i, NULL);
 	}
+	// C0
+	ds18b20convert(&PORTC, &DDRC, &PINC, 1 << 0, NULL);
 	
 	// Delay (sensor needs time to perform conversion)
 	// Cannot be too close to 1000, because the main loop tries to keep 1hz pace
@@ -68,20 +56,23 @@ void driver_temp_read(void){
 	// Read values
 	uint8_t sensor_index = 0;
 	int16_t raw_reading;
-
 	// D3-D7
-	for(uint8_t i = 3; i < 7; i++){
+	for(uint8_t i = 3; i <= 7; i++){
 		ds18b20read(&PORTD, &DDRD, &PIND, 1 << i, NULL, &raw_reading);
 		process_raw_reading(&sensor_index, &raw_reading);
 		sensor_index++;
 
 	}
-	// B3-B5
-	for(uint8_t i = 3; i < 5; i++){
+	// B3-B4
+	for(uint8_t i = 3; i <= 4; i++){
 		ds18b20read(&PORTB, &DDRB, &PINB, 1 << i, NULL, &raw_reading);
 		process_raw_reading(&sensor_index, &raw_reading);
 		sensor_index++;
 	}
+	// C0
+	ds18b20read(&PORTC, &DDRC, &PINC, 1 << 0, NULL, &raw_reading);
+	process_raw_reading(&sensor_index, &raw_reading);
+
 }
 
 #endif

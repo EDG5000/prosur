@@ -13,6 +13,7 @@
 #include "avr/io.h"
 #include "drivers/driver_pwm.h"
 #include "avr/io.h"
+#include "libraries/str/str.h"
 
 uint8_t driver_pwm_value = 0;
 

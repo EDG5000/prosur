@@ -9,9 +9,9 @@
  */ 
 
 #include "business_logic/data_reader.h"
+#include "drivers/driver_temp.h"
 #include "stdint.h"
 #include "config.h"
-#include "drivers/driver_temp.h"
 
 // Moving buffer keeping the last 10 values.
 uint16_t data_reader_last_temperatures[HC3D_CONFIG_TEMP_BUF_SIZE][HC3D_CONFIG_TEMP_SENSOR_COUNT];
@@ -31,8 +31,6 @@ void data_reader_tick(void){
 			data_reader_last_temperatures[frame_index-1][sensor_index] = data_reader_last_temperatures[frame_index][sensor_index];
 		}	
 	}
-
-	driver_temp_read();
 
 	// Overwrite last frame, which is already copied to the frame preceding it.
 	// Write the newly retrieved data to it.

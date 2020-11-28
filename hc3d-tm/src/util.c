@@ -8,6 +8,7 @@
 
 #include "util.h"
 #include "stdint.h"
+#include "libraries/str/str.h"
 
 uint16_t util_time_offset(uint16_t start, uint16_t end){
 	if(end >= start){

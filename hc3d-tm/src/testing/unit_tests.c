@@ -4,11 +4,12 @@
 		SLEEP	
 			CLOCK
 				DRIVER_TACH
-			DRIVER_PWM
+				DRIVER_PWM
 				PWM_AND_CLOCK
 					TEMP_FAILSAFE
 			DRIVER_RELAY	
 			DRIVER_TEMP
+				DATA_REPORTER
 			PUMP_CONTROLLER
 			TACH
  */ 
@@ -91,14 +92,18 @@ int main(void){
 	str("HC3D_TEST_MODE_DRIVER_PWM");
 	driver_pwm_init();
 	while(true){
-		driver_pwm_set_pwm(15);
+		driver_pwm_set(15);
 		driver_sleep(1000);
-		driver_pwm_set_pwm(100);
-		driver_sleep(1000);
-		driver_pwm_set_pwm(75);
-		driver_sleep(1000);
-	}
+		data_reporter_tick(0);
 
+		driver_pwm_set(100);
+		driver_sleep(1000);
+		data_reporter_tick(0);
+
+		driver_pwm_set(75);
+		driver_sleep(1000);
+		data_reporter_tick(0);
+	}
 	driver_system_halt();
 }
 
@@ -172,18 +177,45 @@ int main(void){
 
 }
 
+#elif HC3D_TEST_MODE==HC3D_TEST_MODE_DATA_REPORTER
+
+int main(void){
+	driver_uart_init();
+	str("HC3D_TEST_MODE_DATA_REPORTER\n");
+	driver_clock_init();
+	temp_validator_init();
+
+	while(true){
+		uint16_t time = driver_clock_time();
+		driver_temp_read();
+		data_reader_tick();
+		temp_validator_tick();
+		data_reporter_tick(time);
+		driver_sleep(1000);
+	}
+
+	driver_system_halt();
+}
+
 #elif HC3D_TEST_MODE==HC3D_TEST_MODE_TACH
 
 int main(void){
 	driver_uart_init();
 	str("HC3D_TEST_MODE_TACH");
 	driver_tach_init();
-	uint16_t val;
+	driver_pwm_init();
+
+	uint8_t pwm = 0;
 	while(true){
-		val = driver_tach_get();
-		str("Tach value: %lu.\n", val);
-		
-		driver_sleep(1000);
+		/*if(pwm != 100){
+			pwm += 1;
+		}else{
+			pwm = 0;
+		}*/
+
+		driver_pwm_set(pwm);
+		driver_sleep(500);
+		data_reporter_tick(0); // Will fetch tach reading and display it
 	}
 
 	driver_system_halt();
@@ -201,14 +233,16 @@ int main(void){
 	temp_validator_init();
 	temp_watchdog_init();
 	
+	uint16_t time_tick_start = 0;
+
 	while(data_reader_frame < HC3D_TEMPERATURE_DATASET_SIZE){
 		// Record tick start time to later calculate the correct sleep time
-		uint16_t time_tick_start = driver_clock_time();
-
+		time_tick_start = driver_clock_time();
+		driver_temp_read();
 		data_reader_tick();
 		temp_validator_tick();
 		temp_watchdog_tick();
-        data_reporter_tick(time_tick_start);
+        data_reporter_tick();
 
 		uint16_t time_taken = util_time_offset(time_tick_start, driver_clock_time());
 		driver_sleep(HC3D_INTERVAL - time_taken); // Ensure constant interval
@@ -246,6 +280,8 @@ int main(void){
 		}
 
 		// Report state
+		driver_temp_read();
+		data_reader_tick();
 		data_reporter_tick(0);
 		pump_controller_tick();
 		test_frame++;

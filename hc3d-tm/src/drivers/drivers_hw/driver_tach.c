@@ -1,9 +1,6 @@
 
 /*
- * driver_tach.c
- *
- * Created: 2020-10-25 11:41:26 AM
- *  Author: Joel
+	Pin 2 (D2)
  */ 
 
 #include "config.h"

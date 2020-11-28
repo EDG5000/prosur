@@ -3,6 +3,8 @@
 
 	Set digital pin high or low
 	Uses pinout as described in main.c comment.
+
+	Pin 8 (B0)
  */ 
 
 #include "config.h"
