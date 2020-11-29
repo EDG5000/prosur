@@ -37,10 +37,9 @@ void data_reporter_tick(uint16_t time){
     }
 
     // Print PI controller state, pump controller setpoint, tach reading
-    uint16_t driver_pwm_val = (uint16_t) driver_pwm_value;
     uint16_t pump_i = (uint16_t) pump_controller_state.i;
     uint16_t driver_tach_val = driver_tach_get();
-    str("\tpwm:%u\tpci:%u\ttac:%u", driver_pwm_val, pump_i, driver_tach_val);
+    str("\tpwm:%u\tpci:%u\ttac:%u", driver_pwm_value, pump_i, driver_tach_val);
 
     str("\n");
     data_reporter_frame++;

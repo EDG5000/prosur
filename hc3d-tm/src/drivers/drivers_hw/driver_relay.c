@@ -18,6 +18,7 @@
 #define B0 0
 
 void driver_relay_init(void){
+	driver_relay_set(false);
 	HC3D_SBI(DDRB, B0);
 }
 

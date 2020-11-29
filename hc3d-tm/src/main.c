@@ -130,7 +130,6 @@ int main (void){
 
 	// Init drivers
 	driver_relay_init(); // Relay should be off after power cycle and stay off during initialisation of the relay driver
-	driver_relay_set(true);
 	driver_pwm_init();
 	driver_tach_init();
 	driver_clock_init();
@@ -152,13 +151,17 @@ int main (void){
 		temp_validator_tick();
 		// Will trigger failsafe if any issue is encountered
 		temp_watchdog_tick();
+		if(data_reader_settled){
+			// If watchdog was already triggered during this tick, this line will not be reached
+			// Otherwise, the relay can be turned on since no failsafe was triggered after the reader was settled
+			driver_relay_set(true);
+		}
 		// Run pump controller. Uses data calculated by temp_validator.
 		pump_controller_tick();
 		// Report current state to serial
 		data_reporter_tick(time_tick_start);
 		// Ensure 1Hz tick frquency
 		uint16_t time_taken = util_time_offset(time_tick_start, driver_clock_time());
-		str("Sleeping %u", time_taken);
 		driver_sleep(HC3D_INTERVAL - time_taken);
 	}
 	
