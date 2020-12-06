@@ -79,7 +79,8 @@
 #define HC3D_TEMP_SENSOR_E								3			// Temp sensor handle for E motor stepper
 #define HC3D_TEMP_SENSOR_CHAMBER0						4			// Temp sensor handle for chamber sensor 0
 #define HC3D_TEMP_SENSOR_CHAMBER1						5			// Temp sensor handle for chamber sensor 1
-
+#define HC3D_TEMP_SENSOR_CHAMBER2						6			// Temp sensor handle for chamber sensor 0
+#define HC3D_TEMP_SENSOR_CHAMBER3						7			// Temp sensor handle for chamber sensor 1
 
 /*
 	Configuration
@@ -94,19 +95,21 @@
 #define HC3D_CONFIG_TEMP_SENSOR_COUNT					8			// Amount of temperature sensors. Note: Also used by other temperature-related modules.
 
 // Safety-related limit of each sensor
-#define HC3D_CONFIG_TEMP_SENSOR_X_LIMIT					67			// Temp sensor safe limit for X motor stepper
-#define HC3D_CONFIG_TEMP_SENSOR_Y_LIMIT					67			// Temp sensor safe limit for Y motor stepper
-#define HC3D_CONFIG_TEMP_SENSOR_Z_LIMIT					67			// Temp sensor safe limit for Z motor stepper
-#define HC3D_CONFIG_TEMP_SENSOR_E_LIMIT					67			// Temp sensor safe limit for E motor stepper
-#define HC3D_CONFIG_TEMP_SENSOR_CHAMBER0_LIMIT			80			// Temp sensor safe limit for chamber sensor 0
-#define HC3D_CONFIG_TEMP_SENSOR_CHAMBER1_LIMIT			80			// Temp sensor safe limit for chamber sensor 1
+#define HC3D_CONFIG_TEMP_SENSOR_X_LIMIT					70			// Temp sensor safe limit for X motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_Y_LIMIT					70			// Temp sensor safe limit for Y motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_Z_LIMIT					70			// Temp sensor safe limit for Z motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_E_LIMIT					90			// Temp sensor safe limit for E motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_CHAMBER0_LIMIT			90			// Temp sensor safe limit for chamber sensor 0
+#define HC3D_CONFIG_TEMP_SENSOR_CHAMBER1_LIMIT			90			// Temp sensor safe limit for chamber sensor 1
+#define HC3D_CONFIG_TEMP_SENSOR_CHAMBER2_LIMIT			90			// Temp sensor safe limit for chamber sensor 0
+#define HC3D_CONFIG_TEMP_SENSOR_CHAMBER3_LIMIT			90			// Temp sensor safe limit for chamber sensor 1
 
 // Temperature validation configuration
 #define HC3D_CONFIG_TEMP_BUF_SIZE						10			// Keep last N temperature readings in buffer. EntireS range for confirming validity of readings (filtering out noise)
 #define HC3D_CONFIG_TEMP_VALID_MIN						3			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_VALID_MAX						120			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT				(15*HC3D_INTERVAL)	// When no valid values are produced for n ticks, trigger failsafe
-#define HC3D_CONFIG_WATCHDOG_CHANNELS					6			// 1st N channels will be monitored by watchdog. All data always reported.
+#define HC3D_CONFIG_WATCHDOG_CHANNELS					8			// 1st N channels will be monitored by watchdog. All data always reported.
 #define HC3D_CONFIG_TEMP_MAX_DELTA						5			// Higher temperature deltas observed between valid value and potential valid value will cause rejection of the new value
 #define HC3D_VALIDATE_TEMPERATURE_DELTA					0			// When ON (1), the system will perform an additional validation check. Sensor readings need to change at least by 1/16 of a degree in the l last BUFFER_SIZE samples
 
@@ -117,5 +120,5 @@
 #define HC3D_CONFIG_CONTROLLER_MAX						100			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_SHIFT					8			// See libraries/pi_control/pi_control.h
 #define HC3D_CONFIG_CONTROLLER_TEMP_SETPOINT			57			// Try to keep stepper motor surface temperature under 60
-#define HC3D_CONFIG_PUMP_CONTROL_SENSOR_COUNT			6			// Use 1st N sensors as feedback when controlling pump speed
+#define HC3D_CONFIG_PUMP_CONTROL_SENSOR_COUNT			3			// Use 1st N sensors as feedback when controlling pump speed
 

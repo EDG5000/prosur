@@ -31,6 +31,8 @@ void temp_watchdog_init(void){
 	sensor_safety_limit[HC3D_TEMP_SENSOR_E] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_E_LIMIT);
 	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER0] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_CHAMBER0_LIMIT);
 	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER1] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_CHAMBER1_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER2] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_CHAMBER2_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER3] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_CHAMBER3_LIMIT);
 }
 
 void temp_watchdog_tick(void){
@@ -55,7 +57,7 @@ void temp_watchdog_tick(void){
 		}else if(val > limit){
 			str("Sensor %u exceeded limit of %u at temperature %u.\n", sensor_index, limit, val);
 			failure = true;
-		}else if(last_time == 0 || age > HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT){
+		}else if(last_time != 0 && age > HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT){
 			// If the previous timestamp is 0, then
 			str("Sensor %u has timed out. Age: %u ms.\n", sensor_index, age);
 			failure = true;

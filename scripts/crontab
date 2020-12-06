@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+@reboot /home/pi/scripts/hc3d-tm-mon.sh
+@reboot /home/pi/scripts/mjpg-streamer.sh
+

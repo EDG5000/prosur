@@ -3,15 +3,15 @@
 $line = '';
 
 // Get filename of current data log file (take 1st one from folder listing)
-$directory = "/mnt/ramdisk/datalog/";
+$directory = "/mnt/data/";
 $files = scandir ($directory);
 $file = $directory . $files[2];// because [0] = "." [1] = ".." 
-
+$file = "/mnt/data/hc3d-tm.log";
 //how many lines?
 $linecount=5;
 
 //what's a typical line length?
-$length=190;
+$length=396;
 
 //we double the offset factor on each iteration
 //if our first guess at the file offset doesn't
