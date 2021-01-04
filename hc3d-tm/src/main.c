@@ -143,7 +143,7 @@ int main (void){
 	while(true){
 		// Record tick start time to later calculate the correct sleep time
 		time_tick_start = driver_clock_time();
-		// Read values from all stemperature sensors
+		// Read values from all temperature sensors
 		driver_temp_read();
 		// Fetch temperature data from driver_temp and store it in a buffer
 		data_reader_tick();
