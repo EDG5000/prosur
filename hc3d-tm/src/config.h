@@ -95,14 +95,14 @@
 #define HC3D_CONFIG_TEMP_SENSOR_COUNT					8			// Amount of temperature sensors. Note: Also used by other temperature-related modules.
 
 // Safety-related limit of each sensor
-#define HC3D_CONFIG_TEMP_SENSOR_Z_LIMIT					75			// Temp sensor safe limit for X motor stepper
-#define HC3D_CONFIG_TEMP_SENSOR_X_LIMIT					75			// Temp sensor safe limit for Y motor stepper
-#define HC3D_CONFIG_TEMP_SENSOR_Y_LIMIT					75			// Temp sensor safe limit for Z motor stepper
-#define HC3D_CONFIG_TEMP_SENSOR_E_LIMIT					90			// Temp sensor safe limit for E motor stepper
-#define HC3D_CONFIG_TEMP_SENSOR_CHAMBER0_LIMIT			90			// Temp sensor safe limit for chamber sensor 0
-#define HC3D_CONFIG_TEMP_SENSOR_CHAMBER1_LIMIT			90			// Temp sensor safe limit for chamber sensor 1
-#define HC3D_CONFIG_TEMP_SENSOR_CHAMBER2_LIMIT			90			// Temp sensor safe limit for chamber sensor 0
-#define HC3D_CONFIG_TEMP_SENSOR_CHAMBER3_LIMIT			90			// Temp sensor safe limit for chamber sensor 1
+#define HC3D_CONFIG_TEMP_SENSOR_0_LIMIT					75			// Temp sensor safe limit for X motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_1_LIMIT					75			// Temp sensor safe limit for Y motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_2_LIMIT					75			// Temp sensor safe limit for Z motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_3_LIMIT					90			// Temp sensor safe limit for E motor stepper
+#define HC3D_CONFIG_TEMP_SENSOR_4_LIMIT					90			// Temp sensor safe limit for chamber sensor 0
+#define HC3D_CONFIG_TEMP_SENSOR_5_LIMIT					90			// Temp sensor safe limit for chamber sensor 1
+#define HC3D_CONFIG_TEMP_SENSOR_6_LIMIT					120			// Temp sensor safe limit for chamber sensor 0
+#define HC3D_CONFIG_TEMP_SENSOR_7_LIMIT					120			// Temp sensor safe limit for chamber sensor 1
 
 // Temperature validation configuration
 #define HC3D_CONFIG_TEMP_BUF_SIZE						10			// Keep last N temperature readings in buffer. EntireS range for confirming validity of readings (filtering out noise)

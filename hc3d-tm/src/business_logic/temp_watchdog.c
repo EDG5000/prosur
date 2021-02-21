@@ -25,14 +25,14 @@ uint16_t sensor_safety_limit[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
 void temp_watchdog_init(void){
 	// Copy safety limits to array
-	sensor_safety_limit[HC3D_TEMP_SENSOR_X] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_X_LIMIT);
-	sensor_safety_limit[HC3D_TEMP_SENSOR_Y] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_Y_LIMIT);
-	sensor_safety_limit[HC3D_TEMP_SENSOR_Z] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_Z_LIMIT);
-	sensor_safety_limit[HC3D_TEMP_SENSOR_E] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_E_LIMIT);
-	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER0] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_CHAMBER0_LIMIT);
-	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER1] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_CHAMBER1_LIMIT);
-	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER2] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_CHAMBER2_LIMIT);
-	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER3] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_CHAMBER3_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_X] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_1_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_Y] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_2_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_Z] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_0_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_E] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_3_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER0] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_4_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER1] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_5_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER2] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_6_LIMIT);
+	sensor_safety_limit[HC3D_TEMP_SENSOR_CHAMBER3] = util_temp_raw(HC3D_CONFIG_TEMP_SENSOR_7_LIMIT);
 }
 
 void temp_watchdog_tick(void){
