@@ -9,3 +9,4 @@
 *.mk
 *.hex
 *Makefile
+datalog/
