@@ -11,3 +11,4 @@
 *Makefile
 datalog/
 mjpg-streamer/build/
+hc3d-webmon/mnt-data/

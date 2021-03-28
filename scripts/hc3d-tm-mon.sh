@@ -14,4 +14,4 @@ rm /mnt/data/hc3d-tm.log;
 cat /dev/ttyUSB0 | ts '[%Y-%m-%d %H:%M:%S]' >> /mnt/data/"$NEW_LOG_FILENAME" &
 
 # Create symlink to new file
-ln -s /mnt/data/"$NEW_LOG_FILENAME" /mnt/data/hc3d-tm.log 
+ln -s /mnt/data/"$NEW_LOG_FILENAME" /mnt/data/hc3d-tm.log

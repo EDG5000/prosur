@@ -7,11 +7,17 @@
 		$(document).ready(function(){
 			var container = $("#value-container");
 			setInterval(function(){
-				$.get("get_llc_values.php", function(data){
+		         		$.get("get_llc_values.php", function(data){
+                                        data = data.replace(/\t/g, "<br />");
 					container.html(data);
 				});
 			}, 1000);
+			
+			// Unable to use relative path with different port with pure HTML
+			$("img").attr("src", document.location.href.substr(0, document.location.href.length-1) + ":8080/?action=stream");
+
 		});
+
 	</script>
 	<style type="text/css">
 		body{
@@ -23,7 +29,7 @@
 <body>
 
 <div style="position: absolute; color: white; font-weight: bold; font-family: monospace; background: rgba(0,0,0,0.5); padding: 5px;" id="value-container"></div>
-<img src="http://192.168.1.185:8080/?action=stream" alt="http://192.168.1.185:8080/?action=stream" width="100%" />
+<img width="100%" />
 
 </body>
 </html>
