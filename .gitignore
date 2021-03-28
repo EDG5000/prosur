@@ -10,3 +10,4 @@
 *.hex
 *Makefile
 datalog/
+mjpg-streamer/build/
