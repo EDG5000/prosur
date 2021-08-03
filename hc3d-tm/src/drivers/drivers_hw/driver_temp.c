@@ -6,9 +6,9 @@
 	Uses arbirtrary waiting period to give sensors time to process calculation
 	Uses pinout as described in main.c
 
-	SENSOR		00	01	02	03	04	05	06	07
-	AVR PIN		D3  D4  D5  D6  D7  B3  B4  C0
-	BOARD PIN	03  04  05  06  07  11  12  A0
+
+	AVR PIN		D3
+	BOARD PIN	03
 
  */ 
 
@@ -18,61 +18,59 @@
 #include "drivers/driver_temp.h"
 #include "drivers/driver_sleep.h"
 
-#include "libraries/avr-ds80b20/ds18b20.h"
+#include <ds18b20/ds18b20.h>
 #include "stdint.h"
 #include "stdlib.h"
 #include "libraries/str/str.h"
 #include "avr/io.h"
+#include <ds18b20/romsearch.h>
 
 uint16_t driver_temp_last_readings[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
-// Reading is supposed to be 16x the value in celcius
-// For now, round to whole celcius, treat any sub-zero temperature as 0
-// Store in uint8_t
+#define ROM_SIZE 8 // ROM is 8 bytes
 
-void process_raw_reading(uint8_t* sensor_index, int16_t* raw_reading_p){
-	uint16_t value = *raw_reading_p < 0 ? 0 : *raw_reading_p;
-	driver_temp_last_readings[*sensor_index] = value;
+uint8_t roms[HC3D_CONFIG_TEMP_SENSOR_COUNT * ROM_SIZE];
+uint8_t roms_found;
+
+void driver_temp_init(){
+
+	uint8_t result = ds18b20search(&PORTD, &DDRD, &PIND, 1 << 3, &roms_found, roms, HC3D_CONFIG_TEMP_SENSOR_COUNT * ROM_SIZE);
+	if(result != DS18B20_ERROR_OK){
+		str("Error detecting temperature sensors. Error code: %u", result);
+		while(1){}
+	}
+	for(int i = 0; i < roms_found; i++){
+		str("%u%u%u%U%U%U%U%U\n", roms[i], roms[i+1], roms[i+2], roms[i+3], roms[i+4], roms[i+5], roms[i+6], roms[i+7]);
+	}
+	//if(roms_found != HC3D_CONFIG_TEMP_SENSOR_COUNT){
+	//	str("Error detecting temperature sensors. Detected: %u, Expected: %un", roms_found, HC3D_CONFIG_TEMP_SENSOR_COUNT);
+	//	while(1){}
+	//}
+
 }
 
-// For array length HC3D_TEMP_SENSOR_SOUND is used
+void process_raw_reading(int sensor_index, int16_t raw_reading_p){
+	uint16_t value = raw_reading_p < 0 ? 0 : raw_reading_p;
+	driver_temp_last_readings[sensor_index] = value;
+}
+
 void driver_temp_read(void){
-	// Initiate conversion
-	// D3-D7
-	for(uint8_t i = 3; i <= 7; i++){
-		ds18b20convert(&PORTD, &DDRD, &PIND, 1 << i, NULL);
+	// Conversion
+	for(int i = 0; i < roms_found; i++){
+		ds18b20convert(&PORTD, &DDRD, &PIND, 1 << 3, &roms[i*ROM_SIZE]);
+		//driver_sleep(200);
 	}
-	// B3-B4
-	for(uint8_t i = 3; i <= 4; i++){
-		ds18b20convert(&PORTB, &DDRB, &PINB, 1 << i, NULL);
-	}
-	// C0
-	ds18b20convert(&PORTC, &DDRC, &PINC, 1 << 0, NULL);
-	
-	// Delay (sensor needs time to perform conversion)
-	// Cannot be too close to 1000, because the main loop tries to keep 1hz pace
-	driver_sleep(400);
-	
-	// Read values
-	uint8_t sensor_index = 0;
-	int16_t raw_reading;
-	// D3-D7
-	for(uint8_t i = 3; i <= 7; i++){
-		ds18b20read(&PORTD, &DDRD, &PIND, 1 << i, NULL, &raw_reading);
-		process_raw_reading(&sensor_index, &raw_reading);
-		sensor_index++;
 
-	}
-	// B3-B4
-	for(uint8_t i = 3; i <= 4; i++){
-		ds18b20read(&PORTB, &DDRB, &PINB, 1 << i, NULL, &raw_reading);
-		process_raw_reading(&sensor_index, &raw_reading);
-		sensor_index++;
-	}
-	// C0
-	ds18b20read(&PORTC, &DDRC, &PINC, 1 << 0, NULL, &raw_reading);
-	process_raw_reading(&sensor_index, &raw_reading);
+	// Wait (must be less than 1000ms to allow 1Hz operation of system)
+	driver_sleep(800);
 
+	// Read
+	for(int i = 0; i < roms_found; i++){
+		int16_t raw_reading;
+		ds18b20read(&PORTD, &DDRD, &PIND, 1 << 3, &roms[i*ROM_SIZE], &raw_reading);
+		process_raw_reading(i, raw_reading);
+		//driver_sleep(200);
+	}
 }
 
 #endif

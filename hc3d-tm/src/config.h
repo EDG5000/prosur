@@ -109,7 +109,7 @@
 #define HC3D_CONFIG_TEMP_VALID_MIN						3			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_VALID_MAX						120			// Temperatures lower than this are considered invalid, which affects the failsafe and pump controller
 #define HC3D_CONFIG_TEMP_WATCHDOG_TIMEOUT				(15*HC3D_INTERVAL)	// When no valid values are produced for n ticks, trigger failsafe
-#define HC3D_CONFIG_WATCHDOG_CHANNELS					8			// 1st N channels will be monitored by watchdog. All data always reported.
+#define HC3D_CONFIG_WATCHDOG_CHANNELS					0			// 1st N channels will be monitored by watchdog. All data always reported.
 #define HC3D_CONFIG_TEMP_MAX_DELTA						5			// Higher temperature deltas observed between valid value and potential valid value will cause rejection of the new value
 #define HC3D_VALIDATE_TEMPERATURE_DELTA					0			// When ON (1), the system will perform an additional validation check. Sensor readings need to change at least by 1/16 of a degree in the l last BUFFER_SIZE samples
 

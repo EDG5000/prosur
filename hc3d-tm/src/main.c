@@ -2,7 +2,7 @@
 	HC3D-TM
 	Infinus I/O HC3D Temperature Management
 	
-	TODO expand temperature algorythm: no reading for 100 frames, trigger invalid reading
+	TODO expand temperature algorithm: no reading for 100 frames, trigger invalid reading
 	
 	Purpose
 		- Monitor stepper motor temperature; kill power to Duet when limits exceeded.
@@ -133,6 +133,8 @@ int main (void){
 	driver_pwm_init();
 	driver_tach_init();
 	driver_clock_init();
+	driver_temp_init();
+
 	// Init business logic modules
 	pump_controller_init();
 	temp_validator_init();

@@ -44,7 +44,7 @@ extern "C"
 	\param buflen The length of the ROM array in bytes
 	\returns \ref DS18B20_ERROR_OK on success
 */
-extern uint16_t ds18b20search( volatile uint16_t *port, volatile uint16_t *direction, volatile uint16_t *portin, uint16_t mask, uint16_t *romcnt, uint16_t *roms, uint16_t buflen );
+extern uint8_t ds18b20search( volatile uint8_t *port, volatile uint8_t *direction, volatile uint8_t *portin, uint8_t mask, uint8_t *romcnt, uint8_t *roms, uint16_t buflen );
 
 #ifdef __cplusplus
 }
