@@ -11,7 +11,7 @@ NEW_LOG_FILENAME="hc3d-tm-${DATETIME_STR}.log"
 rm /mnt/data/hc3d-tm.log;
 
 # Start logging to new file
-cat /dev/ttyUSB0 | ts '[%Y-%m-%d %H:%M:%S]' >> /mnt/data/"$NEW_LOG_FILENAME" &
+cat /dev/ttyUSB0 | ts '%s' >> /mnt/data/"$NEW_LOG_FILENAME" &
 
 # Create symlink to new file
 ln -s /mnt/data/"$NEW_LOG_FILENAME" /mnt/data/hc3d-tm.log

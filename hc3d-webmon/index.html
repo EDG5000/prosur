@@ -2,34 +2,12 @@
 <html>
 <head>
 	<title>HC3D</title>
-	<script src="jquery.js"></script>
-	<script>
-		$(document).ready(function(){
-			var container = $("#value-container");
-			setInterval(function(){
-		         		$.get("get_llc_values.php", function(data){
-                                        data = data.replace(/\t/g, "<br />");
-					container.html(data);
-				});
-			}, 1000);
-			
-			// Unable to use relative path with different port with pure HTML
-			$("img").attr("src", document.location.href.substr(0, document.location.href.length-1) + ":8080/?action=stream");
-
-		});
-
-	</script>
-	<style type="text/css">
-		body{
-			padding: 0;
-			margin: 0;
-		}
-	</style>
+	<script src="main.js"></script>
+    <link rel="stylesheet" href="main.css"></link>
 </head>
 <body>
-
-<div style="position: absolute; color: white; font-weight: bold; font-family: monospace; background: rgba(0,0,0,0.5); padding: 5px;" id="value-container"></div>
-<img width="100%" />
-
+	<div id="value-container"></div>
+	<canvas></canvas>
+	<!--<img width="100%" />-->
 </body>
 </html>
