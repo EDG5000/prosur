@@ -3,7 +3,7 @@
 
 	Writes to supplied array upon calling of read function
 	Expected to be called at around 1Hz
-	Uses arbirtrary waiting period to give sensors time to process calculation
+	Uses arbitrary waiting period to give sensors time to process calculation
 	Uses pinout as described in main.c
 
 
@@ -33,20 +33,14 @@ uint8_t roms[HC3D_CONFIG_TEMP_SENSOR_COUNT * ROM_SIZE];
 uint8_t roms_found;
 
 void driver_temp_init(){
-
 	uint8_t result = ds18b20search(&PORTD, &DDRD, &PIND, 1 << 3, &roms_found, roms, HC3D_CONFIG_TEMP_SENSOR_COUNT * ROM_SIZE);
 	if(result != DS18B20_ERROR_OK){
-		str("Error detecting temperature sensors. Error code: %u", result);
+		str("Error detecting temperature sensors. Error code: %u\n", result);
 		while(1){}
 	}
 	for(int i = 0; i < roms_found; i++){
 		str("%u%u%u%U%U%U%U%U\n", roms[i], roms[i+1], roms[i+2], roms[i+3], roms[i+4], roms[i+5], roms[i+6], roms[i+7]);
 	}
-	//if(roms_found != HC3D_CONFIG_TEMP_SENSOR_COUNT){
-	//	str("Error detecting temperature sensors. Detected: %u, Expected: %un", roms_found, HC3D_CONFIG_TEMP_SENSOR_COUNT);
-	//	while(1){}
-	//}
-
 }
 
 void process_raw_reading(int sensor_index, int16_t raw_reading_p){
@@ -58,18 +52,13 @@ void driver_temp_read(void){
 	// Conversion
 	for(int i = 0; i < roms_found; i++){
 		ds18b20convert(&PORTD, &DDRD, &PIND, 1 << 3, &roms[i*ROM_SIZE]);
-		//driver_sleep(200);
 	}
-
-	// Wait (must be less than 1000ms to allow 1Hz operation of system)
-	driver_sleep(800);
 
 	// Read
 	for(int i = 0; i < roms_found; i++){
 		int16_t raw_reading;
 		ds18b20read(&PORTD, &DDRD, &PIND, 1 << 3, &roms[i*ROM_SIZE], &raw_reading);
 		process_raw_reading(i, raw_reading);
-		//driver_sleep(200);
 	}
 }
 
