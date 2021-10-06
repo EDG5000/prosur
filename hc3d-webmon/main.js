@@ -12,17 +12,24 @@ var SENSOR_LABELS = [
     "Motor E"
 ];
 
-var currentSession = null;
-var sessionList = [];
+var SENSOR_COLORS = [
+    "red",
+    "green",
+    "lightblue",
+    "purple",
+    "grey",
+    "orange",
+    "darkgreen",
+    "navy"
+];
 
-var frames = [];
 
-// Obtain handles and environment properties
-var ctx;
-var valueContainer;
-var width;
-var height;
 
+var sessionList = []; // List of filenames available
+var loading = false;
+var frames = []; // List of Frame objects currently loaded
+var ctx = null;
+var valueContainer = null;
 
 // Deserialize frame
 var Frame = function(rawFrame){
@@ -44,26 +51,11 @@ var Frame = function(rawFrame){
 	}
 };
 
-// Retrieve current frame from currently open file
-var getCurrentRawFrame = function(cb){
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if(this.readyState != 4 || this.status != 200) return;
-        cb(xhttp.responseText);
-    };
-    xhttp.open("GET", "get_llc_values.php", true);
-    xhttp.send();
-}
-
-var draw = function(){
-
-};
-
 // Load session data by filename.  
 var loadSession = function(session){
 	console.log("Loading session...");
+	loading = true;
 	frames = [];
-    currentSession = session;
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -81,8 +73,9 @@ var loadSession = function(session){
             }
             lastIndex = index;
         }
+        loadng = false;
         console.log("Session loaded. Frames: " + frames.length);
-        draw();
+        draw.draw();
     };
     xhttp.open("GET", "mnt-data/" + session, true);
     xhttp.send();
@@ -93,10 +86,8 @@ var init = function(){
     // Obtain handles and environment properties
     ctx = document.getElementsByTagName("canvas")[0].getContext("2d");
     valueContainer = document.getElementById("value-container");
-    width = window.innerWidth;
-    height = window.innerHeight;
 
-    // Load list of available Sessions
+    // Load list of available log files and initiate load of the last-loaded file
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         // Display list of files async
@@ -133,23 +124,36 @@ var init = function(){
     xhttp.open("GET", "mnt-data/?C=M;O=D", true);
     xhttp.send();
 
-/*
-		$(document).ready(function(){
-			var container = $("#value-container");
-			setInterval(function(){
-		         		$.get("get_llc_values.php", function(data){
-                                        data = data.replace(/\t/g, "<br />");
-					container.html(data);
-				});
-			}, 1000);
-			
-			// Unable to use relative path with different port with pure HTML
-			//$("img").attr("src", document.location.href.substr(0, document.location.href.length-1) + ":8080/?action=stream");
+	// Periodically obtain last line if the current open file is a live file hc3d-log.log
+	
+	setInterval(function(){
+		if(loading == false && typeof localStorage.currentSession != "undefined" && localStorage.currentSession == "hc3d-temp.log" && frames.length > 0){
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function(){
+				if(this.readyState != 4 || this.status != 200) return;
+				var frame = new Frame(this.responseText);
+				frames.push(frame);
+				draw.draw();
+			};
+			xhttp.open("GET", "get_llc_values.php", true);
+    		xhttp.send();
+		} 
+	}, 1000);	
+};
 
-		});
-
-		*/
-		console.log("Init");
+var onWheel = function(e){
+	if(typeof localStorage.zoomLevel == "undefined"){
+		localStorage.zoomLevel = 1;
+	}
+	var up = e.deltaY > 0;
+	if(up){
+		localStorage.zoomLevel = parseFloat(localStorage.zoomLevel) + .1;
+	}else{
+		localStorage.zoomLevel = parseFloat(localStorage.zoomLevel) - .1;
+	}
+	console.log(localStorage.zoomLevel);
+	draw.draw();
 };
 
 addEventListener("DOMContentLoaded", init);
+addEventListener("wheel", onWheel);
