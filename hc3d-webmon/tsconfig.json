@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"outFile": "main.js",
+		"target": "ES2021",
+		"lib": [
+			"ES6","DOM",
+	  ],
+	},
+	"include": ["*.ts"],
+}

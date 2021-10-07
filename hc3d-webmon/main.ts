@@ -1,18 +1,20 @@
 //[2021-09-29 07:58:59] [30192]	(30)	rt0:20.68	rt1:21.18	rt2:20.62	rt3:20.43	rt4:20.93	rt5:20.68	rt6:20.62	rt7:0.0	vt0:20.68	ut0:30344	vt1:21.18	ut1:30344	vt2:20.62	ut2:30344	vt3:20.43	ut3:30344	vt4:20.93	
 //ut4:30344	vt5:20.68	ut5:30344	vt6:20.62	ut6:30344	vt7:0.0	ut7:0	pwm:0	pci:0	tac:0
 
-var SENSOR_LABELS = [
+namespace App{
+
+const SENSOR_LABELS = [
     "Time",
     "Chamber Mid",
     "Chamber Top",
     "Chamber Heater",
-    "Motor X",
+    "Motor X", 
     "Motor Y",
     "Motor Z",
     "Motor E"
 ];
 
-var SENSOR_COLORS = [
+const SENSOR_COLORS = [
     "red",
     "green",
     "lightblue",
@@ -23,13 +25,12 @@ var SENSOR_COLORS = [
     "navy"
 ];
 
+export let frames = []; // List of Frame objects currently loaded
+export let ctx = null;
 
-
-var sessionList = []; // List of filenames available
-var loading = false;
-var frames = []; // List of Frame objects currently loaded
-var ctx = null;
-var valueContainer = null;
+let sessionList = []; // List of filenames available
+let loading = false;
+let valueContainer = null;
 
 // Deserialize frame
 var Frame = function(rawFrame){
@@ -73,9 +74,9 @@ var loadSession = function(session){
             }
             lastIndex = index;
         }
-        loadng = false;
+        loading = false;
         console.log("Session loaded. Frames: " + frames.length);
-        draw.draw();
+        draw();
     };
     xhttp.open("GET", "mnt-data/" + session, true);
     xhttp.send();
@@ -94,14 +95,14 @@ var init = function(){
         if(this.readyState != 4 || this.status != 200) return;
 
         var parser = new DOMParser();
-        var doc = parser.parseFromString(xhttp.responseText, "text/html");
+        let doc = parser.parseFromString(xhttp.responseText, "text/html");
         var links = doc.querySelectorAll("td a");
-        for(var link of links){
+        for(let link of links){
             // Skip link to parent directory
             if(link.outerText == "Parent Directory"){
                 continue;
             }
-            sessionList.push(link.getAttribute("href"));
+            app.sessionList.push(link.getAttribute("href"));
 
             // Insert the link node into main window
             link.innerText = link.innerText.replaceAll("hc3d-tm-", "");
@@ -127,13 +128,13 @@ var init = function(){
 	// Periodically obtain last line if the current open file is a live file hc3d-log.log
 	
 	setInterval(function(){
-		if(loading == false && typeof localStorage.currentSession != "undefined" && localStorage.currentSession == "hc3d-temp.log" && frames.length > 0){
+		if(app.loading == false && typeof localStorage.currentSession != "undefined" && localStorage.currentSession == "hc3d-temp.log" && frames.length > 0){
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function(){
 				if(this.readyState != 4 || this.status != 200) return;
 				var frame = new Frame(this.responseText);
 				frames.push(frame);
-				draw.draw();
+				draw();
 			};
 			xhttp.open("GET", "get_llc_values.php", true);
     		xhttp.send();
@@ -152,8 +153,10 @@ var onWheel = function(e){
 		localStorage.zoomLevel = parseFloat(localStorage.zoomLevel) - .1;
 	}
 	console.log(localStorage.zoomLevel);
-	draw.draw();
+	draw();
 };
 
 addEventListener("DOMContentLoaded", init);
 addEventListener("wheel", onWheel);
+
+}
