@@ -1,6 +1,3 @@
-//[2021-09-29 07:58:59] [30192]	(30)	rt0:20.68	rt1:21.18	rt2:20.62	rt3:20.43	rt4:20.93	rt5:20.68	rt6:20.62	rt7:0.0	vt0:20.68	ut0:30344	vt1:21.18	ut1:30344	vt2:20.62	ut2:30344	vt3:20.43	ut3:30344	vt4:20.93	
-//ut4:30344	vt5:20.68	ut5:30344	vt6:20.62	ut6:30344	vt7:0.0	ut7:0	pwm:0	pci:0	tac:0
-
 namespace App{
 
 const SENSOR_LABELS = [
@@ -26,7 +23,9 @@ const SENSOR_COLORS = [
 ];
 
 export let frames = []; // List of Frame objects currently loaded
-export let ctx = null;
+export let canvas: HTMLCanvasElement = null;
+export let ctx: CanvasRenderingContext2D = null;
+export let userZoomFactor: number = parseFloat(localStorage.zoomLevel);
 
 let sessionList = []; // List of filenames available
 let loading = false;
@@ -84,6 +83,10 @@ var loadSession = function(session){
 
 var init = function(){
 
+    if(isNaN(userZoomFactor)){
+        userZoomFactor = 1;
+    }
+
     // Obtain handles and environment properties
     ctx = document.getElementsByTagName("canvas")[0].getContext("2d");
     valueContainer = document.getElementById("value-container");
@@ -97,12 +100,13 @@ var init = function(){
         var parser = new DOMParser();
         let doc = parser.parseFromString(xhttp.responseText, "text/html");
         var links = doc.querySelectorAll("td a");
-        for(let link of links){
+
+        for(let link of links as any){
             // Skip link to parent directory
             if(link.outerText == "Parent Directory"){
                 continue;
             }
-            app.sessionList.push(link.getAttribute("href"));
+            sessionList.push(link.getAttribute("href"));
 
             // Insert the link node into main window
             link.innerText = link.innerText.replaceAll("hc3d-tm-", "");
@@ -126,9 +130,8 @@ var init = function(){
     xhttp.send();
 
 	// Periodically obtain last line if the current open file is a live file hc3d-log.log
-	
 	setInterval(function(){
-		if(app.loading == false && typeof localStorage.currentSession != "undefined" && localStorage.currentSession == "hc3d-temp.log" && frames.length > 0){
+		if(loading == false && typeof localStorage.currentSession != "undefined" && localStorage.currentSession == "hc3d-temp.log" && frames.length > 0){
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function(){
 				if(this.readyState != 4 || this.status != 200) return;
@@ -143,15 +146,12 @@ var init = function(){
 };
 
 var onWheel = function(e){
-	if(typeof localStorage.zoomLevel == "undefined"){
-		localStorage.zoomLevel = 1;
-	}
-	var up = e.deltaY > 0;
-	if(up){
-		localStorage.zoomLevel = parseFloat(localStorage.zoomLevel) + .1;
+	if(e.deltaY > 0){
+		userZoomFactor + .1;
 	}else{
-		localStorage.zoomLevel = parseFloat(localStorage.zoomLevel) - .1;
+		userZoomFactor - .1;
 	}
+    localStorage.zoomLevel = userZoomFactor;
 	console.log(localStorage.zoomLevel);
 	draw();
 };
