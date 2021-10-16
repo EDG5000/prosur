@@ -77,12 +77,14 @@ var loadSession = function(session){
         console.log("Session loaded. Frames: " + frames.length);
         draw();
     };
+    console.log(132);
     xhttp.open("GET", "mnt-data/" + session, true);
     xhttp.send();
 };
 
 var init = function(){
-
+ 
+    console.log("a");
     if(isNaN(userZoomFactor)){
         userZoomFactor = 1;
     }

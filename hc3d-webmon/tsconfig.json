@@ -1,10 +1,14 @@
 {
 	"compilerOptions": {
-		"outFile": "main.js",
-		"target": "ES2021",
+		"outFile": "build/main.js",
+		"outDir": "build",
+		"sourceRoot": "../ts/",
+		"rootDir": "ts/",
+		"sourceMap": true,
+		"target": "es2020",
 		"lib": [
 			"ES6","DOM",
 	  ],
 	},
-	"include": ["*.ts"],
+	"include": ["ts/*.ts"],
 }

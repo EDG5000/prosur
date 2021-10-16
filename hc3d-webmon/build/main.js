@@ -179,10 +179,12 @@ var App;
             console.log("Session loaded. Frames: " + App.frames.length);
             App.draw();
         };
+        console.log(132);
         xhttp.open("GET", "mnt-data/" + session, true);
         xhttp.send();
     };
     var init = function () {
+        console.log("a");
         if (isNaN(App.userZoomFactor)) {
             App.userZoomFactor = 1;
         }
@@ -253,3 +255,4 @@ var App;
     addEventListener("DOMContentLoaded", init);
     addEventListener("wheel", onWheel);
 })(App || (App = {}));
+//# sourceMappingURL=main.js.map
