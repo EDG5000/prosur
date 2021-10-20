@@ -16,8 +16,8 @@ const labelEdgeOffset = 10;
 
 let canvasWidth: number;
 let scaleY: number;
-let yMin: number;
-let yMax: number;
+let yMin = 0;
+let yMax = 1;
 //let chartWidth: number;
 //let chartHeight: number;
 let scaleX: number;
@@ -30,17 +30,23 @@ export var draw = function(){
 	// Calculate width of canvas based on time resolution, fixed scale factor and user zoom level
 	scaleX = userZoomFactor * baseZoomFactor;
 	canvasWidth = frames.length * scaleX;
+	// Each plot has different frame count, therefore canvas element has different size	
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
+	canvas.style.width = canvasWidth + "";
 	
 	// Determine yRange
-	for(var val of frames){
-		if(val < yMin || yMin == null){
-			yMin = val;
-		}
-		if(val > yMax || yMax == null){
-			yMax = val;
+	for(var frame of frames){
+		for(var temp of frame.temps){
+			if(temp < yMin || yMin == null){
+				yMin = temp;
+			}
+			if(temp > yMax || yMax == null){
+				yMax = temp;
+			}
 		}
 	}
-
+	
 	if(yMin == null || yMax == 0 || !Number.isFinite(yMin) || !Number.isFinite(yMax) || isNaN(yMin) || isNaN(yMax) || Math.abs(yMax-yMin) == 0){
 		// Unable to calculate range, set artifical range 1 below and 1 above current value, which should center the line if there is a line at all
 		yMin -= 1;
@@ -54,7 +60,7 @@ export var draw = function(){
 	ctx.beginPath();
 	ctx.font = "1em monospace";
 	
-	// Draw horizontal grid and axis labels
+	// Draw horizontal grid lines and axis labels
 	var yRelative = 0;
 	ctx.textAlign = "right";
 	while(yRelative <= 1){
@@ -74,13 +80,13 @@ export var draw = function(){
 		yRelative += yGridInterval;
 	}
 
-	// Draw vertical grid and axis labels
+	// Draw vertical grid lines and axis labels
 	var xValue = 0;
 	while(xValue <= xMax){
 		var xPosition = xMargin + xValue * scaleX;
 		ctx.moveTo(xPosition, 0);
 		ctx.lineTo(xPosition, canvasHeight - yMargin);
-		var valueString = xValue.toFixed(1);
+		var valueString = createTimeLabel(xValue);
 		if(xValue == 0){
 			ctx.textAlign = "left";
 		}else if(xValue == xMax){
@@ -88,24 +94,27 @@ export var draw = function(){
 		}else{
 			ctx.textAlign = "center";
 		}
-		ctx.fillText(valueString, xPosition, canvasHeight-3); // TODO Add X label Y offset as constantr
+		ctx.fillText(valueString, xPosition, canvasHeight-3); // TODO Add X label Y offset as constant
 		xValue += xGridInterval;  
-	}
+	} 
 
 	// Complete drawing of grid
 	ctx.strokeStyle = 'silver';
 	ctx.stroke();
 	ctx.beginPath();
 
-	// Draw data
-	var val = frames[0];
-	ctx.moveTo(xMargin, canvasHeight - ((val-yMin) * scaleY) - yMargin);
-	for(var i = 1; i < frames.length; i++){
-		val = frames[i];
-		//val = 0;
-		var xPos = (i/frequencyHz) * scaleX + xMargin;
-		var yPos = canvasHeight - ((val-yMin) * scaleY) - yMargin;
-		ctx.lineTo(xPos, yPos);
+	for(var sensorIndex = 0; sensorIndex < SENSOR_COLORS.length; sensorIndex++){
+		var color = SENSOR_COLORS[sensorIndex];
+		ctx.strokeStyle = color;
+		// Draw data
+		var val = frames[0].temps[sensorIndex];
+		ctx.moveTo(xMargin, canvasHeight - ((val-yMin) * scaleY) - yMargin);
+		for(var i = 1; i < frames.length; i++){
+			val = frames[i].temps[sensorIndex];
+			var xPos = (i/frequencyHz) * scaleX + xMargin;
+			var yPos = canvasHeight - ((val-yMin) * scaleY) - yMargin;
+			ctx.lineTo(xPos, yPos);
+		}
 	}
 
 	// Complete drawing of grid

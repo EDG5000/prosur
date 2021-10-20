@@ -1,6 +1,8 @@
 namespace App{
 
-const SENSOR_LABELS = [
+export const TEST_MODE = true;
+
+export const SENSOR_LABELS = [
     "Time",
     "Chamber Mid",
     "Chamber Top",
@@ -11,7 +13,7 @@ const SENSOR_LABELS = [
     "Motor E"
 ];
 
-const SENSOR_COLORS = [
+export const SENSOR_COLORS = [
     "red",
     "green",
     "lightblue",
@@ -22,7 +24,7 @@ const SENSOR_COLORS = [
     "navy"
 ];
 
-export let frames = []; // List of Frame objects currently loaded
+export let frames: Array<Frame> = []; // List of Frame objects currently loaded
 export let canvas: HTMLCanvasElement = null;
 export let ctx: CanvasRenderingContext2D = null;
 export let userZoomFactor: number = parseFloat(localStorage.zoomLevel);
@@ -30,26 +32,6 @@ export let userZoomFactor: number = parseFloat(localStorage.zoomLevel);
 let sessionList = []; // List of filenames available
 let loading = false;
 let valueContainer = null;
-
-// Deserialize frame
-var Frame = function(rawFrame){
-    this.temps = [];
-    var i = 0;
-	var lastIndex = 0;
-	while(lastIndex !== -1){
-		var index = rawFrame.indexOf('\t', lastIndex+1);
-		var valueRaw = rawFrame.substr(lastIndex, index-lastIndex);
-		if(index == -1){
-			break;
-		}
-		this.temps[i] = parseFloat(valueRaw);
-		if(lastIndex == rawFrame.length-1){
-			break;
-		}
-		lastIndex = index;
-		i++;
-	}
-};
 
 // Load session data by filename.  
 var loadSession = function(session){
@@ -59,7 +41,7 @@ var loadSession = function(session){
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-        if(this.readyState != 4 || this.status != 200) return;
+        if(this.readyState != 4) return;
         console.log("Parsing data...");
         var responseData = xhttp.responseText;
         var lastIndex = 0;
@@ -77,27 +59,33 @@ var loadSession = function(session){
         console.log("Session loaded. Frames: " + frames.length);
         draw();
     };
-    console.log(132);
-    xhttp.open("GET", "mnt-data/" + session, true);
+    
+    if(TEST_MODE){
+        var url = "testdata/" + session
+    }else{
+        var url = "mnt-data/" + session;
+    }
+
+
+    xhttp.open("GET", url, true);
     xhttp.send();
 };
 
 var init = function(){
- 
-    console.log("a");
     if(isNaN(userZoomFactor)){
         userZoomFactor = 1;
     }
 
     // Obtain handles and environment properties
-    ctx = document.getElementsByTagName("canvas")[0].getContext("2d");
+    canvas = document.getElementsByTagName("canvas")[0];
+    ctx = canvas.getContext("2d");
     valueContainer = document.getElementById("value-container");
 
     // Load list of available log files and initiate load of the last-loaded file
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){
         // Display list of files async
-        if(this.readyState != 4 || this.status != 200) return;
+        if(this.readyState != 4) return;
 
         var parser = new DOMParser();
         let doc = parser.parseFromString(xhttp.responseText, "text/html");
@@ -128,7 +116,13 @@ var init = function(){
         }
         
     };
-    xhttp.open("GET", "mnt-data/?C=M;O=D", true);
+    var url;
+    if(TEST_MODE){
+        url = "testdata/index-of-mnt-data.html";
+    }else{
+        url = "mnt-data/?C=M;O=D";
+    }
+    xhttp.open("GET", url, true);
     xhttp.send();
 
 	// Periodically obtain last line if the current open file is a live file hc3d-log.log
