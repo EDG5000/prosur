@@ -1,8 +1,7 @@
-var App;
-(function (App) {
-    App.TEST_MODE = true;
-    App.SENSOR_LABELS = [
-        "Time",
+var Main;
+(function (Main) {
+    Main.TEST_MODE = true;
+    Main.SENSOR_LABELS = [
         "Chamber Mid",
         "Chamber Top",
         "Chamber Heater",
@@ -11,61 +10,53 @@ var App;
         "Motor Z",
         "Motor E"
     ];
-    App.SENSOR_COLORS = [
+    Main.SENSOR_COLORS = [
         "red",
         "green",
-        "lightblue",
+        "darkmagenta",
         "purple",
         "grey",
         "orange",
-        "darkgreen",
-        "navy"
+        "darkgreen"
     ];
-    App.frames = []; // List of Frame objects currently loaded
-    App.canvas = null;
-    App.ctx = null;
-    App.userZoomFactor = parseFloat(localStorage.zoomLevel);
-    App.loading = false;
-    App.sessionListContainer = null;
+    Main.frames = []; // List of Frame objects currently loaded
+    Main.canvas = null;
+    Main.ctx = null;
+    Main.userZoomFactor = parseFloat(localStorage.zoomLevel);
+    Main.sessionFilenames = []; // List of filenames available
+    Main.loading = false;
+    Main.sessionListContainer = null;
     var init = function () {
-        if (isNaN(App.userZoomFactor)) {
-            App.userZoomFactor = 1;
+        if (isNaN(Main.userZoomFactor)) {
+            Main.userZoomFactor = 1;
         }
-        // Obtain handles and environment properties
-        App.canvas = document.getElementsByTagName("canvas")[0];
-        App.ctx = App.canvas.getContext("2d");
-        App.sessionListContainer = document.getElementById("session-list");
-        // Periodically obtain last line if the current open file is a live file hc3d-log.log
-        setInterval(function () {
-            if (App.loading == false && typeof localStorage.currentSession != "undefined" && localStorage.currentSession == "hc3d-temp.log" && App.frames.length > 0) {
-                var xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function () {
-                    if (this.readyState != 4 || this.status != 200)
-                        return;
-                    var frame = new App.Frame(this.responseText);
-                    App.frames.push(frame);
-                    Drawer.draw();
-                };
-                xhr.open("GET", "get_llc_values.php", true);
-                xhr.send();
-            }
-        }, 1000);
+        // Get DOM nodes and canvas context
+        Main.canvas = document.getElementsByTagName("canvas")[0];
+        Main.ctx = Main.canvas.getContext("2d");
+        Main.sessionListContainer = document.getElementById("session-list");
         // Add mouse listener
-        App.canvas.addEventListener("wheel", onWheel);
-    };
-    var onWheel = function (e) {
-        if (e.deltaY > 0) {
-            App.userZoomFactor + .1;
+        Main.canvas.addEventListener("wheel", function (e) {
+            if (e.deltaY > 0) {
+                Main.userZoomFactor + .1;
+            }
+            else {
+                Main.userZoomFactor - .1;
+            }
+            localStorage.zoomLevel = Main.userZoomFactor;
+            console.log(localStorage.zoomLevel);
+            Drawer.draw();
+        });
+        // Init units
+        SessionLoader.init();
+        // Load session list
+        SessionList.init();
+        // Load last session
+        if (typeof localStorage.lastSession != "undefined") {
+            SessionLoader.load(localStorage.lastSession);
         }
-        else {
-            App.userZoomFactor - .1;
-        }
-        localStorage.zoomLevel = App.userZoomFactor;
-        console.log(localStorage.zoomLevel);
-        Drawer.draw();
     };
     addEventListener("DOMContentLoaded", init);
-})(App || (App = {}));
+})(Main || (Main = {}));
 var Drawer;
 (function (Drawer) {
     // Frequency of souce data. Could be derrived from timestamps alternatively.
@@ -76,30 +67,33 @@ var Drawer;
     const canvasHeight = window.innerHeight;
     const xGridInterval = 60; // Seconds
     const yGridInterval = 0.1; // Relative to graph height
-    const yMargin = 10;
-    const xMargin = 10;
+    const yMargin = 30;
+    const xMargin = 50;
     const labelEdgeOffset = 10;
+    const xLabelYOffset = 10;
     let canvasWidth;
     let scaleY;
-    let yMin = 0;
-    let yMax = 1;
-    //let chartWidth: number;
-    //let chartHeight: number;
+    let yMin = null;
+    let yMax = null;
     let scaleX;
     let xMax;
-    // Draw window.frames using localStorage.zoomLevel
+    let startTimeUnix;
     function draw() {
-        let frame;
-        xMax = frames.length;
+        if (Main.frames.length == 0) {
+            return;
+        }
+        xMax = Main.frames.length;
+        startTimeUnix = Main.frames[0].timeUnix;
         // Calculate width of canvas based on time resolution, fixed scale factor and user zoom level
-        scaleX = App.userZoomFactor * baseZoomFactor;
-        canvasWidth = frames.length * scaleX;
+        scaleX = Main.userZoomFactor * baseZoomFactor;
+        canvasWidth = Main.frames.length * scaleX;
         // Each plot has different frame count, therefore canvas element has different size	
-        App.canvas.width = canvasWidth;
-        App.canvas.height = canvasHeight;
-        App.canvas.style.width = canvasWidth + "";
+        Main.canvas.width = canvasWidth;
+        Main.canvas.height = canvasHeight;
+        Main.canvas.style.width = canvasWidth + "";
         // Determine yRange
-        for (frame of App.frames) {
+        let frame;
+        for (frame of Main.frames) {
             for (var temp of frame.temps) {
                 if (temp < yMin || yMin == null) {
                     yMin = temp;
@@ -117,17 +111,19 @@ var Drawer;
         // Calculate drawing scale
         scaleY = (canvasHeight - yMargin) / (yMax - yMin);
         // Start drawing grid 
-        App.ctx.beginPath();
-        App.ctx.font = "1em monospace";
+        Main.ctx.beginPath();
+        Main.ctx.font = "1em monospace";
+        Main.ctx.strokeStyle = "silver";
         // Draw horizontal grid lines and axis labels
         var yRelative = 0;
-        App.ctx.textAlign = "right";
+        Main.ctx.textAlign = "right";
+        let valueString;
         while (yRelative <= 1) {
             var yValue = yMin + ((yMax - yMin) * (1 - yRelative));
             var yPosition = (canvasHeight - yMargin) * yRelative;
-            App.ctx.moveTo(xMargin, yPosition);
-            App.ctx.lineTo(canvasWidth, yPosition);
-            var valueString = yValue.toFixed(1);
+            Main.ctx.moveTo(xMargin, yPosition);
+            Main.ctx.lineTo(canvasWidth, yPosition);
+            valueString = yValue.toFixed(1);
             // These offsets should be constants!
             var labelYOffset = 4;
             if (yRelative == 0) {
@@ -136,59 +132,58 @@ var Drawer;
             else if (yRelative == 1) {
                 labelYOffset = -10;
             }
-            App.ctx.fillText(valueString, xMargin - labelEdgeOffset, yPosition + labelYOffset); // TODO add margin as constant
+            Main.ctx.fillText(valueString, xMargin - labelEdgeOffset, yPosition + labelYOffset);
             yRelative += yGridInterval;
         }
         // Draw vertical grid lines and axis labels
         var xValue = 0;
         while (xValue <= xMax) {
             var xPosition = xMargin + xValue * scaleX;
-            App.ctx.moveTo(xPosition, 0);
-            App.ctx.lineTo(xPosition, canvasHeight - yMargin);
-            var valueString = Util.createTimeLabel(xValue);
+            Main.ctx.moveTo(xPosition, 0);
+            Main.ctx.lineTo(xPosition, canvasHeight - yMargin);
+            let timeUnix = startTimeUnix + (xValue / frequencyHz);
+            valueString = Util.createTimeLabel(timeUnix);
             if (xValue == 0) {
-                App.ctx.textAlign = "left";
+                Main.ctx.textAlign = "left";
             }
             else if (xValue == xMax) {
-                App.ctx.textAlign = "right";
+                Main.ctx.textAlign = "right";
             }
             else {
-                App.ctx.textAlign = "center";
+                Main.ctx.textAlign = "center";
             }
-            App.ctx.fillText(valueString, xPosition, canvasHeight - 3); // TODO Add X label Y offset as constant
+            Main.ctx.fillText(valueString, xPosition, canvasHeight - xLabelYOffset);
             xValue += xGridInterval;
         }
-        // Complete drawing of grid
-        App.ctx.strokeStyle = 'silver';
-        App.ctx.stroke();
-        App.ctx.beginPath();
-        for (var sensorIndex = 0; sensorIndex < App.SENSOR_COLORS.length; sensorIndex++) {
-            var color = App.SENSOR_COLORS[sensorIndex];
-            App.ctx.strokeStyle = color;
+        for (var sensorIndex = 0; sensorIndex < Main.SENSOR_COLORS.length; sensorIndex++) {
+            // Complete drawing of grid
+            Main.ctx.strokeStyle = color;
+            Main.ctx.stroke();
+            Main.ctx.beginPath();
+            var color = Main.SENSOR_COLORS[sensorIndex];
             // Draw data
-            var val = App.frames[0].temps[sensorIndex];
-            App.ctx.moveTo(xMargin, canvasHeight - ((val - yMin) * scaleY) - yMargin);
-            for (var i = 1; i < App.frames.length; i++) {
-                //frame = frames[i];
-                val = frame.temps[sensorIndex];
-                var xPos = (i / frequencyHz) * scaleX + xMargin;
+            var val = Main.frames[0].temps[sensorIndex];
+            Main.ctx.moveTo(xMargin, canvasHeight - ((val - yMin) * scaleY) - yMargin);
+            for (var frameIndex = 0; frameIndex < Main.frames.length; frameIndex++) {
+                val = Main.frames[frameIndex].temps[sensorIndex];
+                var xPos = (frameIndex / frequencyHz) * scaleX + xMargin;
                 var yPos = canvasHeight - ((val - yMin) * scaleY) - yMargin;
-                App.ctx.lineTo(xPos, yPos);
-                if (isNaN(yPos)) {
-                    console.log(yPos);
-                }
+                Main.ctx.lineTo(xPos, yPos);
+                //if(isNaN(yPos)){
+                //console.log(yPos);
+                //}
             }
         }
         // Complete drawing of grid
-        App.ctx.strokeStyle = 'black';
-        App.ctx.stroke();
+        Main.ctx.strokeStyle = 'black';
+        Main.ctx.stroke();
         // Start drawing axis labels
-        App.ctx.beginPath();
+        Main.ctx.beginPath();
     }
     Drawer.draw = draw;
 })(Drawer || (Drawer = {}));
-var App;
-(function (App) {
+var Frame;
+(function (Frame_1) {
     // Deserialize frame
     class Frame {
         constructor(rawFrame) {
@@ -201,8 +196,8 @@ var App;
                 if (index == -1) {
                     break;
                 }
-                if (index == 0) {
-                    this.time = parseInt(valueRaw);
+                if (lastIndex == 0) {
+                    this.timeUnix = parseInt(valueRaw);
                 }
                 else {
                     this.temps[i - 1] = parseFloat(valueRaw);
@@ -215,85 +210,101 @@ var App;
             }
         }
     }
-    App.Frame = Frame;
+    Frame_1.Frame = Frame;
     ;
-})(App || (App = {}));
+})(Frame || (Frame = {}));
 var SessionList;
 (function (SessionList) {
     // Load list of available log files and initiate load of the last-loaded file
-    function load() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            // Display list of files async
+    function init() {
+        // Invoke loadSession when clicking on link
+        Main.sessionListContainer.addEventListener("click", function (e) {
+            let a = e.target;
+            localStorage.lastSession = a.getAttribute("href");
+            e.preventDefault();
+            SessionLoader.load(localStorage.lastSession);
+        });
+        // Load and display list of files
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
             if (this.readyState != 4)
                 return;
             var parser = new DOMParser();
-            let doc = parser.parseFromString(xhttp.responseText, "text/html");
+            let doc = parser.parseFromString(xhr.responseText, "text/html");
             var links = doc.querySelectorAll("td a");
             for (let link of links) {
                 // Skip link to parent directory
                 if (link.outerText == "Parent Directory") {
                     continue;
                 }
-                App.sessionFilenames.push(link.getAttribute("href"));
+                Main.sessionFilenames.push(link.getAttribute("href"));
                 // Insert the link node into main window
                 link.innerText = link.innerText.replaceAll("hc3d-tm-", "");
                 link.innerText = link.innerText.replaceAll(".log", "");
-                var newLink = App.sessionListContainer.appendChild(link);
-                App.sessionListContainer.appendChild(document.createElement("br"));
-                // Invoke loadSession when clicking on link
-                newLink.addEventListener("click", function (e) {
-                    localStorage.lastSession = this.getAttribute("href");
-                    e.preventDefault();
-                    SessionLoader.load(localStorage.lastSession);
-                });
-            }
-            // Load last session
-            if (typeof localStorage.lastSession != "undefined") {
-                SessionLoader.load(localStorage.lastSession);
+                Main.sessionListContainer.appendChild(link);
+                Main.sessionListContainer.appendChild(document.createElement("br"));
             }
         };
+        // URL is set to Apache directory index containing log file
         var url;
-        if (App.TEST_MODE) {
+        if (Main.TEST_MODE) {
             url = "testdata/index-of-mnt-data.html";
         }
         else {
             url = "mnt-data/?C=M;O=D";
         }
-        xhttp.open("GET", url, true);
-        xhttp.send();
+        xhr.open("GET", url, true);
+        // Start the XHR request
+        xhr.send();
     }
-    SessionList.load = load;
+    SessionList.init = init;
 })(SessionList || (SessionList = {}));
 var SessionLoader;
 (function (SessionLoader) {
+    function init() {
+        // Periodically obtain last line if the current open file is a live file hc3d-log.log
+        setInterval(function () {
+            if (Main.loading == false && typeof localStorage.currentSession != "undefined" && localStorage.currentSession == "hc3d-temp.log" && Main.frames.length > 0) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (this.readyState != 4 || this.status != 200)
+                        return;
+                    var frame = new Frame.Frame(this.responseText);
+                    Main.frames.push(frame);
+                    Drawer.draw();
+                };
+                xhr.open("GET", "get_llc_values.php", true);
+                xhr.send();
+            }
+        }, 1000);
+    }
+    SessionLoader.init = init;
     // Load session data by filename.  
     function load(filename) {
-        console.log("Loading session...");
-        App.loading = true;
-        App.frames = [];
+        Main.loading = true;
+        Main.frames = [];
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState != 4)
                 return;
-            console.log("Parsing data...");
             var responseData = xhttp.responseText;
             var lastIndex = 0;
             while (lastIndex !== -1) {
                 var index = responseData.indexOf('\n', lastIndex + 1);
                 var line = responseData.substr(lastIndex, index - lastIndex);
-                var frame = new App.Frame(line);
-                App.frames.push(frame);
+                if (line.length > 0) {
+                    var frame = new Frame.Frame(line);
+                    Main.frames.push(frame);
+                }
                 if (lastIndex == responseData.length - 1) {
                     break;
                 }
                 lastIndex = index;
             }
-            App.loading = false;
-            console.log("Session loaded. Frames: " + frames.length);
+            Main.loading = false;
             Drawer.draw();
         };
-        if (App.TEST_MODE) {
+        if (Main.TEST_MODE) {
             var url = "testdata/" + filename;
         }
         else {
@@ -317,7 +328,7 @@ var Util;
         // Minutes part from the timestamp
         var minutes = "0" + date.getMinutes();
         // Seconds part from the timestamp
-        var seconds = "0" + date.getSeconds();
+        //var seconds = "0" + date.getSeconds();
         // Will display time in 10:30:23 format
         var formattedTime = hours + ':' + minutes.substr(-2); // + ':' + seconds.substr(-2);
         return formattedTime;

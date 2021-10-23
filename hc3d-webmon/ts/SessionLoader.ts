@@ -1,34 +1,49 @@
 namespace SessionLoader{
 
+export function init(){
+    // Periodically obtain last line if the current open file is a live file hc3d-log.log
+	setInterval(function(){
+		if(Main.loading == false && typeof localStorage.currentSession != "undefined" && localStorage.currentSession == "hc3d-temp.log" && Main.frames.length > 0){
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function(){
+				if(this.readyState != 4 || this.status != 200) return;
+				var frame = new Frame.Frame(this.responseText);
+				Main.frames.push(frame);
+				Drawer.draw();
+			};
+			xhr.open("GET", "get_llc_values.php", true);
+    		xhr.send();
+		} 
+    }, 1000);
+}
+
 // Load session data by filename.  
 export function load(filename: string){
-
-	console.log("Loading session...");
-	App.loading = true;
-	App.frames = [];
+	Main.loading = true;
+	Main.frames = [];
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if(this.readyState != 4) return;
-        console.log("Parsing data...");
         var responseData = xhttp.responseText;
         var lastIndex = 0;
         while(lastIndex !== -1){
             var index = responseData.indexOf('\n', lastIndex+1);
             var line = responseData.substr(lastIndex, index-lastIndex);
-            var frame = new App.Frame(line);
-            App.frames.push(frame);
+            if(line.length > 0){
+                var frame = new Frame.Frame(line);
+                Main.frames.push(frame);
+            }
             if(lastIndex == responseData.length-1){
             	break;
             } 
             lastIndex = index;
         }
-        App.loading = false;
-        console.log("Session loaded. Frames: " + frames.length);
+        Main.loading = false;
         Drawer.draw();
     };
     
-    if(App.TEST_MODE){
+    if(Main.TEST_MODE){
         var url = "testdata/" + filename
     }else{
         var url = "mnt-data/" + filename;

@@ -2,7 +2,11 @@
     "workbench.colorCustomizations": {
       "sideBar.border": "#000",
       "editorGroup.border": "#000",
-      "panel.border": "#000"
+      "panel.border": "#000",
+      "debugConsole.infoForeground": "#000",
+      "debugConsole.sourceForeground": "#000",
+      "debugConsole.warningForeground": "#884d00",
+      "debugConsole.errorForeground": "#ff0000",
     },
     "telemetry.enableTelemetry": false,
     "git.enabled": false,

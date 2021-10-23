@@ -8,35 +8,37 @@ const baseZoomFactor = windowTimeSpanS / window.innerWidth; // Frames per pixel?
 const canvasHeight = window.innerHeight;
 const xGridInterval = 60; // Seconds
 const yGridInterval = 0.1; // Relative to graph height
-const yMargin = 10;
-const xMargin = 10;
+const yMargin = 30;
+const xMargin = 50;
 const labelEdgeOffset = 10;
+const xLabelYOffset = 10;
 
 let canvasWidth: number;
 let scaleY: number;
-let yMin = 0;
-let yMax = 1;
-//let chartWidth: number;
-//let chartHeight: number;
+let yMin = null;
+let yMax = null;
 let scaleX: number;
 let xMax: number;
+let startTimeUnix: number;
 
-// Draw window.frames using localStorage.zoomLevel
 export function draw(){
-	let frame: App.Frame;
-	
-	xMax = frames.length;
+	if(Main.frames.length == 0){
+		return;
+	}
+	xMax = Main.frames.length;
+	startTimeUnix = Main.frames[0].timeUnix;
 
 	// Calculate width of canvas based on time resolution, fixed scale factor and user zoom level
-	scaleX = App.userZoomFactor * baseZoomFactor;
-	canvasWidth = frames.length * scaleX;
+	scaleX = Main.userZoomFactor * baseZoomFactor;
+	canvasWidth = Main.frames.length * scaleX;
 	// Each plot has different frame count, therefore canvas element has different size	
-	App.canvas.width = canvasWidth;
-	App.canvas.height = canvasHeight;
-	App.canvas.style.width = canvasWidth + "";
+	Main.canvas.width = canvasWidth;
+	Main.canvas.height = canvasHeight;
+	Main.canvas.style.width = canvasWidth + "";
 	
 	// Determine yRange
-	for(frame of App.frames){
+	let frame: Frame.Frame;
+	for(frame of Main.frames){
 		for(var temp of frame.temps){
 			if(temp < yMin || yMin == null){
 				yMin = temp;
@@ -57,18 +59,20 @@ export function draw(){
 	scaleY = (canvasHeight - yMargin) / (yMax-yMin);
  
 	// Start drawing grid 
-	App.ctx.beginPath(); 
-	App.ctx.font = "1em monospace";
-	
+	Main.ctx.beginPath(); 
+	Main.ctx.font = "1em monospace";
+	Main.ctx.strokeStyle = "silver";
+
 	// Draw horizontal grid lines and axis labels
 	var yRelative = 0;
-	App.ctx.textAlign = "right";
+	Main.ctx.textAlign = "right";
+	let valueString: string;
 	while(yRelative <= 1){
 		var yValue = yMin + ((yMax-yMin) * (1-yRelative));
 		var yPosition = (canvasHeight-yMargin) * yRelative;
-		App.ctx.moveTo(xMargin, yPosition);
-		App.ctx.lineTo(canvasWidth, yPosition);
-		var valueString = yValue.toFixed(1);
+		Main.ctx.moveTo(xMargin, yPosition);
+		Main.ctx.lineTo(canvasWidth, yPosition);
+		valueString = yValue.toFixed(1);
 		// These offsets should be constants!
 		var labelYOffset = 4;
 		if(yRelative == 0){
@@ -76,7 +80,7 @@ export function draw(){
 		}else if(yRelative == 1){
 			labelYOffset = -10;
 		}
-		App.ctx.fillText(valueString, xMargin - labelEdgeOffset, yPosition + labelYOffset); // TODO add margin as constant
+		Main.ctx.fillText(valueString, xMargin - labelEdgeOffset, yPosition + labelYOffset);
 		yRelative += yGridInterval;
 	}
 
@@ -84,49 +88,49 @@ export function draw(){
 	var xValue = 0;
 	while(xValue <= xMax){
 		var xPosition = xMargin + xValue * scaleX;
-		App.ctx.moveTo(xPosition, 0);
-		App.ctx.lineTo(xPosition, canvasHeight - yMargin);
-		var valueString = Util.createTimeLabel(xValue);
+		Main.ctx.moveTo(xPosition, 0);
+		Main.ctx.lineTo(xPosition, canvasHeight - yMargin);
+		let timeUnix = startTimeUnix + (xValue / frequencyHz);
+		valueString = Util.createTimeLabel(timeUnix);
 		if(xValue == 0){
-			App.ctx.textAlign = "left";
+			Main.ctx.textAlign = "left";
 		}else if(xValue == xMax){
-			App.ctx.textAlign = "right";
+			Main.ctx.textAlign = "right";
 		}else{
-			App.ctx.textAlign = "center";
+			Main.ctx.textAlign = "center";
 		}
-		App.ctx.fillText(valueString, xPosition, canvasHeight-3); // TODO Add X label Y offset as constant
+		Main.ctx.fillText(valueString, xPosition, canvasHeight - xLabelYOffset);
 		xValue += xGridInterval;  
 	} 
 
-	// Complete drawing of grid
-	App.ctx.strokeStyle = 'silver';
-	App.ctx.stroke();
-	App.ctx.beginPath();
-
-	for(var sensorIndex = 0; sensorIndex < App.SENSOR_COLORS.length; sensorIndex++){
-		var color = App.SENSOR_COLORS[sensorIndex];
-		App.ctx.strokeStyle = color;
+	for(var sensorIndex = 0; sensorIndex < Main.SENSOR_COLORS.length; sensorIndex++){
+		// Complete drawing of grid
+		Main.ctx.strokeStyle = color;
+		Main.ctx.stroke();
+		Main.ctx.beginPath();
+		var color = Main.SENSOR_COLORS[sensorIndex];
 		// Draw data
-		var val = App.frames[0].temps[sensorIndex];
-		App.ctx.moveTo(xMargin, canvasHeight - ((val-yMin) * scaleY) - yMargin);
-		for(var i = 1; i < App.frames.length; i++){
-			//frame = frames[i];
-			val = frame.temps[sensorIndex];
-			var xPos = (i/frequencyHz) * scaleX + xMargin;
+		var val = Main.frames[0].temps[sensorIndex];
+		Main.ctx.moveTo(xMargin, canvasHeight - ((val-yMin) * scaleY) - yMargin);
+		for(var frameIndex = 0; frameIndex < Main.frames.length; frameIndex++){
+			
+			val = Main.frames[frameIndex].temps[sensorIndex];
+			var xPos = (frameIndex/frequencyHz) * scaleX + xMargin;
 			var yPos = canvasHeight - ((val-yMin) * scaleY) - yMargin;
-			App.ctx.lineTo(xPos, yPos);
-			if(isNaN(yPos)){
-				console.log(yPos);
-			}
+			Main.ctx.lineTo(xPos, yPos);
+			//if(isNaN(yPos)){
+				//console.log(yPos);
+			//}
 		}
+		
 	}
 
 	// Complete drawing of grid
-	App.ctx.strokeStyle = 'black';
-	App.ctx.stroke();
+	Main.ctx.strokeStyle = 'black';
+	Main.ctx.stroke();
 
 	// Start drawing axis labels
-	App.ctx.beginPath();
+	Main.ctx.beginPath();
 }
 
 }

@@ -1,8 +1,8 @@
-namespace App{
+namespace Frame{
 
 // Deserialize frame
 export class Frame{
-	time: number;
+	timeUnix: number;
 	temps: Array<number>;
 	constructor(rawFrame: string){
 		this.temps = [];
@@ -14,8 +14,8 @@ export class Frame{
 			if(index == -1){
 				break;
 			}
-			if(index == 0){
-                this.time = parseInt(valueRaw);
+			if(lastIndex == 0){
+                this.timeUnix = parseInt(valueRaw);
 			}else{
 				this.temps[i-1] = parseFloat(valueRaw);
 			}
