@@ -1,0 +1,17 @@
+{
+    "workbench.colorCustomizations": {
+      "sideBar.border": "#000",
+      "editorGroup.border": "#000",
+      "panel.border": "#000"
+    },
+    "telemetry.enableTelemetry": false,
+    "git.enabled": false,
+    "workbench.colorTheme": "Github Light Theme",
+    "editor.mouseWheelScrollSensitivity": 2,
+    "editor.minimap.enabled": false,
+    "explorer.confirmDragAndDrop": false,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "editor.fontSize": 12,
+    "debug.focusWindowOnBreak": false,
+    "explorer.confirmDelete": false,
+  }

@@ -1,6 +1,73 @@
-// Obtain handles and environment properties
 var App;
 (function (App) {
+    App.TEST_MODE = true;
+    App.SENSOR_LABELS = [
+        "Time",
+        "Chamber Mid",
+        "Chamber Top",
+        "Chamber Heater",
+        "Motor X",
+        "Motor Y",
+        "Motor Z",
+        "Motor E"
+    ];
+    App.SENSOR_COLORS = [
+        "red",
+        "green",
+        "lightblue",
+        "purple",
+        "grey",
+        "orange",
+        "darkgreen",
+        "navy"
+    ];
+    App.frames = []; // List of Frame objects currently loaded
+    App.canvas = null;
+    App.ctx = null;
+    App.userZoomFactor = parseFloat(localStorage.zoomLevel);
+    App.loading = false;
+    App.sessionListContainer = null;
+    var init = function () {
+        if (isNaN(App.userZoomFactor)) {
+            App.userZoomFactor = 1;
+        }
+        // Obtain handles and environment properties
+        App.canvas = document.getElementsByTagName("canvas")[0];
+        App.ctx = App.canvas.getContext("2d");
+        App.sessionListContainer = document.getElementById("session-list");
+        // Periodically obtain last line if the current open file is a live file hc3d-log.log
+        setInterval(function () {
+            if (App.loading == false && typeof localStorage.currentSession != "undefined" && localStorage.currentSession == "hc3d-temp.log" && App.frames.length > 0) {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (this.readyState != 4 || this.status != 200)
+                        return;
+                    var frame = new App.Frame(this.responseText);
+                    App.frames.push(frame);
+                    Drawer.draw();
+                };
+                xhr.open("GET", "get_llc_values.php", true);
+                xhr.send();
+            }
+        }, 1000);
+        // Add mouse listener
+        App.canvas.addEventListener("wheel", onWheel);
+    };
+    var onWheel = function (e) {
+        if (e.deltaY > 0) {
+            App.userZoomFactor + .1;
+        }
+        else {
+            App.userZoomFactor - .1;
+        }
+        localStorage.zoomLevel = App.userZoomFactor;
+        console.log(localStorage.zoomLevel);
+        Drawer.draw();
+    };
+    addEventListener("DOMContentLoaded", init);
+})(App || (App = {}));
+var Drawer;
+(function (Drawer) {
     // Frequency of souce data. Could be derrived from timestamps alternatively.
     // TODO indicate gaps in the data?
     const frequencyHz = 1;
@@ -21,17 +88,18 @@ var App;
     let scaleX;
     let xMax;
     // Draw window.frames using localStorage.zoomLevel
-    App.draw = function () {
-        xMax = App.frames.length;
+    function draw() {
+        let frame;
+        xMax = frames.length;
         // Calculate width of canvas based on time resolution, fixed scale factor and user zoom level
         scaleX = App.userZoomFactor * baseZoomFactor;
-        canvasWidth = App.frames.length * scaleX;
+        canvasWidth = frames.length * scaleX;
         // Each plot has different frame count, therefore canvas element has different size	
         App.canvas.width = canvasWidth;
         App.canvas.height = canvasHeight;
         App.canvas.style.width = canvasWidth + "";
         // Determine yRange
-        for (var frame of App.frames) {
+        for (frame of App.frames) {
             for (var temp of frame.temps) {
                 if (temp < yMin || yMin == null) {
                     yMin = temp;
@@ -48,7 +116,7 @@ var App;
         }
         // Calculate drawing scale
         scaleY = (canvasHeight - yMargin) / (yMax - yMin);
-        // Start drawing grid
+        // Start drawing grid 
         App.ctx.beginPath();
         App.ctx.font = "1em monospace";
         // Draw horizontal grid lines and axis labels
@@ -77,7 +145,7 @@ var App;
             var xPosition = xMargin + xValue * scaleX;
             App.ctx.moveTo(xPosition, 0);
             App.ctx.lineTo(xPosition, canvasHeight - yMargin);
-            var valueString = App.createTimeLabel(xValue);
+            var valueString = Util.createTimeLabel(xValue);
             if (xValue == 0) {
                 App.ctx.textAlign = "left";
             }
@@ -101,10 +169,14 @@ var App;
             var val = App.frames[0].temps[sensorIndex];
             App.ctx.moveTo(xMargin, canvasHeight - ((val - yMin) * scaleY) - yMargin);
             for (var i = 1; i < App.frames.length; i++) {
-                val = App.frames[i].temps[sensorIndex];
+                //frame = frames[i];
+                val = frame.temps[sensorIndex];
                 var xPos = (i / frequencyHz) * scaleX + xMargin;
                 var yPos = canvasHeight - ((val - yMin) * scaleY) - yMargin;
                 App.ctx.lineTo(xPos, yPos);
+                if (isNaN(yPos)) {
+                    console.log(yPos);
+                }
             }
         }
         // Complete drawing of grid
@@ -112,8 +184,9 @@ var App;
         App.ctx.stroke();
         // Start drawing axis labels
         App.ctx.beginPath();
-    };
-})(App || (App = {}));
+    }
+    Drawer.draw = draw;
+})(Drawer || (Drawer = {}));
 var App;
 (function (App) {
     // Deserialize frame
@@ -145,40 +218,59 @@ var App;
     App.Frame = Frame;
     ;
 })(App || (App = {}));
-var App;
-(function (App) {
-    App.TEST_MODE = true;
-    App.SENSOR_LABELS = [
-        "Time",
-        "Chamber Mid",
-        "Chamber Top",
-        "Chamber Heater",
-        "Motor X",
-        "Motor Y",
-        "Motor Z",
-        "Motor E"
-    ];
-    App.SENSOR_COLORS = [
-        "red",
-        "green",
-        "lightblue",
-        "purple",
-        "grey",
-        "orange",
-        "darkgreen",
-        "navy"
-    ];
-    App.frames = []; // List of Frame objects currently loaded
-    App.canvas = null;
-    App.ctx = null;
-    App.userZoomFactor = parseFloat(localStorage.zoomLevel);
-    let sessionList = []; // List of filenames available
-    let loading = false;
-    let valueContainer = null;
+var SessionList;
+(function (SessionList) {
+    // Load list of available log files and initiate load of the last-loaded file
+    function load() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            // Display list of files async
+            if (this.readyState != 4)
+                return;
+            var parser = new DOMParser();
+            let doc = parser.parseFromString(xhttp.responseText, "text/html");
+            var links = doc.querySelectorAll("td a");
+            for (let link of links) {
+                // Skip link to parent directory
+                if (link.outerText == "Parent Directory") {
+                    continue;
+                }
+                App.sessionFilenames.push(link.getAttribute("href"));
+                // Insert the link node into main window
+                link.innerText = link.innerText.replaceAll("hc3d-tm-", "");
+                link.innerText = link.innerText.replaceAll(".log", "");
+                var newLink = App.sessionListContainer.appendChild(link);
+                App.sessionListContainer.appendChild(document.createElement("br"));
+                // Invoke loadSession when clicking on link
+                newLink.addEventListener("click", function (e) {
+                    localStorage.lastSession = this.getAttribute("href");
+                    e.preventDefault();
+                    SessionLoader.load(localStorage.lastSession);
+                });
+            }
+            // Load last session
+            if (typeof localStorage.lastSession != "undefined") {
+                SessionLoader.load(localStorage.lastSession);
+            }
+        };
+        var url;
+        if (App.TEST_MODE) {
+            url = "testdata/index-of-mnt-data.html";
+        }
+        else {
+            url = "mnt-data/?C=M;O=D";
+        }
+        xhttp.open("GET", url, true);
+        xhttp.send();
+    }
+    SessionList.load = load;
+})(SessionList || (SessionList = {}));
+var SessionLoader;
+(function (SessionLoader) {
     // Load session data by filename.  
-    var loadSession = function (session) {
+    function load(filename) {
         console.log("Loading session...");
-        loading = true;
+        App.loading = true;
         App.frames = [];
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
@@ -197,102 +289,26 @@ var App;
                 }
                 lastIndex = index;
             }
-            loading = false;
-            console.log("Session loaded. Frames: " + App.frames.length);
-            App.draw();
+            App.loading = false;
+            console.log("Session loaded. Frames: " + frames.length);
+            Drawer.draw();
         };
         if (App.TEST_MODE) {
-            var url = "testdata/" + session;
+            var url = "testdata/" + filename;
         }
         else {
-            var url = "mnt-data/" + session;
+            var url = "mnt-data/" + filename;
         }
         xhttp.open("GET", url, true);
         xhttp.send();
-    };
-    var init = function () {
-        if (isNaN(App.userZoomFactor)) {
-            App.userZoomFactor = 1;
-        }
-        // Obtain handles and environment properties
-        App.canvas = document.getElementsByTagName("canvas")[0];
-        App.ctx = App.canvas.getContext("2d");
-        valueContainer = document.getElementById("value-container");
-        // Load list of available log files and initiate load of the last-loaded file
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            // Display list of files async
-            if (this.readyState != 4)
-                return;
-            var parser = new DOMParser();
-            let doc = parser.parseFromString(xhttp.responseText, "text/html");
-            var links = doc.querySelectorAll("td a");
-            for (let link of links) {
-                // Skip link to parent directory
-                if (link.outerText == "Parent Directory") {
-                    continue;
-                }
-                sessionList.push(link.getAttribute("href"));
-                // Insert the link node into main window
-                link.innerText = link.innerText.replaceAll("hc3d-tm-", "");
-                link.innerText = link.innerText.replaceAll(".log", "");
-                var newLink = valueContainer.appendChild(link);
-                valueContainer.appendChild(document.createElement("br"));
-                // Invoke loadSession when clicking on link
-                newLink.addEventListener("click", function (e) {
-                    localStorage.lastSession = this.getAttribute("href");
-                    e.preventDefault();
-                    loadSession(localStorage.lastSession);
-                });
-            }
-            // Load last session
-            if (typeof localStorage.lastSession != "undefined") {
-                loadSession(localStorage.lastSession);
-            }
-        };
-        var url;
-        if (App.TEST_MODE) {
-            url = "testdata/index-of-mnt-data.html";
-        }
-        else {
-            url = "mnt-data/?C=M;O=D";
-        }
-        xhttp.open("GET", url, true);
-        xhttp.send();
-        // Periodically obtain last line if the current open file is a live file hc3d-log.log
-        setInterval(function () {
-            if (loading == false && typeof localStorage.currentSession != "undefined" && localStorage.currentSession == "hc3d-temp.log" && App.frames.length > 0) {
-                var xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function () {
-                    if (this.readyState != 4 || this.status != 200)
-                        return;
-                    var frame = new App.Frame(this.responseText);
-                    App.frames.push(frame);
-                    App.draw();
-                };
-                xhttp.open("GET", "get_llc_values.php", true);
-                xhttp.send();
-            }
-        }, 1000);
-    };
-    var onWheel = function (e) {
-        if (e.deltaY > 0) {
-            App.userZoomFactor + .1;
-        }
-        else {
-            App.userZoomFactor - .1;
-        }
-        localStorage.zoomLevel = App.userZoomFactor;
-        console.log(localStorage.zoomLevel);
-        App.draw();
-    };
-    addEventListener("DOMContentLoaded", init);
-    addEventListener("wheel", onWheel);
-})(App || (App = {}));
-var App;
-(function (App) {
+    }
+    SessionLoader.load = load;
+    ;
+})(SessionLoader || (SessionLoader = {}));
+var Util;
+(function (Util) {
     // Based on: https://stackoverflow.com/a/847196
-    App.createTimeLabel = function (unixTime) {
+    Util.createTimeLabel = function (unixTime) {
         // Create a new JavaScript Date object based on the timestamp
         // multiplied by 1000 so that the argument is in milliseconds, not seconds.
         var date = new Date(unixTime * 1000);
@@ -306,5 +322,5 @@ var App;
         var formattedTime = hours + ':' + minutes.substr(-2); // + ':' + seconds.substr(-2);
         return formattedTime;
     };
-})(App || (App = {}));
+})(Util || (Util = {}));
 //# sourceMappingURL=main.js.map

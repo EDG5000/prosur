@@ -1,4 +1,4 @@
-namespace App{
+namespace Util{
 
 // Based on: https://stackoverflow.com/a/847196
 export var createTimeLabel = function(unixTime: number){
