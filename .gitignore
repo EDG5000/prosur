@@ -12,3 +12,4 @@
 datalog/
 mjpg-streamer/build/
 hc3d-webmon/mnt-data/
+/hc3d-webmon/build/main.js

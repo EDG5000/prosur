@@ -59,10 +59,9 @@ export function draw(){
 	scaleY = (canvasHeight - yMargin) / (yMax-yMin);
  
 	// Start drawing grid 
-	Main.ctx.strokeStyle = "#000";
+	Main.ctx.strokeStyle = "silver";
 	Main.ctx.beginPath(); 
 	Main.ctx.font = "1em monospace";
-	
 
 	// Draw horizontal grid lines and axis labels
 	let yRelative = 0;

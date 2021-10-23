@@ -5,7 +5,7 @@ export function init(){
     // Invoke loadSession when clicking on link
     Main.sessionListContainer.addEventListener("click", function(e){
         let a: HTMLAnchorElement = e.target;
-        localStorage.lastSession = a.getAttribute("href");
+        localStorage.lastSession = a.getAttribute("href").split("/")[1];
         e.preventDefault();
         SessionLoader.load(localStorage.lastSession); 
     });
