@@ -9,15 +9,15 @@ export function init(){
         e.preventDefault();
         SessionLoader.load(localStorage.lastSession); 
     });
-
+ 
     // Load and display list of files
-    var xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function(){  
         if(this.readyState != 4) return;
 
-        var parser = new DOMParser();
+        let parser = new DOMParser();
         let doc = parser.parseFromString(xhr.responseText, "text/html");
-        var links = doc.querySelectorAll("td a");
+        let links = doc.querySelectorAll("td a");
 
         for(let link of links as any){
             // Skip link to parent directory
@@ -35,7 +35,7 @@ export function init(){
     };
 
     // URL is set to Apache directory index containing log file
-    var url: string;
+    let url: string;
     if(Main.TEST_MODE){
         url = "testdata/index-of-mnt-data.html";
     }else{

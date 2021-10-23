@@ -28,7 +28,7 @@ export let sessionFilenames: Array<string> = []; // List of filenames available
 export let loading = false;
 export let sessionListContainer = null;
 
-var init = function(){
+let init = function(){
     if(isNaN(userZoomFactor)){
         userZoomFactor = 1;
     }
