@@ -22,10 +22,12 @@ export function load(filename: string){
 	Main.loading = true;
 	Main.frames = [];
 
+    Logger.i("Downloading " + filename + "...");
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if(this.readyState != 4) return;
         let responseData = xhttp.responseText;
+        Logger.i("Downloaded " + responseData.length + " bytes.");
         let lastIndex = 0;
         while(lastIndex !== -1){
             let index = responseData.indexOf('\n', lastIndex+1);
@@ -40,7 +42,9 @@ export function load(filename: string){
             lastIndex = index;
         }
         Main.loading = false;
-        Drawer.draw();
+        Logger.i("Loaded " + Main.frames.length + " frames.");
+        Drawer.draw(); 
+        Logger.i("Drawing complete.");
     };
     
     let url: string;

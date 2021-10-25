@@ -5,7 +5,7 @@ namespace Drawer{
 const frequencyHz = 1;
 const windowTimeSpanS = 60 * 60; // Display 1 hr of data in one windows' width
 const baseZoomFactor = windowTimeSpanS / window.innerWidth; // Frames per pixel? TODO
-const canvasHeight = window.innerHeight;
+const canvasHeight = window.innerHeight - 100;
 const xGridInterval = 60; // Seconds
 const yGridInterval = 0.1; // Relative to graph height
 const yMargin = 30;

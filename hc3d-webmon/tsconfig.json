@@ -11,12 +11,12 @@
 	  ],
 	},
 	//"include": ["ts/*.ts"], 
-	"include": [
+	/*"include": [
 		"ts/Main.ts",
 		"ts/Drawer.ts",
 		"ts/Frame.ts",
 		"ts/SessionList.ts",
 		"ts/SessionLoader.ts",
 		"ts/Util.ts"
-	], 
+	], */
 }

@@ -9,7 +9,7 @@ export function init(){
         e.preventDefault();
         SessionLoader.load(localStorage.lastSession); 
     });
- 
+    Logger.i("Loading session list...");
     // Load and display list of files
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function(){  
@@ -32,12 +32,13 @@ export function init(){
             Main.sessionListContainer.appendChild(link);
             Main.sessionListContainer.appendChild(document.createElement("br"));
         }
+        Logger.i("Loaded list of " + (links.length-1) + " sessions.");
     };
 
     // URL is set to Apache directory index containing log file
     let url: string;
     if(Main.TEST_MODE){
-        url = "testdata/index-of-mnt-data.html";
+        url = "testdata";
     }else{
         url = "mnt-data/?C=M;O=D";
     }

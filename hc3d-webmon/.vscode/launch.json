@@ -7,12 +7,13 @@
             "type": "pwa-chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "file://${workspaceFolder}/index.html",
+            //"url": "file://${workspaceFolder}/index.html",
+            "url": "http://localhost",
             "webRoot": "${workspaceFolder}",
             //"preLaunchTask": "tsc: build - tsconfig.json",
             //"preLaunchTask": "tsc: watch - tsconfig.json",
             "runtimeExecutable": "/snap/bin/chromium",
-            "runtimeArgs": ["--allow-file-access-from-files", "--disable-web-security"],
+            "runtimeArgs": ["--allow-file-access-from-files"]//, "--disable-web-security"],
         }
     ]
 }
