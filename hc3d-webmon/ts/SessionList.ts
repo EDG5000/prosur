@@ -38,7 +38,7 @@ export function init(){
     // URL is set to Apache directory index containing log file
     let url: string;
     if(Main.TEST_MODE){
-        url = "testdata";
+        url = "testdata/index-of-mnt-data.html";
     }else{
         url = "mnt-data/?C=M;O=D";
     }

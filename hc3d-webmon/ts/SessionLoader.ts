@@ -21,14 +21,16 @@ export function init(){
 export function load(filename: string){
 	Main.loading = true;
 	Main.frames = [];
-
     Logger.i("Downloading " + filename + "...");
     let xhttp = new XMLHttpRequest();
+
+    // XHR callback for loading session list HTML
     xhttp.onreadystatechange = function() {
         if(this.readyState != 4) return;
         let responseData = xhttp.responseText;
         Logger.i("Downloaded " + responseData.length + " bytes.");
         let lastIndex = 0;
+        // Create and store a Frame for each line
         while(lastIndex !== -1){
             let index = responseData.indexOf('\n', lastIndex+1);
             let line = responseData.substr(lastIndex, index-lastIndex);
@@ -46,14 +48,13 @@ export function load(filename: string){
         Drawer.draw(); 
         Logger.i("Drawing complete.");
     };
-    
+    // URL depends on TEST_MODE flag; make XHR call
     let url: string;
     if(Main.TEST_MODE){
         url = "testdata/" + filename
     }else{
         url = "mnt-data/" + filename;
     }
-
     xhttp.open("GET", url, true);
     xhttp.send();
 };

@@ -21,6 +21,7 @@ body{
     font-family: monospace;
     height: 100vh;
     position: absolute;
+    /* top: 0px; */
     border-right: 1px solid black;
 }
 
