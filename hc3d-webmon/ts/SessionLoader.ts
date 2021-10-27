@@ -2,19 +2,21 @@ namespace SessionLoader{
 
 export function init(){
     // Periodically obtain last line if the current open file is a live file hc3d-log.log
-	setInterval(function(){
-		if(Main.loading == false && typeof localStorage.currentSession != "undefined" && localStorage.currentSession == "hc3d-temp.log" && Main.frames.length > 0){
-			let xhr = new XMLHttpRequest();
-			xhr.onreadystatechange = function(){
-				if(this.readyState != 4 || this.status != 200) return;
-				let frame = new Frame.Frame(this.responseText);
-				Main.frames.push(frame);
-				Drawer.draw();
-			};
-			xhr.open("GET", "get_llc_values.php", true);
-    		xhr.send();
-		} 
-    }, 1000);
+	setInterval(refreshCurrentFile, 1000);
+}
+
+function refreshCurrentFile(){
+    if(Main.loading == false && typeof localStorage.lastSession != "undefined" && localStorage.lastSession == Main.CURRENT_LOG_FILE && Main.frames.length > 0){
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if(this.readyState != 4) return;
+            let frame = new Frame.Frame(this.responseText);
+            Main.frames.push(frame);
+            Drawer.draw();
+        };
+        xhr.open("GET", "get_llc_values.php", true);
+        xhr.send();
+    } 
 }
 
 // Load session data by filename.  

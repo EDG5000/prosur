@@ -18,4 +18,6 @@
     "editor.fontSize": 12,
     "debug.focusWindowOnBreak": false,
     "explorer.confirmDelete": false,
+    "editor.hover.enabled": false,
+    "editor.quickSuggestions": false
   }

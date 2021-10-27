@@ -4,6 +4,16 @@
 		{
 			"type": "typescript",
 			"tsconfig": "tsconfig.json",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build",
+			"label": "Build"
+		},
+		{
+			"dependsOn": "Build",
+			"type": "typescript",
+			"tsconfig": "tsconfig.json",
 			"option": "watch",
 			"problemMatcher": [
 				"$tsc-watch"
@@ -12,7 +22,7 @@
 				"kind": "build",
 				"isDefault": true
 			},
-			"label": "tsc: watch - tsconfig.json"
+			"label": "Watch"
 		}
 	]
 }

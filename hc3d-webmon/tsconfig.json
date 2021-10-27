@@ -10,13 +10,4 @@
 			"ES6","DOM",
 	  ],
 	},
-	//"include": ["ts/*.ts"], 
-	/*"include": [
-		"ts/Main.ts",
-		"ts/Drawer.ts",
-		"ts/Frame.ts",
-		"ts/SessionList.ts",
-		"ts/SessionLoader.ts",
-		"ts/Util.ts"
-	], */
 }

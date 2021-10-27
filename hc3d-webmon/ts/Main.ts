@@ -19,12 +19,19 @@ export const SENSOR_COLORS = [
     "orange",
     "darkgreen"
 ];
+export let DATA_FOLDER: string;
+if(TEST_MODE){
+    DATA_FOLDER = "testdata";
+}else{
+    DATA_FOLDER = "mnt-data";
+}
+export const CURRENT_LOG_FILE = "hc3d-temp.csv";
 
 export let frames: Array<Frame.Frame> = []; // List of Frame objects currently loaded
 export let canvas: HTMLCanvasElement = null;
 export let ctx: CanvasRenderingContext2D = null;
 export let userZoomFactor: number = parseFloat(localStorage.zoomLevel);
-export let sessionFilenames: Array<string> = []; // List of filenames available
+//export let sessionFilenames: Array<string> = []; // List of filenames available
 export let loading = false;
 export let sessionListContainer = null;
 
