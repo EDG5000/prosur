@@ -1,3 +1,4 @@
+*.DS_Store
 /bin/
 *.o
 *.d
@@ -10,8 +11,7 @@
 *.hex
 *Makefile
 datalog/
-mjpg-streamer/build/
-
-hc3d-webmon/mnt-data/
-hc3d-webmon/build/main.js
-hc3d-webmon/testdata
+vendor/mjpg-streamer/build/
+webmon/mnt-data/
+webmon/build/main.js
+webmon/testdata
