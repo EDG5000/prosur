@@ -61,13 +61,13 @@ export function draw(){
 		Main.ctx.lineTo(canvasWidth, yPosition);
 		valueString = yValue.toFixed(1);
 		// These offsets should be constants!
-		let labelYOffset = 4;
+		let ylabelYOffset = 4;
 		if(yRelative == 0){
-			labelYOffset = 10;
+			ylabelYOffset = 10;
 		}else if(yRelative == 1){
-			labelYOffset = -10;
+			ylabelYOffset = -10;
 		}
-		Main.ctx.fillText(valueString, Const.xMargin - Const.labelEdgeOffset, yPosition + labelYOffset);
+		Main.ctx.fillText(valueString, Const.xMargin - Const.labelEdgeOffset, yPosition + ylabelYOffset);
 		yRelative += Const.yGridInterval;
 	}
 
