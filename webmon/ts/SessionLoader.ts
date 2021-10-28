@@ -6,7 +6,7 @@ export function init(){
 }
 
 function refreshCurrentFile(){
-    if(Main.loading == false && typeof localStorage.lastSession != "undefined" && localStorage.lastSession == Main.CURRENT_LOG_FILE && Main.frames.length > 0){
+    if(Main.loading == false && typeof localStorage.lastSession != "undefined" && localStorage.lastSession == Main.CURRENT_LOG_FILE && 	Main.frames.length > 0){
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function(){
             if(this.readyState != 4) return;
@@ -21,8 +21,8 @@ function refreshCurrentFile(){
 
 // Load session data by filename.  
 export function load(filename: string){
-	Main.loading = true;
-	Main.frames = [];
+    Main.loading = true;
+    Main.frames = [];
     Logger.i("Downloading " + filename + "...");
     let xhttp = new XMLHttpRequest();
 
@@ -37,8 +37,13 @@ export function load(filename: string){
             let index = responseData.indexOf('\n', lastIndex+1);
             let line = responseData.substr(lastIndex, index-lastIndex);
             if(line.length > 0){
-                let frame = new Frame.Frame(line);
-                Main.frames.push(frame);
+                if(lastIndex == 0){
+	        // First row and letter was found, parse header
+                }else{
+                    // Parse regular row
+                    let frame = new Frame.Frame(line);
+                    Main.frames.push(frame);
+                }
             }
             if(lastIndex == responseData.length-1){
             	break;
