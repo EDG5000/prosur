@@ -4,9 +4,9 @@ export let frames: Array<Frame.Frame> = []; // List of Frame objects currently l
 export let canvas: HTMLCanvasElement = null;
 export let ctx: CanvasRenderingContext2D = null;
 export let userZoomFactor: number = parseFloat(localStorage.zoomLevel);
-//export let sessionFilenames: Array<string> = []; // List of filenames available
 export let loading = false;
 export let sessionListContainer = null;
+export let currentSensorLabels: Array<string>; // Labels are set either from constants or from deserializing CSV header
 
 let init = function(){
     if(isNaN(userZoomFactor)){

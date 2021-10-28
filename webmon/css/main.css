@@ -21,7 +21,6 @@ body{
     font-family: monospace;
     height: 100vh;
     position: absolute;
-    /* top: 0px; */
     border-right: 1px solid black;
 }
 
@@ -29,4 +28,14 @@ canvas{
     position: absolute;
     height: 100vh;
     left: 300px;
+}
+
+#legend{
+    opacity: 0.75; 
+    position: absolute;
+    width: 100px;
+    top: 10px;
+    right: 10px;
+    background: white;
+    color: black;
 }

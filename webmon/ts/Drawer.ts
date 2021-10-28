@@ -1,18 +1,5 @@
 namespace Drawer{
 
-// Frequency of souce data. Could be derrived from timestamps alternatively.
-// TODO indicate gaps in the data?
-const frequencyHz = 1;
-const windowTimeSpanS = 60 * 60; // Display 1 hr of data in one windows' width
-const baseZoomFactor = windowTimeSpanS / window.innerWidth; // Frames per pixel? TODO
-const canvasHeight = window.innerHeight - 100;
-const xGridInterval = 60; // Seconds
-const yGridInterval = 0.1; // Relative to graph height
-const yMargin = 30;
-const xMargin = 50;
-const labelEdgeOffset = 10;
-const xLabelYOffset = 10;
-
 let canvasWidth: number;
 let scaleY: number;
 let yMin = null;
@@ -29,11 +16,11 @@ export function draw(){
 	startTimeUnix = Main.frames[0].timeUnix;
 
 	// Calculate width of canvas based on time resolution, fixed scale factor and user zoom level
-	scaleX = Main.userZoomFactor * baseZoomFactor;
+	scaleX = Main.userZoomFactor * Const.baseZoomFactor;
 	canvasWidth = Main.frames.length * scaleX;
 	// Each plot has different frame count, therefore canvas element has different size	
 	Main.canvas.width = canvasWidth;
-	Main.canvas.height = canvasHeight;
+	Main.canvas.height = Const.canvasHeight;
 	Main.canvas.style.width = canvasWidth + "";
 	
 	// Determine yRange
@@ -56,7 +43,7 @@ export function draw(){
 	}
 
 	// Calculate drawing scale
-	scaleY = (canvasHeight - yMargin) / (yMax-yMin);
+	scaleY = (Const.canvasHeight - Const.yMargin) / (yMax-yMin);
  
 	// Start drawing grid 
 	Main.ctx.strokeStyle = "silver";
@@ -69,8 +56,8 @@ export function draw(){
 	let valueString: string;
 	while(yRelative <= 1){
 		let yValue = yMin + ((yMax-yMin) * (1-yRelative));
-		let yPosition = (canvasHeight-yMargin) * yRelative;
-		Main.ctx.moveTo(xMargin, yPosition);
+		let yPosition = (Const.canvasHeight-Const.yMargin) * yRelative;
+		Main.ctx.moveTo(Const.xMargin, yPosition);
 		Main.ctx.lineTo(canvasWidth, yPosition);
 		valueString = yValue.toFixed(1);
 		// These offsets should be constants!
@@ -80,17 +67,17 @@ export function draw(){
 		}else if(yRelative == 1){
 			labelYOffset = -10;
 		}
-		Main.ctx.fillText(valueString, xMargin - labelEdgeOffset, yPosition + labelYOffset);
-		yRelative += yGridInterval;
+		Main.ctx.fillText(valueString, Const.xMargin - Const.labelEdgeOffset, yPosition + labelYOffset);
+		yRelative += Const.yGridInterval;
 	}
 
 	// Draw vertical grid lines and axis labels
 	let xValue = 0;
 	while(xValue <= xMax){
-		let xPosition = xMargin + xValue * scaleX;
+		let xPosition = Const.xMargin + xValue * scaleX;
 		Main.ctx.moveTo(xPosition, 0);
-		Main.ctx.lineTo(xPosition, canvasHeight - yMargin);
-		let timeUnix = startTimeUnix + (xValue / frequencyHz);
+		Main.ctx.lineTo(xPosition, Const.canvasHeight - Const.yMargin);
+		let timeUnix = startTimeUnix + (xValue / Const.frequencyHz);
 		valueString = Util.createTimeLabel(timeUnix);
 		if(xValue == 0){
 			Main.ctx.textAlign = "left";
@@ -99,30 +86,27 @@ export function draw(){
 		}else{
 			Main.ctx.textAlign = "center";
 		}
-		Main.ctx.fillText(valueString, xPosition, canvasHeight - xLabelYOffset);
-		xValue += xGridInterval;  
+		Main.ctx.fillText(valueString, xPosition, Const.canvasHeight - Const.xLabelYOffset);
+		xValue += Const.xGridInterval;  
 	} 
 	Main.ctx.stroke();
-//return;
-	for(let sensorIndex = 0; sensorIndex < Main.SENSOR_COLORS.length; sensorIndex++){
+
+	for(let sensorIndex = 0; sensorIndex < Const.SENSOR_COLORS.length; sensorIndex++){
 		// Complete drawing of grid
-		let color = Main.SENSOR_COLORS[sensorIndex];
+		let color = Const.SENSOR_COLORS[sensorIndex];
 		Main.ctx.strokeStyle = color;
 		
 		Main.ctx.beginPath();
 		
 		// Draw data
 		let val = Main.frames[0].temps[sensorIndex];
-		Main.ctx.moveTo(xMargin, canvasHeight - ((val-yMin) * scaleY) - yMargin);
+		Main.ctx.moveTo(Const.xMargin, Const.canvasHeight - ((val-yMin) * scaleY) - Const.yMargin);
 		for(let frameIndex = 0; frameIndex < Main.frames.length; frameIndex++){
 			
 			val = Main.frames[frameIndex].temps[sensorIndex];
-			let xPos = (frameIndex/frequencyHz) * scaleX + xMargin;
-			let yPos = canvasHeight - ((val-yMin) * scaleY) - yMargin;
+			let xPos = (frameIndex/Const.frequencyHz) * scaleX + Const.xMargin;
+			let yPos = Const.canvasHeight - ((val-yMin) * scaleY) - Const.yMargin;
 			Main.ctx.lineTo(xPos, yPos);
-			//if(isNaN(yPos)){
-				//console.log(yPos);
-			//}
 		}
 		
 		Main.ctx.stroke();

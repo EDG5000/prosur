@@ -6,7 +6,7 @@ export function init(){
 }
 
 function refreshCurrentFile(){
-    if(Main.loading == false && typeof localStorage.lastSession != "undefined" && localStorage.lastSession == Main.CURRENT_LOG_FILE && 	Main.frames.length > 0){
+    if(Main.loading == false && typeof localStorage.lastSession != "undefined" && localStorage.lastSession == Const.CURRENT_LOG_FILE && Main.frames.length > 0){
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function(){
             if(this.readyState != 4) return;
@@ -32,18 +32,29 @@ export function load(filename: string){
         let responseData = xhttp.responseText;
         Logger.i("Downloaded " + responseData.length + " bytes.");
         let lastIndex = 0;
-        // Create and store a Frame for each line
+        
+        // Locate first newline
+        let index = responseData.indexOf('\n', 1);
+        let line = responseData.substr(0, index);
+
+        if(/[a-zA-Z]/.test(line[0])){
+            // First row has letter, parse header
+            var components = line.split('\t');
+            // Remove time label and store labels in memory
+            Main.currentSensorLabels = components.splice(0, 1); 
+        }else{
+            // First row is numeric, header not present.
+            Main.currentSensorLabels = Const.SENSOR_LABELS;
+        }
+
+        // Parse rows
         while(lastIndex !== -1){
-            let index = responseData.indexOf('\n', lastIndex+1);
-            let line = responseData.substr(lastIndex, index-lastIndex);
+            index = responseData.indexOf('\n', lastIndex+1);
+            line = responseData.substr(lastIndex, index-lastIndex);
             if(line.length > 0){
-                if(lastIndex == 0){
-	        // First row and letter was found, parse header
-                }else{
-                    // Parse regular row
-                    let frame = new Frame.Frame(line);
-                    Main.frames.push(frame);
-                }
+                // Create and store a Frame for each regular ro
+                let frame = new Frame.Frame(line);
+                Main.frames.push(frame);
             }
             if(lastIndex == responseData.length-1){
             	break;
@@ -53,11 +64,12 @@ export function load(filename: string){
         Main.loading = false;
         Logger.i("Loaded " + Main.frames.length + " frames.");
         Drawer.draw(); 
+        LegendUpdater.updateLegend();
         Logger.i("Drawing complete.");
     };
     // URL depends on TEST_MODE flag; make XHR call
     let url: string;
-    if(Main.TEST_MODE){
+    if(Const.TEST_MODE){
         url = "testdata/" + filename
     }else{
         url = "mnt-data/" + filename;
@@ -65,6 +77,5 @@ export function load(filename: string){
     xhttp.open("GET", url, true);
     xhttp.send();
 };
-
 
 }

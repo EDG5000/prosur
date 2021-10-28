@@ -20,7 +20,7 @@ export function init(){
         let timestamps: Array<any> = [];
         for(let link of links as any){
             // Skip link to parent directory
-            if(link.outerText == "Parent Directory" || link.outerText == "index-of-mnt-data.html" || link.outerText == Main.CURRENT_LOG_FILE){
+            if(link.outerText == "Parent Directory" || link.outerText == "index-of-mnt-data.html" || link.outerText == Const.CURRENT_LOG_FILE){
                 continue;
             } 
             let timestamp = parseInt(link.innerText.replace(".csv", ""));
@@ -30,13 +30,13 @@ export function init(){
         timestamps.reverse();
         let linkCurrentFile = document.createElement("a");
         linkCurrentFile.innerText = "Current";
-        linkCurrentFile.href = Main.DATA_FOLDER + "/" + Main.CURRENT_LOG_FILE;
+        linkCurrentFile.href = Const.DATA_FOLDER + "/" + Const.CURRENT_LOG_FILE;
         Main.sessionListContainer.appendChild(linkCurrentFile);
         Main.sessionListContainer.appendChild(document.createElement("br"));
         for(let timestamp of timestamps){
             let filename = timestamp + ".csv"
             let link = document.createElement("a");
-            link.href = Main.DATA_FOLDER + "/" + filename;
+            link.href = Const.DATA_FOLDER + "/" + filename;
             link.innerText = new Date(timestamp * 1000).toString();
             Main.sessionListContainer.appendChild(link);
             Main.sessionListContainer.appendChild(document.createElement("br"));
@@ -46,10 +46,10 @@ export function init(){
 
     // URL is set to Apache directory index containing log file
     let url: string;
-    if(Main.TEST_MODE){
-        url = Main.DATA_FOLDER + "/index-of-mnt-data.html";
+    if(Const.TEST_MODE){
+        url = Const.DATA_FOLDER + "/index-of-mnt-data.html";
     }else{
-        url = Main.DATA_FOLDER + "/?C=M;O=D";
+        url = Const.DATA_FOLDER + "/?C=M;O=D";
     }
     xhr.open("GET", url, true);
 
