@@ -2,8 +2,8 @@ namespace Drawer{
 
 let canvasWidth: number;
 let scaleY: number;
-let yMin = null;
-let yMax = null;
+let yMin: number = null;
+let yMax: number = null;
 let scaleX: number;
 let xMax: number;
 let startTimeUnix: number;
