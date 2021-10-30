@@ -2,18 +2,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "outputCapture": "std",
+            "outputCapture": "console",
             "type": "pwa-chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "file://${workspaceFolder}/index.html",
-            //"url": "http://localhost",
+            //"url": "file://${workspaceFolder}/index.html",
+            "url": "http://localhost",
             "webRoot": "${workspaceFolder}",
             //"preLaunchTask": "tsc: build - tsconfig.json",
             //"preLaunchTask": "tsc: watch - tsconfig.json",
-            //"runtimeExecutable": "/snap/bin/chromium",
+            "runtimeExecutable": "/snap/bin/chromium",
             //"runtimeExecutable": "/Applications/Chromium.app/Contents/MacOS/Chromium",
-            "runtimeExecutable": "custom",
+            //"runtimeExecutable": "custom",
             
             "runtimeArgs": ["--allow-file-access-from-files", "--disable-web-security"],
         }

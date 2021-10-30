@@ -15,3 +15,5 @@ vendor/mjpg-streamer/build/
 webmon/mnt-data/
 webmon/build/main.js
 webmon/testdata
+/hc3d-tm/hc3d-tm-sitl/Debug/hc3d-tm-sitl.exe
+/hc3d-tm/Debug/makefile

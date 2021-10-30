@@ -1,28 +1,40 @@
 namespace Drawer{
 
-let canvasWidth: number;
-let scaleY: number;
+let scaleY: number; // Pixels per y value
 let yMin: number = null;
 let yMax: number = null;
-let scaleX: number;
+let scaleX: number; // Pixels per frame
 let xMax: number;
 let startTimeUnix: number;
+let xMin: number;
+
+export function init(){
+	let active = false;
+	Main.scroller.addEventListener("scroll", function(e: Event){
+		if(!active){
+			requestAnimationFrame(function(){
+				Main.pan = Main.scroller.scrollLeft/Main.scroller.scrollWidth;
+				draw();
+				active = false;
+			});
+			active = true;
+		}
+	});
+}
 
 export function draw(){
 	if(Main.frames.length == 0){
 		return;
 	}
-	xMax = Main.frames.length;
 	startTimeUnix = Main.frames[0].timeUnix;
+	// Scale product base factor and user factor
+	scaleX = Main.zoom * Const.baseZoomFactor;
+	Main.scrollerInner.style.width = (Main.frames.length * scaleX) + "px";
+	Main.canvas.width = Main.canvas.clientWidth;
+	Main.canvas.height = Main.canvas.clientHeight;
+	xMin = Math.floor(Main.frames.length * Main.pan);
+	xMax = Math.floor(xMin + (Main.canvas.width-Const.xMargin) / scaleX);
 
-	// Calculate width of canvas based on time resolution, fixed scale factor and user zoom level
-	scaleX = Main.userZoomFactor * Const.baseZoomFactor;
-	canvasWidth = Main.frames.length * scaleX;
-	// Each plot has different frame count, therefore canvas element has different size	
-	Main.canvas.width = canvasWidth;
-	Main.canvas.height = Const.canvasHeight;
-	Main.canvas.style.width = canvasWidth + "";
-	
 	// Determine yRange
 	let frame: Frame.Frame;
 	for(frame of Main.frames){
@@ -43,7 +55,7 @@ export function draw(){
 	}
 
 	// Calculate drawing scale
-	scaleY = (Const.canvasHeight - Const.yMargin) / (yMax-yMin);
+	scaleY = (Main.canvas.height - Const.yMargin) / (yMax-yMin);
  
 	// Start drawing grid 
 	Main.ctx.strokeStyle = "silver";
@@ -56,9 +68,9 @@ export function draw(){
 	let valueString: string;
 	while(yRelative <= 1){
 		let yValue = yMin + ((yMax-yMin) * (1-yRelative));
-		let yPosition = (Const.canvasHeight-Const.yMargin) * yRelative;
+		let yPosition = (Main.canvas.height-Const.yMargin) * yRelative;
 		Main.ctx.moveTo(Const.xMargin, yPosition);
-		Main.ctx.lineTo(canvasWidth, yPosition);
+		Main.ctx.lineTo(Main.canvas.width, yPosition);
 		valueString = yValue.toFixed(1);
 		// These offsets should be constants!
 		let ylabelYOffset = 4;
@@ -67,31 +79,33 @@ export function draw(){
 		}else if(yRelative == 1){
 			ylabelYOffset = -10;
 		}
-		Main.ctx.fillText(valueString, Const.xMargin - Const.labelEdgeOffset, yPosition + ylabelYOffset);
+		Main.ctx.fillText(valueString, Const.xMargin - Const.yLabelXOffset, yPosition + ylabelYOffset);
 		yRelative += Const.yGridInterval;
 	}
 
 	// Draw vertical grid lines and axis labels
-	let xValue = 0;
-	while(xValue <= xMax){
-		let xPosition = Const.xMargin + xValue * scaleX;
+	let xRelative = 0;
+	while(xRelative <= 1){
+		let xValue = xMin + (xMax-xMin) * xRelative;
+		let xPosition = Const.xMargin + (xValue - xMin) * scaleX;
 		Main.ctx.moveTo(xPosition, 0);
-		Main.ctx.lineTo(xPosition, Const.canvasHeight - Const.yMargin);
+		Main.ctx.lineTo(xPosition, Main.canvas.height - Const.yMargin);
 		let timeUnix = startTimeUnix + (xValue / Const.frequencyHz);
 		valueString = Util.createTimeLabel(timeUnix);
-		if(xValue == 0){
+		if(xValue - xMin == 0){
 			Main.ctx.textAlign = "left";
 		}else if(xValue == xMax){
 			Main.ctx.textAlign = "right";
 		}else{
 			Main.ctx.textAlign = "center";
 		}
-		Main.ctx.fillText(valueString, xPosition, Const.canvasHeight - Const.xLabelYOffset);
-		xValue += Const.xGridInterval;  
+		Main.ctx.fillText(valueString, xPosition, Main.canvas.height - Const.xLabelYOffset);
+		xRelative +=  Const.xGridInterval;
 	} 
+
 	Main.ctx.stroke();
 
-	for(let sensorIndex = 0; sensorIndex < Const.SENSOR_COLORS.length; sensorIndex++){
+	for(let sensorIndex = 0; sensorIndex < Main.currentSensorLabels.length; sensorIndex++){
 		// Complete drawing of grid
 		let color = Const.SENSOR_COLORS[sensorIndex];
 		Main.ctx.strokeStyle = color;
@@ -99,13 +113,15 @@ export function draw(){
 		Main.ctx.beginPath();
 		
 		// Draw data
-		let val = Main.frames[0].temps[sensorIndex];
-		Main.ctx.moveTo(Const.xMargin, Const.canvasHeight - ((val-yMin) * scaleY) - Const.yMargin);
-		for(let frameIndex = 0; frameIndex < Main.frames.length; frameIndex++){
-			
+		if(typeof Main.frames[xMin] == "undefined"){
+			console.log(Main.frames[xMin]);
+		}
+		let val = Main.frames[xMin].temps[sensorIndex];
+		Main.ctx.moveTo(Const.xMargin, Main.canvas.height - ((val-yMin) * scaleY) - Const.yMargin);
+		for(let frameIndex = xMin; frameIndex < xMax; frameIndex++){
 			val = Main.frames[frameIndex].temps[sensorIndex];
-			let xPos = (frameIndex/Const.frequencyHz) * scaleX + Const.xMargin;
-			let yPos = Const.canvasHeight - ((val-yMin) * scaleY) - Const.yMargin;
+			let xPos = ((frameIndex - xMin)/Const.frequencyHz) * scaleX + Const.xMargin;
+			let yPos = Main.canvas.height - ((val-yMin) * scaleY) - Const.yMargin;
 			Main.ctx.lineTo(xPos, yPos);
 		}
 		

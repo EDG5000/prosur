@@ -1,11 +1,13 @@
 namespace SessionList{
 
+export let addedLinks: Array<HTMLAnchorElement>; // Used when adjusting selection state
+
 // Load list of available log files and initiate load of the last-loaded file
-export function init(){    
+export function init(cb: () => void){    
     // Invoke loadSession when clicking on link
-    Main.sessionListContainer.addEventListener("click", function(e){
-        let a: HTMLAnchorElement = e.target;
-        localStorage.lastSession = a.getAttribute("href").split("/")[1];
+    Main.sessionListContainer.addEventListener("click", function(e: Event){
+        let link: HTMLAnchorElement = e.target;
+        localStorage.lastSession = link.getAttribute("href").split("/")[1];
         e.preventDefault();
         SessionLoader.load(localStorage.lastSession); 
     });
@@ -33,15 +35,19 @@ export function init(){
         linkCurrentFile.href = Const.DATA_FOLDER + "/" + Const.CURRENT_LOG_FILE;
         Main.sessionListContainer.appendChild(linkCurrentFile);
         Main.sessionListContainer.appendChild(document.createElement("br"));
+        addedLinks = [];
         for(let timestamp of timestamps){
-            let filename = timestamp + ".csv"
-            let link = document.createElement("a");
+            const filename = timestamp + ".csv"
+            const link = document.createElement("a");
+            addedLinks.push(link);
             link.href = Const.DATA_FOLDER + "/" + filename;
-            link.innerText = new Date(timestamp * 1000).toString();
+            const dateTimeString = new Date(timestamp * 1000).toJSON().replace("T", " ").slice(0, 19);
+            link.innerText = dateTimeString;
             Main.sessionListContainer.appendChild(link);
             Main.sessionListContainer.appendChild(document.createElement("br"));
         }
         Logger.i("Loaded list of " + (links.length-1) + " sessions.");
+        cb();
     };
 
     // URL is set to Apache directory index containing log file

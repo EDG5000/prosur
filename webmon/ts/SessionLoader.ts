@@ -21,6 +21,19 @@ function refreshCurrentFile(){
 
 // Load session data by filename.  
 export function load(filename: string){
+
+
+    // Mark the correct link as selected
+    for(let linkIndex in SessionList.addedLinks){
+        let link = SessionList.addedLinks[linkIndex];
+        let linkFilename = link.href.substring(link.href.lastIndexOf('/')+1);
+        if(linkFilename == filename){
+            link.style.border = "1px solid black";
+        }else{
+            link.style.border = "none";
+        }
+    }
+ 
     Main.loading = true;
     Main.frames = [];
     Logger.i("Downloading " + filename + "...");

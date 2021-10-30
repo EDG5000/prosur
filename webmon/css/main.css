@@ -11,14 +11,14 @@ a:hover{
 body{
     padding: 0;
     margin: 0;
-    overflow-y: hidden !important;
+    overflow: hidden !important;
+    font-family: monospace;
 }
 
 #session-list{
     overflow-y: scroll;
-    width: 300px;
+    width: 170px;
     color: white;
-    font-family: monospace;
     height: 100vh;
     position: absolute;
     border-right: 1px solid black;
@@ -26,17 +26,50 @@ body{
 
 canvas{
     position: absolute;
-    height: 100vh;
-    left: 300px;
+    height: calc(100vh - 20px);
+    top: 0;
+    
+    left: 170px;
+    cursor: grab;
+    z-index: 3;
 }
 
 #legend{
-    opacity: 0.75; 
-    position: absolute;
-    width: 100px;
+    position: fixed;
+    width: 150px;
     top: 10px;
     right: 10px;
-    background: white;
     color: black;
     padding: 5px;
+    font-weight: bold;
+    z-index: 4;
+    background: white;
+    border: 1px solid black;
 }
+
+#zoomLevel{
+    position: fixed;
+    top: 20px;
+    left: 265px;
+    z-index: 4;
+    font-weight: bold;
+    color: black;
+    padding: 5px;
+    background: white;
+    border: 1px solid black;
+}
+
+#scroller{
+    position: absolute;
+    height: 100vh;
+    left: 170px;
+    width: calc(100vw - 170px);
+    overflow-y: hidden;
+    overflow-x: visible;
+    z-index: 2;
+}
+
+    #scroller-inner{
+        width: 0px;
+        height: 1px;
+    }
