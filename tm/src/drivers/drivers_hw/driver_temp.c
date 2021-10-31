@@ -38,9 +38,9 @@ void driver_temp_init(){
 		str("Error detecting temperature sensors. Error code: %u\n", result);
 		while(1){}
 	}
-	for(int i = 0; i < roms_found; i++){
-		str("%u%u%u%U%U%U%U%U\n", roms[i], roms[i+1], roms[i+2], roms[i+3], roms[i+4], roms[i+5], roms[i+6], roms[i+7]);
-	}
+	//for(int i = 0; i < roms_found; i++){
+	//	str("%u%u%u%U%U%U%U%U\n", roms[i], roms[i+1], roms[i+2], roms[i+3], roms[i+4], roms[i+5], roms[i+6], roms[i+7]);
+	//}
 }
 
 void process_raw_reading(int sensor_index, int16_t raw_reading_p){
