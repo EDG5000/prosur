@@ -11,7 +11,7 @@
     "telemetry.enableTelemetry": false,
     "git.enabled": false,
     "workbench.colorTheme": "Github Light Theme",
-    //"editor.mouseWheelScrollSensitivity": 2,
+    "editor.mouseWheelScrollSensitivity": 3,
     "editor.minimap.enabled": false,
     "explorer.confirmDragAndDrop": false,
     "typescript.updateImportsOnFileMove.enabled": "always",

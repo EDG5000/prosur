@@ -58,5 +58,6 @@ export const yMargin = 40;
 export const xMargin = 50;
 export const yLabelXOffset = 10;
 export const xLabelYOffset = 20;
+export const scrollBarSize = 50; // Needs to be set to browser scroll bar size or larger
 
 }

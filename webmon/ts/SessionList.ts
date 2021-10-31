@@ -6,7 +6,7 @@ export let addedLinks: Array<HTMLAnchorElement>; // Used when adjusting selectio
 export function init(cb: () => void){    
     // Invoke loadSession when clicking on link
     Main.sessionListContainer.addEventListener("click", function(e: Event){
-        let link: HTMLAnchorElement = e.target;
+        let link: HTMLAnchorElement = <HTMLAnchorElement>e.target;
         localStorage.lastSession = link.getAttribute("href").split("/")[1];
         e.preventDefault();
         SessionLoader.load(localStorage.lastSession); 

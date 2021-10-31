@@ -26,13 +26,13 @@ export function draw(){
 	if(Main.frames.length == 0){
 		return;
 	}
+	Main.canvas.width = innerWidth - Const.sidebarWidth;
+	Main.canvas.height = innerHeight - Const.scrollBarSize;
 	startTimeUnix = Main.frames[0].timeUnix;
 	// Scale product base factor and user factor
 	scaleX = Main.zoom * Const.baseZoomFactor;
 	Main.scrollerInner.style.width = (Main.frames.length * scaleX) + "px";
-	Main.canvas.width = Main.canvas.clientWidth;
-	Main.canvas.height = Main.canvas.clientHeight;
-	xMin = Math.floor(Main.frames.length * Main.pan);
+	xMin = Math.floor((Main.frames.length-1) * Main.pan);
 	xMax = Math.floor(xMin + (Main.canvas.width-Const.xMargin) / scaleX);
 
 	// Determine yRange

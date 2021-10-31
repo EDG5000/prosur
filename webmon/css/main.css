@@ -26,10 +26,10 @@ body{
 
 canvas{
     position: absolute;
-    height: calc(100vh - 20px);
+    /* height: calc(100vh - 20px); */
+    /* width: calc(100vw - 170px); */
     top: 0;
-    
-    left: 170px;
+    right: 0;
     cursor: grab;
     z-index: 3;
 }

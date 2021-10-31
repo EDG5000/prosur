@@ -4,7 +4,7 @@
 		"outDir": "build",
 		"sourceRoot": "../ts/",
 		"rootDir": "ts/",
-		"sourceMap": true,
+		"inlineSourceMap": true, // Alleviate some caching issues. 
 		"target": "es2020",
 		"lib": [
 			"ES6","DOM",
