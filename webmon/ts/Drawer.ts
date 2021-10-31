@@ -110,14 +110,12 @@ export function draw(){
 
 	Main.ctx.stroke();
 
+	// Draw data for each sensor
 	for(let sensorIndex = 0; sensorIndex < Main.currentSensorLabels.length; sensorIndex++){
 		// Complete drawing of grid
 		let color = Const.SENSOR_COLORS[sensorIndex];
 		Main.ctx.strokeStyle = color;
-		
 		Main.ctx.beginPath();
-		
-		// Draw data
 		if(typeof Main.frames[xMin] == "undefined"){
 			console.log(Main.frames[xMin]);
 		}
@@ -129,7 +127,6 @@ export function draw(){
 			let yPos = Main.canvas.height - ((val-yMin) * scaleY) - Const.yMargin;
 			Main.ctx.lineTo(xPos, yPos);
 		}
-		
 		Main.ctx.stroke();
 	}
 
