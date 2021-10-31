@@ -1,5 +1,6 @@
 namespace Const{
 
+
 export const zoomAffector = 0.05;
 
 
@@ -36,12 +37,16 @@ export const SENSOR_COLORS = [
     "#000000"
 ];
 
+
 // Data folder and current log fle
-export let DATA_FOLDER: string;
+export let dataFolder: string;
+export let refreshUrl: string;
 if(Config.testMode){
-    DATA_FOLDER = "testdata";
+    dataFolder = "testdata";
+    refreshUrl = "testdata/get_llc_values.php"; 
 }else{
-    DATA_FOLDER = "mnt-data";
+    dataFolder = "mnt-data";
+    refreshUrl = "php/get_llc_values.php"; 
 }
 export const CURRENT_LOG_FILE = "hc3d-tm.csv";
 

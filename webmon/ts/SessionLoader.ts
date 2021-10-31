@@ -18,7 +18,7 @@ function refreshCurrentFile(){
                 Main.scroller.scrollLeft = Main.scroller.scrollWidth - Main.scroller.clientWidth;
             }
         };
-        xhr.open("GET", "get_llc_values.php", true);
+        xhr.open("GET", Const.refreshUrl, true);
         xhr.send();
     } 
 }
