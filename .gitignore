@@ -1,5 +1,4 @@
 *.DS_Store
-/bin/
 *.o
 *.d
 *.elf
@@ -15,6 +14,7 @@ vendor/mjpg-streamer/build/
 webmon/mnt-data/
 webmon/build/main.js
 webmon/testdata
-/hc3d-tm/hc3d-tm-sitl/Debug/hc3d-tm-sitl.exe
-/hc3d-tm/Debug/makefile
-/webmon/ts/Config.ts
+tm/hc3d-tm-sitl/Debug/hc3d-tm-sitl.exe
+tm/Debug/makefile
+webmon/ts/Config.ts
+webmon/mnt-data
