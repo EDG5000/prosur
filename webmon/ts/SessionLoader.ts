@@ -46,7 +46,11 @@ export function load(filename: string){
     xhttp.onreadystatechange = function() {
         if(this.readyState != 4) return;
         let responseData = xhttp.responseText;
-        processSessionData(responseData)
+        processSessionData(responseData);
+        // Scroll to end when opening current file
+        if(filename == Const.CURRENT_LOG_FILE){
+            Main.scroller.scrollLeft = Main.scroller.scrollWidth - Main.scroller.clientWidth;
+        }
     };
     // URL depends on TEST_MODE flag; make XHR call
     let url: string;
