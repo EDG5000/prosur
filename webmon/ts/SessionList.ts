@@ -26,6 +26,9 @@ export function init(cb: () => void){
                 continue;
             } 
             let timestamp = parseInt(link.innerText.replace(".csv", ""));
+            if(isNaN(timestamp)){
+                continue;
+            }
             timestamps.push(timestamp);
         }
         timestamps.sort();

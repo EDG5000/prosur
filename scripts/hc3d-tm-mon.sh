@@ -1,11 +1,11 @@
 # Setup serial port
 stty -F /dev/ttyUSB0 9600
 
-# Get date and time
-DATETIME_STR=`date`
+# Get unix timestamp
+TIME_STR=`date +%s`
 
 # Create filename for new session
-NEW_LOG_FILENAME="hc3d-tm-${DATETIME_STR}.log"
+NEW_LOG_FILENAME="${TIME_STR}.csv"
 
 # Delete old symlink; ignore error
 rm /mnt/data/hc3d-tm.log;

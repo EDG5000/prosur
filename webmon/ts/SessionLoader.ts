@@ -13,13 +13,9 @@ function refreshCurrentFile(){
             let frame = new Frame.Frame(this.responseText);
             Main.frames.push(frame);
             let fullyScrolled = Math.floor((Main.scroller.scrollLeft + Main.scroller.clientWidth) - Main.scroller.scrollWidth) > -2;
-            //console.log(Math.floor((Main.scroller.scrollLeft + Main.scroller.clientWidth) - Main.scroller.scrollWidth));
-
             Drawer.draw();
-            console.log("Refresh");
             if(fullyScrolled){
                 Main.scroller.scrollLeft = Main.scroller.scrollWidth - Main.scroller.clientWidth;
-                //console.log("Fullt scrolled");
             }
         };
         xhr.open("GET", "get_llc_values.php", true);
