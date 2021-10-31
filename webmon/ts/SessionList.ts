@@ -35,7 +35,7 @@ export function init(cb: () => void){
         timestamps.reverse();
         let linkCurrentFile = document.createElement("a");
         linkCurrentFile.innerText = "Current";
-        linkCurrentFile.href = Const.DATA_FOLDER + "/" + Const.CURRENT_LOG_FILE;
+        linkCurrentFile.href = Const.dataFolder + "/" + Const.CURRENT_LOG_FILE;
         Main.sessionListContainer.appendChild(linkCurrentFile);
         Main.sessionListContainer.appendChild(document.createElement("br"));
         addedLinks = [];
@@ -43,7 +43,7 @@ export function init(cb: () => void){
             const filename = timestamp + ".csv"
             const link = document.createElement("a");
             addedLinks.push(link);
-            link.href = Const.DATA_FOLDER + "/" + filename;
+            link.href = Const.dataFolder + "/" + filename;
             const dateTimeString = new Date(timestamp * 1000).toJSON().replace("T", " ").slice(0, 19);
             link.innerText = dateTimeString;
             Main.sessionListContainer.appendChild(link);
@@ -56,9 +56,9 @@ export function init(cb: () => void){
     // URL is set to Apache directory index containing log file
     let url: string;
     if(Config.testMode){
-        url = Const.DATA_FOLDER + "/index-of-mnt-data.html";
+        url = Const.dataFolder + "/index-of-mnt-data.html";
     }else{
-        url = Const.DATA_FOLDER + "/?C=M;O=D";
+        url = Const.dataFolder + "/?C=M;O=D";
     }
     xhr.open("GET", url, true);
 
