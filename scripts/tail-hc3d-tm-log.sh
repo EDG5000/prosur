@@ -1,1 +1,1 @@
-tail -f /mnt/data/hc3d-tm.log
+tail -f /mnt/data/hc3d-tm.csv

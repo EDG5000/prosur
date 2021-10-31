@@ -6,7 +6,7 @@ $line = '';
 $directory = "/mnt/data/";
 $files = scandir ($directory);
 $file = $directory . $files[2];// because [0] = "." [1] = ".." 
-$file = "/mnt/data/hc3d-tm.log";
+$file = "/mnt/data/hc3d-tm.csv";
 //how many lines?
 $linecount=5;
 
