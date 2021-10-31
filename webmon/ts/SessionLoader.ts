@@ -12,7 +12,15 @@ function refreshCurrentFile(){
             if(this.readyState != 4) return;
             let frame = new Frame.Frame(this.responseText);
             Main.frames.push(frame);
+            let fullyScrolled = Math.floor((Main.scroller.scrollLeft + Main.scroller.clientWidth) - Main.scroller.scrollWidth) > -2;
+            //console.log(Math.floor((Main.scroller.scrollLeft + Main.scroller.clientWidth) - Main.scroller.scrollWidth));
+
             Drawer.draw();
+            console.log("Refresh");
+            if(fullyScrolled){
+                Main.scroller.scrollLeft = Main.scroller.scrollWidth - Main.scroller.clientWidth;
+                //console.log("Fullt scrolled");
+            }
         };
         xhr.open("GET", "get_llc_values.php", true);
         xhr.send();
@@ -21,7 +29,6 @@ function refreshCurrentFile(){
 
 // Load session data by filename.  
 export function load(filename: string){
-
 
     // Mark the correct link as selected
     for(let linkIndex in SessionList.addedLinks){
@@ -43,42 +50,7 @@ export function load(filename: string){
     xhttp.onreadystatechange = function() {
         if(this.readyState != 4) return;
         let responseData = xhttp.responseText;
-        Logger.i("Downloaded " + responseData.length + " bytes.");
-        let lastIndex = 0;
-        
-        // Locate first newline
-        let index = responseData.indexOf('\n', 1);
-        let line = responseData.substr(0, index);
-
-        if(/[a-zA-Z]/.test(line[0])){
-            // First row has letter, parse header
-            var components = line.split('\t');
-            // Remove time label and store labels in memory
-            Main.currentSensorLabels = components.splice(0, 1); 
-        }else{
-            // First row is numeric, header not present.
-            Main.currentSensorLabels = Const.SENSOR_LABELS;
-        }
-
-        // Parse rows
-        while(lastIndex !== -1){
-            index = responseData.indexOf('\n', lastIndex+1);
-            line = responseData.substr(lastIndex, index-lastIndex);
-            if(line.length > 0){
-                // Create and store a Frame for each regular ro
-                let frame = new Frame.Frame(line);
-                Main.frames.push(frame);
-            }
-            if(lastIndex == responseData.length-1){
-            	break;
-            } 
-            lastIndex = index;
-        }
-        Main.loading = false;
-        Logger.i("Loaded " + Main.frames.length + " frames.");
-        Drawer.draw(); 
-        LegendUpdater.updateLegend();
-        Logger.i("Drawing complete.");
+        processSessionData(responseData)
     };
     // URL depends on TEST_MODE flag; make XHR call
     let url: string;
@@ -90,5 +62,53 @@ export function load(filename: string){
     xhttp.open("GET", url, true);
     xhttp.send();
 };
+
+// TSV session data
+// First field is unix time in seconds
+// Header may be provided optionally, it will be used for the sensor labels
+// Default header will be used when no header present in the file
+export function processSessionData(sessionData: string){
+    Logger.i("Downloaded " + sessionData.length + " bytes.");
+    let index: number;
+    let lastIndex = 0;
+    let line: string;
+    let firstLine = true;
+
+    // Parse rows
+    while(lastIndex !== -1){
+        index = sessionData.indexOf('\n', lastIndex+1);
+        line = sessionData.substr(lastIndex, index-lastIndex);
+
+
+        if(firstLine){
+            firstLine = false;
+            if(/[a-zA-Z]/.test(line[0])){
+                // First row has letter, parse header
+                var components = line.split('\t');
+                components.splice(0, 1); // Remove first item, which must always be unixtime
+                // Remove time label and store labels in memory
+                Main.currentSensorLabels = components; 
+        
+            }else{
+                // First row is numeric, header not present.
+                Main.currentSensorLabels = Const.SENSOR_LABELS;
+            }
+        }else if(line.length > 0){
+            // Create and store a Frame for each regular row
+            let frame = new Frame.Frame(line);
+            Main.frames.push(frame);
+        }
+
+        if(lastIndex == sessionData.length-1){
+            break;
+        } 
+        lastIndex = index;
+    }
+    Main.loading = false;
+    Logger.i("Loaded " + Main.frames.length + " frames.");
+    Drawer.draw(); 
+    LegendUpdater.updateLegend();
+    Logger.i("Drawing complete.");
+}
 
 }

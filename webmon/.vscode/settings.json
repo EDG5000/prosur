@@ -19,5 +19,6 @@
     "debug.focusWindowOnBreak": false,
     "explorer.confirmDelete": false,
     //"editor.hover.enabled": false,
-    "editor.quickSuggestions": false
+    "editor.quickSuggestions": false,
+    "editor.folding": false
   }

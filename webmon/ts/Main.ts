@@ -15,6 +15,7 @@ let init = function(){
     // Get DOM nodes and canvas context
     canvas = document.getElementsByTagName("canvas")[0];
     ctx = canvas.getContext("2d");
+    ctx.translate(0.5, 0.5); // Allegedly "fixes" "blurryness" 
     sessionListContainer = document.getElementById("session-list");
     scroller = document.getElementById("scroller");
     scrollerInner = document.getElementById("scroller-inner");
@@ -33,7 +34,9 @@ let init = function(){
         }
     });
     
-
+    addEventListener("resize", function(){
+        requestAnimationFrame(Drawer.draw);
+    });
 };
 
 addEventListener("DOMContentLoaded", init);

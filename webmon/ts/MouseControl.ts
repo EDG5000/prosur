@@ -30,31 +30,32 @@ export function init(){
         localStorage.zoom = Main.zoom;
         updateLabel();
         Drawer.draw();
+        Main.scroller.scrollLeft = Main.pan * Main.scroller.scrollWidth;
     });
 
-    addEventListener("mousedown", e => {
+    Main.canvas.addEventListener("mousedown", e => {
         isDown = true;
-        Main.canvas.classList.add("active");
-        startX = e.pageX - Main.canvas.offsetLeft;
-        scrollLeft = Main.canvas.scrollLeft;
+        Main.scroller.classList.add("active");
+        startX = e.pageX - Main.scroller.offsetLeft;
+        scrollLeft = Main.scroller.scrollLeft;
     });
 
-    addEventListener("mouseleave", () => {
+    Main.canvas.addEventListener("mouseleave", () => {
         isDown = false;
-        Main.canvas.classList.remove("active");
+        Main.scroller.classList.remove("active");
     });
 
-    addEventListener("mouseup", () => {
+    Main.canvas.addEventListener("mouseup", () => {
         isDown = false;
-        Main.canvas.classList.remove("active");
+        Main.scroller.classList.remove("active");
     });
 
-    addEventListener("mousemove", e => {
+    Main.canvas.addEventListener("mousemove", e => {
         if (!isDown) return;
         e.preventDefault();
-        const x = e.pageX - Main.canvas.offsetLeft;
+        const x = e.pageX - Main.scroller.offsetLeft;
         const walk = x - startX;
-        Main.canvas.scrollLeft = scrollLeft - walk;
+        Main.scroller.scrollLeft = scrollLeft - walk;
     });
 }
 

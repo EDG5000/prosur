@@ -6,28 +6,32 @@ export class Frame{
 	temps: Array<number>;
 	constructor(rawFrame: string){
 		this.temps = [];
-		let i = 0;
-		let lastIndex = 0;
+		
+		let start = 0;
+		let end = rawFrame.indexOf('\t');
+		let endReached = false;
 
-		while(lastIndex !== -1){
-			let index = rawFrame.indexOf('\t', lastIndex+1);
-			let valueRaw = rawFrame.substr(lastIndex, index-lastIndex);
-			if(index == -1){
-				break;
+		while(start != end){
+			if(end == -1){
+				end = rawFrame.length;
+				endReached = true;
 			}
+			let valueRaw = rawFrame.substr(start, end-start);
 
-			if(lastIndex == 0){
+			if(start == 0){
                 this.timeUnix = parseInt(valueRaw);
 			}else{
-				this.temps[i-1] = parseFloat(valueRaw);
+				this.temps.push(parseFloat(valueRaw));
 			}
 			
-			if(lastIndex == rawFrame.length-1){
+			start = end;
+			if(endReached){
 				break;
 			}
-			lastIndex = index;
-			i++;
+			end = rawFrame.indexOf('\t', start+1);
 		}
+
+
 	}
 };
 

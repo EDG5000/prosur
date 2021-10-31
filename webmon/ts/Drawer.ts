@@ -1,8 +1,8 @@
 namespace Drawer{
 
 let scaleY: number; // Pixels per y value
-let yMin: number = null;
-let yMax: number = null;
+let yMin: number;
+let yMax: number;
 let scaleX: number; // Pixels per frame
 let xMax: number;
 let startTimeUnix: number;
@@ -34,8 +34,13 @@ export function draw(){
 	Main.scrollerInner.style.width = (Main.frames.length * scaleX) + "px";
 	xMin = Math.floor((Main.frames.length-1) * Main.pan);
 	xMax = Math.floor(xMin + (Main.canvas.width-Const.xMargin) / scaleX);
+	if(xMax > Main.frames.length-1){
+		xMax = Main.frames.length-1;
+	}
 
 	// Determine yRange
+	yMin = null;
+	yMax = null;
 	let frame: Frame.Frame;
 	for(frame of Main.frames){
 		for(let temp of frame.temps){
@@ -62,7 +67,7 @@ export function draw(){
 	Main.ctx.beginPath(); 
 	Main.ctx.font = "1em monospace";
 
-	// Draw horizontal grid lines and axis labels
+	// Draw horizontal grid lines and y axis labels
 	let yRelative = 0;
 	Main.ctx.textAlign = "right";
 	let valueString: string;
@@ -83,7 +88,7 @@ export function draw(){
 		yRelative += Const.yGridInterval;
 	}
 
-	// Draw vertical grid lines and axis labels
+	// Draw vertical grid lines and x axis labels
 	let xRelative = 0;
 	while(xRelative <= 1){
 		let xValue = xMin + (xMax-xMin) * xRelative;
@@ -94,7 +99,7 @@ export function draw(){
 		valueString = Util.createTimeLabel(timeUnix);
 		if(xValue - xMin == 0){
 			Main.ctx.textAlign = "left";
-		}else if(xValue == xMax){
+		}else if(Math.round(xValue) == xMax){ // The rounding here is a bit hacky.
 			Main.ctx.textAlign = "right";
 		}else{
 			Main.ctx.textAlign = "center";
