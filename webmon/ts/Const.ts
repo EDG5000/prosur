@@ -2,8 +2,7 @@ namespace Const{
 
 export const zoomAffector = 0.05;
 
-// Sensor colors and labels
-export const TEST_MODE = true;
+
 export const SENSOR_LABELS = [
     "Chamber Mid",
     "Chamber Top",
@@ -39,7 +38,7 @@ export const SENSOR_COLORS = [
 
 // Data folder and current log fle
 export let DATA_FOLDER: string;
-if(TEST_MODE){
+if(Config.testMode){
     DATA_FOLDER = "testdata";
 }else{
     DATA_FOLDER = "mnt-data";

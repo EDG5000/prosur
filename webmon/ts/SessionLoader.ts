@@ -50,7 +50,7 @@ export function load(filename: string){
     };
     // URL depends on TEST_MODE flag; make XHR call
     let url: string;
-    if(Const.TEST_MODE){
+    if(Config.testMode){
         url = "testdata/" + filename
     }else{
         url = "mnt-data/" + filename;

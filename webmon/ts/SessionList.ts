@@ -19,7 +19,7 @@ export function init(cb: () => void){
         let parser = new DOMParser();
         let doc = parser.parseFromString(xhr.responseText, "text/html");
         let links = doc.querySelectorAll("td a");
-        let timestamps: Array<any> = [];
+        let timestamps: Array<any> = []; 
         for(let link of links as any){
             // Skip link to parent directory
             if(link.outerText == "Parent Directory" || link.outerText == "index-of-mnt-data.html" || link.outerText == Const.CURRENT_LOG_FILE){
@@ -55,7 +55,7 @@ export function init(cb: () => void){
 
     // URL is set to Apache directory index containing log file
     let url: string;
-    if(Const.TEST_MODE){
+    if(Config.testMode){
         url = Const.DATA_FOLDER + "/index-of-mnt-data.html";
     }else{
         url = Const.DATA_FOLDER + "/?C=M;O=D";
