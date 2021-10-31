@@ -43,7 +43,7 @@ if(Config.testMode){
 }else{
     DATA_FOLDER = "mnt-data";
 }
-export const CURRENT_LOG_FILE = "hc3d-temp.csv";
+export const CURRENT_LOG_FILE = "hc3d-tm.csv";
 
 export const sidebarWidth = 170; // px; needs to match with values in CSS
 

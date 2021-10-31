@@ -8,10 +8,10 @@ TIME_STR=`date +%s`
 NEW_LOG_FILENAME="${TIME_STR}.csv"
 
 # Delete old symlink; ignore error
-rm /mnt/data/hc3d-tm.log;
+rm /mnt/data/hc3d-tm.csv
 
 # Start logging to new file
 cat /dev/ttyUSB0 | ts '%s' >> /mnt/data/"$NEW_LOG_FILENAME" &
 
 # Create symlink to new file
-ln -s /mnt/data/"$NEW_LOG_FILENAME" /mnt/data/hc3d-tm.log
+ln -s /mnt/data/"$NEW_LOG_FILENAME" /mnt/data/hc3d-tm.csv
