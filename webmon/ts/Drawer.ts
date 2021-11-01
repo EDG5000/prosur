@@ -8,6 +8,8 @@ let xMax: number;
 let startTimeUnix: number;
 let xMin: number;
 
+let mouseValueContainer: HTMLElement;
+
 export function init(){
 	let active = false;
 	Main.scroller.addEventListener("scroll", function(e: Event){
@@ -20,6 +22,13 @@ export function init(){
 			active = true;
 		}
 	});
+	mouseValueContainer = document.getElementById("mouse-value");
+	mouseValueContainer.innerText = (0).toFixed(2);
+}
+
+export function onMouseMove(x: number, y: number){
+	let yValue = (Math.round(100 * ((yMax - yMin) * (1-(y / (Main.canvas.height-Const.yMargin))) + yMin))/100).toFixed(2);
+	mouseValueContainer.innerText = yValue;
 }
 
 export function draw(){

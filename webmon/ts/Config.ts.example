@@ -1,3 +1,0 @@
-namespace Config{
-    export let testMode = true;
-}

@@ -8,7 +8,7 @@ let startX: number;
 let scrollLeft: number;
 
 export function init(){
-    label = document.getElementById("zoomLevel");
+    label = document.getElementById("zoom-level");
 
     Main.zoom = parseFloat(localStorage.zoom);
     if(isNaN(Main.zoom)){
@@ -51,6 +51,9 @@ export function init(){
     });
 
     Main.canvas.addEventListener("mousemove", e => {
+        //
+        Drawer.onMouseMove(e.offsetX, e.offsetY);
+
         if (!isDown) return;
         e.preventDefault();
         const x = e.pageX - Main.scroller.offsetLeft;
