@@ -16,6 +16,7 @@ let init = function(){
     canvas = document.getElementsByTagName("canvas")[0];
     ctx = canvas.getContext("2d");
     ctx.translate(0.5, 0.5); // Allegedly "fixes" "blurryness" 
+    ctx.lineWidth = 2;
     sessionListContainer = document.getElementById("session-list");
     scroller = document.getElementById("scroller");
     scrollerInner = document.getElementById("scroller-inner");

@@ -5,13 +5,14 @@ export const zoomAffector = 0.05;
 
 
 export const SENSOR_LABELS = [
-    "Chamber Mid",
-    "Chamber Top",
-    "Chamber Heater",
-    "Motor X", 
-    "Motor Y",
-    "Motor Z",
-    "Motor E"
+"Motor Y",
+"Chamber Bottom",
+"Near Extruder",
+"Chamber Top",
+"Motor X",
+"Motor Z",
+"Chamber Mid",
+"Motor E"
 ];
 export const SENSOR_COLORS = [
     "#e6194B",
@@ -21,8 +22,6 @@ export const SENSOR_COLORS = [
     "#911eb4",
     "#42d4f4",
     "#f032e6",
-    "#bfef45",
-    "#fabed4",
     "#469990",
     "#dcbeff",
     "#9A6324",
