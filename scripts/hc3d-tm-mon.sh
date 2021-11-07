@@ -1,3 +1,7 @@
+#!/bin/bash
+
+kill -9 `cat hc3d-tm.pid`;
+
 # Setup serial port
 stty -F /dev/ttyUSB0 9600
 
@@ -15,3 +19,7 @@ cat /dev/ttyUSB0 | ts '%s' >> /mnt/data/"$NEW_LOG_FILENAME" &
 
 # Create symlink to new file
 ln -s /mnt/data/"$NEW_LOG_FILENAME" /mnt/data/hc3d-tm.csv
+
+# would be nice to store PID of cat process, however this is returning PID of ts process. 
+echo $! > hc3d-tm.pid
+

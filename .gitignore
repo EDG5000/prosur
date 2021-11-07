@@ -18,3 +18,4 @@ tm/hc3d-tm-sitl/Debug/hc3d-tm-sitl.exe
 tm/Debug/makefile
 webmon/ts/Config.ts
 webmon/mnt-data
+scripts/hc3d-tm.pid
