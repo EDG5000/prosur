@@ -41,8 +41,8 @@ export const SENSOR_COLORS = [
 export let dataFolder: string;
 export let refreshUrl: string;
 if(Config.testMode){
-    dataFolder = "testdata";
-    refreshUrl = "testdata/get_llc_values.php"; 
+    dataFolder = "mnt-data";
+    refreshUrl = "mnt-data/get_llc_values.php"; 
 }else{
     dataFolder = "mnt-data";
     refreshUrl = "php/get_llc_values.php"; 

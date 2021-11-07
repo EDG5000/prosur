@@ -125,6 +125,7 @@ export function draw(){
 		let color = Const.SENSOR_COLORS[sensorIndex];
 		Main.ctx.strokeStyle = color;
 		Main.ctx.beginPath();
+		
 		if(typeof Main.frames[xMin] == "undefined"){
 			console.log(Main.frames[xMin]);
 		}
@@ -140,7 +141,6 @@ export function draw(){
 	}
 
 	// Complete drawing of grid
-	Main.ctx.strokeStyle = 'black';
 	Main.ctx.stroke();
 }
 
