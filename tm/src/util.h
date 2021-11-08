@@ -26,3 +26,8 @@ uint16_t util_temp_raw(uint16_t temp);
 uint16_t util_temp(uint16_t temp_raw);
 
 void util_fip(uint16_t raw, fip* fip_val);
+
+char* uint64_to_str(uint64_t n, char dest[static 21]);
+
+
+

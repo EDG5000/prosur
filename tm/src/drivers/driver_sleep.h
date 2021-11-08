@@ -6,4 +6,4 @@
 
 #include "stdint.h"
 
-void driver_sleep(uint16_t time);
+void driver_sleep(uint16_t ms);

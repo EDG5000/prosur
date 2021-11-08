@@ -24,23 +24,30 @@
 #include "libraries/str/str.h"
 #include "avr/io.h"
 #include <ds18b20/romsearch.h>
+#include "util.h"
 
 uint16_t driver_temp_last_readings[HC3D_CONFIG_TEMP_SENSOR_COUNT];
 
-#define ROM_SIZE 8 // ROM is 8 bytes
+#define ROM_SIZE 8
 
-uint8_t roms[HC3D_CONFIG_TEMP_SENSOR_COUNT * ROM_SIZE];
+uint64_t roms[HC3D_CONFIG_TEMP_SENSOR_COUNT * ROM_SIZE];
 uint8_t roms_found;
 
 void driver_temp_init(){
-	uint8_t result = ds18b20search(&PORTD, &DDRD, &PIND, 1 << 3, &roms_found, roms, HC3D_CONFIG_TEMP_SENSOR_COUNT * ROM_SIZE);
+	uint8_t result = ds18b20search(&PORTD, &DDRD, &PIND, 1 << 3, &roms_found, (uint8_t*)roms, HC3D_CONFIG_TEMP_SENSOR_COUNT * ROM_SIZE);
 	if(result != DS18B20_ERROR_OK){
 		str("Error detecting temperature sensors. Error code: %u\n", result);
 		while(1){}
 	}
-	//for(int i = 0; i < roms_found; i++){
-	//	str("%u%u%u%U%U%U%U%U\n", roms[i], roms[i+1], roms[i+2], roms[i+3], roms[i+4], roms[i+5], roms[i+6], roms[i+7]);
-	//}
+
+	// TODO by design all serial output should ideally be written by data_reporter for semantic reasons
+	// Print CSV header
+	for(int i = 0; i < roms_found; i++){
+		char romString[21];
+		uint64_to_str(roms[i], romString);
+		str("\t");
+		str(romString);
+	}
 }
 
 void process_raw_reading(int sensor_index, int16_t raw_reading_p){

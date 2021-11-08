@@ -32,3 +32,13 @@ void util_fip(uint16_t raw, fip* fip_val){
 	fip_val->left = raw / 16;
 	fip_val->right = (100 * (raw % 16)) / 16;
 }
+
+char *uint64_to_str(uint64_t n, char dest[static 21]) {
+    dest += 20;
+    *dest-- = 0;
+    while (n) {
+        *dest-- = (n % 10) + '0';
+        n /= 10;
+    }
+    return dest + 1;
+}

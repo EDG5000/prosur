@@ -10,9 +10,9 @@
 #include "drivers/driver_sleep.h" 
 #include "stdint.h"
 
-// Max delay is 6.5535s
-void driver_sleep(uint16_t time){
-	while(time--) {
+// Max delay is uint16_t max ms. (6.5535s)
+void driver_sleep(uint16_t ms){
+	while(ms--) {
 		_delay_ms(1);
 	}
 }

@@ -111,6 +111,7 @@
 #include "drivers/driver_tach.h"
 #include "drivers/driver_uart.h"
 #include "drivers/driver_system.h"
+#include "drivers/driver_sleep.h"
 #include "libraries/str/str.h"
 #include "stdbool.h"
 
@@ -125,8 +126,9 @@
 
 #if HC3D_TEST_MODE == 0 || HC3D_TEST_MODE == HC3D_TEST_MODE_SITL
 int main (void){
+	driver_sleep(1000 * 15);
 	driver_uart_init();
-	//str("Infinus I/O HC3D-TM 0.0.1 (c) Joel Meijering\n");
+
 
 	// Init drivers
 	driver_relay_init(); // Relay should be off after power cycle and stay off during initialisation of the relay driver
