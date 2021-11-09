@@ -19,3 +19,4 @@ tm/Debug/makefile
 webmon/ts/Config.ts
 webmon/mnt-data
 scripts/hc3d-tm.pid
+prosurd/build
