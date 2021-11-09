@@ -1,5 +1,15 @@
 #pragma once
 
-#include "isotime.hpp"
+#include "json.hpp"
 
-// rr_connect?password=XXX&time=YYY
+using namespace nlohmann;
+
+namespace rrfclient{
+
+// Reprap Object Model: https://github.com/Duet3D/RepRapFirmware/wiki/Object-Model-Documentation#overview
+extern json rr_om;
+
+// Blocking update call. Return within 250ms. Suggest calling at 1Hz.
+void update();
+
+}
