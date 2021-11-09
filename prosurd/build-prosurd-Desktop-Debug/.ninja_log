@@ -1,8 +1,0 @@
-# ninja log v5
-0	604	1636436417072630754	CMakeFiles/prosurd.dir/src/util.cpp.o	ae32ff596ee06361
-0	3320	1636436419788665141	CMakeFiles/prosurd.dir/src/main.cpp.o	db9b16c5932b2f7a
-0	13113	1636436429560788890	CMakeFiles/prosurd.dir/src/rrfclient.cpp.o	73dc951da29d926f
-1	703	1636436531082076637	CMakeFiles/prosurd.dir/src/util.cpp.o	ff4ef947beaaa2f6
-1	3449	1636436533826111489	CMakeFiles/prosurd.dir/src/main.cpp.o	9b370c4a449608ed
-1	12481	1636436542838225972	CMakeFiles/prosurd.dir/src/rrfclient.cpp.o	22e4ee7c86c11990
-1	427	1636436553206357706	prosurd	8c2320cf7362d2cc

@@ -1,3 +1,0 @@
-/home/joel/repos/infinus/hc3d/prosurd/build-prosurd-Desktop-Debug/CMakeFiles/rebuild_cache.dir
-/home/joel/repos/infinus/hc3d/prosurd/build-prosurd-Desktop-Debug/CMakeFiles/edit_cache.dir
-/home/joel/repos/infinus/hc3d/prosurd/build-prosurd-Desktop-Debug/CMakeFiles/prosurd.dir
