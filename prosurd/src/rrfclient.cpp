@@ -19,24 +19,68 @@ namespace rrfclient{
 // or: //http://192.168.2.15/rr_model?flags=d99fn
 // http://192.168.2.15/rr_download?name=0:/gcodes/CFFFP_Electronics Box.gcode
 
+// Get filename of currently printed file:
+// result.file.fileName
+//http://theseus3.local/rr_model?key=job&flags=d99vn
+
 json om;
 
-constexpr int temp_sensor_count = 3;
+const int TEMP_SENSOR_COUNT = 3;
+const string RR_BASE_URL = "http://theseus3.local";
+const string FLAGS_STATUS = "d99fn";
+const string FLAGS_JOB = "d99vn";
+const string KEY_JOB = "job";
+const string ACTION_MODEL = "rr_model";
+
+httplib::Client httpClient(RR_BASE_URL);
+
+// Call RR API
+json call(string action, string flags, string key = ""){
+	string query = action + "flags=" + flags;
+	if(key.size() > 0){
+		action += "&key=" + key;
+	}
+	auto response = httpClient.Get(query.c_str());
+	if(response->status != 200){
+		cout << "Got HTTP" << response->status << endl;
+		return json();
+	}
+
+	try{
+		return json::parse(response->body);
+	}catch(const json::exception& e){
+		cout << "rrfclient: exception while parsing body in call(): " << e.what() << endl;
+		return json();
+	}
+}
 
 // Blocking update call. Return within 250ms. Suggest calling at 1Hz.
 void update(){
-	httplib::Client client("http://192.168.2.15");
-	auto response = client.Get("rr_model?flags=d99fn");
-	if(response->status != 200){
-		cout << "Got HTTP" << response->status << endl;
+	// Get base status object and store in om
+	json om_status = call(ACTION_MODEL, FLAGS_STATUS);
+	if(om_status.is_null()){
+		cout << "rffclient: unable to retrieve om_status, skipping update cycle." << endl;
 		return;
 	}
+	om = om_status;
 
-	om = json::parse(response->body);
-	std::cout << om.dump();
-	//temp[0-2] = result.heat.heaters[0-2].current
-	//isPrinting = result.job.build == null
-	//result.file.fileName
+	// Perform extra request to get information about current print
+	if(get_is_printing()){
+		json om_job = call(ACTION_MODEL, FLAGS_JOB, KEY_JOB);
+		if(om_job.is_null()){
+			cout << "rffclient: unable to retrieve om_job, skipping further processing." << endl;
+			return;
+		}
+		// Merge the two objects
+		try {
+			om["file"] = om_job["file"];
+		}catch(const json::exception& e){
+			cout << "rrfclient: unable to merge job; skipping further processing << endl;";
+			return;
+		}
+	}
+
+	cout << om.dump() << endl;
 }
 
 bool get_is_printing(){
@@ -49,10 +93,10 @@ bool get_is_printing(){
 }
 
 vector<float> get_temperatures(){
-	vector<float> temperatures(temp_sensor_count);
+	vector<float> temperatures(TEMP_SENSOR_COUNT);
 	try{
 		json json_heaters = om["heat"]["heaters"];
-		for(int temp_index = 0; temp_index < temp_sensor_count; temp_index++){
+		for(int temp_index = 0; temp_index < TEMP_SENSOR_COUNT; temp_index++){
 			temperatures[temp_index] = json_heaters[temp_index]["current"];
 		}
 	}catch(json::exception& e){

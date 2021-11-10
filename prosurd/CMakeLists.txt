@@ -13,8 +13,12 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 link_libraries(Threads::Threads)
 
-
-
 include_directories(vendor src)
 
-add_executable(prosurd src/main.cpp src/rrfclient.cpp src/util.cpp)
+add_executable(
+prosurd 
+src/main.cpp 
+src/rrfclient.cpp 
+src/tmclient.cpp
+src/util.cpp
+)

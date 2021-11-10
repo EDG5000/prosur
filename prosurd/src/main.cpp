@@ -4,6 +4,7 @@
 #include <thread>
 
 #include "rrfclient.hpp"
+#include "tmclient.hpp"
 
 using namespace std;
 
