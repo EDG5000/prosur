@@ -1,6 +1,5 @@
 #include <iostream>
 
-
 #include <thread>
 
 #include "rrfclient.hpp"
@@ -8,15 +7,19 @@
 
 using namespace std;
 
+constexpr auto cyleTime = 1000ms;
+
 int main() {
 	bool was_printing = false;
-	thread t{[=]{
+	//thread t{[=]{
 			while(true){
 				// TODO Update chamber temperatures
 				tmclient::update();
-
-
-				rrfclient::update();
+				if(!rrfclient::update()){
+					cerr << "main: rrfclient experienced failure. skipping cycle." << endl;
+					this_thread::sleep_for(cyleTime);
+					continue;
+				}
 				if(rrfclient::get_is_printing() && !was_printing){
 					// Transition to printing
 					// Insert job, get ID back, store ID globally
@@ -28,15 +31,12 @@ int main() {
 				}
 
 				// Store properties of rrclient_om and tmclient_om in frames table
-
-				cout << "Joinable std::thread" << '\n';
+				this_thread::sleep_for(cyleTime);
 			}
-	}};
+	//}};
 
-	cout << "OPJoinable std::thread" << '\n';
-	cout << "Joinable std::thread" << '\n';
-	while(true){
-		this_thread::sleep_for(1000ms);
-	}
+	//while(true){
+	//	this_thread::sleep_for(1000ms);
+	//}
 	return 0;
 }

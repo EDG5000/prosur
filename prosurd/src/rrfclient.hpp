@@ -14,7 +14,7 @@ namespace rrfclient{
 extern json om;
 
 // Blocking update call. Return within 250ms. Suggest calling at 1Hz.
-void update();
+bool update();
 
 // Obtain data obout current state of om object
 bool get_is_printing();

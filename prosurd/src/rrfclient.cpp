@@ -3,8 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
-
-#include "httplib.hpp"
+#include "curl/curl.h"
 #include "json.hpp"
 
 #include "util.hpp"
@@ -17,6 +16,7 @@ namespace rrfclient{
 //http://192.168.2.15/rr_connect?password=amirgay0511&time=2021-11-8T18:9:31
 // rr_connect?password=XXX&time=YYY
 // or: //http://192.168.2.15/rr_model?flags=d99fn
+//rr_model?flags=d99fn
 // http://192.168.2.15/rr_download?name=0:/gcodes/CFFFP_Electronics Box.gcode
 
 // Get filename of currently printed file:
@@ -26,68 +26,103 @@ namespace rrfclient{
 json om;
 
 const int TEMP_SENSOR_COUNT = 3;
-const string RR_BASE_URL = "http://theseus3.local";
+const string RR_BASE_URL = "http://theseus3.local/";
 const string FLAGS_STATUS = "d99fn";
 const string FLAGS_JOB = "d99vn";
 const string KEY_JOB = "job";
 const string ACTION_MODEL = "rr_model";
 
-httplib::Client httpClient(RR_BASE_URL);
+
+size_t onReceiveData(void *contents, size_t size, size_t nmemb, std::string *s){
+    size_t newLength = size*nmemb;
+    try{
+        s->append((char*)contents, newLength);
+    }catch(std::bad_alloc &e){
+        return 0;
+    }
+    return newLength;
+}
 
 // Call RR API
 json call(string action, string flags, string key = ""){
-	string query = action + "flags=" + flags;
+	// Form url
+	string url = RR_BASE_URL + action + "?flags=" + flags;
 	if(key.size() > 0){
-		action += "&key=" + key;
+		url += "&key=" + key;
 	}
-	auto response = httpClient.Get(query.c_str());
-	if(response->status != 200){
-		cout << "Got HTTP" << response->status << endl;
+
+	CURL *curl;
+	CURLcode res;
+	string receiveBuffer;
+
+	curl_global_init(CURL_GLOBAL_DEFAULT);
+
+	curl = curl_easy_init();
+	if(!curl){
+		cerr << "curl init failed" << endl;
+		curl_easy_cleanup(curl);
+		return json();
+	}
+	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, onReceiveData);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &receiveBuffer);
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L); //remove this to disable verbose output
+    curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
+
+	res = curl_easy_perform(curl);
+	if(res != CURLE_OK){
+		cerr << "rrfclient: call: curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
 		return json();
 	}
 
+	curl_global_cleanup();
+
 	try{
-		return json::parse(response->body);
+		return json::parse(receiveBuffer);
 	}catch(const json::exception& e){
-		cout << "rrfclient: exception while parsing body in call(): " << e.what() << endl;
+		cerr << "rrfclient: exception while parsing body in call(): " << e.what() << endl;
 		return json();
 	}
 }
 
 // Blocking update call. Return within 250ms. Suggest calling at 1Hz.
-void update(){
+bool update(){
 	// Get base status object and store in om
 	json om_status = call(ACTION_MODEL, FLAGS_STATUS);
 	if(om_status.is_null()){
-		cout << "rffclient: unable to retrieve om_status, skipping update cycle." << endl;
-		return;
+		cerr << "rffclient: unable to retrieve om_status, skipping update cycle." << endl;
+		return false;
 	}
 	om = om_status;
+
+	cout << om.dump() << endl;
 
 	// Perform extra request to get information about current print
 	if(get_is_printing()){
 		json om_job = call(ACTION_MODEL, FLAGS_JOB, KEY_JOB);
 		if(om_job.is_null()){
-			cout << "rffclient: unable to retrieve om_job, skipping further processing." << endl;
-			return;
+			cerr << "rffclient: unable to retrieve om_job, skipping further processing." << endl;
+			return false;
 		}
 		// Merge the two objects
 		try {
-			om["file"] = om_job["file"];
+			cout << om_job.dump() << endl;
+			om["result"]["file"] = om_job["result"]["file"];
+			cout << om.dump() << endl;
 		}catch(const json::exception& e){
-			cout << "rrfclient: unable to merge job; skipping further processing << endl;";
-			return;
+			cerr << "rrfclient: unable to merge job; skipping further processing << endl;";
+			return false;
 		}
 	}
 
-	cout << om.dump() << endl;
+	return true;
 }
 
 bool get_is_printing(){
 	try{
 		return om["job"]["build"].is_null();
 	}catch(json::exception& e){
-		cout << "rrfclient: get_is_printing: error accessing om: " << e.what() << endl;
+		cerr << "rrfclient: get_is_printing: error accessing om: " << e.what() << endl;
 		return false;
 	}
 }
@@ -109,7 +144,7 @@ string get_filename(){
 	try{
 		return om["file"]["fileName"];
 	}catch(json::exception& e){
-		cout << "rrfclient: get_filename: error accessing om: " << e.what() << endl;
+		cerr << "rrfclient: get_filename: error accessing om: " << e.what() << endl;
 		return "";
 	}
 }
