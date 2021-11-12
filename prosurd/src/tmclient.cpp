@@ -8,36 +8,39 @@
  
 #include <string>
 #include <iostream>
+#include <map>
+#include "util.hpp"
 
 using namespace std;
 
-const string device = "/dev/ttyACM0";
+const string DEVICE = "/dev/ttyACM0";
 int fd = INT32_MAX;
 const int readBufferSize = 100;
+map<uint64_t, float> temperatures;
 
 namespace tmclient{
 
 // Opens the specified serial port, sets it up for binary communication,
 // configures its read timeouts, and sets its baud rate.
 // Returns a non-negative file descriptor on success, or -1 on failure.
-int open_serial_port(string device){
-  int fd = open(device.c_str(), O_RDWR | O_NOCTTY);
-  if(fd == -1){
-    cout << device;
+bool open_serial_port(){
+  fd = open(DEVICE.c_str(), O_RDWR | O_NOCTTY);
+  if(fd < 0){
+      cerr << "tmclient: open_serial_port: opening port failed with fd " << fd << endl;
     return -1;
   }
  
   // Flush away any bytes previously read or written.
   int result = tcflush(fd, TCIOFLUSH);
   if(result){
-      cout << "tmclient: tcflush failed" << endl;
+      cerr << "tmclient: tcflush failed" << endl;
   }
  
   // Get the current configuration of the serial port.
   struct termios options;
   result = tcgetattr(fd, &options);
   if(result){
-    cout << "tmclient: tcgetattr failed" << endl;
+      cerr << "tmclient: tcgetattr failed" << endl;
       
     close(fd);
     return -1;
@@ -59,12 +62,10 @@ int open_serial_port(string device){
  
   result = tcsetattr(fd, TCSANOW, &options);
   if(result){
-    cout << "tmclient: tcsetattr failed";
+    cerr << "tmclient: tcsetattr failed" << endl;
     close(fd);
     return -1;
   }
- 
-  return fd;
 }
  
 // Writes bytes to the serial port, returning 0 on success and -1 on failure.
@@ -91,7 +92,7 @@ string read_line(){
 		char buf[readBufferSize];
 		ssize_t r = read(fd, &buf, readBufferSize);
 		if(r < 0){
-			cout << "tmclient: failed to read from port";
+			cerr << "tmclient: failed to read from port";
 			return "";
 		}
 		if(r == 0){
@@ -109,22 +110,48 @@ string read_line(){
 	}
 }
  
-bool init(){
-  fd = open_serial_port(device);
-  if(fd < 0){
-	return false;
-  }
-    return true;
-}
- 
+
+ /*
 void close_port(){
   close(fd);
 }
+*/
+  
+/*
+ string isodatetime();
+ vector<string> strSplit(string str, string delim);
+ void replaceAll(string& str, const string& from, const string& to);
+ const string urlDecode (const string& str);
+ const string urlEncode(const string& s);
+ string join(const vector<string>& elems, string delim);
+ uint64_t getTimeMillis();
+ */
 
-void update(){
-	string line = read_line();
-
+bool init(){
+  return open_serial_port();
 }
+
+bool update(){
+	string line = read_line();
+    if(line.size() == 0){
+        cerr << ""
+    }
+    vector<string> sensorElements = util::strSplit(line, "\t");
+    for(string sensorDataString: sensorElements){
+        vector<string> sensorDataElements = util::strSplit();
+        if(sensorDataElements.size() != 2){
+            cerr << "tmclient: unable to parse sensorDataString, sensorDataElements size is not 2 but " << sensorDataElements.size() << endl;
+        }
+        try{
+            temperatures[stul(sensorDataElements[0])] = stof(sensorDataElements[1])
+        }catch(const exception& e){
+                
+        }
+        uint64_t = stof
+    }
+}
+
+
 
 }
 
