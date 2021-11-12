@@ -87,26 +87,26 @@ string readBuffer;
 // Returns the number of bytes successfully read into the buffer, or -1 if
 // there was an error reading.
 string read_line(){
-  while(true){
-      char buf[readBufferSize];
-    ssize_t r = read(fd, &buf, readBufferSize);
-    if(r < 0){
-      cout << "tmclient: failed to read from port";
-      return "";
-    }
-    if(r == 0){
-      // Timeout
-        continue;
-    }
-      readBuffer += string(buf);
-      for(int i = 0; i < readBuffer.size(); i++){
-          if(readBuffer[i] == '\n'){
-              string line = readBuffer.substr(0, i+1);
-              readBuffer = readBuffer.substr(i+1, readBuffer.size()-i+1);
-              return line;
-          }
-      }
-  }
+	while(true){
+		char buf[readBufferSize];
+		ssize_t r = read(fd, &buf, readBufferSize);
+		if(r < 0){
+			cout << "tmclient: failed to read from port";
+			return "";
+		}
+		if(r == 0){
+			// Timeout
+			continue;
+		}
+		readBuffer += string(buf);
+		for(int i = 0; i < readBuffer.size(); i++){
+			if(readBuffer[i] == '\n'){
+				string line = readBuffer.substr(0, i+1);
+				readBuffer = readBuffer.substr(i+1, readBuffer.size()-i+1);
+				return line;
+			}
+		}
+	}
 }
  
 bool init(){
@@ -121,9 +121,12 @@ void close_port(){
   close(fd);
 }
 
+void update(){
+	string line = read_line();
+
 }
 
-int main(){
-    tmclient::init();
 }
+
+
 
