@@ -9,16 +9,19 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <vector>
+
 #include "util.hpp"
 
 using namespace std;
 
+namespace tmclient{
+
 const string DEVICE = "/dev/ttyACM0";
 int fd = INT32_MAX;
 const int readBufferSize = 100;
-map<uint64_t, float> temperatures;
+map<long unsigned int, float> temperatures;
 
-namespace tmclient{
 
 // Opens the specified serial port, sets it up for binary communication,
 // configures its read timeouts, and sets its baud rate.
@@ -27,7 +30,7 @@ bool open_serial_port(){
   fd = open(DEVICE.c_str(), O_RDWR | O_NOCTTY);
   if(fd < 0){
       cerr << "tmclient: open_serial_port: opening port failed with fd " << fd << endl;
-    return -1;
+    return true;
   }
  
   // Flush away any bytes previously read or written.
@@ -43,7 +46,7 @@ bool open_serial_port(){
       cerr << "tmclient: tcgetattr failed" << endl;
       
     close(fd);
-    return -1;
+    return true;
   }
  
   // Turn off any options that might interfere with our ability to send and
@@ -64,8 +67,9 @@ bool open_serial_port(){
   if(result){
     cerr << "tmclient: tcsetattr failed" << endl;
     close(fd);
-    return -1;
+    return false;
   }
+  return true;
 }
  
 // Writes bytes to the serial port, returning 0 on success and -1 on failure.
@@ -134,21 +138,23 @@ bool init(){
 bool update(){
 	string line = read_line();
     if(line.size() == 0){
-        cerr << ""
+        cerr << "" << endl;
     }
     vector<string> sensorElements = util::strSplit(line, "\t");
     for(string sensorDataString: sensorElements){
-        vector<string> sensorDataElements = util::strSplit();
+        vector<string> sensorDataElements = util::strSplit(sensorDataString, "\t");
         if(sensorDataElements.size() != 2){
             cerr << "tmclient: unable to parse sensorDataString, sensorDataElements size is not 2 but " << sensorDataElements.size() << endl;
+            return false;
         }
         try{
-            temperatures[stul(sensorDataElements[0])] = stof(sensorDataElements[1])
+            temperatures[stoul(sensorDataElements[0])] = stof(sensorDataElements[1]);
         }catch(const exception& e){
-                
+        	cerr << "tmclient: unable to parse sensorDataString, numerical interpretation failed for " << sensorDataElements[0] << " or " << sensorDataElements[1] << " with exception " << e.what() << endl;
+        	return false;
         }
-        uint64_t = stof
     }
+    return true;
 }
 
 
