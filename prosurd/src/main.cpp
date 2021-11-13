@@ -4,16 +4,43 @@
 
 #include "rrfclient.hpp"
 #include "tmclient.hpp"
+#include "cclient.hpp"
+#include "util.hpp"
 
 using namespace std;
 
 constexpr auto cyleTime = 1000ms;
 
 int main() {
+	if(!cclient::init()){
+		cerr << "main: fail to init cclient. exiting." << endl;
+		return 0;
+	}
+
+	if(!cclient::update()){
+		cerr << "main: cclient experienced failure. skipping cycle." << endl;
+		return 0;
+	}
+	cout << cclient::image.size() << endl;
+	util::writeDataToFileDebug(cclient::image, "/home/joel/file.jpg");
+
+	return 0;
+
+
 	bool was_printing = false;
 	//thread t{[=]{
+
 			while(true){
-				// TODO Update chamber temperatures
+				if(!cclient::update()){
+					cerr << "main: cclient experienced failure. skipping cycle." << endl;
+					this_thread::sleep_for(cyleTime);
+					continue;
+				}
+
+				cout << cclient::image.size() << endl;
+				util::writeDataToFileDebug(cclient::image, "/home/joel/file.jpg");
+
+				/*
 				tmclient::update();
 				if(!rrfclient::update()){
 					cerr << "main: rrfclient experienced failure. skipping cycle." << endl;
@@ -29,10 +56,12 @@ int main() {
 				}else if(rrfclient::get_is_printing()){
 					// Printing, no transition
 				}
+				*/
 
 				// Store properties of rrclient_om and tmclient_om in frames table
 				this_thread::sleep_for(cyleTime);
 			}
+
 	//}};
 
 	//while(true){

@@ -1,14 +1,24 @@
 #include "util.hpp"
 
+#include <sys/time.h>
+
 #include <ctime>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <sys/time.h>
+#include <fstream>
 
 using namespace std;
 
 namespace util{
+
+//https://stackoverflow.com/a/68367878
+void writeDataToFileDebug(vector<uint8_t> data, string filename){
+	std::ofstream out(filename, std::ios::out | std::ios::binary);
+	out.write(reinterpret_cast<const char*>(data.data()), data.size());
+	out.close();
+}
+
 
 string isodatetime(){
     //Derrived from https://stackoverflow.com/a/9528166

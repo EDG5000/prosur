@@ -14,5 +14,5 @@ const string urlDecode (const string& str);
 const string urlEncode(const string& s);
 string join(const vector<string>& elems, string delim);
 uint64_t getTimeMillis();
-
+void writeDataToFileDebug(vector<uint8_t> data, string filename);
 }
