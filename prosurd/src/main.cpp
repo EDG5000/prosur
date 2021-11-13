@@ -1,6 +1,9 @@
 #include <iostream>
 
+#include "inttypes.h"
+
 #include <thread>
+#include <map>
 
 #include "rrfclient.hpp"
 #include "tmclient.hpp"
@@ -12,25 +15,24 @@ using namespace std;
 constexpr auto cyleTime = 1000ms;
 
 int main() {
-	if(!cclient::init()){
-		cerr << "main: fail to init cclient. exiting." << endl;
-		return 0;
+	if(!tmclient::init()){
+		cerr << "main: tmclient init failed." << endl;
 	}
-
-	if(!cclient::update()){
-		cerr << "main: cclient experienced failure. skipping cycle." << endl;
-		return 0;
-	}
-	cout << cclient::image.size() << endl;
-	util::writeDataToFileDebug(cclient::image, "/home/joel/file.jpg");
-
-	return 0;
-
 
 	bool was_printing = false;
 	//thread t{[=]{
-
 			while(true){
+				if(!tmclient::update()){
+					cerr << "main: tmclient update failed, skipping cycle" << endl;
+					this_thread::sleep_for(cyleTime);
+					continue;
+				}
+				for(auto const& sensorData: tmclient::temperatures){
+					cout << sensorData.first << ": " << tmclient::temperatures[sensorData.second] << endl;
+				}
+
+
+				/*
 				if(!cclient::update()){
 					cerr << "main: cclient experienced failure. skipping cycle." << endl;
 					this_thread::sleep_for(cyleTime);
@@ -39,9 +41,10 @@ int main() {
 
 				cout << cclient::image.size() << endl;
 				util::writeDataToFileDebug(cclient::image, "/home/joel/file.jpg");
+				*/
 
 				/*
-				tmclient::update();
+
 				if(!rrfclient::update()){
 					cerr << "main: rrfclient experienced failure. skipping cycle." << endl;
 					this_thread::sleep_for(cyleTime);

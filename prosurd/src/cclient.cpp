@@ -23,10 +23,6 @@ namespace cclient{
 
 vector<uint8_t> image;
 
-bool init(){
-	return true;
-}
-
 bool update(){
 	Camera* camera;
 	GPContext* context = gp_context_new();
@@ -56,7 +52,7 @@ bool update(){
 	}
 	*/
 
-	retval = gp_camera_new(&camera);
+	int retval = gp_camera_new(&camera);
 	if(retval < GP_OK) {
 		cerr << "cclient: unable to create new camera, error code: " << retval << endl;
 		return false;

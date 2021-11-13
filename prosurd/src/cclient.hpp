@@ -10,7 +10,6 @@ namespace cclient{
 
 extern vector<uint8_t> image;
 
-bool init();
 bool update();
 
 }

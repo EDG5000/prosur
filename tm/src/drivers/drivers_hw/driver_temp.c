@@ -45,8 +45,11 @@ void driver_temp_init(){
 	for(int i = 0; i < roms_found; i++){
 		char romString[21];
 		uint64_to_str(roms[i], romString);
-		str("\t");
 		str(romString);
+		if(i < roms_found-1){
+			str("\t");
+		}
+
 	}
 }
 
