@@ -1,7 +1,0 @@
-/*
- * picocom.txt
- *
- * Created: 2020-10-23 3:04:50 PM
- *  Author: Joel
- */ 
- picocom /dev/ttyUSB-HC3D-DEV-0 --baud 115200 --omap crcrlf --echo

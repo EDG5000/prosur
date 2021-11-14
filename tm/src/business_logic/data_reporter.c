@@ -7,13 +7,7 @@
 
 #include "config.h"
 #include "business_logic/data_reporter.h"
-#include "business_logic/data_reader.h"
-#include "business_logic/temp_validator.h"
-#include "business_logic/pump_controller.h"
-#include "libraries/pi_control/pi_control.h"
 #include "libraries/str/str.h"
-#include "drivers/driver_tach.h"
-#include "drivers/driver_pwm.h"
 #include "util.h"
 
 uint16_t data_reporter_frame = 0;
@@ -32,7 +26,7 @@ void data_reporter_tick(uint16_t time){
 	}
 	*/
 
-
+	/*
     // Print valid temperatures and update times
     for(uint8_t sensor_index = 0; sensor_index < HC3D_CONFIG_TEMP_SENSOR_COUNT; sensor_index++){
     	fip valid_temp;
@@ -41,6 +35,7 @@ void data_reporter_tick(uint16_t time){
         //str("\tvt%u:%u.%u\tut%u:%u", sensor_index, valid_temp.left, valid_temp.right, sensor_index, update_time);
     	str("\t%u.%u", valid_temp.left, valid_temp.right);
     }
+    */
 
     /*
     // Print PI controller state, pump controller setpoint, tach reading
