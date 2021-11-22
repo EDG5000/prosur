@@ -24,23 +24,23 @@ int main (void){
 	driver_uart_init();
 
 	// Init drivers
-	driver_relay_init(); // Relay should be off after power cycle and stay off during initialisation of the relay driver
-	driver_pwm_init();
-	driver_tach_init();
+	//driver_relay_init(); // Relay should be off after power cycle and stay off during initialisation of the relay driver
+	//driver_pwm_init();
+	//driver_tach_init();
 	driver_clock_init();
 	driver_temp_init();
 
 	// Init business logic modules
-	pump_controller_init();
-	temp_validator_init();
-	temp_watchdog_init();
+	//pump_controller_init();
+	//temp_validator_init();
+	//temp_watchdog_init();
 
 	uint16_t time_tick_start = 0;
 
 	while(true){
 		time_tick_start = driver_clock_time();
 		driver_temp_read();
-		data_reader_tick();
+		//data_reader_tick();
 		data_reporter_tick(time_tick_start);
 		uint16_t time_taken = util_time_offset(time_tick_start, driver_clock_time());
 		driver_sleep(HC3D_INTERVAL - time_taken);
