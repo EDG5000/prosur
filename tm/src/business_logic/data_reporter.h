@@ -10,4 +10,4 @@
 #include <stdint.h>
 
 void data_reporter_tick(uint16_t time);
-
+void data_reporter_init();
