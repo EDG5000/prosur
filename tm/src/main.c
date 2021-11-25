@@ -28,7 +28,6 @@ int main (void){
 	//driver_pwm_init();
 	//driver_tach_init();
 	driver_clock_init();
-	driver_temp_init();
 
 	// Init business logic modules
 	//pump_controller_init();
