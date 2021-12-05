@@ -16,13 +16,13 @@
 uint16_t data_reporter_frame = 0;
 
 const int ROM_STRING_SIZE = 3*8+1;
-char rom_string[ROM_STRING_SIZE];
+//char rom_string[ROM_STRING_SIZE];
 
 void data_reporter_tick(uint16_t time){
 	str("{");
 
 	// Print temperatures
-	for(uint8_t sensor_index = 0; sensor_index < driver_temp_roms_found; sensor_index++){
+	/*for(uint8_t sensor_index = 0; sensor_index < driver_temp_roms_found; sensor_index++){
 		// Write
 		for(uint8_t rom_byte_index = 0; rom_byte_index < DRIVER_TEMP_ROM_SIZE; rom_byte_index++){
 			utoa(driver_temp_roms[sensor_index][rom_byte_index], rom_string, 10);
@@ -40,6 +40,7 @@ void data_reporter_tick(uint16_t time){
 			str("\t");
 		}
 	}
+	*/
 
     str("}\n");
 }

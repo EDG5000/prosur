@@ -22,6 +22,7 @@
 #if HC3D_TEST_MODE == 0 || HC3D_TEST_MODE == HC3D_TEST_MODE_SITL
 int main (void){
 	driver_uart_init();
+	str("Hallo!");
 
 	// Init drivers
 	//driver_relay_init(); // Relay should be off after power cycle and stay off during initialisation of the relay driver
