@@ -12,14 +12,12 @@
     Note: Driver clock has no testing driver equivalent. Sleep time can be adjusted.
  */ 
 
-#include "config.h"
-#if HC3D_SITL_MODE==0
-
 #include "drivers/driver_clock.h"
+
 #include "stdint.h"
+
 #include "avr/io.h"
 #include "avr/interrupt.h"
-#include "libraries/str/str.h"
 
 volatile uint16_t time = 0;
 
@@ -52,5 +50,3 @@ uint16_t driver_clock_time(void){
 ISR(TIMER0_COMPA_vect){
 	time+=4;
 }
-
-#endif

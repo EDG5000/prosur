@@ -5,13 +5,9 @@
  *  Author: Joel
  */ 
 
-#include "config.h"
-#if HC3D_SITL_MODE==0
-
 #include "drivers/driver_uart.h"
 #include "avr/io.h"
 #include "avr/sfr_defs.h"
-#include "libraries/str/str.h"
 #include "stdio.h"
 
 #include "drivers/driver_sleep.h"
@@ -43,7 +39,4 @@ int get_byte(FILE *stream) {
 	loop_until_bit_is_set(UCSR0A, RXC0);
 	return (uint16_t) UDR0;
 }
-
-#endif
-
 
