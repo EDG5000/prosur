@@ -7,8 +7,15 @@
 	Uses pinout as described in main.c
 
 
-	AVR PIN		D3
-	BOARD PIN	03
+	AVR PIN		C0
+	BOARD PIN	A0?
+
+	MF52A103J3950
+	P334-4
+	418011201
+	10KOhm +-5% | 3950K
+	K | 500
+	011 | 2018.11.30
 
  */ 
 
