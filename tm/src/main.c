@@ -19,9 +19,9 @@
 #include "drivers/driver_system.h"
 
 /*
-R 25 10K0 3950K
-K 数 量
-500
+	R 25 10K0 3950K
+	K 数 量
+	500
 */
 #define SENSOR_COUNT 					8
 #define INTERVAL 						1000				// Main loop is timed to run at 1Hz
@@ -32,7 +32,7 @@ K 数 量
 #define TEMPERATURENOMINAL 				25 					// Temperature for nominal resistance (almost always 25 C)
 #define ADC_RESOLUTION 					1023
 #define VERBOSE_SENSOR_ENABLED 			1
-#define ANALOG_PIN 						0					//Analog pin where the thermistor is connected
+#define ANALOG_PIN 						0					// Analog pin where the thermistor is connected
 #define NOMINAL_RES 					DEFAULT_NOMINAL_RES	// Nominal resistance at 25 degrees Celsius
 #define B_COEF 							3950				// Beta coefficient of the thermistor
 #define SERIAL_RES 						DEFAULT_NOMINAL_RES // Value of the serial resistor
@@ -54,8 +54,6 @@ int main (void){
 	// Measure each sensor; dump all temperatures to JSON array at 1Hz
 	while(true){
 		time_tick_start = driver_clock_time();
-
-
 		for(int sensor_index = 0; sensor_index < SENSOR_COUNT; sensor_index++){
 			uint32_t adc_value = 0;
 			// Collect samples
@@ -79,20 +77,13 @@ int main (void){
 				// Add to sum
 				adc_value += ADC;
 			}
-			//printf("adc val %lu\n", adc_value);
-
 			// Divide to get average
 			adc_value /= SAMPLE_COUNT;
 
-			//printf("adc val avg %lu\n", adc_value);
-
 			// Convert the value to resistance
 			float resistance = adc_value; // Init as float
-			//printf("adc float hundreds %i\n", (int)(resistance*100));
 			resistance = ADC_RESOLUTION / resistance - 1; // Voltage
-			//printf("voltage hundreds %i\n", (int)(resistance*100));
 			resistance *= SERIAL_RES; // Resistance
-			//printf("resistance %i\n", (int)resistance);
 
 			// Convert resistance to temperature
 			float steinhart;
@@ -103,11 +94,7 @@ int main (void){
 			steinhart = 1.0 / steinhart;                 		// Invert
 			steinhart -= 273.15;                         		// convert to C
 
-			//printf("temp %i\n", (int)steinhart);
-
 			uint16_t temperature_hundreds_celcius = (int) (steinhart * 100);
-
-			//printf("temp hundreds %u\n", temperature_hundreds_celcius);
 
 			// Store temperature in hundreds of degrees celcius
 			temperatures[sensor_index] = temperature_hundreds_celcius;
