@@ -1,4 +1,20 @@
-#include "tmclient.hpp"
+//
+//  main.cpp
+//  test
+//
+//  Created by Joel on 8/Dec/2021.
+//
+#include "json.hpp"
+
+#include <iostream>
+
+using namespace nlohmann;
+
+int main(int argc, const char * argv[]) {
+    // insert code here...
+    std::cout << "Hello, World!\n";
+    return 0;
+}
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -15,7 +31,6 @@
 #include <map>
 #include <vector>
 
-#include "util.hpp"
 
 using namespace std;
 
@@ -23,9 +38,22 @@ namespace tmclient{
 
 const string DEVICE_NAME = "/dev/ttyUSB0";
 
-map<long unsigned int, float> temperatures;
+vector<int> temperatures; // Hundreds of degrees celcius
 string readBuffer;
 int fd;
+
+// TODO move to util class
+std::vector<std::string> strSplit(std::string str, std::string delim){
+    std::vector<std::string> segments;
+    std::string::size_type beg = 0;
+    for (std::size_t end = 0; (end = str.find(delim, end)) != std::string::npos; ++end)
+    {
+        segments.push_back(str.substr(beg, end - beg));
+        beg = end + 1;
+    }
+    segments.push_back(str.substr(beg));
+    return segments;
+}
 
 bool init(){
     fd = open(DEVICE_NAME.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
@@ -57,7 +85,7 @@ bool init(){
 
     tty.c_iflag &= ~IGNCR;  /* preserve carriage return */
     tty.c_iflag &= ~INPCK;
-    tty.c_iflag &= ~(INLCR | ICRNL | IUCLC | IMAXBEL);
+    //tty.c_iflag &= ~(INLCR | ICRNL | IUCLC | IMAXBEL);
     tty.c_iflag &= ~(IXON | IXOFF | IXANY);   /* no SW flowcontrol */
 
     tty.c_oflag &= ~OPOST;
@@ -67,71 +95,72 @@ bool init(){
     tty.c_cc[VEOF] = 0x04;
 
     if (tcsetattr(fd, TCSANOW, &tty) != 0) {
-        printf("Error from tcsetattr: %s\n", strerror(errno));
+        cout << "Error from tcsetattr: " << strerror(errno) << endl;
         return false;
     }
     return true;
 }
 
-
 bool update(){
-	/*
-	string line;
-	while(line.size() == 0 ){
-		char buf[readBufferSize];
-		int result = read(fd, &buf, readBufferSize);
-		if(result <= 0){
-			cerr << "tmclient: failed to read from port with error " << result << endl;
-			continue;
-		}
-		readBuffer += string(buf);
-		for(int i = 0; i < readBuffer.size(); i++){
-			if(readBuffer[i] == '\n'){
-				line = readBuffer.substr(0, i+1);
-				readBuffer = readBuffer.substr(i+1, readBuffer.size()-i+1);
-				break;
-			}
-		}
-		this_thread::sleep_for(100ms); // TODO this value is guessed to avoid high CPU?
-	}
-	*/
+    fd = open("/Users/joel/Downloads", O_RDONLY);
 
-
-	// Does this read 1 line?
-    char buf[83];
-    int rdlen = read(fd, buf, sizeof(buf) - 1);
+    char buf[128]; // This limits handling of incoming bytes to 128b/s. Ensure remote transmits slower than this. Otherwise, buffer overrun will occur.
+    long rdlen = read(fd, buf, sizeof(buf) - 1);
     if (rdlen > 0) {
+        // Terminate string
         buf[rdlen] = 0;
     } else if (rdlen < 0) {
-        printf("Error from read: %d: %s\n", rdlen, strerror(errno));
+        cout << "Error from read: " << " " << strerror(errno) << endl;
     } else {
-        printf("Nothing read. EOF?\n");
+        cout << "Nothing read. EOF?" << endl;
     }
-    string line(buf);
-    cout << line << endl;
-	vector<string> sensorElements = util::strSplit(line, "\t");
-	for(string sensorDataString: sensorElements){
-		vector<string> sensorDataElements = util::strSplit(sensorDataString, ":");
-		if(sensorDataElements.size() != 2){
-			cerr << "tmclient: unable to parse sensorDataString, sensorDataElements size is not 2 but " << sensorDataElements.size() << endl;
-			return false;
-		}
-		try{
-			temperatures[stoul(sensorDataElements[0])] = stof(sensorDataElements[1]);
-		}catch(const exception& e){
-			cerr << "tmclient: unable to parse sensorDataString, numerical interpretation failed for " << sensorDataElements[0] << " or " << sensorDataElements[1] << " with exception " << e.what() << endl;
-			return false;
-		}
-	}
-	return true;
+    readBuffer += string(buf);
+    cout << readBuffer << endl;
+
+    vector<string> lines = strSplit(readBuffer, "\n");
+
+    if(lines.size() < 2){
+        // No newlines found yet (only happens when line is longer than the buffer; unlikely). Keep reading.
+        return false;
+    }
+
+    // Normally, 2 lines are in the buffer. The second line is not terminated yet, and is not yet parsed.
+    // Parse all segments except the last segment
+    for(int lineIndex = 0; lineIndex < lines.size()-1; lineIndex++){
+        try{
+            json frame(lines[lineIndex]);
+            if(frame.size() < 2){
+                cout << "Error: expected at least 2 elements in frame: " << lines[lineIndex] << endl;
+                return false;
+            }
+            // Read first element which should equal the element count
+            int expectedValues = frame[0];
+            if(frame.size()-1 != expectedValues){
+                cout << "Error: indicated element count does not correspond to actual element count in frame: " << lines[lineIndex] << endl;
+                return false;
+            }
+            // Ensure the vector is large enough
+            if(temperatures.size() < frame.size()-1){
+                temperatures.resize(frame.size()-1);
+            }
+            // Copy values over; start at second element to skip the size-indicating element.
+            for(int valueIndex = 1; valueIndex < frame.size(); valueIndex++){
+                temperatures[valueIndex-1] = frame[valueIndex];
+            }
+        }catch(exception e){
+            cout << "Error: unable to parse frame: " << lines[lineIndex] << endl;
+            return false;
+        }
+    }
+
+    // Set the buffer to the last line, which was not processed yet
+    readBuffer = lines[lines.size()-1];
+
+    return true;
 }
 
-
-
-}
 
 /*
 
  */
-
-
+}
