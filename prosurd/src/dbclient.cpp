@@ -57,6 +57,10 @@ static void exit_nicely(PGconn *conn){
 }
 
 int main(){
+	// As no host is supplied, it will connect using UNIX-domain socket for optimal performance
+	// Ensure the following line is present in /etc/postgres/12/main/pg_hba.conf
+	// # TYPE  DATABASE        USER            ADDRESS                 METHOD
+	// local   all             all                                     trust
     PGconn *conn = PQconnectdb("dbname = postgres");
 
     // Check to see that the backend connection was successfully made

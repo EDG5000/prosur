@@ -18,5 +18,5 @@ pkg_check_modules(libgphoto2 REQUIRED IMPORTED_TARGET libgphoto2>=2.5.0)
 target_link_libraries(prosurd PUBLIC PkgConfig::libgphoto2)
 
 # libpqxx
-pkg_check_modules(libpqxx REQUIRED IMPORTED_TARGET libpqxx>=6.4.0)
-target_link_libraries(prosurd PUBLIC PkgConfig::libpqxx)
+pkg_check_modules(libpq REQUIRED IMPORTED_TARGET libpq>=12.9)
+target_link_libraries(prosurd PUBLIC PkgConfig::libpq)

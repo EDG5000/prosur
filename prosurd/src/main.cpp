@@ -17,6 +17,7 @@ constexpr auto cyleTime = 1000ms;
 int main() {
 	if(!tmclient::init()){
 		cerr << "main: tmclient init failed." << endl;
+		terminate();
 	}
 
 	bool was_printing = false;
@@ -27,8 +28,8 @@ int main() {
 					this_thread::sleep_for(cyleTime);
 					continue;
 				}
-				for(auto const& sensorData: tmclient::temperatures){
-					cout << sensorData.first << ": " << tmclient::temperatures[sensorData.second] << endl;
+				for(auto const& temperature: tmclient::temperatures){
+					cout << to_string((float)(temperature)/100) << " " << endl;
 				}
 
 

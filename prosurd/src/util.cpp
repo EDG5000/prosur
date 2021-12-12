@@ -19,7 +19,6 @@ void writeDataToFileDebug(vector<uint8_t> data, string filename){
 	out.close();
 }
 
-
 string isodatetime(){
     //Derrived from https://stackoverflow.com/a/9528166
     time_t now;

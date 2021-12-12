@@ -1,13 +1,13 @@
 #pragma once
 
-#include <map>
+#include <vector>
 
 using namespace std;
 
 namespace tmclient{
 
 // Keyed by 64 bit temperature sensor rom
-extern map<long unsigned int, float> temperatures;
+extern vector<int> temperatures; // Hundreds of degrees celcius
 
 bool init();
 bool update();
