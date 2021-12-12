@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace util{
+namespace prosurd::util{
 
 //https://stackoverflow.com/a/68367878
 void writeDataToFileDebug(vector<uint8_t> data, string filename){

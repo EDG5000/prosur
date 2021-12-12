@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace cclient{
+namespace prosurd::cclient{
 
 extern vector<uint8_t> image;
 

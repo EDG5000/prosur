@@ -19,9 +19,21 @@ using namespace std;
 
 #include "gphoto2/gphoto2.h"
 
-namespace cclient{
+namespace prosurd::cclient{
 
 vector<uint8_t> image;
+
+/*
+ *
+ *only needed when gphoto must capture to file
+static string readFile(string filename){
+    ifstream t(filename);
+    stringstream buffer;
+    buffer << t.rdbuf();
+    return buffer.str();
+}
+ *
+ */
 
 bool update(){
 	Camera* camera;

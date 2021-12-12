@@ -18,7 +18,7 @@
 using namespace nlohmann;
 using namespace std;
 
-namespace tmclient{
+namespace prosurd::tmclient{
 
 const string DEVICE_NAME = "/dev/ttyUSB0";
 

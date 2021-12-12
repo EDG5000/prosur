@@ -8,7 +8,7 @@
 using namespace nlohmann;
 using namespace std;
 
-namespace rrfclient{
+namespace prosurd::rrfclient{
 
 // Reprap Object Model: https://github.com/Duet3D/RepRapFirmware/wiki/Object-Model-Documentation#overview
 extern json om;
@@ -17,7 +17,8 @@ extern json om;
 bool update();
 
 // Obtain data obout current state of om object
-bool get_is_printing();
+bool is_printing();
+bool was_printing(); // Value of is_printing of the previous frame. Returns false on first frame.
 vector<float> get_temperatures();
 string get_filename();
 

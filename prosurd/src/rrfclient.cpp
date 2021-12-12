@@ -11,7 +11,7 @@
 using namespace std;
 using namespace nlohmann;
 
-namespace rrfclient{
+namespace prosurd::rrfclient{
 
 //http://192.168.2.15/rr_connect?password=amirgay0511&time=2021-11-8T18:9:31
 // rr_connect?password=XXX&time=YYY
@@ -23,15 +23,18 @@ namespace rrfclient{
 // result.file.fileName
 //http://theseus3.local/rr_model?key=job&flags=d99vn
 
-json om;
-
+	//http://theseus3.local/rr_download?name=0:/gcodes/CFFFP_Electronics Box.gcode
+	//0:/gcodes/CFFFP_Electronics Box.gcode
 const int TEMP_SENSOR_COUNT = 3;
 const string RR_BASE_URL = "http://theseus3.local/";
 const string FLAGS_STATUS = "d99fn";
 const string FLAGS_JOB = "d99vn";
 const string KEY_JOB = "job";
-const string ACTION_MODEL = "rr_model";
 
+// Object model tree as returned by RepRapFirmware
+json om;
+json om_last; // Set to om from last frame
+vector<char> lastJobFile; // Updated on when transitioned to printing state from previous non-printing state (or when first frame after init is in printing state).
 
 size_t onReceiveData(void *contents, size_t size, size_t nmemb, std::string *s){
     size_t newLength = size*nmemb;
@@ -43,14 +46,9 @@ size_t onReceiveData(void *contents, size_t size, size_t nmemb, std::string *s){
     return newLength;
 }
 
-// Call RR API
-json call(string action, string flags, string key = ""){
-	// Form url
-	string url = RR_BASE_URL + action + "?flags=" + flags;
-	if(key.size() > 0){
-		url += "&key=" + key;
-	}
 
+// TODO consider performance; can downloaded job files be streamed directly into the database?
+string call(string url){
 	CURL *curl;
 	CURLcode res;
 	string receiveBuffer;
@@ -61,7 +59,7 @@ json call(string action, string flags, string key = ""){
 	if(!curl){
 		cerr << "curl init failed" << endl;
 		curl_easy_cleanup(curl);
-		return json();
+		return "";
 	}
 	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, onReceiveData);
@@ -72,11 +70,25 @@ json call(string action, string flags, string key = ""){
 	res = curl_easy_perform(curl);
 	if(res != CURLE_OK){
 		cerr << "rrfclient: call: curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
-		return json();
+		return "";
 	}
 
 	curl_global_cleanup();
 
+	return receiveBuffer;
+}
+
+// Call RR API
+json downloadModel(string flags, string key = ""){
+	// Form url
+	string url = RR_BASE_URL + "rr_model?flags=" + flags;
+	if(key == ""){
+		url += "&key=" + key;
+	}
+	string receiveBuffer = call(url);
+	if(receiveBuffer == ""){
+		return json();
+	}
 	try{
 		return json::parse(receiveBuffer);
 	}catch(const json::exception& e){
@@ -85,40 +97,75 @@ json call(string action, string flags, string key = ""){
 	}
 }
 
-// Blocking update call. Return within 250ms. Suggest calling at 1Hz.
+// Download a file and store it into lastJobFile
+void downloadFile(string fileName){
+	string url = RR_BASE_URL + "rr_download";
+	// TODO consider streaming the data directly to postgres instead of storing and copying in memory
+	string fileData = call(url);
+	lastJobFile.assign(fileData.begin(), fileData.end());
+}
+
+// Blocking update call.
+// Will download the current job's file when transitioning into printing state.
 bool update(){
 	// Get base status object and store in om
-	json om_status = call(ACTION_MODEL, FLAGS_STATUS);
+	json om_status = downloadModel(FLAGS_STATUS);
 	if(om_status.is_null()){
 		cerr << "rffclient: unable to retrieve om_status, skipping update cycle." << endl;
 		return false;
 	}
+	om_last = om;
 	om = om_status;
 
-	cout << om.dump() << endl;
+	//cout << om.dump() << endl;
 
 	// Perform extra request to get information about current print
-	if(get_is_printing()){
-		json om_job = call(ACTION_MODEL, FLAGS_JOB, KEY_JOB);
+	if(is_printing()){
+		json om_job = downloadModel(FLAGS_JOB, KEY_JOB);
 		if(om_job.is_null()){
 			cerr << "rffclient: unable to retrieve om_job, skipping further processing." << endl;
 			return false;
 		}
 		// Merge the two objects
 		try {
-			cout << om_job.dump() << endl;
+			//cout << om_job.dump() << endl;
 			om["result"]["file"] = om_job["result"]["file"];
-			cout << om.dump() << endl;
+			//cout << om.dump() << endl;
 		}catch(const json::exception& e){
 			cerr << "rrfclient: unable to merge job; skipping further processing << endl;";
 			return false;
 		}
 	}
 
+	// When in transition from non-printing to printing, Download current job file to memory.
+	if(is_printing() && !was_printing()){
+		// TODO evaluate performance
+		string fileName = get_filename();
+		if(fileName == ""){
+			cerr << "rrfclient: error: get_filename returned an empty string. unable to download job file" << endl;
+			return false;
+		}
+		downloadFile(fileName);
+	}
+
 	return true;
 }
 
-bool get_is_printing(){
+bool was_printing(){
+	if(om_last.is_null()){
+		// On first frame after initialisation, om_last is not instantiated yet.
+		return false;
+	}
+
+	try{
+		return om_last["job"]["build"].is_null();
+	}catch(json::exception& e){
+		cerr << "rrfclient: get_is_printing: error accessing last_om: " << e.what() << endl;
+		return false;
+	}
+}
+
+bool is_printing(){
 	try{
 		return om["job"]["build"].is_null();
 	}catch(json::exception& e){
@@ -142,7 +189,7 @@ vector<float> get_temperatures(){
 
 string get_filename(){
 	try{
-		return om["file"]["fileName"];
+		return om["result"]["file"]["fileName"];
 	}catch(json::exception& e){
 		cerr << "rrfclient: get_filename: error accessing om: " << e.what() << endl;
 		return "";

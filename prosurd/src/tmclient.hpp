@@ -4,7 +4,7 @@
 
 using namespace std;
 
-namespace tmclient{
+namespace prosurd::tmclient{
 
 // Keyed by 64 bit temperature sensor rom
 extern vector<int> temperatures; // Hundreds of degrees celcius

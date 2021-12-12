@@ -16,20 +16,23 @@ cmake_minimum_required(VERSION 3.16.3)
 project(prosurd LANGUAGES CXX)
 
 set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(vendor src)
 
 add_executable(
 prosurd 
-src/main.cpp 
+
+src/prosurd.cpp 
 src/rrfclient.cpp 
 src/tmclient.cpp
 src/util.cpp
 src/cclient.cpp
+src/dbclient.cpp
+
 )
 
 include(dependencies.cmake)
