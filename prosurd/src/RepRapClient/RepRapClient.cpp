@@ -1,18 +1,21 @@
-#include "rrfclient.hpp"
+#include <RepRapClient/RepRapClient.hpp>
 
 #include <vector>
 #include <iostream>
 #include <string>
 #include <time.h>
+
 #include "curl/curl.h"
 #include "json.hpp"
 
-#include "util.hpp"
+#include <Util/Util.hpp>
+
+#include "RepRapClient/HTTPUtil.hpp"
 
 using namespace std;
 using namespace nlohmann;
 
-namespace prosurd::rrfclient{
+namespace Prosur::RepRapClient{
 
 //http://192.168.2.15/rr_connect?password=amirgay0511&time=2021-11-8T18:9:31
 // rr_connect?password=XXX&time=YYY
@@ -37,48 +40,6 @@ json om;
 json om_last; // Set to om from last frame
 vector<char> lastJobFile; // Updated when transitioned to printing state from previous non-printing state (or when first frame after init is in printing state).
 
-size_t onReceiveData(void *contents, size_t size, size_t nmemb, std::string *s){
-    size_t newLength = size*nmemb;
-    try{
-        s->append((char*)contents, newLength);
-    }catch(std::bad_alloc &e){
-        return 0;
-    }
-    return newLength;
-}
-
-
-// TODO consider performance; can downloaded job files be streamed directly into the database?
-string call(string url){
-	CURL *curl;
-	CURLcode res;
-	string receiveBuffer;
-
-	curl_global_init(CURL_GLOBAL_DEFAULT);
-
-	curl = curl_easy_init();
-	if(!curl){
-		cerr << "curl init failed" << endl;
-		curl_easy_cleanup(curl);
-		return "";
-	}
-	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, onReceiveData);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &receiveBuffer);
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L); //remove this to disable verbose output
-    curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
-
-	res = curl_easy_perform(curl);
-	if(res != CURLE_OK){
-		cerr << "rrfclient: call: curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
-		return "";
-	}
-
-	curl_global_cleanup();
-
-	return receiveBuffer;
-}
-
 // Call RR API
 json downloadModel(string flags, string key = ""){
 	// Form url
@@ -86,7 +47,7 @@ json downloadModel(string flags, string key = ""){
 	if(key == ""){
 		url += "&key=" + key;
 	}
-	string receiveBuffer = call(url);
+	string receiveBuffer = HTTPUtil::call(url);
 	if(receiveBuffer == ""){
 		return json();
 	}
@@ -103,7 +64,7 @@ void downloadFile(string fileName){
 	string url = RR_BASE_URL + "rr_download";
 	// TODO consider streaming the data directly to postgres instead of storing and copying in memory
 	// TODO how many copy operations are performed? What is the memory consumption for, say, a 200MB file?
-	string fileData = call(url);
+	string fileData = HTTPUtil::call(url);
 	lastJobFile.assign(fileData.begin(), fileData.end());
 }
 

@@ -1,4 +1,4 @@
-#include "tmclient.hpp"
+#include <AuxTempClient/AuxTempClient.hpp>
 
 #include <fcntl.h>
 #include <stdio.h>
@@ -7,18 +7,18 @@
 #include <termios.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <Util/Util.hpp>
 #include <string>
 #include <iostream>
 #include <vector>
 
 #include "json.hpp"
 
-#include "util.hpp"
 
 using namespace nlohmann;
 using namespace std;
 
-namespace prosurd::tmclient{
+namespace Prosur::AuxTemp{
 
 const string DEVICE_NAME = "/dev/ttyUSB0";
 

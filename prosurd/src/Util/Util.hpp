@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace prosurd::util{
+namespace Prosur::util{
 
 string isodatetime();
 vector<string> strSplit(string str, string delim);

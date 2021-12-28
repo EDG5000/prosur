@@ -1,6 +1,5 @@
-#include "util.hpp"
-
 #include <sys/time.h>
+#include <Util/Util.hpp>
 
 #include <ctime>
 #include <iostream>
@@ -10,7 +9,7 @@
 
 using namespace std;
 
-namespace prosurd::util{
+namespace Prosur::util{
 
 //https://stackoverflow.com/a/68367878
 void writeDataToFileDebug(vector<uint8_t> data, string filename){

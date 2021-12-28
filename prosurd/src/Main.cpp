@@ -1,3 +1,11 @@
+#include "Main.hpp"
+
+#include "AuxTempClient/AuxTempClient.hpp"
+#include "CameraClient/CameraClient.hpp"
+#include "RepRapClient/RepRapClient.hpp"
+#include "DatabaseClient/DatabaseClient.hpp"
+
+#include <Util/Util.hpp>
 #include <iostream>
 
 #include "inttypes.h"
@@ -6,16 +14,11 @@
 #include <map>
 #include <iostream>
 
-#include "rrfclient.hpp"
-#include "tmclient.hpp"
-#include "cclient.hpp"
-#include "util.hpp"
-#include "dbclient.hpp"
 
 using namespace std;
-using namespace prosurd;
+using namespace Prosur;
 
-namespace prosurd{
+namespace Prosur{
 
 
 map<string, int32_t> values;
@@ -28,12 +31,12 @@ constexpr auto cycleTime = 1000ms;
 
 
 int main() {
-	if(!tmclient::init()){
+	/*if(!tmclient::init()){
 		cerr << "main: tmclient init failed." << endl;
 		terminate();
-	}
+	}*/
 
-	if(!dbclient::init()){
+	if(!DatabaseClient::init()){
 		cerr << "main: dbclient init failed." << endl;
 		terminate();
 	}
@@ -42,14 +45,14 @@ int main() {
 	//thread t{[=]{
 			while(true){
 				// Retrieve aux. temperatures
-				if(!tmclient::update()){
+				/*if(!tmclient::update()){
 					cerr << "main: tmclient update failed, skipping cycle" << endl;
 					this_thread::sleep_for(cycleTime);
 					continue;
-				}
+				}*/
 				// Store aux. temperatures
-				for(int sensorIndex = 0; sensorIndex < tmclient::temperatures.size(); sensorIndex++){
-					values["temp_aux_" + to_string(sensorIndex)] = tmclient::temperatures[sensorIndex];
+				for(int sensorIndex = 0; sensorIndex < AuxTemp::temperatures.size(); sensorIndex++){
+					values["temp_aux_" + to_string(sensorIndex)] = AuxTemp::temperatures[sensorIndex];
 				}
 
 				// Insert data from values into database
@@ -71,12 +74,12 @@ int main() {
 				util::writeDataToFileDebug(cclient::image, "/home/joel/file.jpg");
 				*/
 
-				if(!rrfclient::update()){
+				if(!RepRapClient::update()){
 					cerr << "main: rrfclient experienced failure. skipping cycle." << endl;
 					this_thread::sleep_for(cycleTime);
 					continue;
 				}
-				cout << rrfclient::get_current_job_filename() << endl;
+				cout << RepRapClient::get_current_job_filename() << endl;
 				terminate();
 				/*
 				if(rrfclient::get_is_printing() && !was_printing){
@@ -91,7 +94,7 @@ int main() {
 				*/
 
 				// Store properties of rrclient_om and tmclient_om in frames table
-				this_thread::sleep_for(prosurd::cycleTime);
+				this_thread::sleep_for(Prosur::cycleTime);
 				// TODO implement timing caluclation to ensure steady .1Hz operation
 			}
 

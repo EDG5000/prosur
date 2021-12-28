@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace prosurd::cclient{
+namespace Prosur::CameraClient{
 
 extern vector<uint8_t> image;
 

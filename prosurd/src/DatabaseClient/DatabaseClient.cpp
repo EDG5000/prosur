@@ -1,4 +1,5 @@
-#include "dbclient.hpp"
+#include "DatabaseClient/DatabaseClient.hpp"
+#include "DatabaseClient/DatabaseClient.hpp"
 
 #include <map>
 #include <string>
@@ -11,21 +12,22 @@
 #include <climits>
 
 #include <arpa/inet.h>
+
 #include <postgresql/libpq-fe.h>
 
-#include "prosurd.hpp"
-#include "rrfclient.hpp"
-#include "DB.hpp"
+#include <Main.hpp>
+#include <RepRapClient/RepRapClient.hpp>
+#include "DatabaseClient/DBUtil.hpp"
 
 using namespace std;
 
-namespace prosurd::dbclient{
+namespace Prosur::DatabaseClient{
 
 	// TODO consider moving
-	PGconn* conn;
+
 
 	// Set to latest inserted job at startup, incremented at runtime prior to insertion of a new job's first frame.
-	// Is written to each frame as long as rrfclient::is_printing.
+	// Is written to each frame as long as RepRapClient::is_printing.
 	int lastJobId = -1;
 
 	bool init(){
@@ -34,24 +36,17 @@ namespace prosurd::dbclient{
 		// # TYPE  DATABASE        USER            ADDRESS                 METHOD
 		// local   all             all                                     trust
 		// Warning: Use "trust" authentication only when there are no other untrusted Unix users on the system.
-		conn = PQconnectdb("dbname=postgres user=postgres");
-
-		// Check to see that the backend connection was successfully made
-		if (PQstatus(conn) != CONNECTION_OK){
-			cerr << "dbclient: Connection to database failed: " << PQerrorMessage(conn) << endl;
-			PQfinish(conn);
-			return false;
-		}
+		DBUtil::connect("dbname=postgres user=postgres");
 
 		// Obtain the latest jobId currently in the database
-		PGresult* result = DB::query(
+		PGresult* result = DBUtil::query(
 			"select job_id from frame "\
 			"order by job_id desc "\
 			"limit 1"
 		);
 
 		if(PQresultStatus(result) != PGRES_TUPLES_OK){
-			cerr << "dbclient: Unable to obtain latest job_id value. Error: " << PQerrorMessage(conn) << endl;
+			cerr << "dbclient: Unable to obtain latest job_id value. Error: " << DBUtil::getError() << endl;
 			return false;
 		}
 
@@ -83,7 +78,7 @@ namespace prosurd::dbclient{
 	}
 
 	static int64_t file_exists(string filename){
-		PGresult* result = DB::query("select name, modified from file where name = $1", {filename});
+		PGresult* result = DBUtil::query("select name, modified from file where name = $1", {filename});
 		if(result == NULL){
 			cerr << "dbclient: file_exists: Unable to perform query. Aborting" << endl;
 			terminate();
@@ -100,14 +95,14 @@ namespace prosurd::dbclient{
 
 	bool update(){
 		// 1. Create file entry if this is the start of a new job
-		bool newJob = rrfclient::is_printing() && !rrfclient::was_printing();
+		bool newJob = RepRapClient::is_printing() && !RepRapClient::was_printing();
 		if(newJob){
 			// 1.1 Create new jobId for insertion into database
 			lastJobId++;
 
 			// 1.2 Get filename and date modified of current job file
-			string current_job_filename = rrfclient::get_current_job_filename();
-			int64_t current_job_file_modified = rrfclient::get_current_job_modified();
+			string current_job_filename = RepRapClient::get_current_job_filename();
+			int64_t current_job_file_modified = RepRapClient::get_current_job_modified();
 
 			// 1.3. Determine if new file needs to be inserted, adjust filename as needed
 			int64_t existing_file_modified = file_exists(current_job_filename);
@@ -124,13 +119,13 @@ namespace prosurd::dbclient{
 
 			// 1.4 Insert new file now if needed
 			if(existing_file_modified == -1){
-				PGresult* result = DB::query("insert into file (name, modified, data) values ($1, $2, $3)", {
+				PGresult* result = DBUtil::query("insert into file (name, modified, data) values ($1, $2, $3)", {
 						current_job_filename,
 						current_job_file_modified,
-						rrfclient::lastJobFile
+						RepRapClient::lastJobFile
 				});
 				if(result == NULL){
-					cerr << "dbclient: update: Error while trying to insert file " << current_job_filename << "(size: " << rrfclient::lastJobFile.size() << ")" << endl;
+					cerr << "dbclient: update: Error while trying to insert file " << current_job_filename << "(size: " << RepRapClient::lastJobFile.size() << ")" << endl;
 					terminate();
 				}
 			}
@@ -139,25 +134,25 @@ namespace prosurd::dbclient{
 		// 2. Insert frame
 		// 2.1. Setup initial parameters
 		int job_id = lastJobId;
-		if(!rrfclient::is_printing()){
+		if(!RepRapClient::is_printing()){
 			job_id = INT32_MAX; // Sets job ID to NULL when not printing
 		}
 		string file_name;
 		if(newJob){
 			// Store job filename if this is a new job
-			file_name = rrfclient::get_current_job_filename();
+			file_name = RepRapClient::get_current_job_filename();
 		}
-		vector<DB::Param> params = {time, job_id, file_name};
+		vector<DBUtil::Param> params = {time, job_id, file_name};
 
 		// 2.2 Use prosurd::values to generate query and append to parameter vector
 		const int FIXED_PARAM_COUNT = 3; // Match with below query
-		const int PARAM_COUNT = FIXED_PARAM_COUNT + prosurd::values.size();
+		const int PARAM_COUNT = FIXED_PARAM_COUNT + Prosur::values.size();
 		string query = "insert into frame (time, job_id, file_name, ";
 		int i = 0;
-		for(auto& [key, value]: prosurd::values){
+		for(auto& [key, value]: Prosur::values){
 			params.push_back(value);
 			query += key;
-			if(i != prosurd::values.size()-1){
+			if(i != Prosur::values.size()-1){
 				query += ", ";
 			}
 			i++;
@@ -172,7 +167,7 @@ namespace prosurd::dbclient{
 		query += ")";
 
 		// 2.3 Perform insertion query
-		PGresult* result = DB::query(query, params);
+		PGresult* result = DBUtil::query(query, params);
 		if(result == NULL){
 			cerr << "dbclient: update: Failed to perform query: " << query << " with param count " << params.size() << endl;
 			terminate();

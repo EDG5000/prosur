@@ -8,7 +8,7 @@
 using namespace nlohmann;
 using namespace std;
 
-namespace prosurd::rrfclient{
+namespace Prosur::RepRapClient{
 
 // Reprap Object Model: https://github.com/Duet3D/RepRapFirmware/wiki/Object-Model-Documentation#overview
 extern json om;

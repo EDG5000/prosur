@@ -1,5 +1,9 @@
-#include "DB.hpp"
+/*
+ * Utility for interacting with Postgres using libpq.
+ * Provides syntactical sugar for passing parameters along with queries.
+ */
 
+#include <DatabaseClient/DBUtil.hpp>
 #include <string>
 #include <map>
 #include <vector>
@@ -7,11 +11,15 @@
 
 #include <postgresql/libpq-fe.h>
 
-#include "dbclient.hpp"
-
 using namespace std;
 
-namespace prosurd::DB{
+namespace Prosur::DatabaseClient::DBUtil{
+	constexpr int FORMAT_TEXT = 0;
+	constexpr int FORMAT_BINARY = 1;
+
+
+	PGconn* conn;
+
 	Param::Param(int pIntVal){
 		intVal = pIntVal;
 		type = Int;
@@ -46,6 +54,18 @@ namespace prosurd::DB{
 	}
 	*/
 
+	void connect(string connectionString){
+
+		conn = PQconnectdb(connectionString.c_str());
+
+		// Check to see that the backend connection was successfully made
+		if (PQstatus(conn) != CONNECTION_OK){
+			cerr << "dbclient: Connection to database failed: " << getError() << endl;
+			PQfinish(conn);
+			terminate();
+		}
+	}
+
 	PGresult* query(string query, vector<Param> params){
 		// TODO reverse byte order? //uint32_t binaryIntVal = htonl((uint32_t) 2);
 
@@ -57,7 +77,7 @@ namespace prosurd::DB{
 		// Fill arrays
 		int i = 0;
 		for(const Param& param: params){
-			paramFormats[i] = 1;
+			paramFormats[i] = FORMAT_BINARY;
 			if(param.type == String){
 				paramLengths[i] = param.stringVal.size();
 				if(param.stringVal.size() != 0){
@@ -83,22 +103,27 @@ namespace prosurd::DB{
 
 		// Perform query
 		PGresult* result = PQexecParams(
-				dbclient::conn,
+				conn,
 				query.c_str(),
 				params.size(),
 				NULL, // paramTypes
 				paramValues,
 				paramLengths, // paramLengths
 				paramFormats,
-				dbclient::FORMAT_BINARY
+				FORMAT_BINARY
 		);
 
 		if(PQresultStatus(result) != PGRES_TUPLES_OK){
-			cerr << "dbclient: Unable to insert frame. Error: " << PQerrorMessage(dbclient::conn) << endl;
+			cerr << "dbclient: Unable to insert frame. Error: " << getError() << endl;
 			return NULL;
 		}
 
 		return result;
 	}
 
+	string getError(){
+		return getError();
+	}
 }
+
+

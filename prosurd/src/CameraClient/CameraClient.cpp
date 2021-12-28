@@ -1,4 +1,4 @@
-#include "cclient.hpp"
+#include "CameraClient/CameraClient.hpp"
 
 #include <stdlib.h>
 #include <sys/types.h>
@@ -17,9 +17,7 @@
 
 using namespace std;
 
-#include "gphoto2/gphoto2.h"
-
-namespace prosurd::cclient{
+namespace Prosur::CameraClient{
 
 vector<uint8_t> image;
 
