@@ -17,18 +17,6 @@ using namespace nlohmann;
 
 namespace Prosur::RepRapClient{
 
-//http://192.168.2.15/rr_connect?password=amirgay0511&time=2021-11-8T18:9:31
-// rr_connect?password=XXX&time=YYY
-// or: //http://192.168.2.15/rr_model?flags=d99fn
-//rr_model?flags=d99fn
-// http://192.168.2.15/rr_download?name=0:/gcodes/CFFFP_Electronics Box.gcode
-
-// Get filename of currently printed file:
-// result.file.fileName
-//http://theseus3.local/rr_model?key=job&flags=d99vn
-
-	//http://theseus3.local/rr_download?name=0:/gcodes/CFFFP_Electronics Box.gcode
-	//0:/gcodes/CFFFP_Electronics Box.gcode
 const int TEMP_SENSOR_COUNT = 3;
 const string RR_BASE_URL = "http://theseus3.local/";
 const string FLAGS_STATUS = "d99fn";
