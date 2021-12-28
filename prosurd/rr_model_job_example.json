@@ -1,0 +1,54 @@
+{
+  "key": "job",
+  "flags": "d99vn",
+  "result": {
+    "build": {
+      "currentObject": 0,
+      "m486Names": false,
+      "m486Numbers": false,
+      "objects": [
+        {
+          "cancelled": false,
+          "name": "Electronics Box.STL",
+          "x": [
+            11,
+            81
+          ],
+          "y": [
+            8,
+            162
+          ]
+        }
+      ]
+    },
+    "duration": 10,
+    "file": {
+      "filament": [
+        19711.9
+      ],
+      "fileName": "0:/gcodes/CFFFP_Electronics Box.gcode",
+      "firstLayerHeight": 0.3,
+      "generatedBy": "Cura_SteamEngine 4.10.0",
+      "height": 13.98,
+      "lastModified": "2021-07-25T23:25:34",
+      "layerHeight": 0.09,
+      "numLayers": 153,
+      "printTime": 40220,
+      "simulatedTime": 51662,
+      "size": 14460410
+    },
+    "filePosition": 9405,
+    "lastDuration": null,
+    "lastFileName": null,
+    "layer": 1,
+    "layerTime": 0.9,
+    "pauseDuration": 0,
+    "rawExtrusion": 8.6,
+    "timesLeft": {
+      "filament": null,
+      "file": null,
+      "slicer": null
+    },
+    "warmUpDuration": 0
+  }
+}

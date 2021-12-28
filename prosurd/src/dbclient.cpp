@@ -8,229 +8,178 @@
 #include <streambuf>
 #include <sstream>
 #include <ctime>
+#include <climits>
 
 #include <arpa/inet.h>
 #include <postgresql/libpq-fe.h>
 
 #include "prosurd.hpp"
 #include "rrfclient.hpp"
+#include "DB.hpp"
 
 using namespace std;
 
 namespace prosurd::dbclient{
 
-constexpr int FORMAT_TEXT = 0;
-constexpr int FORMAT_BINARY = 1;
+	// TODO consider moving
+	PGconn* conn;
 
-PGconn* conn;
+	// Set to latest inserted job at startup, incremented at runtime prior to insertion of a new job's first frame.
+	// Is written to each frame as long as rrfclient::is_printing.
+	int lastJobId = -1;
 
-#include <climits>
+	bool init(){
+		// As no host is supplied, libpq will connect using UNIX-domain socket for optimal performance.
+		// Ensure the following is present in the table in /etc/postgres/12/main/pg_hba.conf:
+		// # TYPE  DATABASE        USER            ADDRESS                 METHOD
+		// local   all             all                                     trust
+		// Warning: Use "trust" authentication only when there are no other untrusted Unix users on the system.
+		conn = PQconnectdb("dbname=postgres user=postgres");
 
-// Set to latest inserted job at startup, incremented at runtime prior to insertion of a new job's first frame.
-// Is written to each frame as long as rrfclient::is_printing.
-int32_t lastJobId = -1;
+		// Check to see that the backend connection was successfully made
+		if (PQstatus(conn) != CONNECTION_OK){
+			cerr << "dbclient: Connection to database failed: " << PQerrorMessage(conn) << endl;
+			PQfinish(conn);
+			return false;
+		}
 
-bool init(){
-	// As no host is supplied, libpq will connect using UNIX-domain socket for optimal performance.
-	// Ensure the following is present in the table in /etc/postgres/12/main/pg_hba.conf:
-	// # TYPE  DATABASE        USER            ADDRESS                 METHOD
-	// local   all             all                                     trust
-	// Warning: Use "trust" authentication only when there are no other untrusted Unix users on the system.
-    conn = PQconnectdb("dbname=postgres user=postgres");
+		// Obtain the latest jobId currently in the database
+		PGresult* result = DB::query(
+			"select job_id from frame "\
+			"order by job_id desc "\
+			"limit 1"
+		);
 
-    // Check to see that the backend connection was successfully made
-    if (PQstatus(conn) != CONNECTION_OK){
-        cerr << "dbclient: Connection to database failed: " << PQerrorMessage(conn) << endl;
-        PQfinish(conn);
-        return false;
-    }
+		if(PQresultStatus(result) != PGRES_TUPLES_OK){
+			cerr << "dbclient: Unable to obtain latest job_id value. Error: " << PQerrorMessage(conn) << endl;
+			return false;
+		}
 
-    // Obtain the latest jobId currently in the database
-    PGresult* result = PQexecParams(conn,
-		"select job_id from frame "\
-		"group by job_id "\
-		"order by job_id desc "\
-		"limit 1",
-		0,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		1
-	);
+		// Get col number
+		int colNum = PQfnumber(result, "job_id");
+		if(colNum == -1){
+			cerr << "dbclient: Unable to obtain colNum for column job_id" << endl;
+			return false;
+		}
 
-    if(PQresultStatus(result) != PGRES_TUPLES_OK){
-        cerr << "dbclient: Unable to obtain latest job_id value. Error: " << PQerrorMessage(conn) << endl;
-        return false;
-    }
+		// Get row count
+		int rowCount = PQntuples(result);
 
-    // Get col number
-    int colNum = PQfnumber(result, "job_id");
-    if(colNum == -1){
-    	cerr << "dbclient: Unable to obtain colNum for column job_id" << endl;
-    	return false;
-    }
+		// Set lastJobId
+		if(rowCount == 0){
+			// No existing jobs present, start ID at 0
+			lastJobId = 0;
+		}else if(rowCount != 1){
+			cerr << "dbclient: Unable to obtain latest job_id value. Row count was not 1, but " << rowCount << endl;
+			return false;
+		}else if(rowCount == 1){
+			// Dereference, cast, and reverse byte order to little endian.
+			lastJobId = ntohl(*((uint32_t*)PQgetvalue(result, 0, colNum)));
+		}
 
-    // Get row count
-    int rowCount = PQntuples(result);
+		PQclear(result);
 
-    // Set lastJobId
-    if(rowCount == 0){
-    	// No existing jobs present, start ID at 0
-    	lastJobId = 0;
-    }else if(rowCount != 1){
-    	cerr << "dbclient: Unable to obtain latest job_id value. Row count was not 1, but " << rowCount << endl;
-    	return false;
-    }else if(rowCount == 1){
-    	// Dereference, cast, and reverse byte order to little endian.
-    	lastJobId = ntohl(*((uint32_t*)PQgetvalue(result, 0, colNum)));
-    }
-
-    return true;
-}
-
-bool update(){
-
-	// Obtain param count
-	int paramCount = values.size() + 3; // 3 columns plus all values from prosurd::values
-
-    // Detect start of new job
-    bool newJob = rrfclient::is_printing() && !rrfclient::was_printing();
-    if(newJob){
-    	// Create new jobId for insertion into database
-    	lastJobId++;
-
-    		// Insert job file
-    		string fileInsertQuery = "insert into file (name, modified, data) values ($1, $2, $3)";
-    		// Perform insert query
-    		PGresult* result = PQexecParams(
-    				conn,
-    				fileInsertQuery.c_str(),
-    				3,
-    				NULL, // paramTypes
-    				paramValues,
-    				NULL, // paramLengths
-    				paramFormats,
-    				FORMAT_BINARY
-    		);
-    	    if(PQresultStatus(result) != PGRES_TUPLES_OK){
-    	        cerr << "dbclient: Unable to insert frame. Error: " << PQerrorMessage(conn) << endl;
-    	        return false;
-    	    }
-    }
-
-	// Create arrays for passing to PQexecParams
-	const char* paramValues[paramCount];
-	int paramLengths[paramCount];
-
-	// Set all formats
-	int paramFormats[paramCount];
-	for(int i = 0; i < paramCount; i++){
-		paramFormats[i] = 1; // binary
+		return true;
 	}
 
-	// Set time, job_id, file_name as specified in insertQuery
-	paramValues[0] = (char*) &time;
-	if(rrfclient::is_printing()){
-		paramValues[1] = (char*) &lastJobId;
-	}else{
-		paramValues[1] = NULL;
-	}
-	if(newJob){
-		// Store job filename
-		string fileName = rrfclient::get_filename();
-		paramValues[2] = fileName;
-
-	}
-
-    // Generate frame insertion query.
-	// Use keys in prosurd::values as column names.
-    string insertQuery = "insert into frame (time, job_id, file_name, ";
-
-    int i = 0;
-    for(auto& [key, value]: values){
-    	insertQuery += key;
-    	if(i != values.size()-1){
-    		insertQuery += ", ";
-    	}
-    	i++;
-    }
-    insertQuery += ") values (";
-
-    for(int i = 0; i < paramCount; i++){
-    	insertQuery += "$" + to_string(i+1);
-    	if(i != paramCount-1){
-    		insertQuery += ", ";
-    	}
-    }
-    insertQuery += ")";
-
-	// Perform insert query
-	PGresult* result = PQexecParams(
-			conn,
-			insertQuery.c_str(),
-			paramCount,
-			NULL, // paramTypes
-			paramValues,
-			NULL, // paramLengths
-			paramFormats,
-			FORMAT_BINARY
-	);
-    if(PQresultStatus(result) != PGRES_TUPLES_OK){
-        cerr << "dbclient: Unable to insert frame. Error: " << PQerrorMessage(conn) << endl;
-        return false;
-    }
-
-    // Convert integer value "2" to network byte order
-    //uint32_t binaryIntVal = htonl((uint32_t) 2);
-
-	/*
-
-
-
-	for(auto entry: values){
-
+	static int64_t file_exists(string filename){
+		PGresult* result = DB::query("select name, modified from file where name = $1", {filename});
+		if(result == NULL){
+			cerr << "dbclient: file_exists: Unable to perform query. Aborting" << endl;
+			terminate();
+		}
+		int64_t ret_val;
+		if(PQntuples(result) == 1){
+			ret_val = *((int64_t*)PQgetvalue(result, 0, 1));
+		}else{
+			ret_val = -1;
+		}
+		PQclear(result);
+		return ret_val;
 	}
 
+	bool update(){
+		// 1. Create file entry if this is the start of a new job
+		bool newJob = rrfclient::is_printing() && !rrfclient::was_printing();
+		if(newJob){
+			// 1.1 Create new jobId for insertion into database
+			lastJobId++;
 
-    // Set up parameter arrays for PQexecParams
-    const char *paramValues[] = {(char *) &binaryIntVal};
-    int paramLengths[] = {sizeof(binaryIntVal)};
-    int paramFormats[] = {1};
+			// 1.2 Get filename and date modified of current job file
+			string current_job_filename = rrfclient::get_current_job_filename();
+			int64_t current_job_file_modified = rrfclient::get_current_job_modified();
 
-    )
+			// 1.3. Determine if new file needs to be inserted, adjust filename as needed
+			int64_t existing_file_modified = file_exists(current_job_filename);
+			int iterations = 0;
+			while(existing_file_modified != -1 && existing_file_modified != current_job_file_modified && iterations < 10){
+				current_job_filename += " (1)"; // Keep renaming until unique, if timestamps differ
+				existing_file_modified = file_exists(current_job_filename);
+				iterations++;
+			}
+			if(iterations == 10){ // No more then 10 iterations are reasonable
+				cerr << "dbclient: update: Infinite loop when trying to find unique filename, aborting. Filename: " << current_job_filename << endl;
+				terminate();
+			}
 
-    //PGresult* result = PQexecParams(conn, "SELECT * FROM test1 WHERE i = $1", 1, NULL, paramValues, paramLengths, paramFormats, FORMAT_BINARY);
-		PGresult* res = PQexecParams(conn, "SELECT * FROM test1 WHERE i = $1", 1, NULL, paramValues, paramLengths, paramFormats, FORMAT_BINARY);
+			// 1.4 Insert new file now if needed
+			if(existing_file_modified == -1){
+				PGresult* result = DB::query("insert into file (name, modified, data) values ($1, $2, $3)", {
+						current_job_filename,
+						current_job_file_modified,
+						rrfclient::lastJobFile
+				});
+				if(result == NULL){
+					cerr << "dbclient: update: Error while trying to insert file " << current_job_filename << "(size: " << rrfclient::lastJobFile.size() << ")" << endl;
+					terminate();
+				}
+			}
+		}
 
+		// 2. Insert frame
+		// 2.1. Setup initial parameters
+		int job_id = lastJobId;
+		if(!rrfclient::is_printing()){
+			job_id = INT32_MAX; // Sets job ID to NULL when not printing
+		}
+		string file_name;
+		if(newJob){
+			// Store job filename if this is a new job
+			file_name = rrfclient::get_current_job_filename();
+		}
+		vector<DB::Param> params = {time, job_id, file_name};
 
-    if (PQresultStatus(res) != PGRES_TUPLES_OK){
-        cerr << "dbclient: SELECT failed: " << PQerrorMessage(conn) << endl;
-        PQclear(res);
-        PQfinish(conn);
-        return false;
-    }
+		// 2.2 Use prosurd::values to generate query and append to parameter vector
+		const int FIXED_PARAM_COUNT = 3; // Match with below query
+		const int PARAM_COUNT = FIXED_PARAM_COUNT + prosurd::values.size();
+		string query = "insert into frame (time, job_id, file_name, ";
+		int i = 0;
+		for(auto& [key, value]: prosurd::values){
+			params.push_back(value);
+			query += key;
+			if(i != prosurd::values.size()-1){
+				query += ", ";
+			}
+			i++;
+		}
+		query += ") values (";
+		for(int i = 0; i < PARAM_COUNT; i++){
+			query += "$" + to_string(i+1);
+			if(i != PARAM_COUNT-1){
+				query += ", ";
+			}
+		}
+		query += ")";
 
-    // Get col num
-    int colnum = PQfnumber(res, "mycol");
+		// 2.3 Perform insertion query
+		PGresult* result = DB::query(query, params);
+		if(result == NULL){
+			cerr << "dbclient: update: Failed to perform query: " << query << " with param count " << params.size() << endl;
+			terminate();
+		}
 
-    // Get row count
-    int rowcnt = PQntuples(res);
-
-    // Retrieve data for each row
-    for(int rownum = 0; rownum < rowcnt; rowcnt++){
-        // Get field size
-        int PQgetlength(const PGresult *res, int row_number, int column_number);
-
-        // Get data
-        const char* bptr = PQgetvalue(res, rownum, colnum);
-
-    }
-
-
-    PQclear(res);
-*/
-    return true;
-}
+		PQclear(result);
+		return true;
+	}
 
 }

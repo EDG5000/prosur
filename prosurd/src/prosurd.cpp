@@ -76,7 +76,7 @@ int main() {
 					this_thread::sleep_for(cycleTime);
 					continue;
 				}
-				cout << rrfclient::get_filename() << endl;
+				cout << rrfclient::get_current_job_filename() << endl;
 				terminate();
 				/*
 				if(rrfclient::get_is_printing() && !was_printing){

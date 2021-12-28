@@ -1,6 +1,13 @@
 #pragma once
 
+#include <postgresql/libpq-fe.h>
+
 namespace prosurd::dbclient{
+
+constexpr int FORMAT_TEXT = 0;
+constexpr int FORMAT_BINARY = 1;
+
+extern PGconn* conn;
 
 bool init();
 

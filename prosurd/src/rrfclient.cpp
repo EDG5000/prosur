@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <time.h>
 #include "curl/curl.h"
 #include "json.hpp"
 
@@ -34,7 +35,7 @@ const string KEY_JOB = "job";
 // Object model tree as returned by RepRapFirmware
 json om;
 json om_last; // Set to om from last frame
-vector<char> lastJobFile; // Updated on when transitioned to printing state from previous non-printing state (or when first frame after init is in printing state).
+vector<char> lastJobFile; // Updated when transitioned to printing state from previous non-printing state (or when first frame after init is in printing state).
 
 size_t onReceiveData(void *contents, size_t size, size_t nmemb, std::string *s){
     size_t newLength = size*nmemb;
@@ -101,6 +102,7 @@ json downloadModel(string flags, string key = ""){
 void downloadFile(string fileName){
 	string url = RR_BASE_URL + "rr_download";
 	// TODO consider streaming the data directly to postgres instead of storing and copying in memory
+	// TODO how many copy operations are performed? What is the memory consumption for, say, a 200MB file?
 	string fileData = call(url);
 	lastJobFile.assign(fileData.begin(), fileData.end());
 }
@@ -140,7 +142,7 @@ bool update(){
 	// When in transition from non-printing to printing, Download current job file to memory.
 	if(is_printing() && !was_printing()){
 		// TODO evaluate performance
-		string fileName = get_filename();
+		string fileName = get_current_job_filename();
 		if(fileName == ""){
 			cerr << "rrfclient: error: get_filename returned an empty string. unable to download job file" << endl;
 			return false;
@@ -187,12 +189,30 @@ vector<float> get_temperatures(){
 	return temperatures;
 }
 
-string get_filename(){
+string get_current_job_filename(){
 	try{
 		return om["result"]["file"]["fileName"];
 	}catch(json::exception& e){
 		cerr << "rrfclient: get_filename: error accessing om: " << e.what() << endl;
 		return "";
+	}
+}
+
+int64_t get_current_job_modified(){
+	try{
+		string datetimeString =  om["result"]["file"]["lastModified"];
+		// 2021-07-25T23:25:34
+		//
+		tm datetime;
+		memset(&datetime, 0, sizeof(datetime));
+		char* result = strptime(datetimeString.c_str(), "%Y-%m-%dT%H:%M:%S", &datetime);
+		if(result == NULL || *result != NULL){ // Should not be NULL and should point to the NUL byte at the end of the input string to mark a successfull full parse
+			cerr << "Error, unable to parse date string: " << datetimeString << " (failed at character " << result-datetimeString.c_str() << *result << ")" << endl;
+		}
+		return mktime(&datetime);
+	}catch(json::exception& e){
+		cerr << "rrfclient: get_current_file_name: error accessing om: " << e.what() << endl;
+		return -1;
 	}
 }
 

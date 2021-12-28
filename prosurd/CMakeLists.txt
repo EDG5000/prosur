@@ -32,6 +32,7 @@ src/tmclient.cpp
 src/util.cpp
 src/cclient.cpp
 src/dbclient.cpp
+src/DB.cpp
 
 )
 
