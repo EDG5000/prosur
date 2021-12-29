@@ -20,3 +20,4 @@ webmon/ts/Config.ts
 webmon/mnt-data
 scripts/hc3d-tm.pid
 prosurd/build
+prosurd/build_test
