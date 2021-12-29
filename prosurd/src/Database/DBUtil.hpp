@@ -21,26 +21,34 @@ namespace Prosur::Database::DBUtil{
 	// vector<Param> can be used as parameter like so:
 	// myfunc({1, 3423434, "string", myCharVector})
 	class Param{
-		const int intVal = 0;
-		const int64_t longVal = 0;
-		const string stringVal;
-		const vector<char> binaryVal;
-		const DBParamType type = Int;
+		int intVal = 0;
+		int64_t longVal = 0;
+		string stringVal;
+		vector<char> binaryVal;
+		DBParamType type = Int;
 
 		public:
 
 			// Allows assigning by any of the supported types. Sets the type and value.
-			Param(); // Required to be present when used in std::map.
+			Param(){}; // Required to be present when used in std::map.
 			Param(int64_t pLongVal): longVal(pLongVal), type(Long){}
 			Param(string pStringVal): stringVal(pStringVal), type(String){}
 			Param(int pIntVal): intVal(pIntVal), type(Int){}
 			Param(vector<char> pBinaryVal): binaryVal(pBinaryVal), type(Binary){}
 
 			// TODO is this needed at all?
-			//Param& operator=(int64_t value);
-			//Param& operator=(string value);
-			//Param& operator=(int value);
-			//Param& operator=(vector<char> value);
+			/*Param& operator=(int64_t value){
+
+			}
+			Param& operator=(string value){
+
+			}
+			Param& operator=(int value){
+
+			}
+			Param& operator=(vector<char> value){
+
+			}*/
 
 			// To use in conjuction with operator const char* when obtaining raw data.
 			// TODO can this be removed?
@@ -76,7 +84,7 @@ namespace Prosur::Database::DBUtil{
 			// Allows interpreting as any of the supported types. Will perform runtime check on each access for safety.
 			// TODO can this be made static, perhaps with templates or static_assert?
 			// For large datasets, this will slow down each access
-			operator int() const{
+			operator int(){
 				if(type != Int){
 					// This will slow down accessing of parameters, but better safe than sorry
 					cerr << "DBUtil: Param: Attempt to access Param as int while type is " << type << endl;
@@ -84,7 +92,7 @@ namespace Prosur::Database::DBUtil{
 				}
 				return intVal;
 			}
-			operator int64_t() const{
+			operator int64_t(){
 				if(type != Long){
 					// This will slow down accessing of parameters, but better safe than sorry
 					cerr << "DBUtil: Param: Attempt to access Param as int64_t while type is " << type << endl;
@@ -92,7 +100,7 @@ namespace Prosur::Database::DBUtil{
 				}
 				return longVal;
 			}
-			operator string() const{
+			operator string(){
 				if(type != String){
 					// This will slow down accessing of parameters, but better safe than sorry
 					cerr << "DBUtil: Param: Attempt to access Param as string while type is " << type << endl;
@@ -100,7 +108,7 @@ namespace Prosur::Database::DBUtil{
 				}
 				return stringVal;
 			}
-			operator vector<char>() const{
+			operator vector<char>(){
 				if(type != Binary){
 					// This will slow down accessing of parameters, but better safe than sorry
 					cerr << "DBUtil: Param: Attempt to access Param as vector<char> while type is " << type << endl;

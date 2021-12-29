@@ -11,6 +11,17 @@ using namespace std;
 
 namespace Prosur::Util{
 
+	void swapbytes(char* inp, size_t len){
+	    unsigned int i;
+	    unsigned char* in = (unsigned char *)inp,tmp;
+
+	    for(i=0;i<len/2;i++) {
+	        tmp=*(in+i);
+	        *(in+i)=*(in+len-i-1);
+	        *(in+len-i-1)=tmp;
+	    }
+	}
+
 //https://stackoverflow.com/a/68367878
 void writeDataToFileDebug(vector<uint8_t> data, string filename){
 	std::ofstream out(filename, std::ios::out | std::ios::binary);

@@ -12,27 +12,15 @@
 #include <postgresql/libpq-fe.h>
 #include <postgresql/12/server/catalog/pg_type_d.h> // Nasty
 
+#include "Util/Util.hpp"
+
 using namespace std;
 
 namespace Prosur::Database::DBUtil{
 	constexpr int FORMAT_TEXT = 0;
 	constexpr int FORMAT_BINARY = 1;
 
-
 	PGconn* conn;
-
-	Param::Param(){
-		// Only implemented to conform to std::map requirements.
-		cerr << "Param default constructor not supported" << endl;
-		terminate();
-	}
-
-	//Param::Param(int pIntVal){
-		//intVal = pIntVal;
-
-	//}
-
-
 
 	/*
 	// Could be used for printing param values to log
@@ -94,6 +82,14 @@ namespace Prosur::Database::DBUtil{
 			terminate();
 		}
 
+		// Collect values, store as Param in a vector<map<string, Param>>
+		vector<map<string, Param>> resultData;
+
+		int rows = PQntuples(result);
+		if(rows == 0){
+			return resultData;
+		}
+
 		// Collect field names
 		int columnCount = PQnfields(result);
 		vector<string> columnNames;
@@ -104,30 +100,34 @@ namespace Prosur::Database::DBUtil{
 			fieldTypes[fieldName] = PQftype(result, column);
 		}
 
-		// Collect values, store as Param in a vector<map<string, Param>>
-		vector<map<string, Param>> resultData;
-		for(int row = 0; row < PQntuples(result); row++){
+		// Fill values
+		for(int row = 0; row < rows; row++){
 			map<string, Param> rowData;
 			int column = 0;
 			for(const string& columnName: columnNames){
 				Oid type = fieldTypes[columnName];
 				char* data = PQgetvalue(result, row, column);
+				size_t size = PQgetlength(result, row, column);
+				Util::swapbytes(data, size);
 				switch(type){
 				case INT4OID:
-					//rowData[columnName] = *((int*) data); // implicit Param constructor
+					rowData[columnName] = *((int*) data); // implicit Param constructor
 					break;
 				case INT8OID:
-					//rowData[columnName] = *((int64_t*) data); // implicit Param constructor
+					rowData[columnName] = *((int64_t*) data); // implicit Param constructor
 					break;
-				case BYTEAOID:
-					//rowData[columnName] = (data, PQfsize(result, column)); // implicit Vector constructor, implicit Param constructor
+				case BYTEAOID: {
+					vector<char> dataVector(data, data + size);
+					rowData[columnName] = dataVector;
+					}
 					break;
-				case VARCHAROID:
-					//rowData[columnName] = string(data); // implicit Param constructor
+				case TEXTOID:
+					rowData[columnName] = string(data); // implicit Param constructor
 					break;
 				}
 				column++;
 			}
+			resultData.push_back(rowData);
 		}
 
 		//PQclear(result)

@@ -96,7 +96,7 @@ namespace Prosur::Webserver{
 			string responseBody;
 			for(auto& job: jobs){
 				int64_t time = job["time"];
-				string filename = job["filename"];
+				string filename = job["file_name"];
 				int job_id = job["job_id"];
 				responseBody += "<a href=\"/job?id=" + to_string(job_id) + "\">" + Util::isodatetime(time) + "(" + filename + ").csv</a><br />\n";
 			}
@@ -111,6 +111,7 @@ namespace Prosur::Webserver{
 			MHD_destroy_response (response);
 		}
 
+		return -1;
 	}
 
 	void init(){
@@ -124,6 +125,10 @@ namespace Prosur::Webserver{
 			MHD_OPTION_CONNECTION_TIMEOUT, 256,
 			MHD_OPTION_END
 		);
+		if(daemon == NULL){
+			cerr << "Webserver: Unable to initialize." << endl;
+			terminate();
+		}
 	}
 
 	// Assume MHD is cleaned implicitly up when process exits

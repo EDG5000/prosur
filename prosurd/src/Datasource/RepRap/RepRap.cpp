@@ -155,7 +155,7 @@ namespace Prosur::Datasource::RepRap{
 			tm datetime;
 			memset(&datetime, 0, sizeof(datetime));
 			char* result = strptime(datetimeString.c_str(), "%Y-%m-%dT%H:%M:%S", &datetime);
-			if(result == NULL || *result != NULL){ // Should not be NULL and should point to the NUL byte at the end of the input string to mark a successfull full parse
+			if(result != NULL){ // Should not be NULL and should point to the NUL byte at the end of the input string to mark a successfull full parse
 				cerr << "Error, unable to parse date string: " << datetimeString << " (failed at character " << result-datetimeString.c_str() << *result << ")" << endl;
 			}
 			return mktime(&datetime);

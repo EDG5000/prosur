@@ -6,15 +6,15 @@
 using namespace std;
 
 namespace Prosur::Util{
-
-string isodatetime(); // Generate ISO datetime string from current time
-string isodatetime(int64_t timestamp); // Generate ISO datetime string from unix timestamp in seconds as parameter
-vector<string> strSplit(string str, string delim);
-void replaceAll(string& str, const string& from, const string& to);
-const string urlDecode (const string& str);
-const string urlEncode(const string& s);
-string join(const vector<string>& elems, string delim);
-uint64_t getTimeMillis();
-void writeDataToFileDebug(vector<uint8_t> data, string filename);
+	void swapbytes(char* inp, size_t len);
+	string isodatetime(); // Generate ISO datetime string from current time
+	string isodatetime(int64_t timestamp); // Generate ISO datetime string from unix timestamp in seconds as parameter
+	vector<string> strSplit(string str, string delim);
+	void replaceAll(string& str, const string& from, const string& to);
+	const string urlDecode (const string& str);
+	const string urlEncode(const string& s);
+	string join(const vector<string>& elems, string delim);
+	uint64_t getTimeMillis();
+	void writeDataToFileDebug(vector<uint8_t> data, string filename);
 
 }
