@@ -9,13 +9,20 @@
 
 using namespace std;
 
-namespace Prosur::util{
+namespace Prosur::Util{
 
 //https://stackoverflow.com/a/68367878
 void writeDataToFileDebug(vector<uint8_t> data, string filename){
 	std::ofstream out(filename, std::ios::out | std::ios::binary);
 	out.write(reinterpret_cast<const char*>(data.data()), data.size());
 	out.close();
+}
+
+string isodatetime(int64_t timestamp){
+	struct tm* timeinfo = localtime(&timestamp);
+    char buf[sizeof "2011-10-08T07:07:09Z"];
+    strftime(buf, sizeof buf, "%FT%TZ", localtime(&timestamp));
+    return buf;
 }
 
 string isodatetime(){

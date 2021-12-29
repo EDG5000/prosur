@@ -1,15 +1,9 @@
-# Generate makefiles manually in order to use eclipse to invoke make
-# Select clang or recent GCC before invoking cmake for the first time(optional)
-#export CXX=/usr/bin/g++10
+#cd prosur/prosurd
 #rm -rf build
 #mkdir build
 #cd build
+#export CXX=/usr/bin/g++10
 #cmake ..
-# not causing speedup on 9.3.0, it seems to be used correctly though
-#target_precompile_headers(prosurd PRIVATE src/pch.hpp)
-#appearantly, this is supposed to be used to set c++ standard instead of set():
-#target_compile_features(${TARGET_NAME} PRIVATE cxx_std_17)
-
 
 cmake_minimum_required(VERSION 3.16.3)
 
@@ -22,8 +16,6 @@ option(TEST_MODE_MOCK_INPUT "Compile with all input data replaced with simulated
 #option(TEST_MODE_AUXTEMP "Test Aux. Temperatures client")
 
 set(CMAKE_BUILD_TYPE Debug)
-#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
-#set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -35,14 +27,14 @@ set(
 	SOURCE_FILES
 	
 	src/Main.cpp 
-	src/RepRapClient/RepRapClient.cpp 
 	
-	src/DatabaseClient/DatabaseClient.cpp
-	src/DatabaseClient/DBUtil.cpp
+	src/Datasource/RepRap/RepRap.cpp 
+	
+	src/Webserver/Webserver.cpp
+	src/Database/Database.cpp
+	src/Database/DBUtil.cpp
 	src/Util/Util.cpp
 )
-
-
 
 if (TEST_MODE)
 	add_definitions(-DTEST_MODE)
@@ -53,7 +45,7 @@ if (TEST_MODE)
     	
     	src/Test/AuxTempClientMock.cpp
     	src/Test/CameraClientMock.cpp
-    	src/Test/HTTPMock
+    	src/Test/HTTPMock.cpp
 	)
 else()
 	# Use real input modules
@@ -61,10 +53,9 @@ else()
     	SOURCE_FILES 
     	${SOURCE_FILES} 
     	
-		src/RepRapClient/HTTPUtil.cpp
-		src/AuxTempClient/AuxTempClient.cpp
-		src/CameraClient/CameraClient.cpp
-
+		src/Datasource/RepRap/HTTPUtil.cpp
+		src/Datasource/AuxTemp/AuxTemp.cpp
+		src/Datasource/Camera/Camera.cpp
 	)
 endif()
 

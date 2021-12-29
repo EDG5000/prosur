@@ -5,9 +5,10 @@
 
 using namespace std;
 
-namespace Prosur::util{
+namespace Prosur::Util{
 
-string isodatetime();
+string isodatetime(); // Generate ISO datetime string from current time
+string isodatetime(int64_t timestamp); // Generate ISO datetime string from unix timestamp in seconds as parameter
 vector<string> strSplit(string str, string delim);
 void replaceAll(string& str, const string& from, const string& to);
 const string urlDecode (const string& str);

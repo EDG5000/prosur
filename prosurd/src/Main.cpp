@@ -1,29 +1,31 @@
+/*
+ * Prosur: Production Surveyor
+ * Logs all activity in your additive production facility.
+ */
+
 #include "Main.hpp"
-
-#include "AuxTempClient/AuxTempClient.hpp"
-#include "CameraClient/CameraClient.hpp"
-#include "RepRapClient/RepRapClient.hpp"
-#include "DatabaseClient/DatabaseClient.hpp"
-
-#include <Util/Util.hpp>
-#include <iostream>
-
-#include "inttypes.h"
 
 #include <thread>
 #include <map>
 #include <iostream>
+#include <inttypes.h>
 
+#include <Datasource/Camera/Camera.hpp>
+#include <Database/Database.hpp>
+#include <Datasource/RepRap/RepRap.hpp>
+#include <Datasource/AuxTemp/AuxTemp.hpp>
+#include "Webserver/Webserver.hpp"
+#include <Util/Util.hpp>
+#include <ctime>
 
 using namespace std;
 using namespace Prosur;
 
 namespace Prosur{
 
-
 map<string, int32_t> values;
-vector<char> imageData; // Data from the last-captured image.
-int64_t time; // Updated at beginning of cycle. Used by dbclient. Must be unique across frames. Type matches that of time column in database.
+
+int64_t frameTime = 0; // Updated at beginning of cycle. Used by dbclient. Must be unique across frames. Type matches that of time column in database.
 
 constexpr auto cycleTime = 1000ms;
 
@@ -31,19 +33,22 @@ constexpr auto cycleTime = 1000ms;
 
 
 int main() {
-	/*if(!tmclient::init()){
-		cerr << "main: tmclient init failed." << endl;
-		terminate();
-	}*/
+	Webserver::init();
+	Database::init();
 
-	if(!DatabaseClient::init()){
-		cerr << "main: dbclient init failed." << endl;
-		terminate();
+	while(true){
+		this_thread::sleep_for(Prosur::cycleTime);
 	}
 
 	bool was_printing = false;
 	//thread t{[=]{
 			while(true){
+				#ifdef TEST_MODE
+					frameTime++;
+				#else
+					frameTime = time(NULL);
+				#endif
+
 				// Retrieve aux. temperatures
 				/*if(!tmclient::update()){
 					cerr << "main: tmclient update failed, skipping cycle" << endl;
@@ -51,16 +56,14 @@ int main() {
 					continue;
 				}*/
 				// Store aux. temperatures
-				for(int sensorIndex = 0; sensorIndex < AuxTemp::temperatures.size(); sensorIndex++){
-					values["temp_aux_" + to_string(sensorIndex)] = AuxTemp::temperatures[sensorIndex];
+				for(int sensorIndex = 0; sensorIndex < Datasource::AuxTemp::temperatures.size(); sensorIndex++){
+					values["temp_aux_" + to_string(sensorIndex)] = Datasource::AuxTemp::temperatures[sensorIndex];
 				}
 
+				Datasource::RepRap::update();
+
 				// Insert data from values into database
-				/*if(!dbclient::update()){
-					cerr << "main: dbclient update failed, skipping cycle" << endl;
-					this_thread::sleep_for(cycleTime);
-					continue;
-				}*/
+				Database::update();
 
 
 				/*
@@ -74,13 +77,10 @@ int main() {
 				util::writeDataToFileDebug(cclient::image, "/home/joel/file.jpg");
 				*/
 
-				if(!RepRapClient::update()){
-					cerr << "main: rrfclient experienced failure. skipping cycle." << endl;
-					this_thread::sleep_for(cycleTime);
-					continue;
-				}
-				cout << RepRapClient::get_current_job_filename() << endl;
-				terminate();
+
+
+				//cout << RepRapClient::get_current_job_filename() << endl;
+				//terminate();
 				/*
 				if(rrfclient::get_is_printing() && !was_printing){
 					// Transition to printing
@@ -94,7 +94,10 @@ int main() {
 				*/
 
 				// Store properties of rrclient_om and tmclient_om in frames table
-				this_thread::sleep_for(Prosur::cycleTime);
+				#ifndef TEST_MODE
+					// TODO
+					this_thread::sleep_for(Prosur::cycleTime);
+				#endif
 				// TODO implement timing caluclation to ensure steady .1Hz operation
 			}
 

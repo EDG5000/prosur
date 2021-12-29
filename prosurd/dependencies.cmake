@@ -17,6 +17,10 @@ target_link_libraries(prosurd PUBLIC PkgConfig::libcurl)
 pkg_check_modules(libgphoto2 REQUIRED IMPORTED_TARGET libgphoto2>=2.5.0)
 target_link_libraries(prosurd PUBLIC PkgConfig::libgphoto2)
 
-# libpqxx
+# libpq
 pkg_check_modules(libpq REQUIRED IMPORTED_TARGET libpq>=12.9)
 target_link_libraries(prosurd PUBLIC PkgConfig::libpq)
+
+# libmicrohttpd
+pkg_check_modules(libmicrohttpd REQUIRED IMPORTED_TARGET libmicrohttpd>=0.9)
+target_link_libraries(prosurd PUBLIC PkgConfig::libmicrohttpd)

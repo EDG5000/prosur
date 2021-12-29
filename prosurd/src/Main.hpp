@@ -14,6 +14,6 @@ namespace Prosur{
 extern map<string, int32_t> values;
 
 // Updated at the beginning of the tick by Main. Used elsewhere to determine time of current frame.
-extern int64_t time;
+extern int64_t frameTime;
 
 }
