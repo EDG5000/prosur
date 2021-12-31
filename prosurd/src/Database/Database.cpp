@@ -48,7 +48,6 @@ namespace Prosur::Database{
 			cerr << "DatabaseClient: Unable to obtain latest job_id value. Row count was not 1, but " << result.size()  << endl;
 			terminate();
 		}else if(result.size() == 1){
-			// Dereference, cast, and reverse byte order to little endian.
 			lastJobId = result[0]["job_id"];
 		}
 	}

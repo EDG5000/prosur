@@ -4,6 +4,8 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <arpa/inet.h>
+#include <bit>
 
 #include <postgresql/libpq-fe.h>
 
@@ -68,16 +70,16 @@ namespace Prosur::Database::DBUtil{
 
 			// Allows obtaining as raw data pointer (see size())
 			// TODO can this be removed?
-			operator const char*() const{
+			operator char*() const{
 				switch(type){
 				case Int:
 					return (char*) &intVal;
 				case Long:
-					return (char*) &intVal;
+					return (char*) &longVal;
 				case String:
-					return stringVal.data();
+					return (char*) stringVal.data();
 				case Binary:
-					return binaryVal.data();
+					return (char*) binaryVal.data();
 				}
 			}
 
@@ -115,6 +117,21 @@ namespace Prosur::Database::DBUtil{
 					terminate();
 				}
 				return binaryVal;
+			}
+
+			string toString(){
+				switch(type){
+				case Int:
+					return to_string(intVal);
+				case Long:
+					return to_string(longVal);
+				case String:
+					return stringVal;
+				default:
+				case Binary:
+					cerr << "DBUtil: Calling toString on Param of type Binary is not supported." << endl;
+					terminate();
+				}
 			}
 	};
 

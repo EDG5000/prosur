@@ -21,8 +21,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(vendor src)
 
-#
-#
+# List compilation units
 set( 
 	SOURCE_FILES
 	
@@ -31,6 +30,9 @@ set(
 	src/Datasource/RepRap/RepRap.cpp 
 	
 	src/Webserver/Webserver.cpp
+	src/Webserver/Resources/Frames.cpp
+	src/Webserver/Resources/List.cpp
+	src/Webserver/Resources/File.cpp
 	src/Database/Database.cpp
 	src/Database/DBUtil.cpp
 	src/Util/Util.cpp
@@ -38,7 +40,7 @@ set(
 
 if (TEST_MODE)
 	add_definitions(-DTEST_MODE)
-	# Use mock input modules
+	# Mock data sources used in place of real datasources when in TEST_MODE
     set(
     	SOURCE_FILES 
     	${SOURCE_FILES} 
@@ -48,7 +50,7 @@ if (TEST_MODE)
     	src/Test/HTTPMock.cpp
 	)
 else()
-	# Use real input modules
+	# Compile real data sources when not in TEST_MODE
 	set(
     	SOURCE_FILES 
     	${SOURCE_FILES} 

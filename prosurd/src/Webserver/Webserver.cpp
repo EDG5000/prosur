@@ -3,57 +3,148 @@
  * This is free software; see the source for copying conditions.  There is NO
  * warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
+/*
+ * Webserver: Listen for HTTP GET requests on TCP port 80
+ * Respond to requests by invoking the relevant resource handler function
+ * URI Query parameters are passed to the resource handler for processing
+ */
 
 #include "Webserver/Webserver.hpp"
 
 #include <iostream>
+#include <string>
+#include <map>
 #include <sys/types.h>
 #include <sys/select.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
-#include <microhttpd.h>
-#include <string>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <limits.h>
+#include <thread>
 
 #include "Database/DBUtil.hpp"
 #include "Util/Util.hpp"
+#include <Webserver/Resources/Frames.hpp>
+#include "Webserver/Resources/List.hpp"
+#include "Webserver/Resources/File.hpp"
 
 using namespace std;
 
 namespace Prosur::Webserver{
 
-	constexpr int PORT = 8080;
-	constexpr int BUF_SIZE = 1024;
-	constexpr int MAX_URL_LEN = 255;
-	string ERROR_PAGE = "<html><head><title>File not found</title></head><body><h1>HTTP 404: File not found</h1></body></html>";
-	enum Mode{
-		List, // List jobs
-		Job, // Download data for job
-		Range // Download all data within time range, also when not printing
+	constexpr int SERVER_PORT = 8080;
+	constexpr int BUFSIZE = 4096;
+	constexpr int SERVER_BACKLOG = 100;
+
+	typedef struct sockaddr_in SA_IN;
+	typedef struct sockaddr SA;
+
+	/*
+		GET /job?job_id=51 HTTP/1.1
+		User-Agent: PostmanRuntime/7.28.4
+		Accept: /
+		Postman-Token: 6c19b3b4-d1c7-442f-9dc7-628c703eb505
+		Host: localhost:8080
+		Accept-Encoding: gzip, deflate, br
+		Connection: keep-alive
+	 */
+
+	// Resources requested over HTTP are provided to the client by the relevant handler function
+	// - The key is the resource/document/filename component of the URI.
+	// - The map<string,string> argument contains query string parameters.
+	// - Return type is HTTP status code.
+	// - The string is used to write the response body.
+	map<string, int(*)(string&, map<string,string>)> resourceHandlers = {
+		{"list", Resources::List::run}, // Default action (index). List all jobs.
+		{"frames", Resources::Frames::run}, // Get all frames for given job_id or all frames between start and end time (includes frames when printer was idle)
+		{"file", Resources::File::run}, // Download job file or still image taken at given frame ID
 	};
 
-	struct MHD_Daemon* daemon;
-
-	static int respondWithError(MHD_Connection* connection, int httpCode){
-		struct MHD_Response* response = MHD_create_response_from_buffer(ERROR_PAGE.size(), (void*) ERROR_PAGE.c_str(), MHD_RESPMEM_PERSISTENT);
-		return MHD_queue_response (connection, httpCode, response);
+	// Write response HTTP header and body with provided HTTP status code and response body
+	static void sendResponse(int client_socket, int httpCode, string& responseBody){
+		// Send response header
+		string responseHeader = "HTTP/1.1 " + to_string(httpCode) + " OK\r\n\r\n";
+		write(client_socket, responseHeader.c_str(), responseHeader.size());
+		// Send response body
+		write(client_socket, responseBody.c_str(), responseBody.size());
+		close(client_socket);
 	}
 
-	static int accessHandler (void* cls, struct MHD_Connection* connection, const char* pUrl, const char* method, const char* version, const char* upload_data, size_t* upload_data_size, void** ptr){
-		string url = string(pUrl); // e.g. /list
+	// Process incoming TCP connection; read and process HTTP request data
+	static void handleConnection(int clientSocket){
+		char buffer[BUFSIZE];
+		size_t bytesRead = 0;
+		int requestSize = 0;
+		//char actualPath[PATH_MAX+1];
+		bool initial = true;
+		// TODO Implement timeout if no data is received?
+		// TODO it is not waiting for EOF to detect end of HTTP request. Yet, it works fine?! Perhaps this is by chance?
+		while(initial || bytesRead > 0){
+			initial = false;
+			bytesRead = read(
+				clientSocket, // fd
+				(void*) (buffer + requestSize), // buf
+				sizeof(buffer)-requestSize-1 // nbytes
+			);
+			if(bytesRead < 0){
+				cerr << "Webserver: Received error while reading request data. Error code: " + to_string(bytesRead) << endl;
+				return;
+			}
+			requestSize += bytesRead;
+			if(requestSize > BUFSIZE-1 || buffer[requestSize-1] == '\n'){
+				break;
+			}
+		}
 
-		// 1. Obtain request document and parameters. Either may be empty.
-		// 1.1. Declare variables
-		string requestDocument;
-		map<string,string> requestParameters; // Store request params, if present
+		// Request cannot be empty
+		if(requestSize == 0){
+			string error = "Webserver: Error: request size is 0.";
+			cerr << error << endl;
+			sendResponse(clientSocket, HTTP_BAD_REQUEST, error);
+			return;
+		}
 
-		// 1.2. Attempt to split the URI into document name and query string
+		// Limit request size to 1000 bytes
+		if(requestSize > 1000){
+			string error = "Webserver: Error: request size exceeds 1000. Size: " + to_string(requestSize);
+			cerr << error << endl;
+			sendResponse(clientSocket, HTTP_BAD_REQUEST, error);
+			return;
+		}
+
+		// Create string from request buffer
+		string requestData = string(buffer, requestSize);
+
+		// Split header into lines, check for at least one line (HTTP status line)
+		vector<string> headerLines = Util::strSplit(requestData, "\r\n");
+		if(headerLines.size() == 0){
+			string error = "Webserver: Request header line count expected to be at least 1. Request data: " + requestData ;
+			cerr << error << endl;
+			sendResponse(clientSocket, HTTP_BAD_REQUEST, error);
+			return;
+		}
+
+		// Parse HTTP status line
+		string statusLine = headerLines[0];
+		vector<string> statusComponents = Util::strSplit(statusLine, " ");
+		if(statusComponents.size() != 3){
+			string error = "Webserver: Expected request status line component count to be 3, Status line was: " + statusLine;
+			cerr << error << endl;
+			sendResponse(clientSocket, HTTP_BAD_REQUEST, error);
+			return;
+		}
+
+		// Parse URL to extract document name and query string (both optional)
+		string url = statusComponents[1];
 		vector<string> urlSplit = Util::strSplit(url, "?");
 
-		// 1.3. Extract document name (may be empty) from URL
-		requestDocument = urlSplit[0];
-		Util::replaceAll(requestDocument, "/", ""); // Remove preceding slash from URL
+		// Extract document name (may be empty) from URL
+		string resourceName = urlSplit[0];
+		Util::replaceAll(resourceName, "/", ""); // Remove preceding slash from URL
 
-		// 1.4 Parse query string, if present
+		// Parse query string, if present
+		map<string, string> requestParameters;
 		if(urlSplit.size() > 1){
 			// Extract query string into requestParameters map
 			string queryString = urlSplit[1];
@@ -61,8 +152,10 @@ namespace Prosur::Webserver{
 			for(const string& pair: pairs){
 				vector<string> pairElements = Util::strSplit(pair, "=");
 				if(pairElements.size() != 2){
-					cerr << "Webserver: Error: Malformed URI. Pair element count expected to be 2. Source pair: " << pair << "Total URL: " << url << endl;
-					return respondWithError(connection, MHD_HTTP_BAD_REQUEST);
+					string error = "Webserver: Error: Malformed URI. Pair element count expected to be 2. Source pair: " + pair + "Total URL: " + url;
+					cerr << error << endl;
+					sendResponse(clientSocket, HTTP_BAD_REQUEST, error);
+					return;
 				}
 				string key = pairElements[0];
 				string value = pairElements[1];
@@ -70,71 +163,82 @@ namespace Prosur::Webserver{
 			}
 		}
 
-		// 2. Select mode
-		Mode mode;
-		if(requestDocument == "job"){
-			mode = Job;
-		}else if(requestDocument == "range"){
-			mode = Range;
-		}else{
-			// No document provided defaults to listing of jobs
-			// This is behaviour clients may depend on
-			mode = List;
+		// Default resource is "list"
+		if(resourceName == ""){
+			resourceName = "list";
 		}
 
-		if(mode == List){
-			// Perform query extracting records each representing a job
-			// We are only interested in job_id, plus 2 descriptive labels (time and filename)
-			auto jobs = Database::DBUtil::query(
-				"select time, file_name, job_id from frame"\
-				" where job_id is not null"\
-				" group by job_id, time"\
-				" order by job_id desc"\
-				, {}
-			);
-
-			string responseBody;
-			for(auto& job: jobs){
-				int64_t time = job["time"];
-				string filename = job["file_name"];
-				int job_id = job["job_id"];
-				responseBody += "<a href=\"/job?id=" + to_string(job_id) + "\">" + Util::isodatetime(time) + "(" + filename + ").csv</a><br />\n";
-			}
-			struct MHD_Response* response = MHD_create_response_from_buffer(responseBody.size(), (void*) responseBody.c_str(), MHD_RESPMEM_MUST_COPY);
-			int ret = MHD_queue_response (connection, MHD_HTTP_OK, response);
-			MHD_destroy_response (response);
-			return ret;
-		}else if(mode == Job){
-			string responseBody = "<h1>HTTP -1 Not Implemented</h1>";
-			struct MHD_Response* response = MHD_create_response_from_buffer(responseBody.size(), (void*) responseBody.c_str(), MHD_RESPMEM_MUST_COPY);
-			int ret = MHD_queue_response (connection, MHD_HTTP_NETWORK_AUTHENTICATION_REQUIRED, response);
-			MHD_destroy_response (response);
+		// Detect non-existing document
+		if(!resourceHandlers.contains(resourceName)){
+			string error = "Webserver: Error: Resource not found: " + resourceName;
+			cerr << error << endl;
+			sendResponse(clientSocket, HTTP_NOT_FOUND, error);
+			return;
 		}
 
-		return -1;
+		// Call appropriate resource handler to obtain response body and HTTP code
+		string responseBody;
+		int httpCode = resourceHandlers[resourceName](responseBody, requestParameters);
+
+		// Respond
+		sendResponse(clientSocket, httpCode, responseBody);
 	}
 
 	void init(){
-		daemon = MHD_start_daemon(
-			MHD_USE_THREAD_PER_CONNECTION | MHD_USE_INTERNAL_POLLING_THREAD | MHD_USE_DEBUG, // flags
-			PORT,
-			NULL, // Accept Policy Callback
-			NULL, // Accept Policy Callback Argument
-			&accessHandler,
-			NULL, // Access Handler Argument
-			MHD_OPTION_CONNECTION_TIMEOUT, 256,
-			MHD_OPTION_END
-		);
-		if(daemon == NULL){
-			cerr << "Webserver: Unable to initialize." << endl;
-			terminate();
-		}
-	}
+		// Start thread, listen for incoming connections
+		// Invoke handleConnection for each connection
+		// TODO handle requests in a separate thread for each request?
+		thread([]{
 
-	// Assume MHD is cleaned implicitly up when process exits
-	/*void deinit(){
-		MHD_stop_daemon (TLS_daemon);
-	}*/
+			// 1. Setup; get local address
+			int serverSocket, clientSocket;
+			int addrSize;
+			SA_IN serverAddr, clientAddr;
+			serverAddr.sin_family = AF_INET;
+			serverAddr.sin_addr.s_addr= INADDR_ANY;
+			serverAddr.sin_port = htons(SERVER_PORT);
+
+			// 2. Create socket
+			serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+			if(serverSocket < 0){
+				cerr << "Failed to create socket. Error code: " << to_string(serverSocket) << endl;
+				terminate();
+			}
+
+			// Enable SO_REUSEADDR setting to disable socket reuse cooldown period
+			int enable = 1;
+			if(setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0){
+				cerr << "Failed to enable SO_REUSEADDR. Error code: " << to_string(serverSocket) << endl;
+				terminate();
+			}
+
+			// 3. Bind socket
+			int result = bind(serverSocket, (SA*)&serverAddr, sizeof(serverAddr));
+			if(result < 0){
+				cerr << "Webserver: Unable to bind to socket. Error code: " << to_string(result) << endl;
+				terminate();
+			}
+
+			// 4. Start listening
+			result = listen(serverSocket, SERVER_BACKLOG);
+			if(result < 0){
+				cerr << "Webserver: Unable to listen to socket. Error code: " << to_string(result) << endl;
+				terminate();
+			}
+
+			while(true){
+				addrSize = sizeof(SA_IN);
+				clientSocket = accept(
+					serverSocket, // fd
+					(SA*) &clientAddr, // sockaddr
+					(socklen_t*) &addrSize // socklen
+				);
+				// TODO start a thread per request
+				handleConnection(clientSocket);
+
+			}
+		}).detach();
+	}
 }
 
 

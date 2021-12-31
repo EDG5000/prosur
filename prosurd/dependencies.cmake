@@ -3,7 +3,7 @@ find_package(PkgConfig REQUIRED)
 # pthreads
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-link_libraries(Threads::Threads)
+target_link_libraries(prosurd PUBLIC Threads::Threads)
 
 # pthreads
 #pkg_check_modules(pthread-stubs REQUIRED IMPORTED_TARGET pthread-stubs>=0.4)
@@ -20,7 +20,3 @@ target_link_libraries(prosurd PUBLIC PkgConfig::libgphoto2)
 # libpq
 pkg_check_modules(libpq REQUIRED IMPORTED_TARGET libpq>=12.9)
 target_link_libraries(prosurd PUBLIC PkgConfig::libpq)
-
-# libmicrohttpd
-pkg_check_modules(libmicrohttpd REQUIRED IMPORTED_TARGET libmicrohttpd>=0.9)
-target_link_libraries(prosurd PUBLIC PkgConfig::libmicrohttpd)

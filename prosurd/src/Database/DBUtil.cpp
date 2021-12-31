@@ -37,7 +37,6 @@ namespace Prosur::Database::DBUtil{
 	*/
 
 	void connect(string connectionString){
-
 		conn = PQconnectdb(connectionString.c_str());
 
 		// Check to see that the backend connection was successfully made
@@ -49,12 +48,10 @@ namespace Prosur::Database::DBUtil{
 	}
 
 	vector<map<string, Param>> query(string query, vector<Param> params){
-		// TODO reverse byte order? //uint32_t binaryIntVal = htonl((uint32_t) 2);
-
 		// Initialize arrays
 		int paramFormats[params.size()];
 		int paramLengths[params.size()];
-		const char* paramValues[params.size()];
+		char* paramValues[params.size()];
 
 		// Fill arrays
 		int i = 0;
@@ -63,6 +60,11 @@ namespace Prosur::Database::DBUtil{
 			paramLengths[i] = param.size();
 			paramValues[i] = param; // TODO does byte order have to be reversed?
 			i++;
+		}
+
+		// Swap byte order
+		for(int i = 0; i < params.size(); i++){
+			Util::swapbytes(paramValues[i], paramLengths[i]);
 		}
 
 		// Perform query
@@ -77,8 +79,9 @@ namespace Prosur::Database::DBUtil{
 				FORMAT_BINARY
 		);
 
+		// Check for query error
 		if(PQresultStatus(result) != PGRES_TUPLES_OK){
-			cerr << "DBUtil: Query failed. Error: " << getError() << endl;
+			cerr << "DBUtil: Query failed. Error: " << getError() << " Query was: " << query << endl;
 			terminate();
 		}
 
@@ -105,10 +108,18 @@ namespace Prosur::Database::DBUtil{
 			map<string, Param> rowData;
 			int column = 0;
 			for(const string& columnName: columnNames){
+				if(PQgetisnull(result, row, column)){
+					continue;
+				}
 				Oid type = fieldTypes[columnName];
 				char* data = PQgetvalue(result, row, column);
 				size_t size = PQgetlength(result, row, column);
-				Util::swapbytes(data, size);
+				if(type != TEXTOID){
+					// For some reason, TEXT is not swapped, but INT4 and INT8 come in network byte order and need to be swapped to little endian.
+					// TODO how about BYTEA?! Currently, it is swapped.
+					Util::swapbytes(data, size);
+				}
+
 				switch(type){
 				case INT4OID:
 					rowData[columnName] = *((int*) data); // implicit Param constructor
