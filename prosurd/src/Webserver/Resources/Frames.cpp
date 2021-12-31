@@ -29,6 +29,7 @@
 
 #include "Webserver/Webserver.hpp"
 #include "Database/DBUtil.hpp"
+#include "Webserver/HTTPResponseBody.hpp"
 
 using namespace std;
 
@@ -53,7 +54,7 @@ namespace Prosur::Webserver::Resources::Frames{
 			{Job, {"job_id"}}
 	};
 
-	int run(string& responseData, map<string,string> parameters){
+	int run(HTTPResponseBody& responseBody, map<string,string> parameters){
 
 		// Check integer-params to be valid integers, when present. Store in map.
 		vector<string> integerKeys = {"job_id", "start", "end", "modulus"};
@@ -65,28 +66,28 @@ namespace Prosur::Webserver::Resources::Frames{
 			try{
 				numericParameters[key] = stoi(parameters[key]);
 			}catch(const exception& e){
-				responseData = "Webserver: Error: "+key+" parameter is non-numeric. reason: " + string(e.what());
-				cerr << responseData << endl;
+				responseBody = "Webserver: Error: "+key+" parameter is non-numeric. reason: " + string(e.what());
+				cerr << responseBody << endl;
 				return HTTP_BAD_REQUEST;
 			}
 			if(numericParameters[key] < 0){
-				responseData = "Webserver: Error: "+key+" parameter is lower than 0. Value: " + to_string(numericParameters[key]);
-				cerr << responseData << endl;
+				responseBody = "Webserver: Error: "+key+" parameter is lower than 0. Value: " + to_string(numericParameters[key]);
+				cerr << responseBody << endl;
 				return HTTP_BAD_REQUEST;
 			}
 		}
 
 		// Validate the mode param, which is mandatory
 		if(!parameters.contains("mode")){
-			responseData = "Webserver: Error: mode parameter not present, while it is mandatory.";
-			cerr << responseData << endl;
+			responseBody = "Webserver: Error: mode parameter not present, while it is mandatory.";
+			cerr << responseBody << endl;
 			return HTTP_BAD_REQUEST;
 		}
 
 		// Check if mode param is one of available options
 		if(!MODE_VALUES.contains(parameters["mode"])){
-			responseData = "Webserver: Unknown mode selected: " + parameters["mode"];
-			cerr << responseData << endl;
+			responseBody = "Webserver: Unknown mode selected: " + parameters["mode"];
+			cerr << responseBody << endl;
 			return HTTP_BAD_REQUEST;
 		}
 
@@ -96,8 +97,8 @@ namespace Prosur::Webserver::Resources::Frames{
 		// Check for presence of available parameters based on selected Mode
 		for(const auto& key: MANDATORY_PARAMETERS.at(mode)){
 			if(!numericParameters.contains(key)){
-				responseData = "Webserver: Parameter " + key + " was not present, it is mandatory for the selected mode";
-				cerr << responseData << endl;
+				responseBody = "Webserver: Parameter " + key + " was not present, it is mandatory for the selected mode";
+				cerr << responseBody << endl;
 				return HTTP_BAD_REQUEST;
 			}
 		}
@@ -107,8 +108,8 @@ namespace Prosur::Webserver::Resources::Frames{
 		if(numericParameters.contains("modulus")){
 			modulus = numericParameters["modulus"];
 			if(modulus == 0){
-				responseData = "Webserver: Error: modulus parameter needs to be at least 1. Value: " + to_string(numericParameters["modulus"]);
-				cerr << responseData << endl;
+				responseBody = "Webserver: Error: modulus parameter needs to be at least 1. Value: " + to_string(numericParameters["modulus"]);
+				cerr << responseBody << endl;
 				return HTTP_BAD_REQUEST;
 			}
 		}
@@ -154,19 +155,19 @@ namespace Prosur::Webserver::Resources::Frames{
 		for(auto& [key, value]: frames[0]){
 			if(first){
 				first = false;
-				responseData = key;
+				responseBody = key;
 			}else{
-				responseData += "\t" + key;
+				responseBody += "\t" + key;
 			}
 		}
-		responseData += "\n";
+		responseBody += "\n";
 
 		// Append lines with tab-separated values
 		for(auto& frame: frames){
 			for(auto& [key, value]: frame){
-				responseData += value.toString() + "\t";
+				responseBody += value.toString() + "\t";
 			}
-			responseData += "\n";
+			responseBody += "\n";
 		}
 
 		return HTTP_OK;

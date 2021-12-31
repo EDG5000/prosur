@@ -9,14 +9,16 @@
 #include <sstream>
 #include <ctime>
 #include <climits>
+
+#include <time.h>
 #include <arpa/inet.h>
 
 #include <postgresql/libpq-fe.h>
 
-#include <Main.hpp>
-#include <Datasource/RepRap/RepRap.hpp>
-#include <Database/DBUtil.hpp>
-#include <time.h>
+#include "Main.hpp"
+#include "Datasource/RepRap/RepRap.hpp"
+#include "Database/DBUtil.hpp"
+#include <Database/DBParam.hpp>
 
 using namespace std;
 
@@ -107,7 +109,7 @@ namespace Prosur::Database{
 			job_id = INT32_MAX; // Sets job ID to NULL when not printing
 		}
 
-		vector<DBUtil::Param> params = {frameTime, job_id, current_job_filename}; // Filename is filled when it is the first frame of the job. DBUtil will store NULLs in DB.
+		vector<DBParam> params = {frameTime, job_id, current_job_filename}; // Filename is filled when it is the first frame of the job. DBUtil will store NULLs in DB.
 
 		// 2.2 Use prosurd::values to generate query and append to parameter vector
 		const int FIXED_PARAM_COUNT = 3; // Match with below query

@@ -28,6 +28,7 @@
 #include <Webserver/Resources/Frames.hpp>
 #include "Webserver/Resources/List.hpp"
 #include "Webserver/Resources/File.hpp"
+#include "Webserver/HTTPResponseBody.hpp"
 
 using namespace std;
 
@@ -54,20 +55,28 @@ namespace Prosur::Webserver{
 	// - The key is the resource/document/filename component of the URI.
 	// - The map<string,string> argument contains query string parameters.
 	// - Return type is HTTP status code.
-	// - The string is used to write the response body.
-	map<string, int(*)(string&, map<string,string>)> resourceHandlers = {
+	// - The response body has to be written either to the string argument or to the vector<char> argument.
+	map<string, int(*)(HTTPResponseBody&, map<string,string>)> resourceHandlers = {
 		{"list", Resources::List::run}, // Default action (index). List all jobs.
 		{"frames", Resources::Frames::run}, // Get all frames for given job_id or all frames between start and end time (includes frames when printer was idle)
 		{"file", Resources::File::run}, // Download job file or still image taken at given frame ID
 	};
 
 	// Write response HTTP header and body with provided HTTP status code and response body
-	static void sendResponse(int client_socket, int httpCode, string& responseBody){
+	// Either stringResponseBody or binaryResponseBody should have non-zero length
+	static void sendResponse(int client_socket, int httpCode, HTTPResponseBody& responseBody){
 		// Send response header
 		string responseHeader = "HTTP/1.1 " + to_string(httpCode) + " OK\r\n\r\n";
 		write(client_socket, responseHeader.c_str(), responseHeader.size());
 		// Send response body
-		write(client_socket, responseBody.c_str(), responseBody.size());
+		if(responseBody.stringData.size() > 0){
+			// Send the response body string
+			write(client_socket, responseBody.stringData.c_str(), responseBody.stringData.size());
+		}else if(responseBody.binaryData.size() > 0){
+			// Send the response body binary data
+			write(client_socket, responseBody.binaryData.data(), responseBody.binaryData.size());
+		}
+
 		close(client_socket);
 	}
 
@@ -177,7 +186,7 @@ namespace Prosur::Webserver{
 		}
 
 		// Call appropriate resource handler to obtain response body and HTTP code
-		string responseBody;
+		HTTPResponseBody responseBody;
 		int httpCode = resourceHandlers[resourceName](responseBody, requestParameters);
 
 		// Respond

@@ -1,5 +1,10 @@
 #pragma once
 
+#include <vector>
+#include <string>
+
+using namespace std;
+
 namespace Prosur::Webserver{
 	constexpr int HTTP_OK = 200;
 	constexpr int HTTP_BAD_REQUEST = 400;

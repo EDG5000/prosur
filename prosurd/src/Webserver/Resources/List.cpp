@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace Prosur::Webserver::Resources::List{
-	int run(string& responseData, map<string,string> parameters){
+	int run(HTTPResponseBody& responseBody, map<string,string> params){
 		// Perform query extracting records each representing a job
 		// We are only interested in job_id, plus 2 descriptive labels (time and filename)
 		auto jobs = Database::DBUtil::query(
@@ -25,7 +25,7 @@ namespace Prosur::Webserver::Resources::List{
 			int64_t time = job["time"];
 			string filename = job["file_name"];
 			int job_id = job["job_id"];
-			responseData += "<a href=\"/job?id=" + to_string(job_id) + "\">" + Util::isodatetime(time) + "(" + filename + ").csv</a><br />\n";
+			responseBody += string("<a href=\"/job?id=" + to_string(job_id) + "\">" + Util::isodatetime(time) + "(" + filename + ").csv</a><br />\n");
 		}
 
 		return HTTP_OK;

@@ -6,5 +6,5 @@
 using namespace std;
 
 namespace Prosur::Webserver::Resources::File{
-	int run(string& responseData, map<string,string> parameters);
+	int run(HTTPResponseBody& responseBody, map<string,string> params);
 }

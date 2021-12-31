@@ -11,9 +11,9 @@
 using namespace std;
 
 namespace Prosur::Webserver::Resources::File{
-	int run(string& responseData, map<string,string> parameters){
-		responseData = "<h1>Not Implemented</h1>";
-		cerr << "Not implemented" << endl;
+	int run(HTTPResponseBody& responseBody, map<string,string> params){
+		responseBody.stringData = "Not Implemented";
+		cerr << responseBody.stringData << endl;
 		return HTTP_INTERNAL_SERVER_ERROR;
 	}
 }

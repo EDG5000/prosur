@@ -13,6 +13,7 @@
 #include <postgresql/12/server/catalog/pg_type_d.h> // Nasty
 
 #include "Util/Util.hpp"
+#include <Database/DBParam.hpp>
 
 using namespace std;
 
@@ -47,7 +48,7 @@ namespace Prosur::Database::DBUtil{
 		}
 	}
 
-	vector<map<string, Param>> query(string query, vector<Param> params){
+	vector<map<string, DBParam>> query(string query, vector<DBParam> params){
 		// Initialize arrays
 		int paramFormats[params.size()];
 		int paramLengths[params.size()];
@@ -55,7 +56,7 @@ namespace Prosur::Database::DBUtil{
 
 		// Fill arrays
 		int i = 0;
-		for(const Param& param: params){
+		for(const DBParam& param: params){
 			paramFormats[i] = FORMAT_BINARY;
 			paramLengths[i] = param.size();
 			paramValues[i] = param; // TODO does byte order have to be reversed?
@@ -86,7 +87,7 @@ namespace Prosur::Database::DBUtil{
 		}
 
 		// Collect values, store as Param in a vector<map<string, Param>>
-		vector<map<string, Param>> resultData;
+		vector<map<string, DBParam>> resultData;
 
 		int rows = PQntuples(result);
 		if(rows == 0){
@@ -105,7 +106,7 @@ namespace Prosur::Database::DBUtil{
 
 		// Fill values
 		for(int row = 0; row < rows; row++){
-			map<string, Param> rowData;
+			map<string, DBParam> rowData;
 			int column = 0;
 			for(const string& columnName: columnNames){
 				if(PQgetisnull(result, row, column)){
