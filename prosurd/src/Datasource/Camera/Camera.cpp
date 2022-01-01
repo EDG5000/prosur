@@ -54,27 +54,27 @@ void update(){
 		cerr << "cclclient: gphoto2 error: " << domain << " " << str << " " << data << endl;
 	}, 0);
 	if(retval < GP_OK) {
-		cerr << "cclient: unable to add log func, error code: " << retval << endl;
+		cerr << "Camera: unable to add log func, error code: " << retval << endl;
 		return false;
 	}else{
-		cout << "cclient: log function added." << endl;
+		cout << "Camera: log function added." << endl;
 	}
 	*/
 
 	int retval = gp_camera_new(&camera);
 	if(retval < GP_OK) {
-		cerr << "cclient: unable to create new camera, error code: " << retval << endl;
+		cerr << "Camera: unable to create new camera, error code: " << retval << endl;
 		terminate();
 	}else{
-		cout << "cclient: camera created." << endl;
+		cout << "Camera: camera created." << endl;
 	}
 
 	retval = gp_camera_init(camera, context);
 	if(retval < GP_OK) {
-		cerr << "cclient: unable to init camera, error code: " << retval << endl;
+		cerr << "Camera: unable to init camera, error code: " << retval << endl;
 		terminate();
 	}else{
-		cout << "cclient: camera initialized." << endl;
+		cout << "Camera: camera initialized." << endl;
 	}
 
 	/* optional: set camera config
@@ -92,25 +92,25 @@ void update(){
 	CameraFilePath remotePath;
 	retval = gp_camera_capture(camera, GP_CAPTURE_IMAGE, &remotePath, context);
 	if(retval < GP_OK){
-		cerr << "cclient: gphoto2: unable to capture image, return code " << retval << endl;
+		cerr << "Camera: unable to capture image, return code " << retval << endl;
 		terminate();
 	}else{
-		cout << "cclient: gphoto2: gp_camera_capture complete." << endl;
+		cout << "Camera: gp_camera_capture complete." << endl;
 	}
 
 	// Download captured image
 	CameraFile* cameraFile;
 	retval = gp_file_new(&cameraFile);
 	if(retval < GP_OK){
-		cerr << "cclient: gphoto2: gp_file_new failed with error code " << retval << endl;
+		cerr << "Camera: gp_file_new failed with error code " << retval << endl;
 		terminate();
 	}else{
-		cout << "cclient: gphoto2: gp_file_new complete." << endl;
+		cout << "Camera: gp_file_new complete." << endl;
 	}
 
 	retval = gp_camera_file_get(camera, remotePath.folder, remotePath.name, GP_FILE_TYPE_NORMAL, cameraFile, context);
 	if(retval < GP_OK){
-		cerr << "cclient: gphoto2: gp_camera_file_get failed with error code " << retval << endl;
+		cerr << "Camera: gp_camera_file_get failed with error code " << retval << endl;
 		gp_file_free(cameraFile);
 		terminate();
 	}
@@ -120,7 +120,7 @@ void update(){
 	unsigned long int size;
 	retval = gp_file_get_data_and_size(cameraFile, &data, &size);
 	if(retval < GP_OK){
-		cerr << "cclient: gphoto2: unable to get image data data and size, return code " << retval << endl;
+		cerr << "Camera: unable to get image data data and size, return code " << retval << endl;
 		terminate();
 	}
 

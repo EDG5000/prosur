@@ -19,6 +19,7 @@
 #include "Datasource/RepRap/RepRap.hpp"
 #include "Database/DBUtil.hpp"
 #include <Database/DBParam.hpp>
+#include "Util/Util.hpp"
 
 using namespace std;
 
@@ -26,6 +27,9 @@ namespace Prosur::Database{
 	// Set to latest inserted job at startup, incremented at runtime prior to insertion of a new job's first frame.
 	// Is written to each frame as long as RepRapClient::is_printing.
 	int lastJobId = -1;
+
+	map<string, int32_t> numericValues;
+	map<string, vector<char>> binaryValues; // Used for stills in JPEG format, such as the "still_0" column
 
 	void init(){
 		// As no host is supplied, libpq will connect using UNIX-domain socket for optimal performance.
@@ -63,14 +67,14 @@ namespace Prosur::Database{
 	}
 
 	void update(){
-		// 1. Create file entry if this is the start of a new job
+		// Create file entry if this is the start of a new job
 		bool newJob = Datasource::RepRap::is_printing() && !Datasource::RepRap::was_printing();
 		string current_job_filename;
 		if(newJob){
-			// 1.1 Create new jobId for insertion into database
+			// Create new jobId for insertion into database
 			lastJobId++;
 
-			// 1.2 Get filename and date modified of current job file
+			// Get filename and date modified of current job file
 			string current_job_filename = Datasource::RepRap::get_current_job_filename();
 			if(current_job_filename == ""){
 				cerr << "DatabaseClient: update: Error: get_current_job_filename returned empty string, cannot insert job." << endl;
@@ -79,7 +83,7 @@ namespace Prosur::Database{
 
 			int64_t current_job_file_modified = Datasource::RepRap::get_current_job_modified();
 
-			// 1.3. Determine if new file needs to be inserted, adjust filename as needed
+			// Determine if new file needs to be inserted, adjust filename as needed
 			int64_t existing_file_modified = file_exists(current_job_filename);
 			int iterations = 0;
 			while(existing_file_modified != -1 && existing_file_modified != current_job_file_modified && iterations < 10){
@@ -92,7 +96,7 @@ namespace Prosur::Database{
 				terminate();
 			}
 
-			// 1.4 Insert new file now if needed
+			// Insert new file now if needed
 			if(existing_file_modified == -1){
 				DBUtil::query("insert into file (name, modified, data) values ($1, $2, $3)", {
 						current_job_filename,
@@ -102,39 +106,44 @@ namespace Prosur::Database{
 			}
 		}
 
-		// 2. Insert frame
-		// 2.1. Setup initial parameters
+		// Get job_id
 		int job_id = lastJobId;
 		if(!Datasource::RepRap::is_printing()){
 			job_id = INT32_MAX; // Sets job ID to NULL when not printing
 		}
 
+		// Build column list
+		vector<string> columns = {"time", "job_id", "file_name"};
+		for(auto& [key, value]: numericValues){
+			columns.push_back(key);
+		}
+		for(auto& [key, value]: binaryValues){
+			columns.push_back(key);
+		}
+
+		// Build parameter value list
 		vector<DBParam> params = {frameTime, job_id, current_job_filename}; // Filename is filled when it is the first frame of the job. DBUtil will store NULLs in DB.
-
-		// 2.2 Use prosurd::values to generate query and append to parameter vector
-		const int FIXED_PARAM_COUNT = 3; // Match with below query
-		const int PARAM_COUNT = FIXED_PARAM_COUNT + Prosur::values.size();
-		string query = "insert into frame (time, job_id, file_name, ";
-		int i = 0;
-		for(auto& [key, value]: Prosur::values){
+		for(auto& [key, value]: numericValues){
 			params.push_back(value);
-			query += key;
-			if(i != Prosur::values.size()-1){
-				query += ", ";
-			}
-			i++;
 		}
-		query += ") values (";
-		for(int i = 0; i < PARAM_COUNT; i++){
-			query += "$" + to_string(i+1);
-			if(i != PARAM_COUNT-1){
-				query += ", ";
-			}
+		for(auto& [key, value]: binaryValues){
+			params.push_back(value);
 		}
-		query += ")";
 
-		// 2.3 Perform insertion query
-		DBUtil::query(query, params);
+		// Generate query string
+		string columnList = Util::join(columns, ", ");
+		string paramPlaceholders = "$1";
+		for(int i = 1; i < params.size(); i++){
+			paramPlaceholders += ", $" + to_string(i+1);
+		}
+
+		// Run query
+		DBUtil::query(
+			"insert into frame" \
+			"("+  columnList + ")" \
+			"values (" + paramPlaceholders + ")",
+			params
+		);
 	}
 
 }

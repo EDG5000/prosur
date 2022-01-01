@@ -64,19 +64,15 @@ namespace Prosur::Webserver{
 
 	// Write response HTTP header and body with provided HTTP status code and response body
 	// Either stringResponseBody or binaryResponseBody should have non-zero length
-	static void sendResponse(int client_socket, int httpCode, HTTPResponseBody& responseBody){
+	static void sendResponse(int client_socket, int httpCode, HTTPResponseBody responseBody){ // TODO Note: previously, responseBody was of reference-type to avoid copying.
 		// Send response header
 		string responseHeader = "HTTP/1.1 " + to_string(httpCode) + " OK\r\n\r\n";
 		write(client_socket, responseHeader.c_str(), responseHeader.size());
-		// Send response body
-		if(responseBody.stringData.size() > 0){
-			// Send the response body string
-			write(client_socket, responseBody.stringData.c_str(), responseBody.stringData.size());
-		}else if(responseBody.binaryData.size() > 0){
-			// Send the response body binary data
-			write(client_socket, responseBody.binaryData.data(), responseBody.binaryData.size());
-		}
 
+		// Send response body
+		write(client_socket, responseBody, responseBody.size());
+
+		// Close connection
 		close(client_socket);
 	}
 
@@ -244,7 +240,6 @@ namespace Prosur::Webserver{
 				);
 				// TODO start a thread per request
 				handleConnection(clientSocket);
-
 			}
 		}).detach();
 	}

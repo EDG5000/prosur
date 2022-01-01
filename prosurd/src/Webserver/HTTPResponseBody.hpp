@@ -23,6 +23,7 @@ namespace Prosur::Webserver{
 		// Allows assigning by any of the supported types. Sets the type and value.
 		HTTPResponseBody(){}; // Required to be present when used in std::map.
 		HTTPResponseBody(string pStringData): stringData(pStringData){}
+		HTTPResponseBody(const char* pStringData): stringData(pStringData){}
 		HTTPResponseBody(vector<char> pBinaryData): binaryData(pBinaryData){}
 
 		friend ostream& operator<<(ostream& os, const HTTPResponseBody& dt){

@@ -9,30 +9,25 @@
 #include <map>
 #include <iostream>
 #include <inttypes.h>
-
-#include <Datasource/Camera/Camera.hpp>
-#include <Database/Database.hpp>
-#include <Datasource/RepRap/RepRap.hpp>
-#include <Datasource/AuxTemp/AuxTemp.hpp>
-#include "Webserver/Webserver.hpp"
-#include <Util/Util.hpp>
 #include <ctime>
+
+#include "Datasource/Camera/Camera.hpp"
+#include "Database/Database.hpp"
+#include "Datasource/RepRap/RepRap.hpp"
+#include "Datasource/AuxTemp/AuxTemp.hpp"
+#include "Webserver/Webserver.hpp"
+#include "Util/Util.hpp"
 
 using namespace std;
 using namespace Prosur;
 
 namespace Prosur{
 
-map<string, int32_t> values;
-
 int64_t frameTime = 0; // Updated at beginning of cycle. Used by dbclient. Must be unique across frames. Type matches that of time column in database.
 
 constexpr auto cycleTime = 1000ms;
 
-}
-
-
-int main() {
+extern "C" int main() {
 	Webserver::init();
 	Database::init();
 
@@ -50,14 +45,9 @@ int main() {
 				#endif
 
 				// Retrieve aux. temperatures
-				/*if(!tmclient::update()){
-					cerr << "main: tmclient update failed, skipping cycle" << endl;
-					this_thread::sleep_for(cycleTime);
-					continue;
-				}*/
-				// Store aux. temperatures
+				Datasource::AuxTemp::update();
 				for(int sensorIndex = 0; sensorIndex < Datasource::AuxTemp::temperatures.size(); sensorIndex++){
-					values["temp_aux_" + to_string(sensorIndex)] = Datasource::AuxTemp::temperatures[sensorIndex];
+					Database::numericValues["temp_aux_" + to_string(sensorIndex)] = Datasource::AuxTemp::temperatures[sensorIndex];
 				}
 
 				Datasource::RepRap::update();
@@ -79,19 +69,7 @@ int main() {
 
 
 
-				//cout << RepRapClient::get_current_job_filename() << endl;
-				//terminate();
-				/*
-				if(rrfclient::get_is_printing() && !was_printing){
-					// Transition to printing
-					// Insert job, get ID back, store ID globally
-				}else if(!rrfclient::get_is_printing() && was_printing){
-					// Transition to not printing
-					// Set JOB id to NULL
-				}else if(rrfclient::get_is_printing()){
-					// Printing, no transition
-				}
-				*/
+
 
 				// Store properties of rrclient_om and tmclient_om in frames table
 				#ifndef TEST_MODE
@@ -108,3 +86,6 @@ int main() {
 	//}
 	return 0;
 }
+
+}
+

@@ -17,6 +17,7 @@ namespace Prosur::Database{
 	// Allows flexible passing of parameters along with query
 	// vector<Param> can be used as parameter like so:
 	// myfunc({1, 3423434, "string", myCharVector})
+	// Wil perform various implicit conversions, including to char* to obtain raw data
 	class DBParam{
 		int intVal = 0;
 		int64_t longVal = 0;
@@ -57,9 +58,11 @@ namespace Prosur::Database{
 					return (char*) &longVal;
 				case String:
 					return (char*) stringVal.data();
+				default:
 				case Binary:
 					return (char*) binaryVal.data();
 				}
+
 			}
 
 			// Allows interpreting as any of the supported types. Will perform runtime check on each access for safety.

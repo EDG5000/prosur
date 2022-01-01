@@ -116,7 +116,7 @@ namespace Prosur::Webserver::Resources::Frames{
 
 		// Build query based on mode and parameters
 		string query = "select * from frame"; // Base query
-		vector<Database::DBUtil::Param> queryParameters; // Empty param vector
+		vector<Database::DBParam> queryParameters; // Empty param vector
 
 		// Append to the query string and parameter vector depending on the selected mode
 		switch(mode){
