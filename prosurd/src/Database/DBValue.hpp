@@ -7,7 +7,7 @@
 using namespace std;
 
 namespace Prosur::Database{
-	enum DBParamType{
+	enum DBValueType{
 		Int,
 		Long,
 		String,
@@ -18,21 +18,21 @@ namespace Prosur::Database{
 	// vector<Param> can be used as parameter like so:
 	// myfunc({1, 3423434, "string", myCharVector})
 	// Wil perform various implicit conversions, including to char* to obtain raw data
-	class DBParam{
+	class DBValue{
 		int intVal = 0;
 		int64_t longVal = 0;
 		string stringVal;
 		vector<char> binaryVal;
-		DBParamType type = Int;
+		DBValueType type = Int;
 
 		public:
 
 			// Allows assigning by any of the supported types. Sets the type and value.
-			DBParam(){}; // Required to be present when used in std::map.
-			DBParam(int64_t pLongVal): longVal(pLongVal), type(Long){}
-			DBParam(string pStringVal): stringVal(pStringVal), type(String){}
-			DBParam(int pIntVal): intVal(pIntVal), type(Int){}
-			DBParam(vector<char> pBinaryVal): binaryVal(pBinaryVal), type(Binary){}
+			DBValue(){}; // Required to be present when used in std::map.
+			DBValue(int64_t pLongVal): longVal(pLongVal), type(Long){}
+			DBValue(string pStringVal): stringVal(pStringVal), type(String){}
+			DBValue(int pIntVal): intVal(pIntVal), type(Int){}
+			DBValue(vector<char> pBinaryVal): binaryVal(pBinaryVal), type(Binary){}
 
 			// To use in conjuction with operator const char* when obtaining raw data.
 			int size() const{

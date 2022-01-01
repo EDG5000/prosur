@@ -4,21 +4,46 @@
 #include <vector>
 #include <string>
 
-using namespace std;
-
 #include <postgresql/libpq-fe.h>
+
+#include "Database/DBValue.hpp"
+
+#include "Datasource/RepRap/RepRap.hpp"
+
+using namespace std;
 
 namespace Prosur::Database{
 
-void init();
+	// Is filled by the various Datasource functions before being passed to insertFrame
+	struct Frame{
+		vector<float> extruderTemp;
+		vector<float> bedTemp;
+		vector<float> chamberTemp;
+		vector<float> cpuTemp;
+		bool isPrinting;
+		string jobFilename;
+		int64_t jobModified; // -1 when not available
+		vector<float> motorPos; // May be used for x, y, z, e for now. Flexible.
+		float inputVoltage;
+		float probeX; // May be used for. X endstop
+		float probeY; // May be used Y endstop
+		float probeZ; // May be used for z-probe or endstop
+		float probeE; // May be used for filament runout sensor
+		float speedCurrentMms;
+		float speedRequestedMms;
+		int printLayersPrinted;
+		int printLayersRemaining;
+		float printProgressPercentage;
+	};
 
-void update(); // Reads prosurd::values. To be called each frame after all other clients have finished populating prosurd::values.
 
-// Data is stored here before being inserted into the database each frame.
-// Keys match column names in the database.
-// For decimal values, use hundreds, thousands etc.
-// Database field comments document the unit and fraction of the value.
-extern map<string, int32_t> numericValues;
-extern map<string, vector<char>> binaryValues;
+	// These values are important for correctly inserting the frame data
+	namespace KEY{
+		const string IS_PRINTING = "is_printing";
+		const string JOB_FILE_NAME = "job_file_name";
+		const string JOB_FILE_MODIFIED = "job_file_modified";
+	}
 
+	void init();
+	void insertFrame(Frame& frame);
 }

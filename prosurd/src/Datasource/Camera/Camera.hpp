@@ -4,12 +4,10 @@
 
 #include <vector>
 
+#include "Database/Database.hpp"
+
 using namespace std;
 
 namespace Prosur::Datasource::Camera{
-
-extern vector<uint8_t> image;
-
-void update();
-
+	bool fillFrame(Database::Frame& frame); // Fill a part of the passed Frame
 }

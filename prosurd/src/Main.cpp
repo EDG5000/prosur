@@ -44,34 +44,16 @@ extern "C" int main() {
 					frameTime = time(NULL);
 				#endif
 
-				// Retrieve aux. temperatures
-				Datasource::AuxTemp::update();
-				for(int sensorIndex = 0; sensorIndex < Datasource::AuxTemp::temperatures.size(); sensorIndex++){
-					Database::numericValues["temp_aux_" + to_string(sensorIndex)] = Datasource::AuxTemp::temperatures[sensorIndex];
-				}
+				Database::Frame frame; // TODO consider making static; this would allow carrying over old ids such as lastJobId, which may be needed for some logic
 
-				Datasource::RepRap::update();
+				// Allow the various Datasources to fill Frame members
+				Datasource::AuxTemp::fillFrame(frame);
+				Datasource::RepRap::fillFrame(frame);
+				Datasource::Camera::fillFrame(frame);
 
 				// Insert data from values into database
-				Database::update();
+				Database::insertFrame(frame);
 
-
-				/*
-				if(!cclient::update()){
-					cerr << "main: cclient experienced failure. skipping cycle." << endl;
-					this_thread::sleep_for(cyleTime);
-					continue;
-				}
-
-				cout << cclient::image.size() << endl;
-				util::writeDataToFileDebug(cclient::image, "/home/joel/file.jpg");
-				*/
-
-
-
-
-
-				// Store properties of rrclient_om and tmclient_om in frames table
 				#ifndef TEST_MODE
 					// TODO
 					this_thread::sleep_for(Prosur::cycleTime);

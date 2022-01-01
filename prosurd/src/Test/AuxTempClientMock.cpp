@@ -10,26 +10,22 @@
 
 
 namespace Prosur::Datasource::AuxTemp{
+	constexpr int SENSOR_COUNT = 8;
 
-constexpr int SENSOR_COUNT = 8;
+	// Keyed by 64 bit temperature sensor rom
+	vector<int> temperatures; // Hundreds of degrees celcius
 
-// Keyed by 64 bit temperature sensor rom
-vector<int> temperatures; // Hundreds of degrees celcius
-
-bool init(){
-	for(int i = 0; i < temperatures.size(); i++){
-		temperatures[i] = i;
+	bool init(){
+		for(int i = 0; i < temperatures.size(); i++){
+			temperatures[i] = i;
+		}
+		return true;
 	}
-	return true;
-}
 
-bool update(){
-	for(int i = 0; i < temperatures.size(); i++){
-		temperatures[i]++;
+	bool update(){
+		for(int i = 0; i < temperatures.size(); i++){
+			temperatures[i]++;
+		}
+		return true;
 	}
-	return true;
-}
-
-
-
 }

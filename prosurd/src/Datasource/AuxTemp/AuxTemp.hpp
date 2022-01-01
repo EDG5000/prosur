@@ -2,14 +2,12 @@
 
 #include <vector>
 
+#include "Database/Database.hpp"
+
 using namespace std;
 
 namespace Prosur::Datasource::AuxTemp{
-
-extern vector<int> temperatures; // Hundreds of degrees celcius
-
-void init();
-void update();
-
+	void init();
+	void fillFrame(Database::Frame& frame); // Fill a part of the passed Frame
 }
 

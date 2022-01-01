@@ -71,7 +71,7 @@ namespace Prosur::Webserver::Resources::File{
 			}
 		}
 
-		vector<map<string, Database::DBParam>> rows;
+		vector<map<string, Database::DBValue>> rows;
 		string colName;
 
 		// Construct relevant query and retrieve data

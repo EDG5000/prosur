@@ -1,12 +1,17 @@
 /*
- * WARNING: Only run on a network where all machines are trusted and behind a NAT.
+ * WARNING: Only run this behing NAT on a network where all machines are fully trusted.
+ *
+ * If the network and all devices connected to it are not considered fully trused, consider closing port 80 using local firewall
+ * And using an SSH tunnel to access port 80 on the remote machine. Or, just YOLO it.
+ *
  * This is free software; see the source for copying conditions.  There is NO
  * warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
+
 /*
- * Webserver: Listen for HTTP GET requests on TCP port 80
- * Respond to requests by invoking the relevant resource handler function
- * URI Query parameters are passed to the resource handler for processing
+ * Webserver: Listen for HTTP GET requests on TCP port 80.
+ * Respond to requests by invoking the relevant resource handler function.
+ * URI Query parameters are passed to the resource handler for processing.
  */
 
 #include "Webserver/Webserver.hpp"
@@ -40,16 +45,6 @@ namespace Prosur::Webserver{
 
 	typedef struct sockaddr_in SA_IN;
 	typedef struct sockaddr SA;
-
-	/*
-		GET /job?job_id=51 HTTP/1.1
-		User-Agent: PostmanRuntime/7.28.4
-		Accept: /
-		Postman-Token: 6c19b3b4-d1c7-442f-9dc7-628c703eb505
-		Host: localhost:8080
-		Accept-Encoding: gzip, deflate, br
-		Connection: keep-alive
-	 */
 
 	// Resources requested over HTTP are provided to the client by the relevant handler function
 	// - The key is the resource/document/filename component of the URI.
@@ -192,9 +187,8 @@ namespace Prosur::Webserver{
 	void init(){
 		// Start thread, listen for incoming connections
 		// Invoke handleConnection for each connection
-		// TODO handle requests in a separate thread for each request?
+		// TODO handle requests in a separate thread for each request? What happens when multiple requests are received in rapid succession?
 		thread([]{
-
 			// 1. Setup; get local address
 			int serverSocket, clientSocket;
 			int addrSize;

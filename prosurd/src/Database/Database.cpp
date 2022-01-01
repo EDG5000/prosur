@@ -18,7 +18,7 @@
 #include "Main.hpp"
 #include "Datasource/RepRap/RepRap.hpp"
 #include "Database/DBUtil.hpp"
-#include <Database/DBParam.hpp>
+#include <Database/DBValue.hpp>
 #include "Util/Util.hpp"
 
 using namespace std;
@@ -66,7 +66,7 @@ namespace Prosur::Database{
 		return result[0]["modified"];
 	}
 
-	void update(){
+	void insertFrame(Frame& frame){
 		// Create file entry if this is the start of a new job
 		bool newJob = Datasource::RepRap::is_printing() && !Datasource::RepRap::was_printing();
 		string current_job_filename;
@@ -122,7 +122,7 @@ namespace Prosur::Database{
 		}
 
 		// Build parameter value list
-		vector<DBParam> params = {frameTime, job_id, current_job_filename}; // Filename is filled when it is the first frame of the job. DBUtil will store NULLs in DB.
+		vector<DBValue> params = {frameTime, job_id, current_job_filename}; // Filename is filled when it is the first frame of the job. DBUtil will store NULLs in DB.
 		for(auto& [key, value]: numericValues){
 			params.push_back(value);
 		}
