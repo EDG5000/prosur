@@ -25,7 +25,7 @@ using namespace std;
 namespace Prosur::Database{
 	// Set to latest inserted job at startup, incremented at runtime prior to insertion of a new job's first frame.
 	// Is written to each frame as long as RepRapClient::is_printing.
-	int lastJobId = -1;
+	int jobId = -1;
 
 	void init(){
 		// As no host is supplied, libpq will connect using UNIX-domain socket for optimal performance.
@@ -45,12 +45,12 @@ namespace Prosur::Database{
 		// Set lastJobId
 		if(result.size() == 0){
 			// No existing jobs present, start ID at 0
-			lastJobId = 0;
+			jobId = 0;
 		}else if(result.size() != 1){
 			cerr << "DatabaseClient: Unable to obtain latest job_id value. Row count was not 1, but " << result.size()  << endl;
 			terminate();
 		}else if(result.size() == 1){
-			lastJobId = result[0]["job_id"];
+			jobId = result[0]["job_id"];
 		}
 	}
 
@@ -67,7 +67,7 @@ namespace Prosur::Database{
 		bool newJob = frame.isPrinting && !frame.wasPrinting;
 		if(newJob){
 			// Create new jobId for insertion into database
-			lastJobId++;
+			jobId++;
 
 			// Get filename and date modified of current job file
 			if(frame.jobFilename == ""){
@@ -100,11 +100,11 @@ namespace Prosur::Database{
 			}
 		}
 
-		// Get job_id
-		int job_id = lastJobId;
-		if(!frame.isPrinting){
-			job_id = INT32_MAX; // Sets job ID to NULL when not printing
-		}
+		map<DBParam> values = {
+				{"time", frame.time},
+				{"job_id", frame.isPrinting ? jobId : INT32_MAX},
+				{"file_name",
+		};
 
 		// Build column list
 		vector<string> columns = {"time", "job_id", "file_name"};
