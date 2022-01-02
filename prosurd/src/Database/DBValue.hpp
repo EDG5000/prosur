@@ -11,7 +11,8 @@ namespace Prosur::Database{
 		Int,
 		Long,
 		String,
-		Binary
+		Binary,
+		Float
 	};
 
 	// Allows flexible passing of parameters along with query
@@ -19,10 +20,14 @@ namespace Prosur::Database{
 	// myfunc({1, 3423434, "string", myCharVector})
 	// Wil perform various implicit conversions, including to char* to obtain raw data
 	class DBValue{
-		int intVal = 0;
-		int64_t longVal = 0;
-		string stringVal;
-		vector<char> binaryVal;
+		union{
+			int intVal;
+			int64_t longVal;
+			string stringVal;
+			float floatVal;
+			vector<char> binaryVal;
+		};
+
 		DBValueType type = Int;
 
 		public:
@@ -33,11 +38,14 @@ namespace Prosur::Database{
 			DBValue(string pStringVal): stringVal(pStringVal), type(String){}
 			DBValue(int pIntVal): intVal(pIntVal), type(Int){}
 			DBValue(vector<char> pBinaryVal): binaryVal(pBinaryVal), type(Binary){}
+			DBValue(float pFloatVal): floatVal(pFloatVal), type(Float){}
+
 
 			// To use in conjuction with operator const char* when obtaining raw data.
 			int size() const{
 				switch(type){
 				case Int:
+				case Float:
 					return 4;
 				case Long:
 					return 8;
@@ -54,6 +62,8 @@ namespace Prosur::Database{
 				switch(type){
 				case Int:
 					return (char*) &intVal;
+				case Float:
+					return (char*) &floatVal;
 				case Long:
 					return (char*) &longVal;
 				case String:

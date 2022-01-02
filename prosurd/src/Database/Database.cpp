@@ -100,11 +100,67 @@ namespace Prosur::Database{
 			}
 		}
 
-		map<DBParam> values = {
+/*
+	"time" bigint NOT NULL,
+    file_name text,
+    job_id integer,
+    temp_aux_7 integer,
+    temp_aux_6 integer,
+    temp_aux_5 integer,
+    temp_aux_4 integer,
+    temp_aux_3 integer,
+    temp_aux_2 integer,
+    temp_aux_1 integer,
+    temp_aux_0 integer,
+    temp_extruder_0 integer,
+    temp_bed_0 integer,
+    temp_chamber_0 integer,
+    pos_motor_0 integer,
+    pos_motor_1 integer,
+    pos_motor_2 integer,
+    pos_motor_3 integer,
+    print_progress_percentage integer,
+    print_layers_printed integer,
+    print_layers_remaining integer,
+    temp_cpu_0 integer,
+    temp_cpu_1 integer,
+    speed_requested_mms integer,
+    speed_current_mms integer,
+    voltage integer,
+    probe_z integer,
+    probe_x integer,
+    filament_used integer
+*/
+
+		// Create intial map of DBValues for insertion into frame table
+		map<string, DBValue> values = {
 				{"time", frame.time},
 				{"job_id", frame.isPrinting ? jobId : INT32_MAX},
-				{"file_name",
+				{"file_name", frame.jobFilename}
 		};
+
+		// Add still images
+		for(int i = 0; i < frame.still.size(); i++){
+			values["still_" + to_string(i)] = frame.still[i];
+		}
+
+		// Add aux temperatures
+		for(int i = 0; i < frame.auxTemp.size(); i++){
+			values["temp_aux_" + to_string(i)] = frame.auxTemp[i];
+		}
+
+		// Add heater temperatures
+		for(int i = 0; i < frame.heaterTemp.size(); i++){
+			values["temp_heater_" + to_string(i)] = frame.heaterTemp[i];
+		}
+
+		// Voltage and temperatures per board
+		for(int i = 0; i < frame.cpuTemp.size(); i++){
+			values["temp_cpu_" + to_string(i)] = frame.cpuTemp;
+			values["vin_" + to_string(i)] = frame.cpuTemp;
+		}
+
+
 
 		// Build column list
 		vector<string> columns = {"time", "job_id", "file_name"};

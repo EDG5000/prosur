@@ -15,17 +15,23 @@ namespace Prosur::Database{
 	// Is filled by the various Datasource functions before being passed to insertFrame
 	struct Frame{
 		int64_t time; // Unix time second epoch in seconds; primary key of Frame
-		vector<float> auxTemp;
+
 		vector<char> jobFile;
-		vector<vector<char>> still; // JPEG stills
-		vector<float> heaterTemp;
-		float cpuTemp;
-		bool wasPrinting;
-		bool isPrinting;
 		string jobFilename;
 		int64_t jobFileModified; // -1 when not available
+
+		bool wasPrinting;
+		bool isPrinting;
+
+		vector<vector<char>> still; // JPEG stills
+		vector<float> auxTemp;
+		vector<float> heaterTemp;
+		vector<float> cpuTemp;
+		vector<float> inputVoltage;
+
+
 		vector<float> motorPos; // May be used for x, y, z, e for now. Flexible.
-		float inputVoltage;
+
 		float probeX; // May be used for. X endstop
 		float probeY; // May be used Y endstop
 		float probeZ; // May be used for z-probe or endstop

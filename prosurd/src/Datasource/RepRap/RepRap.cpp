@@ -90,8 +90,10 @@ namespace Prosur::Datasource::RepRap{
 			}
 
 			// Board input voltage and CPU temp
-			frame.inputVoltage = om["result"]["boards"][0]["vIn"]["current"];
-			frame.cpuTemp = om["result"]["boards"][0]["mcuTemp"]["current"];
+			for(int i = 0; i < om["result"]["boards"].size(); i++){
+				frame.inputVoltage[i] = om["result"]["boards"][i]["vIn"]["current"];
+				frame.cpuTemp[i] = om["result"]["boards"][i]["mcuTemp"]["current"];
+			}
 
 			// Motor positions, including extruder
 			for(int i = 0; i < 3; i++){
