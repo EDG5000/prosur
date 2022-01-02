@@ -8,21 +8,22 @@
 
 #include "Database/DBValue.hpp"
 
-#include "Datasource/RepRap/RepRap.hpp"
-
 using namespace std;
 
 namespace Prosur::Database{
 
 	// Is filled by the various Datasource functions before being passed to insertFrame
 	struct Frame{
-		vector<float> extruderTemp;
-		vector<float> bedTemp;
-		vector<float> chamberTemp;
-		vector<float> cpuTemp;
+		int64_t time; // Unix time second epoch in seconds; primary key of Frame
+		vector<float> auxTemp;
+		vector<char> jobFile;
+		vector<vector<char>> still; // JPEG stills
+		vector<float> heaterTemp;
+		float cpuTemp;
+		bool wasPrinting;
 		bool isPrinting;
 		string jobFilename;
-		int64_t jobModified; // -1 when not available
+		int64_t jobFileModified; // -1 when not available
 		vector<float> motorPos; // May be used for x, y, z, e for now. Flexible.
 		float inputVoltage;
 		float probeX; // May be used for. X endstop
@@ -35,7 +36,6 @@ namespace Prosur::Database{
 		int printLayersRemaining;
 		float printProgressPercentage;
 	};
-
 
 	// These values are important for correctly inserting the frame data
 	namespace KEY{

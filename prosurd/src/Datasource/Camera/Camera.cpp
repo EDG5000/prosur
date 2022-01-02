@@ -31,7 +31,7 @@ namespace Prosur::Datasource::Camera{
 	 *
 	 */
 
-	bool fillFrame(Database::Frame& frame){
+	void fillFrame(Database::Frame& frame){
 		::Camera* camera;
 		GPContext* context = gp_context_new();
 
@@ -124,16 +124,15 @@ namespace Prosur::Datasource::Camera{
 		}
 
 		// Copy downloaded data to our vector and let gphoto release their file
-		image.resize(size);
-		memcpy(image.data(), data, size);
+		frame.still[0].clear();
+		frame.still[0].resize(size);
+		memcpy(frame.still[0].data(), data, size);
 		gp_file_free(cameraFile);
 
 		// Delete remote image
 		retval = gp_camera_file_delete(camera, remotePath.folder, remotePath.name, context);
 
 		gp_camera_exit(camera, context);
-
-		return image;
 	}
 
 

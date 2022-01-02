@@ -3,8 +3,6 @@
 	Infinus I/O HC3D Temperature Management
 */
 
-#include "util.h"
-
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -13,6 +11,7 @@
 
 #include "avr/io.h"
 
+#include "util.h"
 #include "drivers/driver_uart.h"
 #include "drivers/driver_sleep.h"
 #include "drivers/driver_clock.h"

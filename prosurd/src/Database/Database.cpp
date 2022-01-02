@@ -15,7 +15,6 @@
 
 #include <postgresql/libpq-fe.h>
 
-#include "Main.hpp"
 #include "Datasource/RepRap/RepRap.hpp"
 #include "Database/DBUtil.hpp"
 #include <Database/DBValue.hpp>
@@ -27,9 +26,6 @@ namespace Prosur::Database{
 	// Set to latest inserted job at startup, incremented at runtime prior to insertion of a new job's first frame.
 	// Is written to each frame as long as RepRapClient::is_printing.
 	int lastJobId = -1;
-
-	map<string, int32_t> numericValues;
-	map<string, vector<char>> binaryValues; // Used for stills in JPEG format, such as the "still_0" column
 
 	void init(){
 		// As no host is supplied, libpq will connect using UNIX-domain socket for optimal performance.
@@ -58,7 +54,7 @@ namespace Prosur::Database{
 		}
 	}
 
-	static int64_t file_exists(string filename){
+	static int64_t fileExists(string filename){
 		auto result = DBUtil::query("select name, modified from file where name = $1", {filename});
 		if(result.size() == 0){
 			return -1;
@@ -68,47 +64,45 @@ namespace Prosur::Database{
 
 	void insertFrame(Frame& frame){
 		// Create file entry if this is the start of a new job
-		bool newJob = Datasource::RepRap::is_printing() && !Datasource::RepRap::was_printing();
-		string current_job_filename;
+		bool newJob = frame.isPrinting && !frame.wasPrinting;
 		if(newJob){
 			// Create new jobId for insertion into database
 			lastJobId++;
 
 			// Get filename and date modified of current job file
-			string current_job_filename = Datasource::RepRap::get_current_job_filename();
-			if(current_job_filename == ""){
+			if(frame.jobFilename == ""){
 				cerr << "DatabaseClient: update: Error: get_current_job_filename returned empty string, cannot insert job." << endl;
 				terminate();
 			}
 
-			int64_t current_job_file_modified = Datasource::RepRap::get_current_job_modified();
+			int64_t jobFileModified = frame.jobFileModified;
 
 			// Determine if new file needs to be inserted, adjust filename as needed
-			int64_t existing_file_modified = file_exists(current_job_filename);
+			int64_t existingFileModified = fileExists(frame.jobFilename);
 			int iterations = 0;
-			while(existing_file_modified != -1 && existing_file_modified != current_job_file_modified && iterations < 10){
-				current_job_filename += " (1)"; // Keep renaming until unique, if timestamps differ
-				existing_file_modified = file_exists(current_job_filename);
+			while(existingFileModified != -1 && existingFileModified != frame.jobFileModified && iterations < 10){
+				frame.jobFilename += " (1)"; // Keep renaming until unique, if timestamps differ
+				existingFileModified = fileExists(frame.jobFilename);
 				iterations++;
 			}
 			if(iterations == 10){ // No more then 10 iterations are reasonable
-				cerr << "DatabaseClient: update: Infinite loop when trying to find unique filename, aborting. Filename: " << current_job_filename << endl;
+				cerr << "DatabaseClient: update: Infinite loop when trying to find unique filename, aborting. Filename: " << frame.jobFilename << endl;
 				terminate();
 			}
 
 			// Insert new file now if needed
-			if(existing_file_modified == -1){
+			if(existingFileModified == -1){
 				DBUtil::query("insert into file (name, modified, data) values ($1, $2, $3)", {
-						current_job_filename,
-						current_job_file_modified,
-						Datasource::RepRap::lastJobFile
+						frame.jobFilename,
+						frame.jobFileModified,
+						frame.jobFile
 				});
 			}
 		}
 
 		// Get job_id
 		int job_id = lastJobId;
-		if(!Datasource::RepRap::is_printing()){
+		if(!frame.isPrinting){
 			job_id = INT32_MAX; // Sets job ID to NULL when not printing
 		}
 
@@ -122,7 +116,7 @@ namespace Prosur::Database{
 		}
 
 		// Build parameter value list
-		vector<DBValue> params = {frameTime, job_id, current_job_filename}; // Filename is filled when it is the first frame of the job. DBUtil will store NULLs in DB.
+		vector<DBValue> params = {frame.time, job_id, frame.jobFilename}; // Filename is filled when it is the first frame of the job. DBUtil will store NULLs in DB.
 		for(auto& [key, value]: numericValues){
 			params.push_back(value);
 		}

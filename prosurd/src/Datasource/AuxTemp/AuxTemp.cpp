@@ -21,8 +21,6 @@ using namespace std;
 namespace Prosur::Datasource::AuxTemp{
 
 	const string DEVICE_NAME = "/dev/ttyUSB0";
-
-	vector<int> temperatures; // Hundreds of degrees celcius
 	string readBuffer;
 	int fd;
 
@@ -72,6 +70,8 @@ namespace Prosur::Datasource::AuxTemp{
 	}
 
 	void fillFrame(Database::Frame& frame){
+		frame.auxTemp.clear();
+
 		char buf[128]; // This limits handling of incoming bytes to 128b/s. Ensure remote transmits slower than this. Otherwise, buffer overrun will occur.
 		long rdlen = read(fd, buf, sizeof(buf) - 1);
 		if (rdlen > 0){
@@ -88,31 +88,31 @@ namespace Prosur::Datasource::AuxTemp{
 
 		if(lines.size() < 2){
 			// No newlines found yet (only happens when line is longer than the buffer; unlikely). Keep reading.
-			return temperatures;
+			return;
 		}
 
 		// Normally, 2 lines are in the buffer. The second line is not terminated yet, and is not yet parsed.
 		// Parse all segments except the last segment
 		for(int lineIndex = 0; lineIndex < lines.size()-1; lineIndex++){
 			try{
-				json frame = json::parse(lines[lineIndex]);
-				if(frame.size() < 2){
+				json auxTempFrame = json::parse(lines[lineIndex]);
+				if(frame.auxTemp.size() < 2){
 					cerr << "Error: expected at least 2 elements in frame: " << lines[lineIndex] << endl;
 					terminate();
 				}
 				// Read first element which should equal the element count
-				int expectedValues = frame[0];
-				if(frame.size()-1 != expectedValues){
+				int expectedValues = auxTempFrame[0];
+				if(frame.auxTemp.size()-1 != expectedValues){
 					cerr << "Error: indicated element count does not correspond to actual element count in frame: " << lines[lineIndex] << endl;
 					terminate();
 				}
 				// Ensure the vector is large enough
-				if(temperatures.size() < frame.size()-1){
-					temperatures.resize(frame.size()-1);
+				if(frame.auxTemp.size() < frame.auxTemp.size()-1){
+					frame.auxTemp.resize(frame.auxTemp.size()-1);
 				}
 				// Copy values over; start at second element to skip the size-indicating element.
-				for(int valueIndex = 1; valueIndex < frame.size(); valueIndex++){
-					temperatures[valueIndex-1] = frame[valueIndex];
+				for(int valueIndex = 1; valueIndex < frame.auxTemp.size(); valueIndex++){
+					frame.auxTemp[valueIndex-1] = frame.auxTemp[valueIndex];
 				}
 			}catch(exception& e){
 				cerr << "Error: unable to parse frame: " << lines[lineIndex] << endl;
@@ -122,8 +122,6 @@ namespace Prosur::Datasource::AuxTemp{
 
 		// Set the buffer to the last line, which was not processed yet
 		readBuffer = lines[lines.size()-1];
-
-		return temperatures;
 	}
 
 }

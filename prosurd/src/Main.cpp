@@ -3,13 +3,13 @@
  * Logs all activity in your additive production facility.
  */
 
-#include "Main.hpp"
-
 #include <thread>
 #include <map>
 #include <iostream>
-#include <inttypes.h>
 #include <ctime>
+
+#include <inttypes.h>
+#include <unistd.h>
 
 #include "Datasource/Camera/Camera.hpp"
 #include "Database/Database.hpp"
@@ -23,51 +23,40 @@ using namespace Prosur;
 
 namespace Prosur{
 
-int64_t frameTime = 0; // Updated at beginning of cycle. Used by dbclient. Must be unique across frames. Type matches that of time column in database.
+	// Microseconds between collection of a data frame
+	constexpr int64_t FRAME_COLLECTION_INTERVAL = 1 * 1000 * 1000;
 
-constexpr auto cycleTime = 1000ms;
+	Database::Frame frame;
 
-extern "C" int main() {
-	Webserver::init();
-	Database::init();
+	extern "C" int main() {
+		Webserver::init();
+		Database::init();
 
-	while(true){
-		this_thread::sleep_for(Prosur::cycleTime);
+		while(true){
+			int64_t startTime = Util::unixTime();
+
+			// Store isPrinting from previous frame; clear Frame and populate frame time
+			bool wasPrinting = frame.isPrinting;
+			frame = {};
+			frame.time = startTime;
+			frame.wasPrinting = wasPrinting;
+
+			// Data sources each fill Frame members
+			Datasource::AuxTemp::fillFrame(frame);
+			Datasource::RepRap::fillFrame(frame);
+			Datasource::Camera::fillFrame(frame);
+
+			// Insert frame into database
+			Database::insertFrame(frame);
+
+			// Unless we are in TEST_MODE, sleep based on time taken during this cycle
+			#ifndef TEST_MODE
+				// Substract time taken during cycle with target interval
+				int64_t sleepTime = FRAME_COLLECTION_INTERVAL - ((time(NULL) - startTime) * 1000 * 1000);
+				usleep(sleepTime);
+			#endif
+		}
 	}
-
-	bool was_printing = false;
-	//thread t{[=]{
-			while(true){
-				#ifdef TEST_MODE
-					frameTime++;
-				#else
-					frameTime = time(NULL);
-				#endif
-
-				Database::Frame frame; // TODO consider making static; this would allow carrying over old ids such as lastJobId, which may be needed for some logic
-
-				// Allow the various Datasources to fill Frame members
-				Datasource::AuxTemp::fillFrame(frame);
-				Datasource::RepRap::fillFrame(frame);
-				Datasource::Camera::fillFrame(frame);
-
-				// Insert data from values into database
-				Database::insertFrame(frame);
-
-				#ifndef TEST_MODE
-					// TODO
-					this_thread::sleep_for(Prosur::cycleTime);
-				#endif
-				// TODO implement timing caluclation to ensure steady .1Hz operation
-			}
-
-	//}};
-
-	//while(true){
-	//	this_thread::sleep_for(1000ms);
-	//}
-	return 0;
-}
 
 }
 

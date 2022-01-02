@@ -9,5 +9,5 @@
 using namespace std;
 
 namespace Prosur::Datasource::Camera{
-	bool fillFrame(Database::Frame& frame); // Fill a part of the passed Frame
+	void fillFrame(Database::Frame& frame); // Fill a part of the passed Frame
 }

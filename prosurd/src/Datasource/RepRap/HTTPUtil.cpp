@@ -31,6 +31,7 @@ namespace Prosur::Datasource::RepRap::HTTPUtil{
 			curl_easy_cleanup(curl);
 			return "";
 		}
+
 		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, onReceiveData);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &receiveBuffer);

@@ -7,9 +7,22 @@
 #include <vector>
 #include <fstream>
 
+#include <time.h>
+
 using namespace std;
 
 namespace Prosur::Util{
+
+	int64_t unixTime(){
+		#ifdef TEST_MODE
+			// When testing, no sleeping is done; each invocation, one second passes
+			static int64_t time;
+			time++;
+			return time;
+		#else
+			return time(NULL);
+		#endif
+	}
 
 	void swapbytes(char* inp, size_t len){
 	    unsigned int i;
@@ -85,4 +98,14 @@ namespace Prosur::Util{
 		return ms;
 	}
 
+	// Parse date/time strings as they are found in RepRapFirmware JSON data
+	int64_t parseDateTimeString(string dateTimeString){
+		// e.g. 2021-07-25T23:25:34
+		tm datetime = {};
+		char* result = strptime(dateTimeString.c_str(), "%Y-%m-%dT%H:%M:%S", &datetime);
+		if(result != NULL){ // Should not be NULL and should point to the NUL byte at the end of the input string to mark a successfull full parse
+			cerr << "Error, unable to parse date string: " << dateTimeString << " (failed at character " << result-dateTimeString.c_str() << *result << ")" << endl;
+		}
+		return mktime(&datetime);
+	}
 }
