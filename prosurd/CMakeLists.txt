@@ -45,9 +45,10 @@ if (TEST_MODE)
     	SOURCE_FILES 
     	${SOURCE_FILES} 
     	
-    	src/Test/AuxTempClientMock.cpp
-    	src/Test/CameraClientMock.cpp
-    	src/Test/HTTPMock.cpp
+    	src/Test/AuxTempMock.cpp
+    	src/Test/HTTPUtilMock.cpp
+    	src/Test/CameraMock.cpp
+    	
 	)
 else()
 	# Compile real data sources when not in TEST_MODE
@@ -55,8 +56,8 @@ else()
     	SOURCE_FILES 
     	${SOURCE_FILES} 
     	
+    	src/Datasource/AuxTemp/AuxTemp.cpp
 		src/Datasource/RepRap/HTTPUtil.cpp
-		src/Datasource/AuxTemp/AuxTemp.cpp
 		src/Datasource/Camera/Camera.cpp
 	)
 endif()

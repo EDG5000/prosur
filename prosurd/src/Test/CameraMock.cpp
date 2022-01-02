@@ -21,11 +21,11 @@ namespace Prosur::Datasource::Camera{
 		image << file;
 	}
 
-	void update(){
+	void fillFrame(Database::Frame& frame){
 		if(!ready){
 			init();
 			ready = true;
 		}
+		frame.still[0] = move(image);
 	}
-
 }

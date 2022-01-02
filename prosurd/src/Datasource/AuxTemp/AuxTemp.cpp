@@ -75,6 +75,7 @@ namespace Prosur::Datasource::AuxTemp{
 		// TODO however, what to do in case of failures? Right now, the system terminates.
 		if(!ready){
 			init();
+			ready = true;
 		}
 
 		frame.auxTemp.clear();

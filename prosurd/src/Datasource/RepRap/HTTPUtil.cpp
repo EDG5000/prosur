@@ -19,7 +19,6 @@ namespace Prosur::Datasource::RepRap::HTTPUtil{
 		return newLength;
 	}
 
-
 	// TODO consider performance; can downloaded job files be streamed directly into the database?
 	string call(string url){
 		curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -48,5 +47,4 @@ namespace Prosur::Datasource::RepRap::HTTPUtil{
 
 		return receiveBuffer;
 	}
-
 }

@@ -8,24 +8,28 @@
 
 #include "json.hpp"
 
-
 namespace Prosur::Datasource::AuxTemp{
 	constexpr int SENSOR_COUNT = 8;
 
 	// Keyed by 64 bit temperature sensor rom
 	vector<int> temperatures; // Hundreds of degrees celcius
 
-	bool init(){
+	bool ready = false;
+
+	static void init(){
 		for(int i = 0; i < temperatures.size(); i++){
 			temperatures[i] = i;
 		}
-		return true;
 	}
 
-	bool update(){
+	void fillFrame(Database::Frame& frame){ // Fill a part of the passed Frame
+		if(!ready){
+			init();
+			ready = true;
+		}
+
 		for(int i = 0; i < temperatures.size(); i++){
 			temperatures[i]++;
 		}
-		return true;
 	}
 }

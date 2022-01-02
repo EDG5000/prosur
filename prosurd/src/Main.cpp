@@ -12,9 +12,9 @@
 #include <unistd.h>
 
 #include "Datasource/Camera/Camera.hpp"
-#include "Database/Database.hpp"
 #include "Datasource/RepRap/RepRap.hpp"
 #include "Datasource/AuxTemp/AuxTemp.hpp"
+#include "Database/Database.hpp"
 #include "Webserver/Webserver.hpp"
 #include "Util/Util.hpp"
 

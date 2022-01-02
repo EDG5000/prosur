@@ -18,7 +18,6 @@ using namespace std;
 
 namespace Prosur::Datasource::Camera{
 
-
 	/*
 	 *
 	 *only needed when gphoto must capture to file
@@ -84,9 +83,6 @@ namespace Prosur::Datasource::Camera{
 			fprintf (stderr, "changed configuration '%s' to '%s'\n", buf, s+1);
 		*/
 
-
-
-
 		// Capture image, obtain remote path
 		CameraFilePath remotePath;
 		retval = gp_camera_capture(camera, GP_CAPTURE_IMAGE, &remotePath, context);
@@ -134,7 +130,6 @@ namespace Prosur::Datasource::Camera{
 
 		gp_camera_exit(camera, context);
 	}
-
 
 	/*
 	void deinit(){
