@@ -101,98 +101,111 @@ namespace Prosur::Database{
 		}
 
 /*
-	"time" bigint NOT NULL,
+    "time" bigint NOT NULL,
     file_name text,
     job_id integer,
-    temp_aux_7 integer,
-    temp_aux_6 integer,
-    temp_aux_5 integer,
-    temp_aux_4 integer,
-    temp_aux_3 integer,
-    temp_aux_2 integer,
-    temp_aux_1 integer,
-    temp_aux_0 integer,
-    temp_extruder_0 integer,
-    temp_bed_0 integer,
-    temp_chamber_0 integer,
-    pos_motor_0 integer,
-    pos_motor_1 integer,
-    pos_motor_2 integer,
-    pos_motor_3 integer,
-    print_progress_percentage integer,
+    temp_aux_7 real,
+    temp_aux_6 real,
+    temp_aux_5 real,
+    temp_aux_4 real,
+    temp_aux_3 real,
+    temp_aux_2 real,
+    temp_aux_1 real,
+    temp_aux_0 real,
+    temp_extruder_0 real,
+    temp_bed_0 real,
+    temp_chamber_0 real,
+    pos_motor_0 real,
+    pos_motor_1 real,
+    pos_motor_2 real,
+    pos_motor_3 real,
+    print_progress_percentage real,
     print_layers_printed integer,
     print_layers_remaining integer,
-    temp_cpu_0 integer,
-    temp_cpu_1 integer,
-    speed_requested_mms integer,
-    speed_current_mms integer,
+    temp_cpu_0 real,
+    speed_requested_mms real,
+    speed_current_mms real,
     voltage integer,
     probe_z integer,
     probe_x integer,
-    filament_used integer
+    filament_used real,
+    still_0 bytea,
+    vin_0 real
 */
 
-		// Create intial map of DBValues for insertion into frame table
-		map<string, DBValue> values = {
-				{"time", frame.time},
-				{"job_id", frame.isPrinting ? jobId : INT32_MAX},
-				{"file_name", frame.jobFilename}
+		// Create map of DBValues for insertion into frame table
+		map<string, DBValue> row = {
+			{"time", frame.time},
+			{"job_id", frame.isPrinting ? jobId : INT32_MAX},
+			{"file_name", frame.jobFilename}
 		};
 
-		// Add still images
+		// Add still images to map
 		for(int i = 0; i < frame.still.size(); i++){
-			values["still_" + to_string(i)] = frame.still[i];
+			row["still_" + to_string(i)] = frame.still[i];
 		}
 
-		// Add aux temperatures
+		// Add aux temperatures to map
 		for(int i = 0; i < frame.auxTemp.size(); i++){
-			values["temp_aux_" + to_string(i)] = frame.auxTemp[i];
+			row["temp_aux_" + to_string(i)] = frame.auxTemp[i];
 		}
 
-		// Add heater temperatures
+		// Add heater temperatures to map
 		for(int i = 0; i < frame.heaterTemp.size(); i++){
-			values["temp_heater_" + to_string(i)] = frame.heaterTemp[i];
+			row["temp_heater_" + to_string(i)] = frame.heaterTemp[i];
 		}
 
-		// Voltage and temperatures per board
+		// Voltage and temperatures per board; add to map
 		for(int i = 0; i < frame.cpuTemp.size(); i++){
-			values["temp_cpu_" + to_string(i)] = frame.cpuTemp;
-			values["vin_" + to_string(i)] = frame.cpuTemp;
+			row["temp_cpu_" + to_string(i)] = frame.cpuTemp[i];
+			row["vin_" + to_string(i)] = frame.cpuTemp[i];
 		}
 
-
-
-		// Build column list
-		vector<string> columns = {"time", "job_id", "file_name"};
-		for(auto& [key, value]: numericValues){
-			columns.push_back(key);
-		}
-		for(auto& [key, value]: binaryValues){
-			columns.push_back(key);
+		// Motor positions
+		for(int i = 0; i < frame.motorPos.size(); i++){
+			row["pos_motor_" + to_string(i)] = frame.motorPos[i];
 		}
 
-		// Build parameter value list
-		vector<DBValue> params = {frame.time, job_id, frame.jobFilename}; // Filename is filled when it is the first frame of the job. DBUtil will store NULLs in DB.
-		for(auto& [key, value]: numericValues){
-			params.push_back(value);
-		}
-		for(auto& [key, value]: binaryValues){
-			params.push_back(value);
+		// Endstop positions
+		for(int i = 0; i < frame.endstop.size(); i++){
+			row["endstop_" + to_string(i)] = frame.endstop[i];
 		}
 
-		// Generate query string
-		string columnList = Util::join(columns, ", ");
+		// Probe positions
+		for(int i = 0; i < frame.probe.size(); i++){
+			row["probe_" + to_string(i)] = frame.probe[i];
+		}
+
+		// Coincidentally, the following lines ended up being sorted by length
+		row["speed_current_mms"] = frame.speedCurrentMms;
+		row["speed_requested_mms"] = frame.speedRequestedMms;
+		row["print_layers_printed"] = frame.printLayersPrinted;
+		row["print_layers_remaining"] = frame.printLayersRemaining;
+		row["print_progress_percentage"] = frame.printProgressPercentage;
+
+		// Generate string of numeric placeholder
 		string paramPlaceholders = "$1";
-		for(int i = 1; i < params.size(); i++){
+		for(int i = 1; i < row.size(); i++){
+			// Add numbered placeholder
 			paramPlaceholders += ", $" + to_string(i+1);
 		}
+
+		// Create comma-separated list of columns
+		vector<string> columns;
+		vector<DBValue> values;
+		for(auto& [key, value]: row){
+			// Add column name
+			columns.push_back(key);
+			values.push_back(value);
+		}
+		string columnString = Util::join(columns, ", ");
 
 		// Run query
 		DBUtil::query(
 			"insert into frame" \
-			"("+  columnList + ")" \
+			"("+  columnString + ")" \
 			"values (" + paramPlaceholders + ")",
-			params
+			values
 		);
 	}
 

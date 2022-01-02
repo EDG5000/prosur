@@ -20,13 +20,13 @@ namespace Prosur::Database{
 	// myfunc({1, 3423434, "string", myCharVector})
 	// Wil perform various implicit conversions, including to char* to obtain raw data
 	class DBValue{
-		union{
-			int intVal;
-			int64_t longVal;
+		//union{ // Causing issues with "implicitly deleted copy constructor". Annoying.'
+			int intVal = 0;
+			int64_t longVal = 0;
 			string stringVal;
-			float floatVal;
+			float floatVal = 0;
 			vector<char> binaryVal;
-		};
+		//};
 
 		DBValueType type = Int;
 

@@ -5,7 +5,7 @@
 -- Dumped from database version 12.9 (Ubuntu 12.9-0ubuntu0.20.04.1)
 -- Dumped by pg_dump version 12.9 (Ubuntu 12.9-0ubuntu0.20.04.1)
 
--- Started on 2021-12-11 18:29:14 CET
+-- Started on 2022-01-02 16:03:10 CET
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -73,32 +73,33 @@ CREATE TABLE public.frame (
     "time" bigint NOT NULL,
     file_name text,
     job_id integer,
-    temp_aux_7 integer,
-    temp_aux_6 integer,
-    temp_aux_5 integer,
-    temp_aux_4 integer,
-    temp_aux_3 integer,
-    temp_aux_2 integer,
-    temp_aux_1 integer,
-    temp_aux_0 integer,
-    temp_extruder_0 integer,
-    temp_bed_0 integer,
-    temp_chamber_0 integer,
-    pos_motor_0 integer,
-    pos_motor_1 integer,
-    pos_motor_2 integer,
-    pos_motor_3 integer,
-    print_progress_percentage integer,
+    temp_aux_7 real,
+    temp_aux_6 real,
+    temp_aux_5 real,
+    temp_aux_4 real,
+    temp_aux_3 real,
+    temp_aux_2 real,
+    temp_aux_1 real,
+    temp_aux_0 real,
+    temp_extruder_0 real,
+    temp_bed_0 real,
+    temp_chamber_0 real,
+    pos_motor_0 real,
+    pos_motor_1 real,
+    pos_motor_2 real,
+    pos_motor_3 real,
+    print_progress_percentage real,
     print_layers_printed integer,
     print_layers_remaining integer,
-    temp_cpu_0 integer,
-    temp_cpu_1 integer,
-    speed_requested_mms integer,
-    speed_current_mms integer,
+    temp_cpu_0 real,
+    speed_requested_mms real,
+    speed_current_mms real,
     voltage integer,
     probe_z integer,
     probe_x integer,
-    filament_used integer
+    filament_used real,
+    still_0 bytea,
+    vin_0 real
 );
 
 
@@ -146,7 +147,7 @@ COMMENT ON COLUMN public.frame.job_id IS 'Must be supplied when printing. Must b
 -- Name: COLUMN frame.temp_aux_7; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_aux_7 IS 'Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_aux_7 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
@@ -155,7 +156,7 @@ COMMENT ON COLUMN public.frame.temp_aux_7 IS 'Hundreds of degrees celcius.';
 -- Name: COLUMN frame.temp_aux_6; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_aux_6 IS 'Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_aux_6 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
@@ -164,7 +165,7 @@ COMMENT ON COLUMN public.frame.temp_aux_6 IS 'Hundreds of degrees celcius.';
 -- Name: COLUMN frame.temp_aux_5; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_aux_5 IS 'Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_aux_5 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
@@ -173,7 +174,7 @@ COMMENT ON COLUMN public.frame.temp_aux_5 IS 'Hundreds of degrees celcius.';
 -- Name: COLUMN frame.temp_aux_4; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_aux_4 IS 'Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_aux_4 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
@@ -182,7 +183,7 @@ COMMENT ON COLUMN public.frame.temp_aux_4 IS 'Hundreds of degrees celcius.';
 -- Name: COLUMN frame.temp_aux_3; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_aux_3 IS 'Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_aux_3 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
@@ -191,7 +192,7 @@ COMMENT ON COLUMN public.frame.temp_aux_3 IS 'Hundreds of degrees celcius.';
 -- Name: COLUMN frame.temp_aux_2; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_aux_2 IS 'Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_aux_2 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
@@ -200,7 +201,7 @@ COMMENT ON COLUMN public.frame.temp_aux_2 IS 'Hundreds of degrees celcius.';
 -- Name: COLUMN frame.temp_aux_1; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_aux_1 IS 'Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_aux_1 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
@@ -209,7 +210,7 @@ COMMENT ON COLUMN public.frame.temp_aux_1 IS 'Hundreds of degrees celcius.';
 -- Name: COLUMN frame.temp_aux_0; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_aux_0 IS 'Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_aux_0 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
@@ -218,7 +219,7 @@ COMMENT ON COLUMN public.frame.temp_aux_0 IS 'Hundreds of degrees celcius.';
 -- Name: COLUMN frame.temp_extruder_0; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_extruder_0 IS 'Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_extruder_0 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
@@ -227,7 +228,7 @@ COMMENT ON COLUMN public.frame.temp_extruder_0 IS 'Hundreds of degrees celcius.'
 -- Name: COLUMN frame.temp_bed_0; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_bed_0 IS 'Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_bed_0 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
@@ -236,7 +237,7 @@ COMMENT ON COLUMN public.frame.temp_bed_0 IS 'Hundreds of degrees celcius.';
 -- Name: COLUMN frame.temp_chamber_0; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_chamber_0 IS 'Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_chamber_0 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
@@ -245,7 +246,7 @@ COMMENT ON COLUMN public.frame.temp_chamber_0 IS 'Hundreds of degrees celcius.';
 -- Name: COLUMN frame.pos_motor_0; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.pos_motor_0 IS 'Hundreds of mm';
+COMMENT ON COLUMN public.frame.pos_motor_0 IS 'mm';
 
 
 --
@@ -254,7 +255,7 @@ COMMENT ON COLUMN public.frame.pos_motor_0 IS 'Hundreds of mm';
 -- Name: COLUMN frame.pos_motor_1; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.pos_motor_1 IS 'Hundreds of mm';
+COMMENT ON COLUMN public.frame.pos_motor_1 IS 'mm';
 
 
 --
@@ -263,7 +264,7 @@ COMMENT ON COLUMN public.frame.pos_motor_1 IS 'Hundreds of mm';
 -- Name: COLUMN frame.pos_motor_2; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.pos_motor_2 IS 'Hundreds of mm';
+COMMENT ON COLUMN public.frame.pos_motor_2 IS 'mm';
 
 
 --
@@ -272,7 +273,7 @@ COMMENT ON COLUMN public.frame.pos_motor_2 IS 'Hundreds of mm';
 -- Name: COLUMN frame.pos_motor_3; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.pos_motor_3 IS 'Hundreds of mm';
+COMMENT ON COLUMN public.frame.pos_motor_3 IS 'mm';
 
 
 --
@@ -281,7 +282,7 @@ COMMENT ON COLUMN public.frame.pos_motor_3 IS 'Hundreds of mm';
 -- Name: COLUMN frame.print_progress_percentage; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.print_progress_percentage IS 'Hundreds of %';
+COMMENT ON COLUMN public.frame.print_progress_percentage IS '%';
 
 
 --
@@ -290,38 +291,29 @@ COMMENT ON COLUMN public.frame.print_progress_percentage IS 'Hundreds of %';
 -- Name: COLUMN frame.temp_cpu_0; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_cpu_0 IS 'CPU''s, such as those present on MCU''s and SOC''s.; Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.temp_cpu_0 IS 'CPU/MCU; Degrees Celcius.';
 
 
 --
 -- TOC entry 2997 (class 0 OID 0)
 -- Dependencies: 202
--- Name: COLUMN frame.temp_cpu_1; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN frame.speed_requested_mms; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.temp_cpu_1 IS 'CPU''s, such as those present on MCU''s and SOC''s.; Hundreds of degrees celcius.';
+COMMENT ON COLUMN public.frame.speed_requested_mms IS 'mm/s';
 
 
 --
 -- TOC entry 2998 (class 0 OID 0)
 -- Dependencies: 202
--- Name: COLUMN frame.speed_requested_mms; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN frame.speed_current_mms; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.speed_requested_mms IS 'Hundreds of mm/s';
+COMMENT ON COLUMN public.frame.speed_current_mms IS 'mm/s';
 
 
 --
 -- TOC entry 2999 (class 0 OID 0)
--- Dependencies: 202
--- Name: COLUMN frame.speed_current_mms; Type: COMMENT; Schema: public; Owner: postgres
---
-
-COMMENT ON COLUMN public.frame.speed_current_mms IS 'Hundreds of mm/s';
-
-
---
--- TOC entry 3000 (class 0 OID 0)
 -- Dependencies: 202
 -- Name: COLUMN frame.voltage; Type: COMMENT; Schema: public; Owner: postgres
 --
@@ -330,7 +322,7 @@ COMMENT ON COLUMN public.frame.voltage IS 'Hundreds of volts';
 
 
 --
--- TOC entry 3001 (class 0 OID 0)
+-- TOC entry 3000 (class 0 OID 0)
 -- Dependencies: 202
 -- Name: COLUMN frame.probe_z; Type: COMMENT; Schema: public; Owner: postgres
 --
@@ -339,21 +331,39 @@ COMMENT ON COLUMN public.frame.probe_z IS 'Value depending on implementation. Re
 
 
 --
--- TOC entry 3002 (class 0 OID 0)
+-- TOC entry 3001 (class 0 OID 0)
 -- Dependencies: 202
 -- Name: COLUMN frame.probe_x; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.probe_x IS 'For endstops: 1=triggered. 0=not triggered.';
+COMMENT ON COLUMN public.frame.probe_x IS 'For endstops, suggest using as 1=triggered. 0=not triggered.';
+
+
+--
+-- TOC entry 3002 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: COLUMN frame.filament_used; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.frame.filament_used IS 'mm';
 
 
 --
 -- TOC entry 3003 (class 0 OID 0)
 -- Dependencies: 202
--- Name: COLUMN frame.filament_used; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN frame.still_0; Type: COMMENT; Schema: public; Owner: postgres
 --
 
-COMMENT ON COLUMN public.frame.filament_used IS 'Hundreds of mm.';
+COMMENT ON COLUMN public.frame.still_0 IS 'JPEG image taken at frame.time';
+
+
+--
+-- TOC entry 3004 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: COLUMN frame.vin_0; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.frame.vin_0 IS 'Input voltage to board';
 
 
 --
@@ -362,8 +372,7 @@ COMMENT ON COLUMN public.frame.filament_used IS 'Hundreds of mm.';
 -- Data for Name: file; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.file (name, modified, data) FROM stdin;
-\.
+INSERT INTO public.file VALUES ('test.csv', -1, '\x');
 
 
 --
@@ -372,8 +381,8 @@ COPY public.file (name, modified, data) FROM stdin;
 -- Data for Name: frame; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.frame ("time", file_name, job_id, temp_aux_7, temp_aux_6, temp_aux_5, temp_aux_4, temp_aux_3, temp_aux_2, temp_aux_1, temp_aux_0, temp_extruder_0, temp_bed_0, temp_chamber_0, pos_motor_0, pos_motor_1, pos_motor_2, pos_motor_3, print_progress_percentage, print_layers_printed, print_layers_remaining, temp_cpu_0, temp_cpu_1, speed_requested_mms, speed_current_mms, voltage, probe_z, probe_x, filament_used) FROM stdin;
-\.
+INSERT INTO public.frame VALUES (1639318549, NULL, 1001, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.frame VALUES (1639318550, 'test.csv', 51, 1000, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 
 --
@@ -403,7 +412,7 @@ ALTER TABLE ONLY public.frame
     ADD CONSTRAINT frame_fk FOREIGN KEY (file_name) REFERENCES public.file(name) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
--- Completed on 2021-12-11 18:29:14 CET
+-- Completed on 2022-01-02 16:03:11 CET
 
 --
 -- PostgreSQL database dump complete

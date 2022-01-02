@@ -11,7 +11,6 @@
 using namespace std;
 
 namespace Prosur::Database{
-
 	// Is filled by the various Datasource functions before being passed to insertFrame
 	struct Frame{
 		int64_t time; // Unix time second epoch in seconds; primary key of Frame
@@ -20,35 +19,26 @@ namespace Prosur::Database{
 		string jobFilename;
 		int64_t jobFileModified; // -1 when not available
 
+		// When isPrinting && !wasPrinting, a new uniqur jobId is generated and inserted into the database along with the Frame
 		bool wasPrinting;
 		bool isPrinting;
 
 		vector<vector<char>> still; // JPEG stills
+
 		vector<float> auxTemp;
 		vector<float> heaterTemp;
 		vector<float> cpuTemp;
 		vector<float> inputVoltage;
-
-
 		vector<float> motorPos; // May be used for x, y, z, e for now. Flexible.
+		vector<float> endstop; // Suggested use: x-endstop, y-endstop, z-probe, filament runout sensor (x,y,z,e)
+		vector<float> probe;
 
-		float probeX; // May be used for. X endstop
-		float probeY; // May be used Y endstop
-		float probeZ; // May be used for z-probe or endstop
-		float probeE; // May be used for filament runout sensor
 		float speedCurrentMms;
 		float speedRequestedMms;
 		int printLayersPrinted;
 		int printLayersRemaining;
 		float printProgressPercentage;
 	};
-
-	// These values are important for correctly inserting the frame data
-	namespace KEY{
-		const string IS_PRINTING = "is_printing";
-		const string JOB_FILE_NAME = "job_file_name";
-		const string JOB_FILE_MODIFIED = "job_file_modified";
-	}
 
 	void init();
 	void insertFrame(Frame& frame);

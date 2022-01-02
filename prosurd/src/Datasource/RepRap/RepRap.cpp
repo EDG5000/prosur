@@ -100,6 +100,17 @@ namespace Prosur::Datasource::RepRap{
 				frame.motorPos[i] = om["result"]["mode"]["axes"][0]["machinePosition"];
 			}
 			frame.motorPos[3] = om["result"]["move"]["extruders"][0]["position"];
+
+			// Probes
+			for(int i = 0; i < om["result"]["sensors"]["endstops"].size(); i++){
+				frame.probe[i] = om["result"]["sensors"]["endstops"][i];
+			}
+
+			// Endstops
+			for(int i = 0; i < om["result"]["sensors"]["probes"].size(); i++){
+				frame.endstop[i] = om["result"]["sensors"]["probes"][i]["value"][0]; // Probes with multiple values will only have value 0 stored.
+			}
+
 		}catch(json::exception& e){
 			cerr << "RepRapClient: fillFrame: error accessing object model: " << e.what() << endl;
 			terminate();
