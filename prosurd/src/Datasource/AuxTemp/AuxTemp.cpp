@@ -23,8 +23,9 @@ namespace Prosur::Datasource::AuxTemp{
 	const string DEVICE_NAME = "/dev/ttyUSB0";
 	string readBuffer;
 	int fd;
+	bool ready = false;
 
-	void init(){
+	static void init(){
 		fd = open(DEVICE_NAME.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
 		if (fd < 0) {
 			cerr << "Error opening " << DEVICE_NAME << " " << strerror(errno) << endl;
@@ -70,6 +71,12 @@ namespace Prosur::Datasource::AuxTemp{
 	}
 
 	void fillFrame(Database::Frame& frame){
+		// TODO for increased reliability, considered reopening the device on each frame
+		// TODO however, what to do in case of failures? Right now, the system terminates.
+		if(!ready){
+			init();
+		}
+
 		frame.auxTemp.clear();
 
 		char buf[128]; // This limits handling of incoming bytes to 128b/s. Ensure remote transmits slower than this. Otherwise, buffer overrun will occur.
