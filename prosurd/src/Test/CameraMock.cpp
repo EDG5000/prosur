@@ -3,22 +3,25 @@
 #include <iostream>
 #include <istream>
 #include <fstream>
-#include <strstream>
 #include <filesystem>
+
+#include "Database/Frame.hpp"
 
 using namespace std;
 using namespace filesystem;
 
 namespace Prosur::Datasource::Camera{
 
-	vector<uint8_t> image;
+	vector<char> image;
 
 	bool ready = false;
 
 	static void init(){
 		string path = current_path().string() + "/testdata/testimage.jpg";
 		ifstream file(path);
-		image << file;
+
+
+	    copy(istreambuf_iterator<char>(file), istreambuf_iterator<char>(), back_inserter(image));
 	}
 
 	void fillFrame(Database::Frame& frame){
@@ -26,6 +29,6 @@ namespace Prosur::Datasource::Camera{
 			init();
 			ready = true;
 		}
-		frame.still[0] = move(image);
+		frame.still.push_back(image);
 	}
 }

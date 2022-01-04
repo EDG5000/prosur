@@ -17,6 +17,7 @@
 #include "Database/Database.hpp"
 #include "Webserver/Webserver.hpp"
 #include "Util/Util.hpp"
+#include "Database/Frame.hpp"
 
 using namespace std;
 using namespace Prosur;
@@ -34,7 +35,7 @@ namespace Prosur{
 
 		while(true){
 			int64_t startTime = Util::unixTime();
-
+/*
 			// Store isPrinting from previous frame; clear Frame and populate frame time
 			bool wasPrinting = frame.isPrinting;
 			frame = {};
@@ -48,7 +49,7 @@ namespace Prosur{
 
 			// Insert frame into database
 			Database::insertFrame(frame);
-
+*/
 			// Unless we are in TEST_MODE, sleep based on time taken during this cycle
 			#ifndef TEST_MODE
 				// Substract time taken during cycle with target interval
@@ -57,6 +58,5 @@ namespace Prosur{
 			#endif
 		}
 	}
-
 }
 

@@ -14,6 +14,7 @@
 
 #include "json.hpp"
 
+#include "Database/Frame.hpp"
 
 using namespace nlohmann;
 using namespace std;
@@ -104,23 +105,19 @@ namespace Prosur::Datasource::AuxTemp{
 		for(int lineIndex = 0; lineIndex < lines.size()-1; lineIndex++){
 			try{
 				json auxTempFrame = json::parse(lines[lineIndex]);
-				if(frame.auxTemp.size() < 2){
+				if(auxTempFrame.size() < 2){
 					cerr << "Error: expected at least 2 elements in frame: " << lines[lineIndex] << endl;
 					terminate();
 				}
 				// Read first element which should equal the element count
 				int expectedValues = auxTempFrame[0];
-				if(frame.auxTemp.size()-1 != expectedValues){
+				if(auxTempFrame.size()-1 != expectedValues){
 					cerr << "Error: indicated element count does not correspond to actual element count in frame: " << lines[lineIndex] << endl;
 					terminate();
 				}
-				// Ensure the vector is large enough
-				if(frame.auxTemp.size() < frame.auxTemp.size()-1){
-					frame.auxTemp.resize(frame.auxTemp.size()-1);
-				}
 				// Copy values over; start at second element to skip the size-indicating element.
-				for(int valueIndex = 1; valueIndex < frame.auxTemp.size(); valueIndex++){
-					frame.auxTemp[valueIndex-1] = frame.auxTemp[valueIndex];
+				for(int valueIndex = 1; valueIndex < auxTempFrame.size(); valueIndex++){
+					frame.auxTemp.push_back(auxTempFrame[valueIndex]);
 				}
 			}catch(exception& e){
 				cerr << "Error: unable to parse frame: " << lines[lineIndex] << endl;

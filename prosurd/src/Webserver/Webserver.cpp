@@ -46,6 +46,13 @@ namespace Prosur::Webserver{
 	typedef struct sockaddr_in SA_IN;
 	typedef struct sockaddr SA;
 
+	const map<int, string> STATUS_MESSAGE = {
+		{HTTP::OK, "OK"},
+		{HTTP::BAD_REQUEST, "Bad Request"},
+		{HTTP::NOT_FOUND, "Not Found"},
+		{HTTP::INTERNAL_SERVER_ERROR, "Internal Server Error"}
+	};
+
 	// Resources requested over HTTP are provided to the client by the relevant handler function
 	// - The key is the resource/document/filename component of the URI.
 	// - The map<string,string> argument contains query string parameters.
@@ -61,7 +68,7 @@ namespace Prosur::Webserver{
 	// Either stringResponseBody or binaryResponseBody should have non-zero length
 	static void sendResponse(int client_socket, int httpCode, HTTPResponseBody responseBody){ // TODO Note: previously, responseBody was of reference-type to avoid copying.
 		// Send response header
-		string responseHeader = "HTTP/1.1 " + to_string(httpCode) + " OK\r\n\r\n";
+		string responseHeader = "HTTP/1.1 " + to_string(httpCode) + " "+STATUS_MESSAGE.at(httpCode)+"\r\n\r\n";
 		write(client_socket, responseHeader.c_str(), responseHeader.size());
 
 		// Send response body
@@ -101,7 +108,7 @@ namespace Prosur::Webserver{
 		if(requestSize == 0){
 			string error = "Webserver: Error: request size is 0.";
 			cerr << error << endl;
-			sendResponse(clientSocket, HTTP_BAD_REQUEST, error);
+			sendResponse(clientSocket, HTTP::BAD_REQUEST, error);
 			return;
 		}
 
@@ -109,7 +116,7 @@ namespace Prosur::Webserver{
 		if(requestSize > 1000){
 			string error = "Webserver: Error: request size exceeds 1000. Size: " + to_string(requestSize);
 			cerr << error << endl;
-			sendResponse(clientSocket, HTTP_BAD_REQUEST, error);
+			sendResponse(clientSocket, HTTP::BAD_REQUEST, error);
 			return;
 		}
 
@@ -121,7 +128,7 @@ namespace Prosur::Webserver{
 		if(headerLines.size() == 0){
 			string error = "Webserver: Request header line count expected to be at least 1. Request data: " + requestData ;
 			cerr << error << endl;
-			sendResponse(clientSocket, HTTP_BAD_REQUEST, error);
+			sendResponse(clientSocket, HTTP::BAD_REQUEST, error);
 			return;
 		}
 
@@ -131,7 +138,7 @@ namespace Prosur::Webserver{
 		if(statusComponents.size() != 3){
 			string error = "Webserver: Expected request status line component count to be 3, Status line was: " + statusLine;
 			cerr << error << endl;
-			sendResponse(clientSocket, HTTP_BAD_REQUEST, error);
+			sendResponse(clientSocket, HTTP::BAD_REQUEST, error);
 			return;
 		}
 
@@ -154,7 +161,7 @@ namespace Prosur::Webserver{
 				if(pairElements.size() != 2){
 					string error = "Webserver: Error: Malformed URI. Pair element count expected to be 2. Source pair: " + pair + "Total URL: " + url;
 					cerr << error << endl;
-					sendResponse(clientSocket, HTTP_BAD_REQUEST, error);
+					sendResponse(clientSocket, HTTP::BAD_REQUEST, error);
 					return;
 				}
 				string key = pairElements[0];
@@ -172,13 +179,17 @@ namespace Prosur::Webserver{
 		if(!resourceHandlers.contains(resourceName)){
 			string error = "Webserver: Error: Resource not found: " + resourceName;
 			cerr << error << endl;
-			sendResponse(clientSocket, HTTP_NOT_FOUND, error);
+			sendResponse(clientSocket, HTTP::NOT_FOUND, error);
 			return;
 		}
 
 		// Call appropriate resource handler to obtain response body and HTTP code
 		HTTPResponseBody responseBody;
 		int httpCode = resourceHandlers[resourceName](responseBody, requestParameters);
+
+		if(httpCode != HTTP::OK){
+			cerr << "Webserver: Error while serving resource. URL: " + url << endl;
+		}
 
 		// Respond
 		sendResponse(clientSocket, httpCode, responseBody);

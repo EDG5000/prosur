@@ -59,17 +59,24 @@ namespace Prosur::Database::DBUtil{
 		for(const DBValue& param: params){
 			paramFormats[i] = FORMAT_BINARY;
 			paramLengths[i] = param.size();
-			paramValues[i] = param; // TODO does byte order have to be reversed?
+			if(param.isNull()){
+				paramValues[i] = nullptr;
+			}else{
+				paramValues[i] = param;
+				// Convert to network byte order
+				// Integer and floats are swapped. Binary array and string is not swapped.
+				if(param.type != String && param.type != Binary){
+					Util::swapbytes(paramValues[i], paramLengths[i]);
+				}
+
+			}
 			i++;
 		}
 
-		// Swap byte order
-		for(int i = 0; i < params.size(); i++){
-			Util::swapbytes(paramValues[i], paramLengths[i]);
-		}
+		PGresult* result;
 
 		// Perform query
-		PGresult* result = PQexecParams(
+		result = PQexecParams(
 				conn,
 				query.c_str(),
 				params.size(),
@@ -80,8 +87,9 @@ namespace Prosur::Database::DBUtil{
 				FORMAT_BINARY
 		);
 
+		ExecStatusType status = PQresultStatus(result);
 		// Check for query error
-		if(PQresultStatus(result) != PGRES_TUPLES_OK){
+		if(status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK){
 			cerr << "DBUtil: Query failed. Error: " << getError() << " Query was: " << query << endl;
 			terminate();
 		}
@@ -94,7 +102,7 @@ namespace Prosur::Database::DBUtil{
 			return resultData;
 		}
 
-		// Collect field names
+		// Collect field names and types
 		int columnCount = PQnfields(result);
 		vector<string> columnNames;
 		map<string, Oid> fieldTypes;
@@ -107,17 +115,16 @@ namespace Prosur::Database::DBUtil{
 		// Fill values
 		for(int row = 0; row < rows; row++){
 			map<string, DBValue> rowData;
-			int column = 0;
-			for(const string& columnName: columnNames){
+			for(int column = 0; column < columnNames.size(); column++){
 				if(PQgetisnull(result, row, column)){
 					continue;
 				}
+				string columnName = columnNames[column];
 				Oid type = fieldTypes[columnName];
 				char* data = PQgetvalue(result, row, column);
 				size_t size = PQgetlength(result, row, column);
-				if(type != TEXTOID){
-					// For some reason, TEXT is not swapped, but INT4 and INT8 come in network byte order and need to be swapped to little endian.
-					// TODO how about BYTEA?! Currently, it is swapped.
+				// Integer and floats are swapped. Binary array and string are not swapped.
+				if(type != TEXTOID && type != BYTEAOID){
 					Util::swapbytes(data, size);
 				}
 
@@ -137,12 +144,11 @@ namespace Prosur::Database::DBUtil{
 					rowData[columnName] = string(data); // implicit Param constructor
 					break;
 				}
-				column++;
+
 			}
 			resultData.push_back(rowData);
 		}
 
-		//PQclear(result)
 		return resultData;
 	}
 

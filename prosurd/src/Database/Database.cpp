@@ -18,6 +18,7 @@
 #include "Datasource/RepRap/RepRap.hpp"
 #include "Database/DBUtil.hpp"
 #include <Database/DBValue.hpp>
+#include "Database/Frame.hpp"
 #include "Util/Util.hpp"
 
 using namespace std;
@@ -25,7 +26,7 @@ using namespace std;
 namespace Prosur::Database{
 	// Set to latest inserted job at startup, incremented at runtime prior to insertion of a new job's first frame.
 	// Is written to each frame as long as RepRapClient::is_printing.
-	int jobId = -1;
+	int lastJobId = -1;
 
 	void init(){
 		// As no host is supplied, libpq will connect using UNIX-domain socket for optimal performance.
@@ -35,27 +36,32 @@ namespace Prosur::Database{
 		// local   all             all                                     trust
 		DBUtil::connect("dbname=postgres user=postgres");
 
+#ifdef TEST_MODE
+		// TODO PLEASE REMOVE THIS....... COME ON!
+		DBUtil::query("delete from frame;");
+		DBUtil::query("delete from job_file");
+#endif
 		// Obtain the latest jobId currently in the database
-		auto result = DBUtil::query(
-			"select job_id from frame "\
-			"order by job_id desc "\
-			"limit 1"
-		);
+		auto result = DBUtil::query("\
+			select job_id from frame \
+			order by job_id desc \
+			limit 1\
+		");
 
 		// Set lastJobId
 		if(result.size() == 0){
 			// No existing jobs present, start ID at 0
-			jobId = 0;
+			lastJobId = 0;
 		}else if(result.size() != 1){
 			cerr << "DatabaseClient: Unable to obtain latest job_id value. Row count was not 1, but " << result.size()  << endl;
 			terminate();
 		}else if(result.size() == 1){
-			jobId = result[0]["job_id"];
+			lastJobId = result[0]["job_id"];
 		}
 	}
 
 	static int64_t fileExists(string filename){
-		auto result = DBUtil::query("select name, modified from file where name = $1", {filename});
+		auto result = DBUtil::query("select name, modified from job_file where name = $1", {filename});
 		if(result.size() == 0){
 			return -1;
 		}
@@ -63,11 +69,14 @@ namespace Prosur::Database{
 	}
 
 	void insertFrame(Frame& frame){
+		DBUtil::query("BEGIN"); // Begin transaction involving job_file insert and frame insert
+
 		// Create file entry if this is the start of a new job
 		bool newJob = frame.isPrinting && !frame.wasPrinting;
 		if(newJob){
 			// Create new jobId for insertion into database
-			jobId++;
+			lastJobId++;
+			frame.jobId = lastJobId;
 
 			// Get filename and date modified of current job file
 			if(frame.jobFilename == ""){
@@ -92,7 +101,7 @@ namespace Prosur::Database{
 
 			// Insert new file now if needed
 			if(existingFileModified == -1){
-				DBUtil::query("insert into file (name, modified, data) values ($1, $2, $3)", {
+				DBUtil::query("insert into job_file (name, modified, data) values ($1, $2, $3)", {
 						frame.jobFilename,
 						frame.jobFileModified,
 						frame.jobFile
@@ -100,88 +109,9 @@ namespace Prosur::Database{
 			}
 		}
 
-/*
-    "time" bigint NOT NULL,
-    file_name text,
-    job_id integer,
-    temp_aux_7 real,
-    temp_aux_6 real,
-    temp_aux_5 real,
-    temp_aux_4 real,
-    temp_aux_3 real,
-    temp_aux_2 real,
-    temp_aux_1 real,
-    temp_aux_0 real,
-    temp_extruder_0 real,
-    temp_bed_0 real,
-    temp_chamber_0 real,
-    pos_motor_0 real,
-    pos_motor_1 real,
-    pos_motor_2 real,
-    pos_motor_3 real,
-    print_progress_percentage real,
-    print_layers_printed integer,
-    print_layers_remaining integer,
-    temp_cpu_0 real,
-    speed_requested_mms real,
-    speed_current_mms real,
-    voltage integer,
-    probe_z integer,
-    probe_x integer,
-    filament_used real,
-    still_0 bytea,
-    vin_0 real
-*/
-
-		// Create map of DBValues for insertion into frame table
-		map<string, DBValue> row = {
-			{"time", frame.time},
-			{"job_id", frame.isPrinting ? jobId : INT32_MAX},
-			{"file_name", frame.jobFilename}
-		};
-
-		// Add still images to map
-		for(int i = 0; i < frame.still.size(); i++){
-			row["still_" + to_string(i)] = frame.still[i];
-		}
-
-		// Add aux temperatures to map
-		for(int i = 0; i < frame.auxTemp.size(); i++){
-			row["temp_aux_" + to_string(i)] = frame.auxTemp[i];
-		}
-
-		// Add heater temperatures to map
-		for(int i = 0; i < frame.heaterTemp.size(); i++){
-			row["temp_heater_" + to_string(i)] = frame.heaterTemp[i];
-		}
-
-		// Voltage and temperatures per board; add to map
-		for(int i = 0; i < frame.cpuTemp.size(); i++){
-			row["temp_cpu_" + to_string(i)] = frame.cpuTemp[i];
-			row["vin_" + to_string(i)] = frame.cpuTemp[i];
-		}
-
-		// Motor positions
-		for(int i = 0; i < frame.motorPos.size(); i++){
-			row["pos_motor_" + to_string(i)] = frame.motorPos[i];
-		}
-
-		// Endstop positions
-		for(int i = 0; i < frame.endstop.size(); i++){
-			row["endstop_" + to_string(i)] = frame.endstop[i];
-		}
-
-		// Probe positions
-		for(int i = 0; i < frame.probe.size(); i++){
-			row["probe_" + to_string(i)] = frame.probe[i];
-		}
-
-		// Coincidentally, the following lines ended up being sorted by length
-		row["speed_current_mms"] = frame.speedCurrentMms;
-		row["speed_requested_mms"] = frame.speedRequestedMms;
-		row["print_layers_printed"] = frame.printLayersPrinted;
-		row["print_layers_remaining"] = frame.printLayersRemaining;
-		row["print_progress_percentage"] = frame.printProgressPercentage;
+		// Export Frame into a map of DBValue instances
+		map<string, DBValue> row;
+		frame.exportMap(row);
 
 		// Generate string of numeric placeholder
 		string paramPlaceholders = "$1";
@@ -202,11 +132,12 @@ namespace Prosur::Database{
 
 		// Run query
 		DBUtil::query(
-			"insert into frame" \
-			"("+  columnString + ")" \
+			"insert into frame " \
+			"("+  columnString + ") " \
 			"values (" + paramPlaceholders + ")",
 			values
 		);
+		DBUtil::query("end"); // Commit transaction
 	}
 
 }

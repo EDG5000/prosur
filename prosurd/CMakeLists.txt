@@ -35,6 +35,7 @@ set(
 	src/Webserver/Resources/File.cpp
 	src/Database/Database.cpp
 	src/Database/DBUtil.cpp
+	src/Database/Frame.cpp
 	src/Util/Util.cpp
 )
 

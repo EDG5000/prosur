@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <regex>
 
 #include <time.h>
 
@@ -103,9 +104,41 @@ namespace Prosur::Util{
 		// e.g. 2021-07-25T23:25:34
 		tm datetime = {};
 		char* result = strptime(dateTimeString.c_str(), "%Y-%m-%dT%H:%M:%S", &datetime);
-		if(result != NULL){ // Should not be NULL and should point to the NUL byte at the end of the input string to mark a successfull full parse
+		if(result == NULL){ // Should not be NULL and should point to the NUL byte at the end of the input string to mark a successfull full parse
 			cerr << "Error, unable to parse date string: " << dateTimeString << " (failed at character " << result-dateTimeString.c_str() << *result << ")" << endl;
+			terminate();
 		}
 		return mktime(&datetime);
+	}
+
+	std::string decodeURIComponent(std::string encoded) {
+		std::string decoded = encoded;
+		std::smatch sm;
+		std::string haystack;
+		int dynamicLength = decoded.size() - 2;
+		if (decoded.size() < 3) return decoded;
+		for (int i = 0; i < dynamicLength; i++){
+			haystack = decoded.substr(i, 3);
+			if (std::regex_match(haystack, sm, std::regex("%[0-9A-F]{2}"))){
+				haystack = haystack.replace(0, 1, "0x");
+				std::string rc = {(char)std::stoi(haystack, nullptr, 16)};
+				decoded = decoded.replace(decoded.begin() + i, decoded.begin() + i + 3, rc);
+			}
+			dynamicLength = decoded.size() - 2;
+		}
+		return decoded;
+	}
+
+	std::string encodeURIComponent(std::string decoded){
+		std::ostringstream oss;
+		std::regex r("[!'\\(\\)*-.0-9A-Za-z_~]");
+		for (char &c : decoded){
+			if (std::regex_match((std::string){c}, r)){
+				oss << c;
+			}else{
+				oss << "%" << std::uppercase << std::hex << (0xff & c);
+			}
+		}
+		return oss.str();
 	}
 }

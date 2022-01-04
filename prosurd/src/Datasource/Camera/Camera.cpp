@@ -14,6 +14,8 @@
 #include <vector>
 #include <iostream>
 
+#include "Database/Frame.hpp"
+
 using namespace std;
 
 namespace Prosur::Datasource::Camera{

@@ -1,8 +1,20 @@
+/*
+    Used when passing query parameers to DBUtil::query.
+
+	DBValue will implicitly convert from various types, e.g.:
+
+	vector<DBValue> test = {1.3, 3423434, "string", myCharVector};
+
+	Allows various implicit conversions, including to char* to obtain raw data
+ */
+
 #pragma once
 
 #include <string>
 #include <vector>
 #include <iostream>
+#include <float.h>
+#include <stdint.h>
 
 using namespace std;
 
@@ -15,12 +27,8 @@ namespace Prosur::Database{
 		Float
 	};
 
-	// Allows flexible passing of parameters along with query
-	// vector<Param> can be used as parameter like so:
-	// myfunc({1, 3423434, "string", myCharVector})
-	// Wil perform various implicit conversions, including to char* to obtain raw data
 	class DBValue{
-		//union{ // Causing issues with "implicitly deleted copy constructor". Annoying.'
+		//union{ // Union is causing issues with "implicitly deleted copy constructor". Annoying.'
 			int intVal = 0;
 			int64_t longVal = 0;
 			string stringVal;
@@ -28,9 +36,10 @@ namespace Prosur::Database{
 			vector<char> binaryVal;
 		//};
 
-		DBValueType type = Int;
+
 
 		public:
+			DBValueType type = Int;
 
 			// Allows assigning by any of the supported types. Sets the type and value.
 			DBValue(){}; // Required to be present when used in std::map.
@@ -40,6 +49,22 @@ namespace Prosur::Database{
 			DBValue(vector<char> pBinaryVal): binaryVal(pBinaryVal), type(Binary){}
 			DBValue(float pFloatVal): floatVal(pFloatVal), type(Float){}
 
+			// DBUtil will insert NULLs when inserting a DBValue with isNull() == true
+			bool isNull() const{
+				switch(type){
+				case Int:
+					return intVal == INT32_MAX;
+				case Float:
+					return floatVal == FLT_MAX;
+				case Long:
+					return longVal == INT64_MAX;
+				case String:
+					return stringVal.size() == 0;
+				case Binary:
+					return binaryVal.size() == 0;
+				}
+				return 0;
+			}
 
 			// To use in conjuction with operator const char* when obtaining raw data.
 			int size() const{
@@ -110,18 +135,29 @@ namespace Prosur::Database{
 				}
 				return binaryVal;
 			}
+			operator float(){
+				if(type != Float){
+					// This will slow down accessing of parameters, but better safe than sorry
+					cerr << "DBUtil: Param: Attempt to access Param as vector<char> while type is " << type << endl;
+					terminate();
+				}
+				return floatVal;
+			}
 
+			// Used for serializing when printing to log
 			string toString(){
 				switch(type){
 				case Int:
-					return to_string(intVal);
+					return intVal == INT32_MAX ? "NULL" : to_string(intVal);
 				case Long:
-					return to_string(longVal);
+					return longVal == INT64_MAX ? "NULL" : to_string(longVal);
 				case String:
 					return stringVal;
+				case Float:
+					return floatVal == FLT_MAX ? "NULL" : to_string(floatVal);
 				default:
 				case Binary:
-					cerr << "DBUtil: Calling toString on Param of type Binary is not supported." << endl;
+					return "<binary data of length: " + to_string(size()) + ">";
 					terminate();
 				}
 			}

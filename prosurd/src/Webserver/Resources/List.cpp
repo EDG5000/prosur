@@ -28,6 +28,6 @@ namespace Prosur::Webserver::Resources::List{
 			responseBody += string("<a href=\"/job?id=" + to_string(job_id) + "\">" + Util::isodatetime(time) + "(" + filename + ").csv</a><br />\n");
 		}
 
-		return HTTP_OK;
+		return HTTP::OK;
 	}
 }

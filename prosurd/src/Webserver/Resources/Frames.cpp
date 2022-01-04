@@ -42,7 +42,7 @@ namespace Prosur::Webserver::Resources::Frames{
 	};
 
 	const map<string, Mode> MODE_VALUES = {
-		{"latest", Job},
+		{"latest", Latest},
 		{"range", Range},
 		{"job", Job}
 	};
@@ -68,12 +68,12 @@ namespace Prosur::Webserver::Resources::Frames{
 			}catch(const exception& e){
 				responseBody = "Webserver: Error: "+key+" parameter is non-numeric. reason: " + string(e.what());
 				cerr << responseBody << endl;
-				return HTTP_BAD_REQUEST;
+				return HTTP::BAD_REQUEST;
 			}
 			if(numericParameters[key] < 0){
 				responseBody = "Webserver: Error: "+key+" parameter is lower than 0. Value: " + to_string(numericParameters[key]);
 				cerr << responseBody << endl;
-				return HTTP_BAD_REQUEST;
+				return HTTP::BAD_REQUEST;
 			}
 		}
 
@@ -81,14 +81,14 @@ namespace Prosur::Webserver::Resources::Frames{
 		if(!parameters.contains("mode")){
 			responseBody = "Webserver: Error: mode parameter not present, while it is mandatory.";
 			cerr << responseBody << endl;
-			return HTTP_BAD_REQUEST;
+			return HTTP::BAD_REQUEST;
 		}
 
 		// Check if mode param is one of available options
 		if(!MODE_VALUES.contains(parameters["mode"])){
 			responseBody = "Webserver: Unknown mode selected: " + parameters["mode"];
 			cerr << responseBody << endl;
-			return HTTP_BAD_REQUEST;
+			return HTTP::BAD_REQUEST;
 		}
 
 		// Assign Mode
@@ -99,7 +99,7 @@ namespace Prosur::Webserver::Resources::Frames{
 			if(!numericParameters.contains(key)){
 				responseBody = "Webserver: Parameter " + key + " was not present, it is mandatory for the selected mode";
 				cerr << responseBody << endl;
-				return HTTP_BAD_REQUEST;
+				return HTTP::BAD_REQUEST;
 			}
 		}
 
@@ -110,7 +110,7 @@ namespace Prosur::Webserver::Resources::Frames{
 			if(modulus == 0){
 				responseBody = "Webserver: Error: modulus parameter needs to be at least 1. Value: " + to_string(numericParameters["modulus"]);
 				cerr << responseBody << endl;
-				return HTTP_BAD_REQUEST;
+				return HTTP::BAD_REQUEST;
 			}
 		}
 
@@ -121,7 +121,8 @@ namespace Prosur::Webserver::Resources::Frames{
 		// Append to the query string and parameter vector depending on the selected mode
 		switch(mode){
 			case Latest:
-				query += " limit 1 order by time desc";
+				query += " order by time desc \
+					limit 1";
 				break;
 			case Range:
 				query += " where time > $1 and time < $2";
@@ -147,7 +148,7 @@ namespace Prosur::Webserver::Resources::Frames{
 
 		if(frames.size() == 0){
 			// Nothing do to; header cannot be constructed and no rows to serialize.
-			return HTTP_OK;
+			return HTTP::OK;
 		}
 
 		// Build csv header
@@ -170,6 +171,6 @@ namespace Prosur::Webserver::Resources::Frames{
 			responseBody += "\n";
 		}
 
-		return HTTP_OK;
+		return HTTP::OK;
 	}
 }
