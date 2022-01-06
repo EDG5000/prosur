@@ -14,9 +14,10 @@ namespace Prosur::Database{
 		int64_t time; // Unix time second epoch in seconds; primary key of Frame
 		int jobId;
 
-		vector<char> jobFile;
+		vector<char> jobFile; // Stored in job_file with filename and modified as composite key, avoiding redundant files.
 		string jobFilename;
 		int64_t jobFileModified; // -1 when not available
+		map<string,string> jobParameters; // Stored separately
 
 		// When isPrinting && !wasPrinting, a new uniqur jobId is generated and inserted into the database along with the Frame
 		bool wasPrinting;
@@ -35,7 +36,7 @@ namespace Prosur::Database{
 		float speedCurrentMms;
 		float speedRequestedMms;
 		int printLayersPrinted;
-		int printLayersRemaining;
+		int printLayersTotal;
 		float printProgressPercentage;
 
 		void exportMap(map<string, DBValue>& values); // Used by toString and by Database when inserting into database

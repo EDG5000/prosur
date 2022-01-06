@@ -16,7 +16,10 @@
 #include <float.h>
 #include <stdint.h>
 
+#include "json.hpp"
+
 using namespace std;
+using namespace nlohmann;
 
 namespace Prosur::Database{
 	enum DBValueType{
@@ -35,8 +38,6 @@ namespace Prosur::Database{
 			float floatVal = 0;
 			vector<char> binaryVal;
 		//};
-
-
 
 		public:
 			DBValueType type = Int;
@@ -142,6 +143,22 @@ namespace Prosur::Database{
 					terminate();
 				}
 				return floatVal;
+			}
+			operator json(){
+				switch(type){
+				case Int:
+					return intVal;
+				case Long:
+					return longVal;
+				case String:
+					return stringVal;
+				case Float:
+					return floatVal;
+				default:
+				case Binary:
+					return "<binary data of length: " + to_string(size()) + ">";
+					terminate();
+				}
 			}
 
 			// Used for serializing when printing to log

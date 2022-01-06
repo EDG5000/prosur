@@ -18,4 +18,5 @@ namespace Prosur::Util{
 	uint64_t getTimeMillis();
 	void writeDataToFileDebug(vector<uint8_t> data, string filename);
 	int64_t parseDateTimeString(string dateTimeString);
+	int64_t rand();
 }

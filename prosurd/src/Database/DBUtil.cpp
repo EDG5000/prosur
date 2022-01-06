@@ -90,7 +90,11 @@ namespace Prosur::Database::DBUtil{
 		ExecStatusType status = PQresultStatus(result);
 		// Check for query error
 		if(status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK){
-			cerr << "DBUtil: Query failed. Error: " << getError() << " Query was: " << query << endl;
+			cerr << "DBUtil: Query failed. Error: " << getError() << " Query was: " << query << " Parameters: ";
+			for(auto& param: params){
+				cerr << param.toString() << " ";
+			}
+			cerr << endl;
 			terminate();
 		}
 
@@ -144,11 +148,9 @@ namespace Prosur::Database::DBUtil{
 					rowData[columnName] = string(data); // implicit Param constructor
 					break;
 				}
-
 			}
 			resultData.push_back(rowData);
 		}
-
 		return resultData;
 	}
 

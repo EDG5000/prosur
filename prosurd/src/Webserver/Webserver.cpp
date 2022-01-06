@@ -67,8 +67,11 @@ namespace Prosur::Webserver{
 	// Write response HTTP header and body with provided HTTP status code and response body
 	// Either stringResponseBody or binaryResponseBody should have non-zero length
 	static void sendResponse(int client_socket, int httpCode, HTTPResponseBody responseBody){ // TODO Note: previously, responseBody was of reference-type to avoid copying.
-		// Send response header
-		string responseHeader = "HTTP/1.1 " + to_string(httpCode) + " "+STATUS_MESSAGE.at(httpCode)+"\r\n\r\n";
+		// Create response headers
+		string responseHeader = "HTTP/1.1 " + to_string(httpCode) + " " + STATUS_MESSAGE.at(httpCode)+"\r\n";
+		responseHeader += "Content-Type: " + responseBody.type() + "\r\n\r\n";
+
+		// Write response headers
 		write(client_socket, responseHeader.c_str(), responseHeader.size());
 
 		// Send response body

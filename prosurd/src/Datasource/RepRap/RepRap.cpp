@@ -10,6 +10,7 @@
 
 #include <Util/Util.hpp>
 #include "Database/Frame.hpp"
+#include "JobFile/JobFile.hpp"
 
 using namespace std;
 using namespace nlohmann;
@@ -92,7 +93,6 @@ namespace Prosur::Datasource::RepRap{
 
 		// Access the downloaded model; store relevant values in the Frame
 		// TODO The key checking and complicated error reporting code makes this piece less elegant than originally intended.
-		// I could blame nlohmann::json::exception::what() for not containing relevant details when accessing non-existing elements, but I won't.
 		try{
 			// When printing, download and merge job model to get information about current print
 			if(frame.isPrinting){
@@ -101,7 +101,7 @@ namespace Prosur::Datasource::RepRap{
 					cerr << "rffclient: unable to retrieve om_job." << endl;
 					terminate();
 				}
-				// Merge the two objects
+
 				checkKeys(om_job, {"result", "file", "fileName"});
 				if(om_job["result"]["file"]["fileName"].is_null()){
 					// TODO Sometimes only lastFileName is available, so we use that one. It would be so much easier if fileName was simply included in the regular model. Are they any query parameters which can be added to avoid having to make a separate request to retrieve fileName?
@@ -111,6 +111,12 @@ namespace Prosur::Datasource::RepRap{
 					frame.jobFilename = om_job["result"]["file"]["fileName"];
 					frame.jobFileModified = Util::parseDateTimeString(om_job["result"]["file"]["lastModified"]);
 				}
+
+				checkKeys(om_job, {"result", "layer"});
+				frame.printLayersPrinted = om_job["result"]["layer"];
+
+				checkKeys(om_job, {"result", "file", "numLayers"});
+				frame.printLayersTotal = om_job["result"]["file"]["numLayers"];
 			}
 
 			// Heater temperatures
@@ -155,6 +161,7 @@ namespace Prosur::Datasource::RepRap{
 		}
 
 		// When transitioning to printing state, download current job file.
+		// Also parse the job file and extract any print parameters
 		if(frame.isPrinting && !frame.wasPrinting){
 			string filename = frame.jobFilename;
 			if(filename == ""){
@@ -163,6 +170,7 @@ namespace Prosur::Datasource::RepRap{
 			}
 			string fileData = HTTPUtil::call(RR_BASE_URL + "rr_gcode?"  + Util::encodeURIComponent("gcode=M37 P\"0:/gcodes/" + filename + "\""));
 			frame.jobFile.assign(fileData.begin(), fileData.end());
+			frame.jobParameters = JobFile::extractParameters(fileData);
 		}
 	}
 }

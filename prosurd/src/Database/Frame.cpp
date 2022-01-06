@@ -57,7 +57,7 @@ namespace Prosur::Database{
 		values["speed_current_mms"] = speedCurrentMms;
 		values["speed_requested_mms"] = speedRequestedMms;
 		values["print_layers_printed"] = printLayersPrinted;
-		values["print_layers_remaining"] = printLayersRemaining;
+		values["print_layers_total"] = printLayersTotal;
 		values["print_progress_percentage"] = printProgressPercentage;
 	}
 

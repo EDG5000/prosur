@@ -37,6 +37,8 @@ set(
 	src/Database/DBUtil.cpp
 	src/Database/Frame.cpp
 	src/Util/Util.cpp
+	src/JobFile/JobFile.cpp
+	src/JobFile/ParameterExtractor/PrusaSlicer.cpp
 )
 
 if (TEST_MODE)

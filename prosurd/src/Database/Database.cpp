@@ -37,16 +37,22 @@ namespace Prosur::Database{
 		DBUtil::connect("dbname=postgres user=postgres");
 
 #ifdef TEST_MODE
-		cerr << "clearing database" << endl;
 		// TODO PLEASE REMOVE THIS....... COME ON!
-		DBUtil::query("delete from frame;");
-		DBUtil::query("delete from job_file");
+		//DBUtil::query("begin;");
+		//DBUtil::query("ALTER TABLE job_parameter DISABLE TRIGGER ALL;");
+		//DBUtil::query("ALTER TABLE frame DISABLE TRIGGER ALL;");
+		//DBUtil::query("ALTER TABLE job_file DISABLE TRIGGER ALL;");
+		//DBUtil::query("delete from job_parameter;");
+		//DBUtil::query("delete from frame;");
+		//DBUtil::query("delete from job_file;");
+		//DBUtil::query("end;");
 #endif
 		// Obtain the latest jobId currently in the database
 		auto result = DBUtil::query("\
 			select job_id from frame \
+			where job_id is not null \
 			order by job_id desc \
-			limit 1\
+			limit 1 \
 		");
 
 		// Set lastJobId
@@ -70,15 +76,23 @@ namespace Prosur::Database{
 	}
 
 	void insertFrame(Frame& frame){
-		DBUtil::query("BEGIN"); // Begin transaction involving job_file insert and frame insert
+		DBUtil::query("begin"); // Begin transaction involving job_file insert and frame insert
 
-		// Create file entry if this is the start of a new job
+		// Check if this is the first frame of a new job
 		bool newJob = frame.isPrinting && !frame.wasPrinting;
-		if(newJob){
-			// Create new jobId for insertion into database
-			lastJobId++;
-			frame.jobId = lastJobId;
 
+		// Create new jobId
+		if(newJob){
+			lastJobId++;
+		}
+
+		// Set jobId
+		if(frame.isPrinting){
+			frame.jobId = lastJobId;
+		}
+
+		// Insert job file if needed; insert job parameters
+		if(newJob){
 			// Get filename and date modified of current job file
 			if(frame.jobFilename == ""){
 				cerr << "DatabaseClient: update: Error: get_current_job_filename returned empty string, cannot insert job." << endl;
@@ -87,7 +101,7 @@ namespace Prosur::Database{
 
 			int64_t jobFileModified = frame.jobFileModified;
 
-			// Determine if new file needs to be inserted, adjust filename as needed
+			// Determine if a new new file needs to be inserted, adjust filename as needed
 			int64_t existingFileModified = fileExists(frame.jobFilename);
 			int iterations = 0;
 			while(existingFileModified != -1 && existingFileModified != frame.jobFileModified && iterations < 10){
@@ -107,6 +121,14 @@ namespace Prosur::Database{
 						frame.jobFileModified,
 						frame.jobFile
 				});
+			}
+
+			// Store the job parameters for this job in the job_parameter table
+			for(const auto& [key, value]: frame.jobParameters){
+				DBUtil::query("\
+					insert into job_parameter (job_id, key, value) \
+					values($1, $2, $3) \
+				", {frame.jobId, key, value});
 			}
 		}
 

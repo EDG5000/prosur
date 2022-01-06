@@ -30,8 +30,10 @@
 #include "Webserver/Webserver.hpp"
 #include "Database/DBUtil.hpp"
 #include "Webserver/HTTPResponseBody.hpp"
+#include "json.hpp"
 
 using namespace std;
+using namespace nlohmann;
 
 namespace Prosur::Webserver::Resources::Frames{
 
@@ -55,7 +57,7 @@ namespace Prosur::Webserver::Resources::Frames{
 	};
 
 	int run(HTTPResponseBody& responseBody, map<string,string> parameters){
-
+cerr << "HALLO" << endl;
 		// Check integer-params to be valid integers, when present. Store in map.
 		vector<string> integerKeys = {"job_id", "start", "end", "modulus"};
 		map<string, int> numericParameters;
@@ -114,7 +116,8 @@ namespace Prosur::Webserver::Resources::Frames{
 			}
 		}
 
-		// Build query based on mode and parameters
+		// Build frame retrieval query based on mode and parameters
+		// TODO selecting * means also selecting the stills. This is too slow.
 		string query = "select * from frame"; // Base query
 		vector<Database::DBValue> queryParameters; // Empty param vector
 
@@ -143,14 +146,58 @@ namespace Prosur::Webserver::Resources::Frames{
 				break;
 		}
 
-		// Run query, obtain result
+		// Run query to obtain frames
 		auto frames = Database::DBUtil::query(query, queryParameters);
 
+		// A job should at least have one frame
 		if(frames.size() == 0){
 			// Nothing do to; header cannot be constructed and no rows to serialize.
-			return HTTP::OK;
+			string error = "Webserver: Frames: No data found for job_id: " + to_string(numericParameters["job_id"]);
+			responseBody = error;
+			cerr << error << endl;
+			return HTTP::NOT_FOUND;
 		}
 
+		// Start preparing JSON object to return
+		json outputObject;
+		outputObject["frames"] = {};
+		outputObject["parameters"] = {};
+
+		// Write frames to the JSON object
+		// TODO this is not working as auto-selecting the conversion is not working
+		for(auto& row: frames){
+			for(auto& [column, value]: row){
+				cerr << value.toString() << endl;
+				outputObject["frames"][column].push_back(value);
+			}
+		}
+
+		// When in job mode, fetch job parameters and write to the JSON object
+		if(mode == Job){ // key, value, job_id
+			auto parameterRows = Database::DBUtil::query("\
+				select * from job_parameter \
+				where job_id = $1 \
+			", {numericParameters["job_id"]});
+			// Get job parameter key and value from each row, put in JSON object
+			for(auto& row: parameterRows){
+				if(!row.contains("key")){
+					cerr << "Database::Resource::Frames: Missing column: key from output." << endl;
+					terminate();
+				}
+				if(!row.contains("value")){
+					cerr << "Database::Resource::Frames: Missing column: value from output." << endl;
+					terminate();
+				}
+				cerr << (string) row["key"] << endl;
+				cerr << (string) row["value"] << endl;
+				outputObject[(string) row["key"]] = (string) row["value"];
+			}
+		}
+
+		responseBody = outputObject;
+
+		//
+		/*
 		// Build csv header
 		bool first = true;
 		for(auto& [key, value]: frames[0]){
@@ -170,6 +217,7 @@ namespace Prosur::Webserver::Resources::Frames{
 			}
 			responseBody += "\n";
 		}
+*/
 
 		return HTTP::OK;
 	}

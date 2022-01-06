@@ -95,6 +95,11 @@ rr_gcode?gcode=M37 P\"0:/gcodes/CFFFP_Electronics Box.gcode\"
 			}
 			string id = identify(entry["request"]["url"]);
 			string responseText = entry["response"]["content"]["text"];
+			if(responseText.size() == 0){
+				// The last response is an empty string in the current test dataset, skip it to avoid errors.
+				continue;
+			}
+
 			responses[id].push_back(responseText);
 		}
 	}
@@ -122,7 +127,13 @@ rr_gcode?gcode=M37 P\"0:/gcodes/CFFFP_Electronics Box.gcode\"
 			cerr << "HTTPUtilMock: No responses available for request with id " << id << " and URL: " << url << endl;
 		}
 		responseLastIndex[id]++;
-		return responses[id][responseLastIndex[id] % responses[id].size()];
+		int index = responseLastIndex[id] % responses[id].size();
+		string& response = responses[id][index];
+		if(response.size() == 0){
+			cerr << "HTTPUtilMock: Empty response body for id: " << id << " index: " << to_string(index) << endl;
+			terminate();
+		}
+		return response;
 	}
 
 }

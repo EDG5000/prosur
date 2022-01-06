@@ -7,6 +7,7 @@
 #include <vector>
 #include <fstream>
 #include <regex>
+#include <cstdlib>
 
 #include <time.h>
 
@@ -14,10 +15,23 @@ using namespace std;
 
 namespace Prosur::Util{
 
+	// Derrived from: https://stackoverflow.com/a/33011643
+	int64_t rand(){
+		static bool ready;
+		static int seed;
+		if(!ready){
+			srand(time(NULL));
+		}
+		uint64_t r = std::rand();
+		r = r<<30 | std::rand();
+		r = r<<30 | std::rand();
+		return (int64_t) std::rand;
+	}
+
 	int64_t unixTime(){
 		#ifdef TEST_MODE
 			// When testing, no sleeping is done; each invocation, one second passes
-			static int64_t time;
+			static int64_t time = Util::rand();
 			time++;
 			return time;
 		#else
@@ -28,7 +42,6 @@ namespace Prosur::Util{
 	void swapbytes(char* inp, size_t len){
 	    unsigned int i;
 	    unsigned char* in = (unsigned char *)inp,tmp;
-
 	    for(i=0;i<len/2;i++) {
 	        tmp=*(in+i);
 	        *(in+i)=*(in+len-i-1);
@@ -36,7 +49,7 @@ namespace Prosur::Util{
 	    }
 	}
 
-	//Derrived from https://stackoverflow.com/a/68367878
+	// Derrived from https://stackoverflow.com/a/68367878
 	void writeDataToFileDebug(vector<uint8_t> data, string filename){
 		std::ofstream out(filename, std::ios::out | std::ios::binary);
 		out.write(reinterpret_cast<const char*>(data.data()), data.size());
