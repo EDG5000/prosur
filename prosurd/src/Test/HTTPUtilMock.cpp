@@ -104,8 +104,6 @@ rr_gcode?gcode=M37 P\"0:/gcodes/CFFFP_Electronics Box.gcode\"
 			init();
 			ready = true;
 		}
-		cerr << url << endl;
-
 		// Return test file Gcode data if URL is identified as file download type
 		if(url.find("rr_gcode") != string::npos){
 			// Load and return test gcode

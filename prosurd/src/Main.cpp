@@ -35,7 +35,7 @@ namespace Prosur{
 
 		while(true){
 			int64_t startTime = Util::unixTime();
-/*
+
 			// Store isPrinting from previous frame; clear Frame and populate frame time
 			bool wasPrinting = frame.isPrinting;
 			frame = {};
@@ -49,11 +49,16 @@ namespace Prosur{
 
 			// Insert frame into database
 			Database::insertFrame(frame);
-*/
+
 			// Unless we are in TEST_MODE, sleep based on time taken during this cycle
 			#ifndef TEST_MODE
 				// Substract time taken during cycle with target interval
-				int64_t sleepTime = FRAME_COLLECTION_INTERVAL - ((time(NULL) - startTime) * 1000 * 1000);
+				int64_t timeTaken = time(NULL) - startTime;
+				int64_t sleepTime = FRAME_COLLECTION_INTERVAL - timeTaken;
+				if(sleepTime < 0){
+					cerr << "warning: taking " << (sleepTime * -1) << "us too long to keep up with desired " << FRAME_COLLECTION_INTERVAL << "us interval. Operating at reduced frame collection rate." << endl;
+					sleepTime = 0;
+				}
 				usleep(sleepTime);
 			#endif
 		}

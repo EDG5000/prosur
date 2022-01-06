@@ -103,11 +103,9 @@ namespace Prosur::Webserver::Resources::File{
 		}
 
 		if(rows.size() == 0){
-			if(numericParams["still_id"] > (STILL_COLUMN_COUNT-1)){
-				responseBody = "Webserver: File: No such file.";
-				cerr << responseBody.stringData << endl;
-				return HTTP::NOT_FOUND;
-			}
+			responseBody = "Webserver: File: No such file.";
+			cerr << responseBody.stringData << endl;
+			return HTTP::NOT_FOUND;
 		}
 
 		if(rows.size() > 1){

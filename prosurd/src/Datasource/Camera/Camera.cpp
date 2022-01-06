@@ -32,6 +32,10 @@ namespace Prosur::Datasource::Camera{
 	 *
 	 */
 
+	static string errorString(int result){
+		return gp_port_result_as_string(result);
+	}
+
 	void fillFrame(Database::Frame& frame){
 		::Camera* camera;
 		GPContext* context = gp_context_new();
@@ -49,21 +53,21 @@ namespace Prosur::Datasource::Camera{
 							ctx_progress_stop_func, p);
 		 */
 
-		/*
+
 		int retval = gp_log_add_func(GP_LOG_ERROR, [](GPLogLevel level, const char *domain, const char *str, void *data) -> void {
-			cerr << "cclclient: gphoto2 error: " << domain << " " << str << " " << data << endl;
+			cerr << "Camera: gp_log_add_func: error: " << domain << " " << str << " " << data << endl;
 		}, 0);
 		if(retval < GP_OK) {
 			cerr << "Camera: unable to add log func, error code: " << retval << endl;
-			return false;
+			terminate();
 		}else{
 			cout << "Camera: log function added." << endl;
 		}
-		*/
 
-		int retval = gp_camera_new(&camera);
+
+		retval = gp_camera_new(&camera);
 		if(retval < GP_OK) {
-			cerr << "Camera: unable to create new camera, error code: " << retval << endl;
+			cerr << "Camera: unable to create new camera, error code: " << errorString(retval) << endl;
 			terminate();
 		}else{
 			cout << "Camera: camera created." << endl;
@@ -71,7 +75,7 @@ namespace Prosur::Datasource::Camera{
 
 		retval = gp_camera_init(camera, context);
 		if(retval < GP_OK) {
-			cerr << "Camera: unable to init camera, error code: " << retval << endl;
+			cerr << "Camera: unable to init camera, error code: " << errorString(retval) << endl;
 			terminate();
 		}else{
 			cout << "Camera: camera initialized." << endl;
@@ -89,7 +93,7 @@ namespace Prosur::Datasource::Camera{
 		CameraFilePath remotePath;
 		retval = gp_camera_capture(camera, GP_CAPTURE_IMAGE, &remotePath, context);
 		if(retval < GP_OK){
-			cerr << "Camera: unable to capture image, return code " << retval << endl;
+			cerr << "Camera: unable to capture image, return code " << errorString(retval) << endl;
 			terminate();
 		}else{
 			cout << "Camera: gp_camera_capture complete." << endl;
@@ -99,7 +103,7 @@ namespace Prosur::Datasource::Camera{
 		CameraFile* cameraFile;
 		retval = gp_file_new(&cameraFile);
 		if(retval < GP_OK){
-			cerr << "Camera: gp_file_new failed with error code " << retval << endl;
+			cerr << "Camera: gp_file_new failed with error code " << errorString(retval) << endl;
 			terminate();
 		}else{
 			cout << "Camera: gp_file_new complete." << endl;
@@ -107,7 +111,7 @@ namespace Prosur::Datasource::Camera{
 
 		retval = gp_camera_file_get(camera, remotePath.folder, remotePath.name, GP_FILE_TYPE_NORMAL, cameraFile, context);
 		if(retval < GP_OK){
-			cerr << "Camera: gp_camera_file_get failed with error code " << retval << endl;
+			cerr << "Camera: gp_camera_file_get failed with error code " << errorString(retval) << endl;
 			gp_file_free(cameraFile);
 			terminate();
 		}
@@ -117,12 +121,13 @@ namespace Prosur::Datasource::Camera{
 		unsigned long int size;
 		retval = gp_file_get_data_and_size(cameraFile, &data, &size);
 		if(retval < GP_OK){
-			cerr << "Camera: unable to get image data data and size, return code " << retval << endl;
+			cerr << "Camera: unable to get image data data and size, return code " << errorString(retval) << endl;
 			terminate();
 		}
 
 		// Copy downloaded data to our vector and let gphoto release their file
-		frame.still[0].clear();
+		frame.still.clear();
+		frame.still.push_back({});
 		frame.still[0].resize(size);
 		memcpy(frame.still[0].data(), data, size);
 		gp_file_free(cameraFile);

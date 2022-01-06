@@ -37,6 +37,7 @@ namespace Prosur::Database{
 		DBUtil::connect("dbname=postgres user=postgres");
 
 #ifdef TEST_MODE
+		cerr << "clearing database" << endl;
 		// TODO PLEASE REMOVE THIS....... COME ON!
 		DBUtil::query("delete from frame;");
 		DBUtil::query("delete from job_file");

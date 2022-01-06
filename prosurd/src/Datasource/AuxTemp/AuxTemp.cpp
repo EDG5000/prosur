@@ -120,8 +120,7 @@ namespace Prosur::Datasource::AuxTemp{
 					frame.auxTemp.push_back(auxTempFrame[valueIndex]);
 				}
 			}catch(exception& e){
-				cerr << "Error: unable to parse frame: " << lines[lineIndex] << endl;
-				terminate();
+				cerr << "Warning: Dropping frame: " << lines[lineIndex] << endl;
 			}
 		}
 

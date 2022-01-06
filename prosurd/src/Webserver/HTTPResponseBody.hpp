@@ -20,6 +20,7 @@ namespace Prosur::Webserver{
 	public:
 		vector<char> binaryData;
 		string stringData;
+
 		// Allows assigning by any of the supported types. Sets the type and value.
 		HTTPResponseBody(){}; // Required to be present when used in std::map.
 		HTTPResponseBody(string pStringData): stringData(pStringData){}
@@ -30,12 +31,6 @@ namespace Prosur::Webserver{
 		    os << dt.stringData;
 		    return os;
 		}
-
-		/*HTTPResponseBody& operator+=(const HTTPResponseBody& rhs){
-
-		      this->m_iNumber += rhs.m_iNumber;
-		      return *this;
-		}*/
 
 		HTTPResponseBody& operator += (const HTTPResponseBody& rhs){
 			stringData += rhs.stringData;
@@ -60,50 +55,5 @@ namespace Prosur::Webserver{
 			}
 			return 0;
 		}
-
-		/*HTTPResponseBody& operator=(const char* value){
-			return HTTPResponseBody
-		}*/
-
-
-/*
-
-
-			// TODO is this needed at all?
-			//Param& operator=(int64_t value){
-
-			//}
-
-			//Param& operator=(int value){
-
-			//}
-			//Param& operator=(vector<char> value){
-
-			//}
-
-
-
-
-
-			// Allows interpreting as any of the supported types. Will perform runtime check on each access for safety.
-			// TODO can this be made static, perhaps with templates or static_assert?
-			// For large datasets, this will slow down each access
-			operator string(){
-				if(type != String){
-					// This will slow down accessing of parameters, but better safe than sorry
-					cerr << "Webserver::HTTPResponseBody: Attempt to access Param as string while type is " << type << endl;
-					terminate();
-				}
-				return stringData;
-			}
-			operator vector<char>(){
-				if(type != Binary){
-					// This will slow down accessing of parameters, but better safe than sorry
-					cerr << "DBUtil: Attempt to access Param as vector<char> while type is " << type << endl;
-					terminate();
-				}
-				return binaryData;
-			}
-			*/
 	};
 }

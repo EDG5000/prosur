@@ -29,8 +29,8 @@ namespace Prosur::Database{
 		vector<float> cpuTemp;
 		vector<float> inputVoltage;
 		vector<float> motorPos; // May be used for x, y, z, e for now. Flexible.
-		vector<float> endstop; // Suggested use: x-endstop, y-endstop, z-probe, filament runout sensor (x,y,z,e)
-		vector<float> probe;
+		vector<int> endstop; // Suggested use: x-endstop, y-endstop, z-probe, filament runout sensor (x,y,z,e)
+		vector<int> probe;
 
 		float speedCurrentMms;
 		float speedRequestedMms;
