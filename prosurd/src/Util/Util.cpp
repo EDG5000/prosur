@@ -15,17 +15,13 @@ using namespace std;
 
 namespace Prosur::Util{
 
-	// Derrived from: https://stackoverflow.com/a/33011643
-	int64_t rand(){
+	int64_t rand(){ //140737349414545
 		static bool ready;
-		static int seed;
 		if(!ready){
 			srand(time(NULL));
+			ready = true;
 		}
-		uint64_t r = std::rand();
-		r = r<<30 | std::rand();
-		r = r<<30 | std::rand();
-		return (int64_t) std::rand;
+		return std::rand();
 	}
 
 	int64_t unixTime(){

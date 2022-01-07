@@ -104,7 +104,7 @@ namespace Prosur::Datasource::RepRap{
 
 				checkKeys(om_job, {"result", "file", "fileName"});
 				if(om_job["result"]["file"]["fileName"].is_null()){
-					// TODO Sometimes only lastFileName is available, so we use that one. It would be so much easier if fileName was simply included in the regular model. Are they any query parameters which can be added to avoid having to make a separate request to retrieve fileName?
+					// TODO Sometimes only lastFileName is available, so we use that one. It would be easier if fileName was included in the regular model. Are they any query parameters which can be added to avoid having to make a separate request to retrieve fileName?
 					checkKeys(om_job, {"result", "lastFileName"});
 					frame.jobFilename = om_job["result"]["lastFileName"];
 				}else{
@@ -112,11 +112,13 @@ namespace Prosur::Datasource::RepRap{
 					frame.jobFileModified = Util::parseDateTimeString(om_job["result"]["file"]["lastModified"]);
 				}
 
-				checkKeys(om_job, {"result", "layer"});
-				frame.printLayersPrinted = om_job["result"]["layer"];
-
 				checkKeys(om_job, {"result", "file", "numLayers"});
 				frame.printLayersTotal = om_job["result"]["file"]["numLayers"];
+			}
+
+			if(!om["result"]["job"]["layer"].is_null()){
+				checkKeys(om, {"result", "job", "layer"});
+				frame.printLayersPrinted = om["result"]["job"]["layer"];
 			}
 
 			// Heater temperatures
@@ -168,9 +170,8 @@ namespace Prosur::Datasource::RepRap{
 				cerr << "RepRapClient: error: get_current_job_filename returned an empty string. unable to download job file" << endl;
 				terminate();
 			}
-			string fileData = HTTPUtil::call(RR_BASE_URL + "rr_gcode?"  + Util::encodeURIComponent("gcode=M37 P\"0:/gcodes/" + filename + "\""));
-			frame.jobFile.assign(fileData.begin(), fileData.end());
-			frame.jobParameters = JobFile::extractParameters(fileData);
+			frame.jobFile = HTTPUtil::call(RR_BASE_URL + "rr_gcode?"  + Util::encodeURIComponent("gcode=M37 P\"0:/gcodes/" + filename + "\""));
+			frame.jobParameters = JobFile::extractParameters(frame.jobFile);
 		}
 	}
 }

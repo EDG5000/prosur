@@ -11,17 +11,15 @@ using namespace nlohmann;
 
 namespace Prosur::Webserver{
 	enum ContentType{
-		HTML,
-		Binary,
+		Text,
+		JPEG,
 		JSON
 	};
 
-	// Allows flexible passing of parameters along with query
-	// vector<Param> can be used as parameter like so:
-	// myfunc({1, 3423434, "string", myCharVector})
+	// Allows flexible returning of a response body by assinging strings, binary data (char vector) a json objects.
 	class HTTPResponseBody{
 		// TODO content type is ambiguous; string could be binary or HTML (gcode vs html). Maybe stop using HTML, only use JSON?
-		ContentType contentType = HTML;
+		ContentType contentType = Text;
 	public:
 		vector<char> binaryData;
 		string stringData;
@@ -29,9 +27,9 @@ namespace Prosur::Webserver{
 
 		// Allows assigning by any of the supported types. Sets the type and value.
 		HTTPResponseBody(){}; // Required to be present when used in std::map.
-		HTTPResponseBody(string pStringData): stringData(pStringData), contentType(HTML){}
-		HTTPResponseBody(const char* pStringData): stringData(pStringData), contentType(HTML){}
-		HTTPResponseBody(vector<char> pBinaryData): binaryData(pBinaryData), contentType(Binary){}
+		HTTPResponseBody(string pStringData): stringData(pStringData), contentType(Text){}
+		HTTPResponseBody(const char* pStringData): stringData(pStringData), contentType(Text){}
+		HTTPResponseBody(vector<char> pBinaryData): binaryData(pBinaryData), contentType(JPEG){}
 		HTTPResponseBody(json pJsonData): jsonData(pJsonData), contentType(JSON){
 			stringData = pJsonData.dump(4);
 		}
@@ -43,7 +41,7 @@ namespace Prosur::Webserver{
 
 		HTTPResponseBody& operator += (const HTTPResponseBody& rhs){
 			stringData += rhs.stringData;
-		   return *this;
+			return *this;
 		}
 
 		// Allows obtaining as raw data pointer (see size())
@@ -67,13 +65,12 @@ namespace Prosur::Webserver{
 
 		string type(){
 			switch(contentType){
-			case Binary:
-				// TODO .......
+			case JPEG:
 				return "image/jpeg";
 			case JSON:
 				return "application/json;charset=UTF-8";
-			case HTML:
-				return "text/html;charset=UTF-8";
+			case Text:
+				return "text/plain";
 			}
 			return "";
 		}

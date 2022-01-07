@@ -28,25 +28,9 @@ namespace Prosur::Database{
 	// Is written to each frame as long as RepRapClient::is_printing.
 	int lastJobId = -1;
 
-	void init(){
-		// As no host is supplied, libpq will connect using UNIX-domain socket for optimal performance.
-		// Warning: Use "trust" authentication only when there are no other untrusted Unix users on the system.
-		// Ensure the following is present in the table in /etc/postgres/12/main/pg_hba.conf:
-		// # TYPE  DATABASE        USER            ADDRESS                 METHOD
-		// local   all             all                                     trust
-		DBUtil::connect("dbname=postgres user=postgres");
+	map<string, string> frameColumnTypes; // Currently only read by Webserver::Resource::Frames
 
-#ifdef TEST_MODE
-		// TODO PLEASE REMOVE THIS....... COME ON!
-		//DBUtil::query("begin;");
-		//DBUtil::query("ALTER TABLE job_parameter DISABLE TRIGGER ALL;");
-		//DBUtil::query("ALTER TABLE frame DISABLE TRIGGER ALL;");
-		//DBUtil::query("ALTER TABLE job_file DISABLE TRIGGER ALL;");
-		//DBUtil::query("delete from job_parameter;");
-		//DBUtil::query("delete from frame;");
-		//DBUtil::query("delete from job_file;");
-		//DBUtil::query("end;");
-#endif
+	void init(){
 		// Obtain the latest jobId currently in the database
 		auto result = DBUtil::query("\
 			select job_id from frame \
@@ -64,6 +48,12 @@ namespace Prosur::Database{
 			terminate();
 		}else if(result.size() == 1){
 			lastJobId = result[0]["job_id"];
+		}
+		
+		// Obtain list of column type (this is only used when Webserver is serving the Frames resource)
+		result = DBUtil::query("select column_name::text, data_type::text from information_schema.columns where table_name = $1", {"frame"});
+		for(auto& row: result){
+			frameColumnTypes[row["column_name"]] = (string) row["data_type"];
 		}
 	}
 

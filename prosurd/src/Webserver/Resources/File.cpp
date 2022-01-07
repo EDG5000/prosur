@@ -23,12 +23,11 @@ namespace Prosur::Webserver::Resources::File{
 	map<string, Mode> modeValues = {
 			{"still", Still},
 			{"job", Job}
-
 	};
 
 	map<Mode, vector<string>> mandatoryParams = {
 			{Still, {"time", "still_id"}},
-			{Job, {"job"}}
+			{Job, {"job_id"}}
 	};
 
 	int run(HTTPResponseBody& responseBody, map<string,string> params){
@@ -87,7 +86,7 @@ namespace Prosur::Webserver::Resources::File{
 			rows = Database::DBUtil::query("\
 				select "+colName+" \
 				from frame \
-				where time = $1 \
+				where time = $1 and "+colName+" is not null\
 				", {(int64_t) numericParams["time"]}
 			);
 		}else if(mode == Job){
@@ -97,7 +96,7 @@ namespace Prosur::Webserver::Resources::File{
 				from job_file \
 				join frame on frame.job_file_name = job_file.name \
 				where job_id = $1 and frame.job_file_name is not null \
-				group by job_file.data \
+				limit 1 \
 				", {numericParams["job_id"]}
 			);
 		}
@@ -123,7 +122,14 @@ namespace Prosur::Webserver::Resources::File{
 			return HTTP::INTERNAL_SERVER_ERROR;
 		}
 
-		responseBody = (vector<char>) rows[0][colName];
+		if(mode == Job){
+			// Return textual data, considered by HTTPResponseBody as text/plain
+			responseBody = (string) rows[0][colName];
+		}else if(mode == Still){
+			// Return binary data, assumed by HTTPResponseBody to be of type image/jpeg
+			responseBody = (vector<char>)rows[0][colName];
+		}
+
 		return HTTP::OK;
 	}
 }

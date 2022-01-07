@@ -26,11 +26,14 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <set>
 
 #include "Webserver/Webserver.hpp"
 #include "Database/DBUtil.hpp"
+#include "Database/Database.hpp"
 #include "Webserver/HTTPResponseBody.hpp"
 #include "json.hpp"
+#include "Util/Util.hpp"
 
 using namespace std;
 using namespace nlohmann;
@@ -57,7 +60,6 @@ namespace Prosur::Webserver::Resources::Frames{
 	};
 
 	int run(HTTPResponseBody& responseBody, map<string,string> parameters){
-cerr << "HALLO" << endl;
 		// Check integer-params to be valid integers, when present. Store in map.
 		vector<string> integerKeys = {"job_id", "start", "end", "modulus"};
 		map<string, int> numericParameters;
@@ -116,9 +118,61 @@ cerr << "HALLO" << endl;
 			}
 		}
 
-		// Build frame retrieval query based on mode and parameters
-		// TODO selecting * means also selecting the stills. This is too slow.
-		string query = "select * from frame"; // Base query
+		// Retrieve user selection of columns
+		vector<string> userSelectedColumns;
+		if(parameters.contains("columns")){
+			// Check the input for max size
+			if(parameters["columns"].size() > 1000){
+				responseBody = "Webserver: error: column parameter exceeded max length of 1000";
+				cerr << responseBody << endl;
+				return HTTP::BAD_REQUEST;
+			}
+			// Parse the parameter into a vector
+			userSelectedColumns = Util::strSplit(parameters["columns"], ",");
+			// Check each column for existance and disallow binary columns
+			for(string& column: userSelectedColumns){
+				if(!Database::frameColumnTypes.contains(column)){
+					responseBody = "Webserver: Error: selected column does not exist in database: " + column;
+					cerr << responseBody << endl;
+					return HTTP::BAD_REQUEST;
+				}
+				if(Database::frameColumnTypes[column] == "text" || Database::frameColumnTypes[column] == "bytea"){
+					responseBody = "Webserver: Error: selected column is not numeric: " + column;
+					cerr << responseBody << endl;
+					return HTTP::BAD_REQUEST;
+				}
+			}
+		}
+
+		// Holds selection of columns that will be used in the select query
+		vector<string> finalColumnSelection;
+
+		// Build list of columns to be included in select query
+		for(auto& [column, type]: Database::frameColumnTypes){
+			// Skip binary and text (used for gcode) columns to avoid slowdown
+			if(type == "text" || type == "bytea"){
+				continue;
+			}
+
+			// If user has specified a column list, check if it is on that list
+			// TODO this lookup would be faster with a std::set
+			if(userSelectedColumns.size() > 0){
+				bool found = false;
+				for(string& userColumn: userSelectedColumns){
+					if(userColumn == column){
+						found = true;
+						break;
+					}
+				}
+				if(!found){
+					continue;
+				}
+			}
+
+			finalColumnSelection.push_back(column);
+		}
+
+		string query = "select "+Util::join(finalColumnSelection, ",")+" from frame"; // Base query
 		vector<Database::DBValue> queryParameters; // Empty param vector
 
 		// Append to the query string and parameter vector depending on the selected mode
@@ -167,7 +221,6 @@ cerr << "HALLO" << endl;
 		// TODO this is not working as auto-selecting the conversion is not working
 		for(auto& row: frames){
 			for(auto& [column, value]: row){
-				cerr << value.toString() << endl;
 				outputObject["frames"][column].push_back(value);
 			}
 		}
@@ -188,36 +241,11 @@ cerr << "HALLO" << endl;
 					cerr << "Database::Resource::Frames: Missing column: value from output." << endl;
 					terminate();
 				}
-				cerr << (string) row["key"] << endl;
-				cerr << (string) row["value"] << endl;
-				outputObject[(string) row["key"]] = (string) row["value"];
+				outputObject["parameters"][(string) row["key"]] = (string) row["value"];
 			}
 		}
 
 		responseBody = outputObject;
-
-		//
-		/*
-		// Build csv header
-		bool first = true;
-		for(auto& [key, value]: frames[0]){
-			if(first){
-				first = false;
-				responseBody = key;
-			}else{
-				responseBody += "\t" + key;
-			}
-		}
-		responseBody += "\n";
-
-		// Append lines with tab-separated values
-		for(auto& frame: frames){
-			for(auto& [key, value]: frame){
-				responseBody += value.toString() + "\t";
-			}
-			responseBody += "\n";
-		}
-*/
 
 		return HTTP::OK;
 	}

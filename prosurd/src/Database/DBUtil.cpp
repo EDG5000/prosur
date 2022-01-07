@@ -8,6 +8,7 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <thread>
 
 #include <postgresql/libpq-fe.h>
 #include <postgresql/12/server/catalog/pg_type_d.h> // Nasty
@@ -21,34 +22,36 @@ namespace Prosur::Database::DBUtil{
 	constexpr int FORMAT_TEXT = 0;
 	constexpr int FORMAT_BINARY = 1;
 
-	PGconn* conn;
+	map<thread::id, PGconn*> connections; // One connection per thread is set up lazily
 
-	/*
-	// Could be used for printing param values to log
-	ostream & operator << (ostream &out, const Param &param){
-		if(param.type == Int){
-			out << param.intVal;
-		}else if(param.type == Long){
-			out << param.longVal;
-		}else if(param.type == String){
-			out << param.stringVal;
-		}
-	    return out;
-	}
-	*/
-
-	void connect(string connectionString){
-		conn = PQconnectdb(connectionString.c_str());
+	static PGconn* connect(){
+		// As no host is supplied, libpq will connect using UNIX-domain socket for optimal performance.
+		// Warning: Use "trust" authentication only when there are no other untrusted Unix users on the system.
+		// Ensure the following is present in the table in /etc/postgres/12/main/pg_hba.conf:
+		// # TYPE  DATABASE        USER            ADDRESS                 METHOD
+		// local   all             all                                     trust
+		PGconn* conn = PQconnectdb("dbname=postgres user=postgres");
 
 		// Check to see that the backend connection was successfully made
 		if (PQstatus(conn) != CONNECTION_OK){
-			cerr << "dbclient: Connection to database failed: " << getError() << endl;
+			cerr << "dbclient: Connection to database failed: " << string(PQerrorMessage(conn)) << endl;
 			PQfinish(conn);
 			terminate();
 		}
+
+		return conn;
 	}
 
 	vector<map<string, DBValue>> query(string query, vector<DBValue> params){
+		// Check if a connection is present for the current thread, if not, set it up
+		PGconn* conn;
+		if(!connections.contains(this_thread::get_id())){
+			conn = connect();
+			connections[this_thread::get_id()] = conn;
+		}else{
+			conn = connections[this_thread::get_id()];
+		}
+
 		// Initialize arrays
 		int paramFormats[params.size()];
 		int paramLengths[params.size()];
@@ -68,7 +71,6 @@ namespace Prosur::Database::DBUtil{
 				if(param.type != String && param.type != Binary){
 					Util::swapbytes(paramValues[i], paramLengths[i]);
 				}
-
 			}
 			i++;
 		}
@@ -77,20 +79,20 @@ namespace Prosur::Database::DBUtil{
 
 		// Perform query
 		result = PQexecParams(
-				conn,
-				query.c_str(),
-				params.size(),
-				NULL, // paramTypes
-				paramValues,
-				paramLengths,
-				paramFormats,
-				FORMAT_BINARY
+			conn,
+			query.c_str(),
+			params.size(),
+			NULL, // paramTypes
+			paramValues,
+			paramLengths,
+			paramFormats,
+			FORMAT_BINARY
 		);
 
 		ExecStatusType status = PQresultStatus(result);
 		// Check for query error
 		if(status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK){
-			cerr << "DBUtil: Query failed. Error: " << getError() << " Query was: " << query << " Parameters: ";
+			cerr << "DBUtil: Query failed. Error: " << string(PQerrorMessage(conn)) << " Query was: " << query << " Parameters: ";
 			for(auto& param: params){
 				cerr << param.toString() << " ";
 			}
@@ -152,10 +154,6 @@ namespace Prosur::Database::DBUtil{
 			resultData.push_back(rowData);
 		}
 		return resultData;
-	}
-
-	string getError(){
-		return PQerrorMessage(conn);
 	}
 }
 

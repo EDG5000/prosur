@@ -14,7 +14,7 @@ namespace Prosur::Database{
 		int64_t time; // Unix time second epoch in seconds; primary key of Frame
 		int jobId;
 
-		vector<char> jobFile; // Stored in job_file with filename and modified as composite key, avoiding redundant files.
+		string jobFile; // Stored in job_file with filename and modified as composite key, avoiding redundant files.
 		string jobFilename;
 		int64_t jobFileModified; // -1 when not available
 		map<string,string> jobParameters; // Stored separately

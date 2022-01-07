@@ -65,7 +65,6 @@ namespace Prosur::Webserver{
 	};
 
 	// Write response HTTP header and body with provided HTTP status code and response body
-	// Either stringResponseBody or binaryResponseBody should have non-zero length
 	static void sendResponse(int client_socket, int httpCode, HTTPResponseBody responseBody){ // TODO Note: previously, responseBody was of reference-type to avoid copying.
 		// Create response headers
 		string responseHeader = "HTTP/1.1 " + to_string(httpCode) + " " + STATUS_MESSAGE.at(httpCode)+"\r\n";
@@ -89,7 +88,7 @@ namespace Prosur::Webserver{
 		//char actualPath[PATH_MAX+1];
 		bool initial = true;
 		// TODO Implement timeout if no data is received?
-		// TODO it is not waiting for EOF to detect end of HTTP request. Yet, it works fine?! Perhaps this is by chance?
+		// TODO it is not waiting for EOF to detect end of HTTP request. Yet, it works fine! Perhaps this is by chance?
 		while(initial || bytesRead > 0){
 			initial = false;
 			bytesRead = read(
@@ -109,7 +108,7 @@ namespace Prosur::Webserver{
 
 		// Request cannot be empty
 		if(requestSize == 0){
-			string error = "Webserver: Error: request size is 0.";
+			string error = "Webserver: Error: request size is 0, ignoring connection.";
 			cerr << error << endl;
 			sendResponse(clientSocket, HTTP::BAD_REQUEST, error);
 			return;

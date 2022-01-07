@@ -13,21 +13,22 @@ using namespace std;
 namespace Prosur::Webserver::Resources::List{
 	int run(HTTPResponseBody& responseBody, map<string,string> params){
 		// Perform query extracting records each representing a job
-		// We are only interested in job_id, plus 2 descriptive labels (time and filename)
-		auto jobs = Database::DBUtil::query(
-			"select time, file_name, job_id from frame"\
-			" where job_id is not null"\
-			" group by job_id, time"
-			, {}
-		);
+		auto jobs = Database::DBUtil::query("\
+			select distinct on(job_id) time, job_id, job_file_name \
+			from frame \
+			where job_id is not null \
+		");
 
-		for(auto& job: jobs){
-			int64_t time = job["time"];
-			string filename = job["file_name"];
-			int job_id = job["job_id"];
-			responseBody += string("<a href=\"/job?id=" + to_string(job_id) + "\">" + Util::isodatetime(time) + "(" + filename + ").csv</a><br />\n");
+		// Create JSON array to store return data
+		json returnObject;
+		for(auto& row: jobs){
+			json job;
+			job["time"] = (int64_t) row["time"];
+			job["job_file_name"] = row["job_file_name"];
+			job["job_id"] = (int) row["job_id"];
+			returnObject.push_back(job);
 		}
-
+		responseBody = returnObject;
 		return HTTP::OK;
 	}
 }
