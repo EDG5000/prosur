@@ -61,14 +61,14 @@ namespace Prosur::Webserver::Resources::Frames{
 
 	int run(HTTPResponseBody& responseBody, map<string,string> parameters){
 		// Check integer-params to be valid integers, when present. Store in map.
-		vector<string> integerKeys = {"job_id", "start", "end", "modulus"};
-		map<string, int> numericParameters;
+		vector<string> integerKeys = {"job_id", "min", "max", "modulus"};
+		map<string, int64_t> numericParameters;
 		for(const auto& key: integerKeys){
 			if(!parameters.contains(key)){
 				continue;
 			}
 			try{
-				numericParameters[key] = stoi(parameters[key]);
+				numericParameters[key] = stol(parameters[key]);
 			}catch(const exception& e){
 				responseBody = "Webserver: Error: "+key+" parameter is non-numeric. reason: " + string(e.what());
 				cerr << responseBody << endl;
@@ -187,15 +187,15 @@ namespace Prosur::Webserver::Resources::Frames{
 				queryParameters.push_back(numericParameters["max"]);
 				if(modulus > 1){
 					query += "  and time % $3 = 0";
-					queryParameters.push_back(numericParameters["modulo"]);
+					queryParameters.push_back((int)numericParameters["modulo"]);
 				}
 				break;
 			case Job:
 				query += " where job_id = $1";
-				queryParameters.push_back(numericParameters["job_id"]);
+				queryParameters.push_back((int) numericParameters["job_id"]);
 				if(modulus > 1){
 					query += "  and time % $2 = 0";
-					queryParameters.push_back(numericParameters["modulo"]);
+					queryParameters.push_back((int) numericParameters["modulo"]);
 				}
 				break;
 		}

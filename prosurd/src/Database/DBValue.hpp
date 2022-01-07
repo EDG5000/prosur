@@ -73,6 +73,9 @@ namespace Prosur::Database{
 					return stringVal.size() == 0;
 				case Binary:
 					return binaryVal.size() == 0;
+				case Undefined:
+					cerr << "Error: Calling isNull() on DBValue with type Undefined causes undefined behaviour." << endl;
+					terminate();
 				}
 				return 0;
 			}
@@ -89,6 +92,9 @@ namespace Prosur::Database{
 					return stringVal.size();
 				case Binary:
 					return binaryVal.size();
+				case Undefined:
+					cerr << "Error: Calling size() on DBValue with type Undefined causes undefined behaviour." << endl;
+					terminate();
 				}
 				return 0;
 			}
@@ -104,6 +110,9 @@ namespace Prosur::Database{
 					return (char*) &longVal;
 				case String:
 					return (char*) stringVal.data();
+				case Undefined:
+					cerr << "Error: Calling operator char*() on DBValue with type Undefined causes undefined behaviour." << endl;
+					terminate();
 				default:
 				case Binary:
 					return (char*) binaryVal.data();
@@ -146,6 +155,9 @@ namespace Prosur::Database{
 					return stringVal;
 				case Float:
 					return floatVal;
+				case Undefined:
+					cerr << "Error: Calling operator json() on DBValue with type Undefined causes undefined behaviour." << endl;
+					terminate();
 				default:
 				case Binary:
 					return "<binary data of length: " + to_string(size()) + ">";
@@ -168,7 +180,7 @@ namespace Prosur::Database{
 				case Binary:
 					return "<binary data of length: " + to_string(size()) + ">";
 				case Undefined:
-					return "<undefined>";
+					cerr << "Error: Calling operator toString() on DBValue with type Undefined causes undefined behaviour." << endl;
 					terminate();
 				}
 			}
