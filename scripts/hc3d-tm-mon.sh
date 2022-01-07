@@ -1,5 +1,3 @@
-#!/bin/bash
-
 kill -9 `cat hc3d-tm.pid`;
 
 # Setup serial port
