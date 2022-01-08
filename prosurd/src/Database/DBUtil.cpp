@@ -77,17 +77,26 @@ namespace Prosur::Database::DBUtil{
 
 		PGresult* result;
 
-		// Perform query
-		result = PQexecParams(
-			conn,
-			query.c_str(),
-			params.size(),
-			NULL, // paramTypes
-			paramValues,
-			paramLengths,
-			paramFormats,
-			FORMAT_BINARY
-		);
+		if(params.size() == 0){
+			// Perform query
+			result = PQexec(
+				conn,
+				query.c_str()
+			);
+		}else{
+			// Perform query
+			result = PQexecParams(
+				conn,
+				query.c_str(),
+				params.size(),
+				NULL, // paramTypes
+				paramValues,
+				paramLengths,
+				paramFormats,
+				FORMAT_BINARY
+			);
+		}
+
 
 		ExecStatusType status = PQresultStatus(result);
 		// Check for query error

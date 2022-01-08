@@ -9,6 +9,7 @@
 #include <sstream>
 #include <ctime>
 #include <climits>
+#include <filesystem>
 
 #include <time.h>
 #include <arpa/inet.h>
@@ -22,6 +23,7 @@
 #include "Util/Util.hpp"
 
 using namespace std;
+using namespace filesystem;
 
 namespace Prosur::Database{
 	// Set to latest inserted job at startup, incremented at runtime prior to insertion of a new job's first frame.
@@ -31,6 +33,16 @@ namespace Prosur::Database{
 	map<string, string> frameColumnTypes; // Currently only read by Webserver::Resource::Frames
 
 	void init(){
+		// Load and execute the database creation script to ensure the database is created and present
+		std::ifstream t(current_path().string() + "/database.sql");
+		std::stringstream buffer;
+		buffer << t.rdbuf();
+		string databaseCreationScript = buffer.str();
+		DBUtil::query(databaseCreationScript.c_str());
+
+		// Set default schema to prosur
+		DBUtil::query("set search_path to prosur");
+
 		// Obtain the latest jobId currently in the database
 		auto result = DBUtil::query("\
 			select job_id from frame \
