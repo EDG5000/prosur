@@ -29,7 +29,7 @@ namespace Prosur::Database::DBUtil{
 		// Warning: Use "trust" authentication only when there are no other untrusted Unix users on the system.
 		// Ensure the following is present in the table in /etc/postgres/12/main/pg_hba.conf:
 		// # TYPE  DATABASE        USER            ADDRESS                 METHOD
-		// local   all             all                                     trust
+		// local   all             postgres                                trust
 		PGconn* conn = PQconnectdb("dbname=postgres user=postgres");
 
 		// Check to see that the backend connection was successfully made
@@ -48,6 +48,9 @@ namespace Prosur::Database::DBUtil{
 		if(!connections.contains(this_thread::get_id())){
 			conn = connect();
 			connections[this_thread::get_id()] = conn;
+
+			// Set default schema to prosur
+			DBUtil::query("set search_path to prosur");
 		}else{
 			conn = connections[this_thread::get_id()];
 		}

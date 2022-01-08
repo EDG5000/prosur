@@ -38,10 +38,11 @@ namespace Prosur::Database{
 		std::stringstream buffer;
 		buffer << t.rdbuf();
 		string databaseCreationScript = buffer.str();
+		if(databaseCreationScript.size() == 0){
+			cerr << "Database: Error: Unable to load database.sql from current path. Make sure ${CWD}/database.sql exists." << endl;
+			terminate();
+		}
 		DBUtil::query(databaseCreationScript.c_str());
-
-		// Set default schema to prosur
-		DBUtil::query("set search_path to prosur");
 
 		// Obtain the latest jobId currently in the database
 		auto result = DBUtil::query("\

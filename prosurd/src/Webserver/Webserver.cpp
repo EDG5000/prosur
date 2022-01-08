@@ -61,7 +61,7 @@ namespace Prosur::Webserver{
 	// - The response body has to be written either to the string argument or to the vector<char> argument.
 	map<string, int(*)(HTTPResponseBody&, map<string,string>)> resourceHandlers = {
 		{"", Resources::Client::run},
-		{"list", Resources::Jobs::run}, // Default action (index). List all jobs.
+		{"jobs", Resources::Jobs::run}, // Default action (index). List all jobs.
 		{"frames", Resources::Frames::run}, // Get all frames for given job_id or all frames between start and end time (includes frames when printer was idle)
 		{"file", Resources::File::run}, // Download job file or still image taken at given frame ID
 	};
