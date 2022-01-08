@@ -53,6 +53,7 @@ namespace Prosur::Util{
 	}
 
 	string isodatetime(int64_t timestamp){
+		time_t timepstampConverted = (time_t) timestamp; // TODO There are differences observed on platforms (gcc on arm, clang on x86) regarding length of time_t.
 		struct tm* timeinfo = localtime(&timestamp);
 		char buf[sizeof "2011-10-08T07:07:09Z"];
 		strftime(buf, sizeof buf, "%FT%TZ", localtime(&timestamp));
