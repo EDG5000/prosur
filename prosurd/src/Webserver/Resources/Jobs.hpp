@@ -7,6 +7,6 @@
 
 using namespace std;
 
-namespace Prosur::Webserver::Resources::File{
+namespace Prosur::Webserver::Resources::Jobs{
 	int run(HTTPResponseBody& responseBody, map<string,string> params);
 }

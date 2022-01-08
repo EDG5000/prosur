@@ -1,4 +1,14 @@
-#include "Webserver/Resources/List.hpp"
+/*
+ *  Webserver Resource: File. Returns either:
+ *  - A Job's associated file, by supplying a Job ID.
+ *  - A still belonging to a particular Frame, by supplying the still index (always 0 if only one camera is installed) and the timestamp
+ *  See Main.cpp to determine which timetamps should have stills associated with them (hint: every sixth frame, due to the modulus operation used to determine whether to capture an image or not, as seen in Main.cpp).
+ *  URL examples:
+ *  /file?mode=still&still_id=0&time=123456890
+ *  /file?mode=job&job_id=1234
+ */
+
+#include "Webserver/Resources/File.hpp"
 
 #include <string>
 #include <map>

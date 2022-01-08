@@ -1,4 +1,4 @@
-#include "Webserver/Resources/List.hpp"
+#include <Webserver/Resources/Jobs.hpp>
 
 #include <string>
 #include <map>
@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace Prosur::Webserver::Resources::List{
+namespace Prosur::Webserver::Resources::Jobs{
 	int run(HTTPResponseBody& responseBody, map<string,string> params){
 		// Perform query extracting records each representing a job
 		auto jobs = Database::DBUtil::query("\

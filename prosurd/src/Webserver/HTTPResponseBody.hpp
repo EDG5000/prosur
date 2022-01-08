@@ -12,6 +12,7 @@ using namespace nlohmann;
 namespace Prosur::Webserver{
 	enum ContentType{
 		Text,
+		HTML,
 		JPEG,
 		JSON
 	};
@@ -27,9 +28,16 @@ namespace Prosur::Webserver{
 
 		// Allows assigning by any of the supported types. Sets the type and value.
 		HTTPResponseBody(){}; // Required to be present when used in std::map.
-		HTTPResponseBody(string pStringData): stringData(pStringData), contentType(Text){}
+		// By default, assigning a HTTPResponseBody instance with a string will result in a text/plain response body (due to automatic implicit conversion)
+		// Caller can explicity invoke constructor and set the "html" flag high, this will set the content type to text/html
+		HTTPResponseBody(string pStringData, bool html = false): stringData(pStringData){
+			contentType = html ? HTML : Text;
+		}
+		// Initialize with c-string
 		HTTPResponseBody(const char* pStringData): stringData(pStringData), contentType(Text){}
+		// Initialize with binary data using vector<char>. Assumed to be JPEG data.
 		HTTPResponseBody(vector<char> pBinaryData): binaryData(pBinaryData), contentType(JPEG){}
+		// Initialize with json object. Will be serialized immediately. Content type will be application/json
 		HTTPResponseBody(json pJsonData): jsonData(pJsonData), contentType(JSON){
 			stringData = pJsonData.dump(4);
 		}
@@ -71,6 +79,8 @@ namespace Prosur::Webserver{
 				return "application/json;charset=UTF-8";
 			case Text:
 				return "text/plain";
+			case HTML:
+				return "text/html";
 			}
 			return "";
 		}

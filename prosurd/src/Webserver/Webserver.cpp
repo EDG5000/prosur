@@ -31,8 +31,9 @@
 #include "Database/DBUtil.hpp"
 #include "Util/Util.hpp"
 #include <Webserver/Resources/Frames.hpp>
-#include "Webserver/Resources/List.hpp"
+#include <Webserver/Resources/Jobs.hpp>
 #include "Webserver/Resources/File.hpp"
+#include "Webserver/Resources/Client.hpp"
 #include "Webserver/HTTPResponseBody.hpp"
 
 using namespace std;
@@ -59,7 +60,8 @@ namespace Prosur::Webserver{
 	// - Return type is HTTP status code.
 	// - The response body has to be written either to the string argument or to the vector<char> argument.
 	map<string, int(*)(HTTPResponseBody&, map<string,string>)> resourceHandlers = {
-		{"list", Resources::List::run}, // Default action (index). List all jobs.
+		{"", Resources::Client::run},
+		{"list", Resources::Jobs::run}, // Default action (index). List all jobs.
 		{"frames", Resources::Frames::run}, // Get all frames for given job_id or all frames between start and end time (includes frames when printer was idle)
 		{"file", Resources::File::run}, // Download job file or still image taken at given frame ID
 	};
@@ -170,11 +172,6 @@ namespace Prosur::Webserver{
 				string value = pairElements[1];
 				requestParameters[key] = value;
 			}
-		}
-
-		// Default resource is "list"
-		if(resourceName == ""){
-			resourceName = "list";
 		}
 
 		// Detect non-existing document

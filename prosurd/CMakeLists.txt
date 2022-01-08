@@ -31,8 +31,9 @@ set(
 	
 	src/Webserver/Webserver.cpp
 	src/Webserver/Resources/Frames.cpp
-	src/Webserver/Resources/List.cpp
+	src/Webserver/Resources/Jobs.cpp
 	src/Webserver/Resources/File.cpp
+	src/Webserver/Resources/Client.cpp
 	src/Database/Database.cpp
 	src/Database/DBUtil.cpp
 	src/Database/Frame.cpp
