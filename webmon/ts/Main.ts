@@ -1,43 +1,45 @@
 namespace Main{
 
-export let scroller: HTMLElement = null;
-export let scrollerInner: HTMLElement = null;
-export let frames: Array<Frame.Frame> = []; // List of Frame objects currently loaded
-export let canvas: HTMLCanvasElement = null;
-export let ctx: CanvasRenderingContext2D = null;
-export let zoom: number = 1;
-export let loading: boolean = false;
-export let sessionListContainer: HTMLElement = null;
-export let currentSensorLabels: Array<string>; // Labels are set either from constants or from deserializing CSV header
-export let pan: number = 0;
+    // DOM elements
+    export namespace HTMLElements{
+        export let scroller: HTMLElement;
+        export let scrollerInner: HTMLElement ;
+        export let sessionListContainer: HTMLElement;
+        export let mouseValueContainer: HTMLElement;
+        export let legend: HTMLElement;
+    }
+
+    // User settings; stored in local storage
+    export namespace UserSettings{
+        export let selectedColumns = typeof localStorage.selectedColumns == "undefined" ? {} : JSON.parse(localStorage.selectedColumns);
+        export let zoom = isNaN(localStorage.zoom) ? 1 : parseFloat(localStorage.zoom);
+    }
+
+    // Data retrieved from Prosurd
+    export namespace Data{
+        export let frames: any; // Contains one array for each column
+        export let parameters: Map<String,String> // Map of parameters belonging to a print job. Received as part of the frames resouce when loading data belonging to a job. Not populated when viewing all frames.
+    }
 
 let init = function(){
-    // Get DOM nodes and canvas context
-    canvas = document.getElementsByTagName("canvas")[0];
-    ctx = canvas.getContext("2d");
-    // Uncommented, there is suspicion is causes regression with the positioning, more than half a pixel
-    //ctx.translate(0.5, 0.5); // Allegedly "fixes" "blurryness" 
-    //ctx.lineWidth = 2;
-    sessionListContainer = document.getElementById("session-list");
-    scroller = document.getElementById("scroller");
-    scrollerInner = document.getElementById("scroller-inner");
+    // Init DOM nodes
+    HTMLElements.sessionListContainer = document.getElementById("session-list");
+    HTMLElements.scroller = document.getElementById("scroller");
+    HTMLElements.scrollerInner = document.getElementById("scroller-inner");
+	HTMLElements.mouseValueContainer = document.getElementById("mouse-value");
+    HTMLElements.legend = document.getElementById("legend");
 
-    Drawer.init();
+     // Init units
+    Plotter.init();
     MouseControl.init();
-
-    // Init units
-    SessionLoader.init();
+    FrameLoader.init();
 
     // Load session list
-    SessionList.init(function(){
+    JobList.init(function(){
         // Load last session
         if(typeof localStorage.lastSession != "undefined"){
-            SessionLoader.load(localStorage.lastSession);
+            FrameLoader.load(localStorage.lastSession);
         }
-    });
-    
-    addEventListener("resize", function(){
-        requestAnimationFrame(Drawer.draw);
     });
 };
 

@@ -155,7 +155,7 @@ namespace Prosur::Webserver::Resources::Frames{
 			}
 
 			// If user has specified a column list, check if it is on that list
-			// TODO this lookup would be faster with a std::set
+			// TODO this lookup would be easier with a std::set
 			if(userSelectedColumns.size() > 0){
 				bool found = false;
 				for(string& userColumn: userSelectedColumns){
@@ -200,13 +200,15 @@ namespace Prosur::Webserver::Resources::Frames{
 				break;
 		}
 
+		cerr << query << endl;
+
 		// Run query to obtain frames
 		auto frames = Database::DBUtil::query(query, queryParameters);
 
 		// A job should at least have one frame
 		if(frames.size() == 0){
 			// Nothing do to; header cannot be constructed and no rows to serialize.
-			string error = "Webserver: Frames: No data found for job_id: " + to_string(numericParameters["job_id"]);
+			string error = "Webserver: Frames: No data found.";
 			responseBody = error;
 			cerr << error << endl;
 			return HTTP::NOT_FOUND;
@@ -218,7 +220,6 @@ namespace Prosur::Webserver::Resources::Frames{
 		outputObject["parameters"] = {};
 
 		// Write frames to the JSON object
-		// TODO this is not working as auto-selecting the conversion is not working
 		for(auto& row: frames){
 			for(auto& [column, value]: row){
 				outputObject["frames"][column].push_back(value);
@@ -230,7 +231,7 @@ namespace Prosur::Webserver::Resources::Frames{
 			auto parameterRows = Database::DBUtil::query("\
 				select * from job_parameter \
 				where job_id = $1 \
-			", {numericParameters["job_id"]});
+			", {(int) numericParameters["job_id"]});
 			// Get job parameter key and value from each row, put in JSON object
 			for(auto& row: parameterRows){
 				if(!row.contains("key")){

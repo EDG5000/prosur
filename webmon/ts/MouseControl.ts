@@ -10,60 +10,55 @@ let scrollLeft: number;
 export function init(){
     label = document.getElementById("zoom-level");
 
-    Main.zoom = parseFloat(localStorage.zoom);
-    if(isNaN(Main.zoom)){
-        Main.zoom = 1;
-    }
-
     updateLabel();
 
     // Add mouse listener
-    Main.canvas.addEventListener("wheel", function(e: any){
+    Plotter.canvas.addEventListener("wheel", function(e: any){
         if(e.deltaY < 0){
-            Main.zoom *= (1 + Const.zoomAffector);
+            Main.UserSettings.zoom *= (1 + Const.ZOOM_AFFECTOR);
         }else{
-            Main.zoom *= (1 - Const.zoomAffector);
+            Main.UserSettings.zoom *= (1 - Const.ZOOM_AFFECTOR);
         }
-        if(Main.zoom == 0){
-            Main.zoom = 1;
+        if(Main.UserSettings.zoom == 0){
+            Main.UserSettings.zoom = 1;
         }
-        localStorage.zoom = Main.zoom;
+        localStorage.zoom = Main.UserSettings.zoom;
         updateLabel();
-        Drawer.draw();
-        Main.scroller.scrollLeft = Main.pan * Main.scroller.scrollWidth;
+        Plotter.draw();
+        Main.HTMLElements.scroller.scrollLeft = Plotter.pan * Main.HTMLElements.scroller.scrollWidth;
     });
 
-    Main.canvas.addEventListener("mousedown", e => {
+    Plotter.canvas.addEventListener("mousedown", e => {
         isDown = true;
-        Main.scroller.classList.add("active");
-        startX = e.pageX - Main.scroller.offsetLeft;
-        scrollLeft = Main.scroller.scrollLeft;
+        Main.HTMLElements.scroller.classList.add("active");
+        startX = e.pageX - Main.HTMLElements.scroller.offsetLeft;
+        scrollLeft = Main.HTMLElements.scroller.scrollLeft;
     });
 
-    Main.canvas.addEventListener("mouseleave", () => {
+    Plotter.canvas.addEventListener("mouseleave", () => {
         isDown = false;
-        Main.scroller.classList.remove("active");
+        Main.HTMLElements.scroller.classList.remove("active");
     });
 
-    Main.canvas.addEventListener("mouseup", () => {
+    Plotter.canvas.addEventListener("mouseup", () => {
         isDown = false;
-        Main.scroller.classList.remove("active");
+        Main.HTMLElements.scroller.classList.remove("active");
     });
 
-    Main.canvas.addEventListener("mousemove", e => {
+    Plotter.canvas.addEventListener("mousemove", e => {
         //
-        Drawer.onMouseMove(e.offsetX, e.offsetY);
+        Plotter.onMouseMove(e.offsetX, e.offsetY);
 
         if (!isDown) return;
         e.preventDefault();
-        const x = e.pageX - Main.scroller.offsetLeft;
+        const x = e.pageX - Main.HTMLElements.scroller.offsetLeft;
         const walk = x - startX;
-        Main.scroller.scrollLeft = scrollLeft - walk;
+        Main.HTMLElements.scroller.scrollLeft = scrollLeft - walk;
     });
 }
 
 export function updateLabel(){
-    label.innerText = "" + (Math.round(Main.zoom * 1000) / 1000);
+    label.innerText = "" + (Math.round(Main.UserSettings.zoom * 1000) / 1000);
 }
 
 }

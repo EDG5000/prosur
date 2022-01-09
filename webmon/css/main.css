@@ -1,11 +1,15 @@
+:root {
+  color-scheme: dark;
+}
+
 a{
-    color: black;
+    color: white;
     font-weight: normal;
     text-decoration: none;
 }
 
 a:hover{
-    background: #e4e4e4;
+    background: #000000;
 }
 
 body{
@@ -13,12 +17,13 @@ body{
     margin: 0;
     overflow: hidden !important;
     font-family: monospace;
+    background: #202124;
 }
 
 #session-list{
     overflow-y: scroll;
-    width: 170px;
-    color: white;
+    width: 400px;
+    color: black;
     height: 100vh;
     position: absolute;
     border-right: 1px solid black;
@@ -34,34 +39,34 @@ canvas{
 
 #legend, #zoom-level, #mouse-value{
     position: fixed;
-    color: black;
+    color: white;
     padding: 5px;
-    background: white;
-    border: 1px solid black;
+    background: #262626;
+    border: 1px solid #909090;
     font-weight: bold;
     z-index: 4;
 }
 
 #legend{
     top: 10px;
-    right: 30vw;
+    right: 10px;
 }
 
 #zoom-level{
     top: 10px;
-    left: 230px;
+    left: 487px;
 }
 
 #mouse-value{
-    right: 50vw;
+    left: 577px;
     top: 10px;
 }
 
 #scroller{
     position: absolute;
     height: 100vh;
-    left: 170px;
-    width: calc(100vw - 170px);
+    left: 400px;
+    width: calc(100vw - 400px);
     overflow-y: hidden;
     overflow-x: visible;
     z-index: 2;

@@ -80,8 +80,13 @@ namespace Prosur::Database::DBUtil{
 
 		PGresult* result;
 
-		if(params.size() == 0){
-			// Perform query
+		// Run query, either as multi-command, in which case no parameters will be passed and returned rows are discarded,
+		// or as regular single-command query, where all parameters are passed and result rows are interpreted.
+		bool isMultiCommandQuery = query.find(";") != string::npos;
+		if(isMultiCommandQuery){
+			// Perform multi-command query. Note: Cannot be used to retrieve data as the FORMAT_BINARY flag cannot be passed to
+			// PQexec. Even if data is returned, below code will attempt to interpret it as binary, which will produce garbage
+			// Therefore, when running a multi-command query, an empty vector is always returned and result rows are not interpreted
 			result = PQexec(
 				conn,
 				query.c_str()
@@ -100,7 +105,6 @@ namespace Prosur::Database::DBUtil{
 			);
 		}
 
-
 		ExecStatusType status = PQresultStatus(result);
 		// Check for query error
 		if(status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK){
@@ -112,12 +116,16 @@ namespace Prosur::Database::DBUtil{
 			terminate();
 		}
 
-		// Collect values, store as Param in a vector<map<string, Param>>
-		vector<map<string, DBValue>> resultData;
+		// Result rows are not fetched for a multi-command query. See above comment near "if(isMultiCommandQuery)"
+		if(isMultiCommandQuery){
+			return {};
+		}
 
+		// Get row count. Return empty vector if no rows
 		int rows = PQntuples(result);
 		if(rows == 0){
-			return resultData;
+			PQclear(result);
+			return {};
 		}
 
 		// Collect field names and types
@@ -130,7 +138,8 @@ namespace Prosur::Database::DBUtil{
 			fieldTypes[fieldName] = PQftype(result, column);
 		}
 
-		// Fill values
+		// Fill values, store as Param in a vector<map<string, Param>>
+		vector<map<string, DBValue>> resultData;
 		for(int row = 0; row < rows; row++){
 			map<string, DBValue> rowData;
 			for(int column = 0; column < columnNames.size(); column++){
@@ -148,6 +157,8 @@ namespace Prosur::Database::DBUtil{
 
 				switch(type){
 				case INT4OID:
+					//rowData[columnName] = (int) ntohl(*((int32_t *) data));
+					//rowData[columnName] = (int) *((int*) data); // implicit Param constructor
 					rowData[columnName] = *((int*) data); // implicit Param constructor
 					break;
 				case INT8OID:
@@ -165,6 +176,9 @@ namespace Prosur::Database::DBUtil{
 			}
 			resultData.push_back(rowData);
 		}
+
+		PQclear(result);
+
 		return resultData;
 	}
 }

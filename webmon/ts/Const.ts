@@ -1,25 +1,14 @@
 namespace Const{
 
+export const HOST = "localhost";
+export const PORT = 8080;
 
-export const zoomAffector = 0.05;
-
-
-export const SENSOR_LABELS = [
-"Motor Y",
-"Chamber Bottom",
-"Near Extruder",
-"Chamber Top",
-"Motor X",
-"Motor Z",
-"Chamber Mid",
-"Motor E"
-];
 export const SENSOR_COLORS = [
     "#e6194B",
     "#3cb44b",
-    "#4363d8",
+    "#7d90d6",
     "#f58231",
-    "#911eb4",
+    "#db7af8",
     "#42d4f4",
     "#f032e6",
     "#469990",
@@ -36,31 +25,18 @@ export const SENSOR_COLORS = [
     "#000000"
 ];
 
-
-// Data folder and current log fle
-export let dataFolder: string;
-export let refreshUrl: string;
-if(Config.testMode){
-    dataFolder = "mnt-data";
-    refreshUrl = "mnt-data/get_llc_values.php"; 
-}else{
-    dataFolder = "mnt-data";
-    refreshUrl = "php/get_llc_values.php"; 
-}
-export const CURRENT_LOG_FILE = "hc3d-tm.csv";
-
-export const sidebarWidth = 170; // px; needs to match with values in CSS
-
-// Graph constants
-export const frequencyHz = 1; // Assumed frequency of souce data. (timestamps ignored)
-export const windowTimeSpanS = 60 * 60; // Display 1 hr of data in one windows' width
-export const baseZoomFactor = windowTimeSpanS / window.innerWidth; // Pixels per frame (pixels per frequencyHz seconds)
-export const xGridInterval = 0.1; // Relative to graph width
-export const yGridInterval = 0.1; // Relative to graph height
-export const yMargin = 40;
-export const xMargin = 50;
-export const yLabelXOffset = 10;
-export const xLabelYOffset = 20;
-export const scrollBarSize = 50; // Needs to be set to browser scroll bar size or larger
+export const XHR_SUCCESS = 4;
+export const ZOOM_AFFECTOR = 0.05;
+export const SIDEBAR_WIDTH = 400; // px; needs to match with values in CSS
+export const FREQ_HZ = 1; // Assumed frequency of souce data. (timestamps ignored)
+export const WINDOW_TIME_SPAN_S = 60 * 60; // Display 1 hr of data in one windows' width
+export const BASE_ZOOM_FACTOR = WINDOW_TIME_SPAN_S / window.innerWidth; // Pixels per frame (pixels per frequencyHz seconds)
+export const X_GRID_INTERVAL = 0.1; // Relative to graph width
+export const Y_GRID_INTERVAL = 0.1; // Relative to graph height
+export const Y_MARGIN = 40;
+export const X_MARGIN = 50;
+export const Y_LABEL_X_OFFSET = 10;
+export const X_LABEL_Y_OFFSET = 20;
+export const SCROLL_BAR_SIZE = 50; // Needs to be set to browser scroll bar size or larger
 
 }

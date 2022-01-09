@@ -120,8 +120,6 @@ namespace Prosur::Database{
 
 			}
 
-
-
 			// Allows interpreting as any of the supported types. Will perform runtime check on each access for safety.
 			// TODO can this be made static, perhaps with templates or static_assert?
 			// For large datasets, this will slow down each access

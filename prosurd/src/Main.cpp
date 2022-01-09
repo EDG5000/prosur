@@ -42,6 +42,7 @@ namespace Prosur{
 			frame.time = startTime;
 			frame.wasPrinting = wasPrinting;
 
+			/*
 			// Data sources each fill Frame members
 			Datasource::AuxTemp::fillFrame(frame);
 			Datasource::RepRap::fillFrame(frame);
@@ -51,8 +52,10 @@ namespace Prosur{
 				Datasource::Camera::fillFrame(frame);
 			}
 
+
 			// Insert frame into database
 			Database::insertFrame(frame);
+*/
 
 			// Unless we are in TEST_MODE, sleep based on time taken during this cycle
 			#ifndef TEST_MODE

@@ -9,7 +9,7 @@
  */
 
 /*
- * Webserver: Listen for HTTP GET requests on TCP port 80.
+ * Webserver: Listen for HTTP GET requests on TCP port 8080.
  * Respond to requests by invoking the relevant resource handler function.
  * URI Query parameters are passed to the resource handler for processing.
  */
