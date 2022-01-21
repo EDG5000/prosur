@@ -1,6 +1,9 @@
 /*
  * Prosur: Production Surveyor
- * Logs all activity in your additive production facility.
+ *
+ * Logging all activity
+ * in your additive production facility.
+ *
  */
 
 #include <thread>
@@ -57,8 +60,8 @@ namespace Prosur{
 			Database::insertFrame(frame);
 */
 
-			// Unless we are in TEST_MODE, sleep based on time taken during this cycle
-			#ifndef TEST_MODE
+			// Unless we are in TEST_MODE_MOCK_INPUT, sleep based on time taken during this cycle
+			#ifndef EST_MODE_MOCK_INPUT
 				// Substract time taken during cycle with target interval
 				int64_t timeTaken = time(NULL) - startTime;
 				int64_t sleepTime = FRAME_COLLECTION_INTERVAL - timeTaken;

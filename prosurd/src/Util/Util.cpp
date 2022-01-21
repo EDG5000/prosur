@@ -25,7 +25,7 @@ namespace Prosur::Util{
 	}
 
 	int64_t unixTime(){
-		#ifdef TEST_MODE
+		#ifdef TEST_MODE_MOCK_INPUT
 			// When testing, no sleeping is done; each invocation, one second passes
 			static int64_t time = Util::rand();
 			time++;

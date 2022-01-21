@@ -1,18 +1,10 @@
 #include <Datasource/Camera/Camera.hpp>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <signal.h>
-#include <gphoto2/gphoto2.h>
-#include <unistd.h>
 
 #include <string>
 #include <vector>
 #include <iostream>
+
+#include <gphoto2/gphoto2.h>
 
 #include "Database/Frame.hpp"
 
@@ -96,7 +88,6 @@ namespace Prosur::Datasource::Camera{
 		}
 
 		// Copy downloaded data to our vector and let gphoto release their file
-		frame.still.clear();
 		frame.still.push_back({});
 		frame.still[0].resize(size);
 		memcpy(frame.still[0].data(), data, size);
