@@ -45,20 +45,20 @@ namespace Prosur{
 			frame.time = startTime;
 			frame.wasPrinting = wasPrinting;
 
-			/*
+
 			// Data sources each fill Frame members
 			Datasource::AuxTemp::fillFrame(frame);
 			Datasource::RepRap::fillFrame(frame);
 			// Collect stills only every 6th frame. At .1Hz, one still a minute.
+
 			// TODO Use H.265 video to reduce data usage for still collection. How to implement this elegantly? Could chunks of data be written into each frame record in a bytea field? How would the performance be when having to stitch together 24hrs worth of frames? Can it be streamed over HTTP with seeking capability? Or is streaming to disk the only reasonable option? libavcodec could be used.
 			if(frame.time % 6 == 0){
+				// Record each 6th frame to reduce disk usage
 				Datasource::Camera::fillFrame(frame);
 			}
 
-
 			// Insert frame into database
 			Database::insertFrame(frame);
-*/
 
 			// Unless we are in TEST_MODE_MOCK_INPUT, sleep based on time taken during this cycle
 			#ifndef EST_MODE_MOCK_INPUT
