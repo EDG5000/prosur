@@ -157,20 +157,21 @@ namespace Prosur::Database::DBUtil{
 
 				switch(type){
 				case INT4OID:
-					//rowData[columnName] = (int) ntohl(*((int32_t *) data));
-					//rowData[columnName] = (int) *((int*) data); // implicit Param constructor
 					rowData[columnName] = *((int*) data); // implicit Param constructor
 					break;
 				case INT8OID:
 					rowData[columnName] = *((int64_t*) data); // implicit Param constructor
 					break;
 				case BYTEAOID: {
-					vector<char> dataVector(data, data + size);
-					rowData[columnName] = dataVector;
+						vector<char> dataVector(data, data + size);
+						rowData[columnName] = dataVector;
 					}
 					break;
 				case TEXTOID:
 					rowData[columnName] = string(data); // implicit Param constructor
+					break;
+				case FLOAT4OID:
+					rowData[columnName] = *((float*) data);
 					break;
 				}
 			}

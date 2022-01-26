@@ -29,14 +29,14 @@ namespace Prosur::Datasource::Camera{
 		// Get file descriptor to the video device
 		int fd = open(CAMERA_PATH.c_str(), O_RDWR | O_EXCL);
 		if(fd < 0){
-			cerr << "Failed to open device, OPEN Errno:" << strerror(errno) << endl;
+			cerr << "Camera: Failed to open device << " << CAMERA_PATH << ", OPEN Errno:" << strerror(errno) << endl;
 			terminate();
 		}
 
 		// 2. Ask the device if it can capture frames
 		v4l2_capability capability;
 		if(ioctl(fd, VIDIOC_QUERYCAP, &capability) < 0){
-			cerr << "Failed to get device capabilities, VIDIOC_QUERYCAP Errno: " << strerror(errno) << endl;
+			cerr << "Camera: Failed to get device capabilities, VIDIOC_QUERYCAP Errno: " << strerror(errno) << endl;
 			terminate();
 		}
 
@@ -49,7 +49,7 @@ namespace Prosur::Datasource::Camera{
 		imageFormat.fmt.pix.field = V4L2_FIELD_NONE;
 		// Tell the device you are using this format
 		if(ioctl(fd, VIDIOC_S_FMT, &imageFormat) < 0){
-			cerr << "Device could not set format, VIDIOC_S_FMT Errno: " << strerror(errno) << endl;
+			cerr << "Camera: Device could not set format, VIDIOC_S_FMT Errno: " << strerror(errno) << endl;
 			terminate();
 		}
 
@@ -62,7 +62,7 @@ namespace Prosur::Datasource::Camera{
 		requestBuffer.memory = V4L2_MEMORY_MMAP;
 
 		if(ioctl(fd, VIDIOC_REQBUFS, &requestBuffer) < 0){
-			cerr << "Could not request buffer from device, VIDIOC_REQBUFS Errno: " << strerror(errno) << endl;
+			cerr << "Camera: Could not request buffer from device, VIDIOC_REQBUFS Errno: " << strerror(errno) << endl;
 			terminate();
 		}
 
@@ -72,7 +72,7 @@ namespace Prosur::Datasource::Camera{
 		queryBuffer.memory = V4L2_MEMORY_MMAP;
 		queryBuffer.index = 0;
 		if(ioctl(fd, VIDIOC_QUERYBUF, &queryBuffer) < 0){
-			cerr << "Device did not return the buffer information, VIDIOC_QUERYBUF Errno: " << strerror(errno) << endl;
+			cerr << "Camera: Device did not return the buffer information, VIDIOC_QUERYBUF Errno: " << strerror(errno) << endl;
 			terminate();
 		}
 
@@ -93,25 +93,25 @@ namespace Prosur::Datasource::Camera{
 		// Activate streaming
 		int type = bufferinfo.type;
 		if(ioctl(fd, VIDIOC_STREAMON, &type) < 0){
-			cerr << "Could not start streaming, VIDIOC_STREAMON Errno: " << strerror(errno) << endl;
+			cerr << "Camera: Could not start streaming, VIDIOC_STREAMON Errno: " << strerror(errno) << endl;
 			terminate();
 		}
 
 		// Queue the buffer
 		if(ioctl(fd, VIDIOC_QBUF, &bufferinfo) < 0){
-			cerr << "Could not queue buffer, VIDIOC_QBUF Errno: " << strerror(errno) << endl;
+			cerr << "Camera: Could not queue buffer, VIDIOC_QBUF Errno: " << strerror(errno) << endl;
 			terminate();
 		}
 
 		// Dequeue the buffer
 		if(ioctl(fd, VIDIOC_DQBUF, &bufferinfo) < 0){
-			cerr << "Could not dequeue the buffer, VIDIOC_DQBUF Errno: " << strerror(errno) << endl;
+			cerr << "Camera: Could not dequeue the buffer, VIDIOC_DQBUF Errno: " << strerror(errno) << endl;
 			terminate();
 		}
 
 		// End streaming
 		if(ioctl(fd, VIDIOC_STREAMOFF, &type) < 0){
-			cerr << "Could not end streaming, VIDIOC_STREAMOFF Errno: " << strerror(errno) << endl;
+			cerr << "Camera: Could not end streaming, VIDIOC_STREAMOFF Errno: " << strerror(errno) << endl;
 			terminate();
 		}
 
@@ -125,7 +125,7 @@ namespace Prosur::Datasource::Camera{
 
 		// Close the video device
 		if(close(fd) < 0){
-			cerr << "Camera: Unable to close device " << to_string(fd) << ". Error:  " << strerror(errno) << endl;
+			cerr << "Camera: Camera: Unable to close device " << to_string(fd) << ". Error:  " << strerror(errno) << endl;
 		}
 	}
 }

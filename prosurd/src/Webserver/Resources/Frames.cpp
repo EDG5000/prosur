@@ -200,8 +200,6 @@ namespace Prosur::Webserver::Resources::Frames{
 				break;
 		}
 
-		cerr << query << endl;
-
 		// Run query to obtain frames
 		auto frames = Database::DBUtil::query(query, queryParameters);
 
