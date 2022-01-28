@@ -15,14 +15,24 @@ export const SENSOR_COLORS = [
     "#dcbeff",
     "#9A6324",
     "#fffac8",
-    "#800000",
+    "#aaffc3",
+    "#ffd8b1",
+    "#a9a9a9",// end
+    "#e6194B",
+    "#3cb44b",
+    "#7d90d6",
+    "#f58231",
+    "#db7af8",
+    "#42d4f4",
+    "#f032e6",
+    "#469990",
+    "#dcbeff",
+    "#9A6324",
+    "#fffac8",
     "#aaffc3",
     "#808000",
     "#ffd8b1",
-    "#000075",
     "#a9a9a9",
-    "#ffffff",
-    "#000000"
 ];
 
 export const XHR_SUCCESS = 4;
