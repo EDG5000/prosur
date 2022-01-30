@@ -40,6 +40,8 @@ using namespace nlohmann;
 
 namespace Prosur::Webserver::Resources::Frames{
 
+
+
 	enum Mode{
 		Latest, // Return 1 frame, the latest frame
 		Range, // Between min and max, inclusive
@@ -187,7 +189,7 @@ namespace Prosur::Webserver::Resources::Frames{
 				queryParameters.push_back(numericParameters["max"]);
 				if(modulus > 1){
 					query += "  and time % $3 = 0";
-					queryParameters.push_back((int)numericParameters["modulo"]);
+					queryParameters.push_back(numericParameters["modulus"]);
 				}
 				break;
 			case Job:
@@ -195,7 +197,7 @@ namespace Prosur::Webserver::Resources::Frames{
 				queryParameters.push_back((int) numericParameters["job_id"]);
 				if(modulus > 1){
 					query += "  and time % $2 = 0";
-					queryParameters.push_back((int) numericParameters["modulo"]);
+					queryParameters.push_back((int) numericParameters["modulus"]);
 				}
 				break;
 		}

@@ -56,7 +56,8 @@ export function init(){
     });
 
     Main.canvas.addEventListener("mousemove", e => {
-        Plotter.onMouseMove(e.offsetX, e.offsetY);
+        // TODO
+        //Plotter.onMouseMove(e.offsetX, e.offsetY);
 
         if (!isDown) return;
         e.preventDefault();

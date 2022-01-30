@@ -1,5 +1,5 @@
 :root {
-  color-scheme: dark;
+    color-scheme: dark;
 }
 
 a{
@@ -18,21 +18,10 @@ body{
     overflow: hidden !important;
     font-family: monospace;
     background: #202124;
-}
-
-#session-list{
-    overflow-y: scroll;
-    width: 400px;
-    color: black;
-    height: 100vh;
-    position: absolute;
-    border-right: 1px solid black;
+    color: white;
 }
 
 canvas{
-    position: absolute;
-    top: 0;
-    right: 0;
     cursor: crosshair;
     z-index: 3;
 }
@@ -49,7 +38,7 @@ canvas{
 
 #legend{
     top: 10px;
-    right: 10px;
+    right: 500px;
 }
 
 #zoom-level{
@@ -61,3 +50,34 @@ canvas{
     left: 577px;
     top: 10px;
 }
+
+/* Three columns */
+#session-list, #parameter-list, #viewer{
+    position: absolute;
+    height: 100vh;
+    top: 0;
+}
+
+#session-list{
+    left: 0;
+    width: 400px;
+    overflow-y: scroll;
+    
+    border-right: 1px solid black;
+}
+
+#parameter-list{
+    right: 0;
+    width: 400px;
+
+    overflow-y: scroll;
+}
+
+#viewer{
+    left: 400px;
+    right: 400px;
+    height: 100vh;
+    
+    background: yellow;
+}
+

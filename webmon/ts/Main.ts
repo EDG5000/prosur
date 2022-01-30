@@ -5,6 +5,7 @@ namespace Main{
     export let sessionListContainer: HTMLElement;
     export let mouseValueContainer: HTMLElement;
     export let legend: HTMLElement;
+    export let parameterListContainer: HTMLElement;
 
     // Settings stored in local storage
     export namespace Settings{
@@ -20,6 +21,7 @@ namespace Main{
         // Get elements
         sessionListContainer = document.getElementById("session-list");
         mouseValueContainer = document.getElementById("mouse-value");
+        parameterListContainer = document.getElementById("parameter-list");
         legend = document.getElementById("legend");
         canvas = document.getElementsByTagName("canvas")[0];
 

@@ -69,6 +69,7 @@ namespace Prosur::Database{
 		for(auto& row: result){
 			frameColumnTypes[row["column_name"]] = (string) row["data_type"];
 		}
+		cout << "debug" << endl;
 	}
 
 	static int64_t fileExists(string filename){

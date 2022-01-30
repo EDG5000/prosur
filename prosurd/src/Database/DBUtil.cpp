@@ -43,6 +43,13 @@ namespace Prosur::Database::DBUtil{
 	}
 
 	vector<map<string, DBValue>> query(string query, vector<DBValue> params){
+		cout << "DBUtil::query " << query << " is invoked with params: " << endl;
+		for(auto& param: params){
+			cerr << param.toString() << " ";
+
+		}
+		cout << endl;
+
 		// Check if a connection is present for the current thread, if not, set it up
 		PGconn* conn;
 		if(!connections.contains(this_thread::get_id())){
@@ -50,7 +57,10 @@ namespace Prosur::Database::DBUtil{
 			connections[this_thread::get_id()] = conn;
 
 			// Set default schema to prosur
-			DBUtil::query("set search_path to prosur");
+			// TODO is below call causing issues?
+			//DBUtil::query("set search_path to prosur");
+			// TODO add error handling to this call
+			PQexec(conn, "set search_path to prosur");
 		}else{
 			conn = connections[this_thread::get_id()];
 		}
@@ -92,6 +102,13 @@ namespace Prosur::Database::DBUtil{
 				query.c_str()
 			);
 		}else{
+			cout << "Now running query " << query << " with params: " << endl;
+			for(auto& param: params){
+				cerr << param.toString() << " ";
+
+			}
+			cout << endl;
+
 			// Perform query
 			result = PQexecParams(
 				conn,
