@@ -1,48 +1,46 @@
 namespace Main{
 
-    // DOM elements
-    export namespace HTMLElements{
-        export let scroller: HTMLElement;
-        export let scrollerInner: HTMLElement ;
-        export let sessionListContainer: HTMLElement;
-        export let mouseValueContainer: HTMLElement;
-        export let legend: HTMLElement;
-    }
+    // Elements
+    export let canvas: HTMLCanvasElement = null;
+    export let sessionListContainer: HTMLElement;
+    export let mouseValueContainer: HTMLElement;
+    export let legend: HTMLElement;
 
-    // User settings; stored in local storage
-    export namespace UserSettings{
+    // Settings stored in local storage
+    export namespace Settings{
         export let selectedColumns = typeof localStorage.selectedColumns == "undefined" ? {} : JSON.parse(localStorage.selectedColumns);
         export let zoom = isNaN(localStorage.zoom) ? 1 : parseFloat(localStorage.zoom);
+        export let pan = isNaN(localStorage.pan) ? 1 : parseFloat(localStorage.pan);
     }
 
-    // Data retrieved from Prosurd
-    export namespace Data{
-        export let frames: any; // Contains one array for each column
-        export let parameters: Map<String,String> // Map of parameters belonging to a print job. Received as part of the frames resouce when loading data belonging to a job. Not populated when viewing all frames.
-    }
+    // Chunk holder (chunky)
+    export let chunks: any[] = null;
 
-let init = function(){
-    // Init DOM nodes
-    HTMLElements.sessionListContainer = document.getElementById("session-list");
-    HTMLElements.scroller = document.getElementById("scroller");
-    HTMLElements.scrollerInner = document.getElementById("scroller-inner");
-	HTMLElements.mouseValueContainer = document.getElementById("mouse-value");
-    HTMLElements.legend = document.getElementById("legend");
+    let init = function(){
+        // Get elements
+        sessionListContainer = document.getElementById("session-list");
+        mouseValueContainer = document.getElementById("mouse-value");
+        legend = document.getElementById("legend");
+        canvas = document.getElementsByTagName("canvas")[0];
 
-     // Init units
-    Plotter.init();
-    MouseControl.init();
-    FrameLoader.init();
+        // Init
+        Const.init();
+        Plotter.init();
+        MouseControl.init();
+        ChunkLoader.init();
 
-    // Load session list
-    JobList.init(function(){
-        // Load last session
-        if(typeof localStorage.lastSession != "undefined"){
-            FrameLoader.load(localStorage.lastSession);
-        }
-    });
-};
+        // Load session list
+        JobList.init(function(){
+            // Load last session
+            /*if(typeof localStorage.lastSession != "undefined"){
+                ChunkLoader.load(localStorage.lastSession);
+            }*/
+            /*ChunkManager.tick(function({
+                Plotter.rix
+            }));*/
+            ChunkLoader.tick();
+        });
+    };
 
-addEventListener("DOMContentLoaded", init);
-
+    addEventListener("DOMContentLoaded", init);
 }

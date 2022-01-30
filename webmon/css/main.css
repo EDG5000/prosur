@@ -61,18 +61,3 @@ canvas{
     left: 577px;
     top: 10px;
 }
-
-#scroller{
-    position: absolute;
-    height: 100vh;
-    left: 400px;
-    width: calc(100vw - 400px);
-    overflow-y: hidden;
-    overflow-x: visible;
-    z-index: 2;
-}
-
-    #scroller-inner{
-        width: 0px;
-        height: 1px;
-    }

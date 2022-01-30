@@ -58,7 +58,7 @@ namespace Prosur{
 			}
 
 			// Insert frame into database
-			Database::insertFrame(frame);
+			//Database::insertFrame(frame);
 
 			// Unless we are in TEST_MODE_MOCK_INPUT, sleep based on time taken during this cycle
 			#ifndef EST_MODE_MOCK_INPUT
