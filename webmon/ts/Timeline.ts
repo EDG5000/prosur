@@ -8,17 +8,17 @@ namespace Timeline{
     let imageCount: number;
 
     export function init(){
-        for(let i = 0; i < imageCount; i++){
-            let img = document.createElement("img");
-            img.height = containerHeight;
-            images.push(img);
-        }
-
         containerHeight = Main.timelineContainer.clientHeight;
         containerWidth = Main.timelineContainer.clientWidth;
         imageScaleFactor = containerHeight / Const.STILL_HEIGHT;
         imageWidth = Math.round(Const.STILL_WIDTH * imageScaleFactor);
         imageCount = Math.round(containerWidth / imageWidth);
+
+        for(let i = 0; i < imageCount; i++){
+            let img = document.createElement("img");
+            img.height = containerHeight;
+            images.push(img);
+        }
     }
 
     // Pan the images and update the src attributes
@@ -34,7 +34,7 @@ namespace Timeline{
             while(time % Const.STILL_CAPTURE_INTERVAL != 0){
                 time++;
             }
-            images[i].src = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/file?mode=still&still_id=0time=" + time;
+            images[i].src = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/file?mode=still&still_id=0&time=" + time;
         }
         const startTime = Main.Settings.pan;
 
