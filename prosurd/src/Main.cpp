@@ -28,7 +28,8 @@ using namespace Prosur;
 namespace Prosur{
 
 	// Microseconds between collection of a data frame
-	constexpr int64_t FRAME_COLLECTION_INTERVAL = 10 * 1000 * 1000;
+	constexpr int64_t FRAME_COLLECTION_INTERVAL = 1 * 1000 * 1000;
+	constexpr int64_t STILL_CAPTURE_INTERVAL = 6; // Capture a still each 6th second
 
 	Database::Frame frame;
 
@@ -52,7 +53,7 @@ namespace Prosur{
 			// Collect stills only every 6th frame. At .1Hz, one still a minute.
 
 			// TODO Use H.265 video to reduce data usage for still collection. How to implement this elegantly? Could chunks of data be written into each frame record in a bytea field? How would the performance be when having to stitch together 24hrs worth of frames? Can it be streamed over HTTP with seeking capability? Or is streaming to disk the only reasonable option? libavcodec could be used.
-			if(frame.time % 6 == 0){
+			if(frame.time % STILL_CAPTURE_INTERVAL == 0){
 				// Record each 6th frame to reduce disk usage
 				//Datasource::Camera::fillFrame(frame);
 			}

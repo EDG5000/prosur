@@ -35,7 +35,7 @@ namespace ChunkLoader{
 
         // Configure request and set callback
         const modulus = Math.pow(2, zoom);
-        let url = "http://" + Const.HOST + ":" + Const.PORT + "/frames?mode=range&min=" + min + "&max=" + (min + Const.CHUNK_RANGE[Main.Settings.zoom]);
+        let url = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/frames?mode=range&min=" + min + "&max=" + (min + Const.CHUNK_RANGE[Main.Settings.zoom]);
         if(modulus != 1){
             url += ("&modulus=" + modulus);
         }
@@ -44,8 +44,7 @@ namespace ChunkLoader{
         xhr.open("GET", url, true);
         xhr.onreadystatechange = function() {
             // Error checking
-            if(xhr.readyState != Const.XHR_SUCCESS){
-                console.error("ChunkLoader: readyState is " + this.readyState + ". Aborting.");
+            if(xhr.readyState != Const.XHR.DONE){
                 return;
             }
             if(typeof xhr.response == "undefined" || xhr.response == null){
@@ -79,7 +78,7 @@ namespace ChunkLoader{
                 console.log("Cache was invalidated due to exceeding maximum size of " + Const.CACHE_MAX_FRAMES);
                 resetCache();
                 framesLoaded = 0;
-                tick();
+                Main.tick();
                 return;
             }
             

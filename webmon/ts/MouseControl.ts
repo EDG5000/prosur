@@ -33,7 +33,7 @@ export function init(){
         //Main.Settings.pan = Main.Settings.pan - Main.Settings.pan * Main.HTMLElements.scroller.scrollWidth;;
         // TODO set pan
         localStorage.pan = Main.Settings.pan;
-        ChunkLoader.tick();
+        Main.tick();
     });
 
     Main.canvas.addEventListener("mousedown", e => {
@@ -42,7 +42,7 @@ export function init(){
         //startX = e.pageX - Main.HTMLElements.scroller.offsetLeft;
         //Main.Settings.pan = Main.HTMLElements.scroller.scrollLeft;
         localStorage.pan = Main.Settings.pan;
-        ChunkLoader.tick();
+        Main.tick();
     });
 
     Main.canvas.addEventListener("mouseleave", () => {
@@ -66,7 +66,7 @@ export function init(){
         //Main.Settings.pan = Main.Settings.pan - walk;
         // TODO calculate pan
         localStorage.pan = Main.Settings.pan;
-        ChunkLoader.tick();
+        Main.tick();
     });
 }
 

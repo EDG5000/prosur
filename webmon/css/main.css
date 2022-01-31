@@ -52,10 +52,26 @@ canvas{
 }
 
 /* Three columns */
-#session-list, #parameter-list, #viewer{
+#session-list, #parameter-list{
     position: absolute;
     height: 100vh;
     top: 0;
+}
+
+canvas, #timeline{
+    position: absolute;
+    margin-left: 400px;
+    width: calc(100vw - 400px - 400px);
+}
+
+#timeline{
+    bottom: 0;
+    height: 400px;
+}
+
+canvas{
+    top: 0;
+    height: calc(100vh - 400px);
 }
 
 #session-list{
@@ -71,6 +87,7 @@ canvas{
     width: 400px;
 
     overflow-y: scroll;
+    border-left: 1px solid black;
 }
 
 #viewer{
@@ -81,3 +98,10 @@ canvas{
     background: yellow;
 }
 
+#timeline{
+    float: left;
+
+    margin-left: 400px;
+    margin-right: 400px;
+    border-top: 1px solid black;
+}

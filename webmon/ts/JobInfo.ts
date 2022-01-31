@@ -12,15 +12,14 @@ namespace JobInfo{
     //export let parameters: Map<String,String>
     export function load(jobId: number){
 
-        let url = "http://" + Const.HOST + ":" + Const.PORT + "/frames?mode=job&job_id=" + jobId;
+        let url = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/frames?mode=job&job_id=" + jobId;
 
         let xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
         xhr.open("GET", url, true);
         xhr.onreadystatechange = function() {
             // Error checking
-            if(xhr.readyState != Const.XHR_SUCCESS){
-                console.error("JobInfo: readyState is " + this.readyState + ". Aborting.");
+            if(xhr.readyState != Const.XHR.DONE){
                 return;
             }
             if(typeof xhr.response == "undefined" || xhr.response == null){

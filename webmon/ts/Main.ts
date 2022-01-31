@@ -6,6 +6,7 @@ namespace Main{
     export let mouseValueContainer: HTMLElement;
     export let legend: HTMLElement;
     export let parameterListContainer: HTMLElement;
+    export let timelineContainer: HTMLElement;
 
     // Settings stored in local storage
     export namespace Settings{
@@ -22,27 +23,25 @@ namespace Main{
         sessionListContainer = document.getElementById("session-list");
         mouseValueContainer = document.getElementById("mouse-value");
         parameterListContainer = document.getElementById("parameter-list");
+        timelineContainer = document.getElementById("timeline");
         legend = document.getElementById("legend");
         canvas = document.getElementsByTagName("canvas")[0];
 
         // Init
         Const.init();
         Plotter.init();
-        MouseControl.init();
         ChunkLoader.init();
+        Timeline.init();
+        JobList.init()
+        MouseControl.init();
 
-        // Load session list
-        JobList.init(function(){
-            // Load last session
-            /*if(typeof localStorage.lastSession != "undefined"){
-                ChunkLoader.load(localStorage.lastSession);
-            }*/
-            /*ChunkManager.tick(function({
-                Plotter.rix
-            }));*/
-            ChunkLoader.tick();
-        });
+        tick();
     };
+
+    export function tick(){
+        ChunkLoader.tick();
+        Timeline.tick();
+    }
 
     addEventListener("DOMContentLoaded", init);
 }

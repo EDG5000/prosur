@@ -39,7 +39,7 @@ render(frame)
 export let addedLinks: Array<HTMLAnchorElement>; // Used when adjusting selection state
 
 // Load list of available log files and initiate load of the last-loaded file
-export function init(cb: () => void){    
+export function init(){    
 
     // Mark the correct link as selected
     /*for(let linkIndex in SessionList.addedLinks){
@@ -60,7 +60,7 @@ export function init(cb: () => void){
         const jobId = parseInt(link.dataset.jobId);
         Main.Settings.pan = time;
         localStorage.pan = time;
-        ChunkLoader.tick();
+        Main.tick();
         JobInfo.load(jobId);
     });
 
@@ -68,7 +68,9 @@ export function init(cb: () => void){
     let xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.onreadystatechange = function(){  
-        if(this.readyState != Const.XHR_SUCCESS) return;
+        if(xhr.readyState != Const.XHR.DONE){
+            return;
+        }
         addedLinks = [];
         for(let job of xhr.response){
             const link = document.createElement("a");
@@ -88,12 +90,11 @@ export function init(cb: () => void){
             Main.sessionListContainer.appendChild(link);
             Main.sessionListContainer.appendChild(document.createElement("br"));
         }
-        cb();
     };
 
     // URL is set to Apache directory index containing log file
     let url: string;
-    url = "http://"+Const.HOST+":"+Const.PORT+"/jobs";
+    url = Const.URL_SCHEME + Const.HOST+":" + Const.PORT + "/jobs";
     xhr.open("GET", url, true);
 
     // Start the XHR request

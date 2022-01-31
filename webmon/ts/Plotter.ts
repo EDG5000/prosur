@@ -63,7 +63,7 @@ namespace Plotter{
 				// Store choice in memory and flush to local storage
 				Main.Settings.selectedColumns[column] = radio.checked;
 				localStorage.selectedColumns = JSON.stringify(Main.Settings.selectedColumns);
-				ChunkLoader.tick();
+				Main.tick();
 			};
 			
 			radio.value = column;

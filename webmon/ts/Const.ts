@@ -1,5 +1,6 @@
 namespace Const{
 
+    export const URL_SCHEME = "http://";
     export const HOST = "localhost";
     export const PORT = 8080;
 
@@ -35,7 +36,15 @@ namespace Const{
         "#a9a9a9",
     ];
 
-    export const XHR_SUCCESS = 4;
+    export const XHR = {
+        DONE: 4,
+        LOADING: 3,
+        HEADERS_RECEIVED: 2,
+        OPENED: 1,
+        UNSENT: 0
+
+    };
+
     //export const ZOOM_AFFECTOR = 0.05; Perhaps still needed to set mouse wheel sensitivity
     export const SIDEBAR_WIDTH = 400; // px; needs to match with values in CSS
     export const FREQ_HZ = 1; // Assumed frequency of souce data. (timestamps ignored)
@@ -52,7 +61,10 @@ namespace Const{
     export const CACHE_MAX_FRAMES = 10000 // ~100 bytes per frame
     export let CHUNK_RANGE = []; // Delta time per chunk, per zoom level. With modulus of 1, this equals the plot width in pixels.
     export const CHUNK_SIZE = window.innerWidth - Const.X_MARGIN - Const.SIDEBAR_WIDTH; // Amount of frames in chunk
-    
+    export const STILL_CAPTURE_INTERVAL = 6;
+    export const STILL_WIDTH = 1280; // Dimensions of images taken on frame
+    export const STILL_HEIGHT = 960;
+
     export function init(){
         // Frame count depends on modulus and chunk size, calculated at init 
         for(let zoom = 0; zoom < Const.MAX_ZOOM; zoom++){
