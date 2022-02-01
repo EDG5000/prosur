@@ -42,19 +42,22 @@ namespace Plotter{
 		Main.canvas.width = innerWidth - Const.SIDEBAR_WIDTH;
 		Main.canvas.height = innerHeight - Const.SCROLL_BAR_SIZE;
 		const chunkRange = Const.CHUNK_RANGE[zoom];
-		const startIndex = Math.floor((chunkRange / (Main.Settings.pan % Math.pow(2, zoom))) * Const.CHUNK_SIZE);
-		const endIndex = Const.CHUNK_SIZE + Math.floor((chunkRange / ((Main.Settings.pan + chunkRange) % Math.pow(2, zoom))) * Const.CHUNK_SIZE);
+		const pan = Main.Settings.pan;
+
 		const scaleX = Main.Settings.zoom * Const.BASE_ZOOM_FACTOR;
-		const xMax = Main.Settings.pan + Const.CHUNK_RANGE[zoom];
-		const modulus = Math.pow(2, zoom);
+		const xMax = pan + Const.CHUNK_RANGE[zoom];
+		//const modulus = Math.pow(2, zoom);
 		let yMin = 0;
 		let yMax = 0;
 		const columns: Array<string> = [];
 
+		// If there is data in any of the chunks, update legend, obtain user-selected column list and determine y-range
 		if(leftChunk != null || rightChunk != null){
 			// List numeric columns available in the data by looking at the left chunk
 			const allColumns: Array<string> = [];
-			for(let column in leftChunk != null ? leftChunk : rightChunk){
+			// Pick any non-null chunk
+			const chunk = leftChunk != null ? leftChunk : rightChunk;
+			for(let column in chunk){
 				if(typeof leftChunk[column][0] != "number"){
 					// We are here to plot numbers and numbers only. Understood?
 					continue;
@@ -90,7 +93,6 @@ namespace Plotter{
 			}
 
 			// List the user-selected columns if they are also present in the data
-			
 			for(let column of allColumns){
 				if(typeof Main.Settings.selectedColumns[column] != "undefined" && Main.Settings.selectedColumns[column]){
 					columns.push(column);
@@ -99,29 +101,26 @@ namespace Plotter{
 
 			// Determine y-range
 			for(let column of columns){
-				let index = startIndex;
-				let val: number;
-				// Fetch value from the correct chunk
-				for(let time = Main.Settings.pan; time < Main.Settings.pan + chunkRange; time += modulus){
-					if(index < Const.CHUNK_SIZE){
-						// In left chunk
-						val = leftChunk[column][index];
-					}else{
-						// In right chunk
-						val = rightChunk[column][index - Const.CHUNK_SIZE];
+				let chunks = [];
+				if(leftChunk != null){
+					chunks.push(leftChunk);
+				}
+				if(rightChunk != null){
+					chunks.push(rightChunk);
+				}
+				for(let chunk of chunks){
+					// Fetch value from the correct chunk
+					for(let val of chunk[column]){
+						// Update min and max as appropriate
+						if(val < yMin || yMin == null){
+							yMin = val;
+						}
+						if(val > yMax || yMax == null){
+							yMax = val;
+						}
 					}
-
-					// Update min and max as appropriate
-					if(val < yMin || yMin == null){
-						yMin = val;
-					}
-					if(val > yMax || yMax == null){
-						yMax = val;
-					}
-					index++;
 				}
 			}
-			
 		}
 
 		// Apply fallback y-range if needed (in the case of no data or other edge cases)
@@ -139,7 +138,7 @@ namespace Plotter{
 		ctx.fillStyle = "white"; // Text color
 		ctx.beginPath(); 
 		ctx.font = "1em monospace";
-		/*
+		
 		// Draw horizontal grid lines and y axis labels
 		let yRelative = 0;
 		ctx.textAlign = "right";
@@ -164,13 +163,13 @@ namespace Plotter{
 		// Draw vertical grid lines and x axis labels
 		let xRelative = 0;
 		while(xRelative <= 1){
-			let xValue = Main.Settings.pan + (xMax-Main.Settings.pan) * xRelative;
-			let xPosition = Const.X_MARGIN + (xValue - Main.Settings.pan) * scaleX;
+			let xValue = pan + (xMax-pan) * xRelative;
+			let xPosition = Const.X_MARGIN + (xValue - pan) * scaleX;
 			ctx.moveTo(xPosition, 0);
 			ctx.lineTo(xPosition, Main.canvas.height - Const.Y_MARGIN);
 			let timeUnix = leftChunkTime + (xValue / Const.FREQ_HZ);
 			valueString = Util.createTimeLabel(timeUnix);
-			if(xValue - Main.Settings.pan == 0){
+			if(xValue - pan == 0){
 				ctx.textAlign = "left";
 			}else if(Math.round(xValue) == xMax){ // The rounding here is a bit hacky.
 				ctx.textAlign = "right";
@@ -180,13 +179,31 @@ namespace Plotter{
 			ctx.fillText(valueString, xPosition, Main.canvas.height - Const.X_LABEL_Y_OFFSET);
 			xRelative +=  Const.X_GRID_INTERVAL;
 		} 
-ctx.stroke();
+		ctx.stroke();
 	
-		*/
+		
 
-		// Draw data if at least one of the chunks are non-null
+		// Plot the data if at least one of the chunks are non-null
 		if(leftChunk != null || rightChunk != null){
-			// Draw data for each sensor
+			let startIndex: number;
+			let endIndex: number;
+
+			if(leftChunk != null){
+				// Starting at left chunk
+				startIndex = Math.floor(((pan % chunkRange) / chunkRange) * Const.CHUNK_SIZE);
+			}else{
+				// First row of right chunk
+				startIndex = 0;
+			}
+			if(rightChunk != null){
+				// Inverse of startIndex
+				endIndex = Const.CHUNK_SIZE - startIndex;
+			}else{
+				// Ending at left chunk
+				endIndex = Const.CHUNK_SIZE - 1;
+			}
+
+			// Draw data for each column
 			for(let colno = 0; colno < columns.length; colno++){
 				// Get colname, set color, start path
 				const column = columns[colno];
@@ -194,24 +211,49 @@ ctx.stroke();
 				ctx.strokeStyle = color;
 				ctx.beginPath();
 				
-				// Move to first value
-				let val = leftChunk[column][0];
-				ctx.moveTo(Const.X_MARGIN, Main.canvas.height - ((val-yMin) * scaleY) - Const.Y_MARGIN);
-				let index = 0;
 				// Draw a line per value
-				for(let time = Main.Settings.pan + 1; time < Main.Settings.pan + chunkRange; time += modulus){
+				let inLeftChunk = leftChunk != null; // Still in left chunk. Set low once right chunk is reached.
+				let ready = false;
+				let initial = true;
+				// Start iterating at startIndex of left chunk if possible. Otherwise, start at leftIndex of right chunk
+				// End at endIndex of right chunk or endIndex in left chunk if right chunk is not available
+				// Move from left chunk to right chunk as needed
+				for(let index = startIndex; !ready; index++){
 					let val: number;
-					if(index < Const.CHUNK_SIZE){
-						// In left chunk
+					let time: number;
+					if(inLeftChunk && index < leftChunk[column].length){
 						val = leftChunk[column][index];
-					}else{
+						time = leftChunk["time"][index];
+					}else if(inLeftChunk && index == Const.CHUNK_SIZE){
+						// Left chunk fully traversed
+						if(rightChunk == null){
+							// There is no right chunk, so all drawing is complete
+							break;
+						}else{
+							// Proceed to right chunk or abort when right chunk is not available
+							index = 0;
+							inLeftChunk = false;
+							continue;
+						}
+					}else if(rightChunk != null && index < endIndex && index < rightChunk[column].length){
 						// In right chunk
-						val = rightChunk[column][index - Const.CHUNK_SIZE];
+						val = rightChunk[column][index];
+						time = rightChunk["time"][index];
+						if(rightChunk == null){
+							// Only the left chunk was present, abort now.
+							break;
+						}
+					}else{
+						break;
 					}
 					let xPos = ((time - Main.Settings.pan)/Const.FREQ_HZ) * scaleX + Const.X_MARGIN;
 					let yPos = Main.canvas.height - ((val-yMin) * scaleY) - Const.Y_MARGIN;
-					ctx.lineTo(xPos, yPos);
-					index++;
+					if(initial){
+						ctx.moveTo(xPos, yPos);
+						initial = false;
+					}else{
+						ctx.lineTo(xPos, yPos);
+					}
 				}
 				ctx.stroke();
 			}
