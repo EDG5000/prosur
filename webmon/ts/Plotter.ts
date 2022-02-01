@@ -38,7 +38,20 @@ namespace Plotter{
 
 	export function draw(leftChunkTime: number, rightChunkTime: number, leftChunk: any, rightChunk: any, zoom: number){
 
-		if(leftChunk == null && rightChunk == null){
+		// Calculate additional parameters
+		Main.canvas.width = innerWidth - Const.SIDEBAR_WIDTH;
+		Main.canvas.height = innerHeight - Const.SCROLL_BAR_SIZE;
+		const chunkRange = Const.CHUNK_RANGE[zoom];
+		const startIndex = Math.floor((chunkRange / (Main.Settings.pan % Math.pow(2, zoom))) * Const.CHUNK_SIZE);
+		const endIndex = Const.CHUNK_SIZE + Math.floor((chunkRange / ((Main.Settings.pan + chunkRange) % Math.pow(2, zoom))) * Const.CHUNK_SIZE);
+		const scaleX = Main.Settings.zoom * Const.BASE_ZOOM_FACTOR;
+		const xMax = Main.Settings.pan + Const.CHUNK_RANGE[zoom];
+		const modulus = Math.pow(2, zoom);
+		let yMin = 0;
+		let yMax = 0;
+		const columns: Array<string> = [];
+
+		if(leftChunk != null || rightChunk != null){
 			// List numeric columns available in the data by looking at the left chunk
 			const allColumns: Array<string> = [];
 			for(let column in leftChunk != null ? leftChunk : rightChunk){
@@ -48,88 +61,74 @@ namespace Plotter{
 				}
 				allColumns.push(column);
 			}
-		}
+		
+			// Update legend based on columns present in the data
+			// Create checkboxes for toggling the columns and attach a handler for when they are clicked
+			Main.legend.innerText = "";
+			for(let i = 0; i < allColumns.length; i++){
+				let column = allColumns[i];
+				let color = typeof Const.SENSOR_COLORS[i] != "undefined" ? Const.SENSOR_COLORS[i] : "white";
+				// Create checkbox to toggle column
+				const radio = document.createElement("input");
+				// Columns are checked off unless a user setting with value "true" is present
+				radio.checked = typeof Main.Settings.selectedColumns[column] != "undefined" && Main.Settings.selectedColumns[column];
+				radio.type = "checkbox";
+				radio.onclick = function(e){
+					// Store choice in memory and flush to local storage
+					Main.Settings.selectedColumns[column] = radio.checked;
+					localStorage.selectedColumns = JSON.stringify(Main.Settings.selectedColumns);
+					Main.tick();
+				};
+				
+				radio.value = column;
+				const span = document.createElement("span");
+				span.style.color = color;
+				span.innerText = column.toUpperCase();
+				Main.legend.appendChild(radio);
+				Main.legend.appendChild(span);
+				Main.legend.appendChild(document.createElement("br"));
+			}
 
-		// Update legend based on columns present in the data
-		// Create checkboxes for toggling the columns and attach a handler for when they are clicked
-		Main.legend.innerText = "";
-		for(let i = 0; i < allColumns.length; i++){
-			let column = allColumns[i];
-			let color = typeof Const.SENSOR_COLORS[i] != "undefined" ? Const.SENSOR_COLORS[i] : "white";
-			// Create checkbox to toggle column
-			const radio = document.createElement("input");
-			// Columns are checked off unless a user setting with value "true" is present
-			radio.checked = typeof Main.Settings.selectedColumns[column] != "undefined" && Main.Settings.selectedColumns[column];
-			radio.type = "checkbox";
-			radio.onclick = function(e){
-				// Store choice in memory and flush to local storage
-				Main.Settings.selectedColumns[column] = radio.checked;
-				localStorage.selectedColumns = JSON.stringify(Main.Settings.selectedColumns);
-				Main.tick();
-			};
+			// List the user-selected columns if they are also present in the data
 			
-			radio.value = column;
-			const span = document.createElement("span");
-			span.style.color = color;
-			span.innerText = column.toUpperCase();
-			Main.legend.appendChild(radio);
-			Main.legend.appendChild(span);
-			Main.legend.appendChild(document.createElement("br"));
-		}
-
-		// List the user-selected columns if they are also present in the data
-		const columns: Array<string> = [];
-		for(let column of allColumns){
-			if(typeof Main.Settings.selectedColumns[column] != "undefined" && Main.Settings.selectedColumns[column]){
-				columns.push(column);
+			for(let column of allColumns){
+				if(typeof Main.Settings.selectedColumns[column] != "undefined" && Main.Settings.selectedColumns[column]){
+					columns.push(column);
+				}
 			}
-		}
-		
-		// Determine dimensions
-		Main.canvas.width = innerWidth - Const.SIDEBAR_WIDTH;
-		Main.canvas.height = innerHeight - Const.SCROLL_BAR_SIZE;
-		const startTimeUnix = leftChunk.time[0];
-		const chunkRange = Const.CHUNK_RANGE[zoom];
-		const startIndex = Math.floor((chunkRange / (Main.Settings.pan % Math.pow(2, zoom))) * Const.CHUNK_SIZE);
-		const endIndex = Const.CHUNK_SIZE + Math.floor((chunkRange / ((Main.Settings.pan + chunkRange) % Math.pow(2, zoom))) * Const.CHUNK_SIZE);
-		// Scale is product of base factor and user factor
-		// TODO evaluate
-		const scaleX = Main.Settings.zoom * Const.BASE_ZOOM_FACTOR;
-		const xMax = Main.Settings.pan + Const.CHUNK_RANGE[zoom];
-		const modulus = Math.pow(2, zoom);
 
-		// Determine y-range
-		let yMin = null;
-		let yMax = null;
-		for(let column of columns){
-			let index = startIndex;
-			let val: number;
-			// Fetch value from the correct chunk
-			for(let time = Main.Settings.pan; time < Main.Settings.pan + chunkRange; time += modulus){
-				if(index < Const.CHUNK_SIZE){
-					// In left chunk
-					val = leftChunk[column][index];
-				}else{
-					// In right chunk
-					val = rightChunk[column][index - Const.CHUNK_SIZE];
-				}
+			// Determine y-range
+			for(let column of columns){
+				let index = startIndex;
+				let val: number;
+				// Fetch value from the correct chunk
+				for(let time = Main.Settings.pan; time < Main.Settings.pan + chunkRange; time += modulus){
+					if(index < Const.CHUNK_SIZE){
+						// In left chunk
+						val = leftChunk[column][index];
+					}else{
+						// In right chunk
+						val = rightChunk[column][index - Const.CHUNK_SIZE];
+					}
 
-				// Update min and max as appropriate
-				if(val < yMin || yMin == null){
-					yMin = val;
+					// Update min and max as appropriate
+					if(val < yMin || yMin == null){
+						yMin = val;
+					}
+					if(val > yMax || yMax == null){
+						yMax = val;
+					}
+					index++;
 				}
-				if(val > yMax || yMax == null){
-					yMax = val;
-				}
-				index++;
 			}
+			
 		}
-		
-		// Apply fallback y-range if needed
+
+		// Apply fallback y-range if needed (in the case of no data or other edge cases)
 		if(yMin == null || yMax == 0 || !Number.isFinite(yMin) || !Number.isFinite(yMax) || isNaN(yMin) || isNaN(yMax) || Math.abs(yMax-yMin) == 0){
 			// Unable to calculate range, set artifical range 1 below and 1 above current value, which should center the line if there is a line at all
-			yMin -= 1;
-			yMax += 1;
+			yMin = 1;
+			yMax = 1;
 		}
 
 		// Calculate drawing scale
@@ -169,7 +168,7 @@ namespace Plotter{
 			let xPosition = Const.X_MARGIN + (xValue - Main.Settings.pan) * scaleX;
 			ctx.moveTo(xPosition, 0);
 			ctx.lineTo(xPosition, Main.canvas.height - Const.Y_MARGIN);
-			let timeUnix = startTimeUnix + (xValue / Const.FREQ_HZ);
+			let timeUnix = leftChunkTime + (xValue / Const.FREQ_HZ);
 			valueString = Util.createTimeLabel(timeUnix);
 			if(xValue - Main.Settings.pan == 0){
 				ctx.textAlign = "left";
@@ -181,41 +180,44 @@ namespace Plotter{
 			ctx.fillText(valueString, xPosition, Main.canvas.height - Const.X_LABEL_Y_OFFSET);
 			xRelative +=  Const.X_GRID_INTERVAL;
 		} 
-
-		ctx.stroke();
+ctx.stroke();
+	
 		*/
-		// Draw data for each sensor
-		for(let colno = 0; colno < columns.length; colno++){
-			// Get colname, set color, start path
-			const column = columns[colno];
-			let color = Const.SENSOR_COLORS[colno];
-			ctx.strokeStyle = color;
-			ctx.beginPath();
-			
-			// Move to first value
-			let val = leftChunk[column][0];
-			ctx.moveTo(Const.X_MARGIN, Main.canvas.height - ((val-yMin) * scaleY) - Const.Y_MARGIN);
-			let index = 0;
-			// Draw a line per value
-			for(let time = Main.Settings.pan + 1; time < Main.Settings.pan + chunkRange; time += modulus){
-				let val: number;
-				if(index < Const.CHUNK_SIZE){
-					// In left chunk
-					val = leftChunk[column][index];
-				}else{
-					// In right chunk
-					val = rightChunk[column][index - Const.CHUNK_SIZE];
+
+		// Draw data if at least one of the chunks are non-null
+		if(leftChunk != null || rightChunk != null){
+			// Draw data for each sensor
+			for(let colno = 0; colno < columns.length; colno++){
+				// Get colname, set color, start path
+				const column = columns[colno];
+				let color = Const.SENSOR_COLORS[colno];
+				ctx.strokeStyle = color;
+				ctx.beginPath();
+				
+				// Move to first value
+				let val = leftChunk[column][0];
+				ctx.moveTo(Const.X_MARGIN, Main.canvas.height - ((val-yMin) * scaleY) - Const.Y_MARGIN);
+				let index = 0;
+				// Draw a line per value
+				for(let time = Main.Settings.pan + 1; time < Main.Settings.pan + chunkRange; time += modulus){
+					let val: number;
+					if(index < Const.CHUNK_SIZE){
+						// In left chunk
+						val = leftChunk[column][index];
+					}else{
+						// In right chunk
+						val = rightChunk[column][index - Const.CHUNK_SIZE];
+					}
+					let xPos = ((time - Main.Settings.pan)/Const.FREQ_HZ) * scaleX + Const.X_MARGIN;
+					let yPos = Main.canvas.height - ((val-yMin) * scaleY) - Const.Y_MARGIN;
+					ctx.lineTo(xPos, yPos);
+					index++;
 				}
-				let xPos = ((time - Main.Settings.pan)/Const.FREQ_HZ) * scaleX + Const.X_MARGIN;
-				let yPos = Main.canvas.height - ((val-yMin) * scaleY) - Const.Y_MARGIN;
-				ctx.lineTo(xPos, yPos);
-				index++;
+				ctx.stroke();
 			}
+			// Complete drawing of grid
 			ctx.stroke();
 		}
-
-		// Complete drawing of grid
-		ctx.stroke();
 	}
 
 }
