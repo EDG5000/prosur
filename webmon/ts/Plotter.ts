@@ -38,14 +38,16 @@ namespace Plotter{
 
 	export function draw(leftChunkTime: number, rightChunkTime: number, leftChunk: any, rightChunk: any, zoom: number){
 
-		// List numeric columns available in the data by looking at the left chunk
-		const allColumns: Array<string> = [];
-		for(let column in leftChunk){
-			if(typeof leftChunk[column][0] != "number"){
-				// We are here to plot numbers and numbers only. Understood?
-				continue;
+		if(leftChunk == null && rightChunk == null){
+			// List numeric columns available in the data by looking at the left chunk
+			const allColumns: Array<string> = [];
+			for(let column in leftChunk != null ? leftChunk : rightChunk){
+				if(typeof leftChunk[column][0] != "number"){
+					// We are here to plot numbers and numbers only. Understood?
+					continue;
+				}
+				allColumns.push(column);
 			}
-			allColumns.push(column);
 		}
 
 		// Update legend based on columns present in the data
@@ -93,9 +95,7 @@ namespace Plotter{
 		// Scale is product of base factor and user factor
 		// TODO evaluate
 		const scaleX = Main.Settings.zoom * Const.BASE_ZOOM_FACTOR;
-
 		const xMax = Main.Settings.pan + Const.CHUNK_RANGE[zoom];
-
 		const modulus = Math.pow(2, zoom);
 
 		// Determine y-range

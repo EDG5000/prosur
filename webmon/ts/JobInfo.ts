@@ -22,8 +22,8 @@ namespace JobInfo{
             if(xhr.readyState != Const.XHR.DONE){
                 return;
             }
-            if(typeof xhr.response == "undefined" || xhr.response == null){
-                console.error("XHR response not present. Value: " + xhr.response);
+            if(xhr.response == null){
+                console.error("JobInfo: failed to download, response was null. Is the backend reachable?");
                 return;
             }
             let parameters = xhr.response.parameters;

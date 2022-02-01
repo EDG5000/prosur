@@ -47,8 +47,13 @@ namespace ChunkLoader{
             if(xhr.readyState != Const.XHR.DONE){
                 return;
             }
-            if(typeof xhr.response == "undefined" || xhr.response == null){
-                console.error("ChunkLoader: Failure to obtain response JSON data. Check server response header and browser support for JSON response type support in XHR.");
+            if(xhr.status == 404){
+                // Request succeeded, but no data was found (empty chunk). Invoke the callback regardless.
+                Main.chunks[Main.Settings.zoom][min + ""] = null; // Mark chunk as confirmed empty
+                cb(null, zoom);
+            }
+            if(xhr.response == null){
+                console.error("ChunkLoader: failed to download, response was null. Is the backend reachable?");
                 return;
             }
             if(typeof xhr.response == "string"){
@@ -94,81 +99,3 @@ namespace ChunkLoader{
     };
 
 }
-
-
-
-/*
-    Checks if new chunks need to be loaded and loads them in Main.chunks
-    Will clear all chunks and reload the currently needed chunks when Const.CHUNK_QUOTA is exceeded
-    Will perform live-update by loading the last frame and appending it to the current chunk if possible (otherwise, a new chunk is allocated) 
-*/
-
-/*
-onClickSession: loadSession:
-jobId == -1 ? chunkLoader.tick() : loadSession(jobId)
-
-loadSession(jobId):
-mode=job&job_id=${jobId}
-
-onDrag: chunkLoader.tick()
-
-onZoom: chunkLoader.tick()
-
-chunkLoader.tick():
-// Is zoomlevel already logorithmic?
-ZOOM_MULTIPLIER = 150
-modulus = 1.1^zoomLevel || modulus = zoomLevel * ZOOM_MULTIPLIER
-
-
-
-if(typeof cache[modulus][leftChunk] == "undefined"){
-cache[modulus][leftChunk] = download(mode=range&min = leftChunk & max = leftChunk+chunkSize[modulus] & modulus = modulus)
-}
-
-if(undefined){
-cache[modulus][leftChunk] = download(mode=range&min = rightChunk & max = rightChunk+chunkSize[modulus] & modulus = modulus)
-}
-
-
-drawer.tick():
-for(let x = minX; x < maxX; i++){
-chunk = Math.round(x / chunkSize[modulus])
-frame = cache[modulus][chunk][x];
-render(frame)
-}
-*/
-
-//namespace ChunkManager{
-
-
-        // Scroll to end when opening current file
-        /*if(job == Const.CURRENT_LOG_FILE){
-            Main.HTMLElements.scroller.scrollLeft = Main.HTMLElements.scroller.scrollWidth - Main.HTMLElements.scroller.clientWidth;
-        }*/
-
-   /* 
-    export function init(){
-    // Periodically obtain last line if the current open file is a live file hc3d-log.log
-	setInterval(refreshCurrentFile, 1000);
-}
-
-
-function refreshCurrentFile(){
-    if(Main.loading == false && typeof localStorage.lastSession != "undefined" && localStorage.lastSession == Const.CURRENT_LOG_FILE && Main.Data.frames.length > 0){
-        let xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function(){
-            if(this.readyState != 4) return;
-            let frame = new Frame.Frame(this.responseText);
-            Main.Data.frames.push(frame);
-            let fullyScrolled = Math.floor((Main.HTMLElements.scroller.scrollLeft + Main.HTMLElements.scroller.clientWidth) - Main.HTMLElements.scroller.scrollWidth) > -2;
-            Drawer.draw();
-            if(fullyScrolled){
-                Main.HTMLElements.scroller.scrollLeft = Main.HTMLElements.scroller.scrollWidth - Main.HTMLElements.scroller.clientWidth;
-            }
-        };
-        xhr.open("GET", Const.refreshUrl, true);
-        xhr.send();
-    }
-}
-*/
-//}

@@ -71,6 +71,10 @@ export function init(){
         if(xhr.readyState != Const.XHR.DONE){
             return;
         }
+        if(xhr.response == null){
+            console.error("JobList: Failed to download, response was null. Is the backend reachable?");
+            return;
+        }
         addedLinks = [];
         for(let job of xhr.response){
             const link = document.createElement("a");
