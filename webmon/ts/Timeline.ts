@@ -18,11 +18,14 @@ namespace Timeline{
             let img = document.createElement("img");
             img.height = containerHeight;
             images.push(img);
+            Main.timelineContainer.appendChild(img);
         }
     }
 
     // Pan the images and update the src attributes
     export function tick(){
+        return;
+
         // Determine offset of first image. Which is between 0 and IMAGE_WIDTH
         const offset = Math.round(Main.Settings.pan % imageWidth);
 

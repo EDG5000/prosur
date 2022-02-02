@@ -66,12 +66,12 @@ canvas, #timeline{
 
 #timeline{
     bottom: 0;
-    height: 400px;
+    height: 200px;
 }
 
 canvas{
     top: 0;
-    height: calc(100vh - 400px);
+    height: calc(100vh - 200px);
 }
 
 #session-list{

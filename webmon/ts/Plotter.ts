@@ -1,54 +1,54 @@
 namespace Plotter{
-
 	// Main.canvas and context
 	export let ctx: CanvasRenderingContext2D = null;
-
 
 	export function init(){
 		// Get DOM nodes and Main.canvas context
 		ctx = Main.canvas.getContext("2d");
-
-		let active = false;
-		/*
-		// Adjust horizontal pan whenever the graph is scrolled horizontally
-		Main.canvas.addEventListener("scroll", function(e: Event){
-			if(!active){
-				requestAnimationFrame(function(){
-					Main.Settings.pan = Main.scroller.scrollLeft/Main.scroller.scrollWidth;
-					draw();
-					active = false;
-				});
-				active = true;
-			}
-		});
-		*/
 		Main.mouseValueContainer.innerText = (0).toFixed(2);
 
-		/*addEventListener("resize", function(){
-			requestAnimationFrame(draw);
-		});*/
+		addEventListener("resize", function(){
+			requestAnimationFrame(function(){
+				if(typeof lastZoom == "undefined"){
+					// No drawing has yet taken place, so we cannot redraw. Ignore event.
+					return;
+				}
+				draw(lastLeftChunkTime, lastRightChunkTime, lastLeftChunk, lastRightChunk, lastZoom);
+			});
+		});
 	}
 
-	/*
+	// Only read when redrawing due to browser window resize
+	let lastLeftChunkTime: number;
+	let lastRightChunkTime:number;
+	let lastLeftChunk: any;
+	let lastRightChunk: any;
+	let lastZoom: number;
+
+	let yMin = 0;
+	let yMax = 0;
+
 	export function onMouseMove(x: number, y: number){
 		let yValue = (Math.round(100 * ((yMax - yMin) * (1-(y / (Main.canvas.height-Const.Y_MARGIN))) + yMin))/100).toFixed(2);
 		Main.mouseValueContainer.innerText = yValue;
 	}
-	*/
-
+	
 	export function draw(leftChunkTime: number, rightChunkTime: number, leftChunk: any, rightChunk: any, zoom: number){
+		console.log(Main.Settings.pan);
+
+		// Store parameters to allow redrawing upong window resize
+		lastLeftChunkTime = leftChunkTime;
+		lastRightChunkTime = rightChunkTime;
+		lastLeftChunk = leftChunk;
+		lastRightChunk = rightChunk;
+		lastZoom = zoom;
 
 		// Calculate additional parameters
 		Main.canvas.width = innerWidth - Const.SIDEBAR_WIDTH;
 		Main.canvas.height = innerHeight - Const.SCROLL_BAR_SIZE;
 		const chunkRange = Const.CHUNK_RANGE[zoom];
 		const pan = Main.Settings.pan;
-
 		const scaleX = Main.Settings.zoom * Const.BASE_ZOOM_FACTOR;
-		const xMax = pan + Const.CHUNK_RANGE[zoom];
-		//const modulus = Math.pow(2, zoom);
-		let yMin = 0;
-		let yMax = 0;
 		const columns: Array<string> = [];
 
 		// If there is data in any of the chunks, update legend, obtain user-selected column list and determine y-range
@@ -100,6 +100,8 @@ namespace Plotter{
 			}
 
 			// Determine y-range
+			yMin = 0;
+			yMax = 0;
 			for(let column of columns){
 				let chunks = [];
 				if(leftChunk != null){
@@ -163,15 +165,14 @@ namespace Plotter{
 		// Draw vertical grid lines and x axis labels
 		let xRelative = 0;
 		while(xRelative <= 1){
-			let xValue = pan + (xMax-pan) * xRelative;
-			let xPosition = Const.X_MARGIN + (xValue - pan) * scaleX;
+			const xPosition = Const.X_MARGIN + xRelative * (Main.canvas.width - Const.X_MARGIN);
 			ctx.moveTo(xPosition, 0);
 			ctx.lineTo(xPosition, Main.canvas.height - Const.Y_MARGIN);
-			let timeUnix = leftChunkTime + (xValue / Const.FREQ_HZ);
+			let timeUnix = Main.Settings.pan + Const.CHUNK_RANGE[zoom] * xRelative;
 			valueString = Util.createTimeLabel(timeUnix);
-			if(xValue - pan == 0){
+			if(xRelative == 0){
 				ctx.textAlign = "left";
-			}else if(Math.round(xValue) == xMax){ // The rounding here is a bit hacky.
+			}else if(xRelative == 1){ // The rounding here is a bit hacky.
 				ctx.textAlign = "right";
 			}else{
 				ctx.textAlign = "center";

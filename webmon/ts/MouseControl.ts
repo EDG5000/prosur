@@ -13,10 +13,11 @@ export function init(){
 
     // Add mouse listener
     Main.canvas.addEventListener("wheel", function(e: any){
+        // Every event, mutate zoom level by 1. Max is Const.MAX_ZOOM. Min = 
         if(e.deltaY < 0 && Main.Settings.zoom < Const.MAX_ZOOM){
             //Main.UserSettings.zoom *= (1 + Const.ZOOM_AFFECTOR);
             Main.Settings.zoom += 1;
-        }else if(e.deltaY > 0 && Main.Settings.zoom > 2){
+        }else if(e.deltaY > 0 && Main.Settings.zoom > (Const.MIN_ZOOM + 1)){
             //Main.UserSettings.zoom *= (1 - Const.ZOOM_AFFECTOR);
             Main.Settings.zoom -= 1;
         }
@@ -38,21 +39,16 @@ export function init(){
 
     Main.canvas.addEventListener("mousedown", e => {
         isDown = true;
-        //Main.HTMLElements.scroller.classList.add("active");
-        //startX = e.pageX - Main.HTMLElements.scroller.offsetLeft;
-        //Main.Settings.pan = Main.HTMLElements.scroller.scrollLeft;
-        localStorage.pan = Main.Settings.pan;
+        startX = e.pageX;
         Main.tick();
     });
 
     Main.canvas.addEventListener("mouseleave", () => {
         isDown = false;
-        //Main.HTMLElements.scroller.classList.remove("active");
     });
 
     Main.canvas.addEventListener("mouseup", () => {
         isDown = false;
-        //Main.HTMLElements.scroller.classList.remove("active");
     });
 
     Main.canvas.addEventListener("mousemove", e => {
@@ -61,10 +57,7 @@ export function init(){
 
         if (!isDown) return;
         e.preventDefault();
-        //const x = e.pageX - Main.HTMLElements.scroller.offsetLeft;
-        //const walk = x - startX;
-        //Main.Settings.pan = Main.Settings.pan - walk;
-        // TODO calculate pan
+        const walk = Main.Settings.pan - (e.pageX - startX);
         localStorage.pan = Main.Settings.pan;
         Main.tick();
     });
