@@ -40,7 +40,6 @@ export function init(){
     Main.canvas.addEventListener("mousedown", e => {
         isDown = true;
         startX = e.pageX;
-        Main.tick();
     });
 
     Main.canvas.addEventListener("mouseleave", () => {
@@ -57,7 +56,21 @@ export function init(){
 
         if (!isDown) return;
         e.preventDefault();
-        const walk = Main.Settings.pan - (e.pageX - startX);
+        // Mouse movement in pixels
+        const walkPixels = (e.pageX - startX);
+
+        // Update startX for next event
+        startX = e.pageX;
+
+        //console.log("Walk pixels: " + walkPixels);
+        const plotWidth = (Main.canvas.width - Const.X_MARGIN);
+        //console.log("Plotwidth: " + plotWidth);
+        //console.log("Walkpixels/plotwidth: " + (walkPixels / plotWidth));
+        //console.log("Chunk range: " + Const.CHUNK_RANGE[Main.Settings.zoom]);
+        
+        const walkTime = (walkPixels / plotWidth) * Const.CHUNK_RANGE[Main.Settings.zoom];
+        //console.log("Walk time: " + walkTime);
+        Main.Settings.pan -= walkTime;
         localStorage.pan = Main.Settings.pan;
         Main.tick();
     });

@@ -16,7 +16,7 @@ namespace ChunkLoader{
         // Load left chunk
         const range = Const.CHUNK_RANGE[Main.Settings.zoom];
         const leftChunkTime = Math.floor(Main.Settings.pan / range) * range;
-        const rightChunkTime = Math.round(Main.Settings.pan / range) * range;
+        const rightChunkTime = leftChunkTime + range;
 
         get(leftChunkTime, Main.Settings.zoom, function(leftChunk, zoom){
             ChunkLoader.get(rightChunkTime, Main.Settings.zoom, function(rightChunk, zoom){
@@ -51,6 +51,7 @@ namespace ChunkLoader{
                 // Request succeeded, but no data was found (empty chunk). Invoke the callback regardless.
                 Main.chunks[Main.Settings.zoom][min + ""] = null; // Mark chunk as confirmed empty
                 cb(null, zoom);
+                return;
             }
             if(xhr.response == null){
                 console.error("ChunkLoader: failed to download, response was null. Is the backend reachable?");
@@ -80,9 +81,9 @@ namespace ChunkLoader{
             // Check cache limit
             framesLoaded += xhr.response.frames.time.length;
             if(framesLoaded > Const.CACHE_MAX_FRAMES){
+                framesLoaded = 0;
                 console.log("Cache was invalidated due to exceeding maximum size of " + Const.CACHE_MAX_FRAMES);
                 resetCache();
-                framesLoaded = 0;
                 Main.tick();
                 return;
             }

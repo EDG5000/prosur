@@ -184,13 +184,14 @@ namespace Prosur::Webserver::Resources::Frames{
 					limit 1";
 				break;
 			case Range:
-				query += " where time > $1 and time < $2";
+				query += " where time >= $1::int8 and time <= $2::int8";
 				queryParameters.push_back(numericParameters["min"]);
 				queryParameters.push_back(numericParameters["max"]);
 				if(modulus > 1){
-					query += "  and time % $3 = 0";
+					query += " and time % $3 = 0";
 					queryParameters.push_back(numericParameters["modulus"]);
 				}
+				query += " order by time asc"; // Test data is sometimes ordered illogically
 				break;
 			case Job:
 				query += " where job_id = $1";
@@ -199,6 +200,7 @@ namespace Prosur::Webserver::Resources::Frames{
 					query += "  and time % $2 = 0";
 					queryParameters.push_back((int) numericParameters["modulus"]);
 				}
+				query += " order by time asc"; // Test data is sometimes ordered illogically
 				break;
 		}
 
@@ -247,6 +249,8 @@ namespace Prosur::Webserver::Resources::Frames{
 		}
 
 		responseBody = outputObject;
+
+		cout << "first frame time" << frames[0]["time"].toString() << "parm long min " << queryParameters[0].toString() << endl;
 
 		return HTTP::OK;
 	}

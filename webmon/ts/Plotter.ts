@@ -34,7 +34,7 @@ namespace Plotter{
 	}
 	
 	export function draw(leftChunkTime: number, rightChunkTime: number, leftChunk: any, rightChunk: any, zoom: number){
-		console.log(Main.Settings.pan);
+		//console.log(Main.Settings.pan);
 
 		// Store parameters to allow redrawing upong window resize
 		lastLeftChunkTime = leftChunkTime;
@@ -57,8 +57,10 @@ namespace Plotter{
 			const allColumns: Array<string> = [];
 			// Pick any non-null chunk
 			const chunk = leftChunk != null ? leftChunk : rightChunk;
+
+			// Obtain numerical columns
 			for(let column in chunk){
-				if(typeof leftChunk[column][0] != "number"){
+				if(typeof chunk[column][0] != "number"){
 					// We are here to plot numbers and numbers only. Understood?
 					continue;
 				}
@@ -247,13 +249,18 @@ namespace Plotter{
 					}else{
 						break;
 					}
-					let xPos = ((time - Main.Settings.pan)/Const.FREQ_HZ) * scaleX + Const.X_MARGIN;
+					let xPos = ((time - Main.Settings.pan) / Const.CHUNK_RANGE[zoom]) * (Main.canvas.width - Const.X_MARGIN);
 					let yPos = Main.canvas.height - ((val-yMin) * scaleY) - Const.Y_MARGIN;
+					if(xPos < 0 || yPos < 0){
+						//debugger;
+					}
 					if(initial){
+						//console.log("Move: " + xPos + " - " + xPos);
 						ctx.moveTo(xPos, yPos);
 						initial = false;
 					}else{
 						ctx.lineTo(xPos, yPos);
+						//console.log("Line: " + xPos + " - " + xPos);
 					}
 				}
 				ctx.stroke();
