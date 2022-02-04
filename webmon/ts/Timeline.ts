@@ -5,39 +5,39 @@ namespace Timeline{
     let containerWidth: number;
     let imageScaleFactor: number;
     let imageWidth: number;
-    let imageCount: number;
+    let imageHeight: number;
+    const imageCount = 1 / Const.X_GRID_INTERVAL;
+    let imageRange: number; // Image width expressed as time range
 
     export function init(){
         containerHeight = Main.timelineContainer.clientHeight;
         containerWidth = Main.timelineContainer.clientWidth;
-        imageScaleFactor = containerHeight / Const.STILL_HEIGHT;
-        imageWidth = Math.round(Const.STILL_WIDTH * imageScaleFactor);
-        imageCount = Math.round(containerWidth / imageWidth);
+        imageWidth = Math.round(containerWidth / imageCount);
+        imageScaleFactor = imageWidth / Const.STILL_WIDTH;
+        imageHeight = Const.STILL_HEIGHT * imageScaleFactor;
+        imageRange =  Const.CHUNK_RANGE[Main.Settings.zoom]  / imageCount;
 
+        //imageCount = Math.ceil(containerWidth / imageWidth) + 1; // One more image is needed; when panning the images, the screen is to remain filled
         for(let i = 0; i < imageCount; i++){
             let img = document.createElement("img");
-            img.height = containerHeight;
+            img.width = imageWidth;
+            img.height = imageHeight; // Optional
             images.push(img);
             Main.timelineContainer.appendChild(img);
         }
+    
     }
+            
 
     // Pan the images and update the src attributes
     export function tick(){
-        return;
 
-        // Determine offset of first image. Which is between 0 and IMAGE_WIDTH
-        const offset = Math.round(Main.Settings.pan % imageWidth);
-
+        let exactTime = Main.Settings.pan;
         for(let i = 0; i < imageCount; i++){
-            const relativeLeftEdge = 1/(i+1) + (1 / (offset / containerWidth));
-            const timeOffset = relativeLeftEdge * Const.CHUNK_RANGE[Main.Settings.zoom];
-            let time = Math.round(Main.Settings.pan + timeOffset);
-            // Find closest matching 6th frame, as still are only taken on 6th frames
-            while(time % Const.STILL_CAPTURE_INTERVAL != 0){
-                time++;
-            }
+            // Closest matching 6th frame, as still are only taken on 6th frames
+            let time = exactTime - (exactTime % Const.STILL_CAPTURE_INTERVAL);
             images[i].src = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/file?mode=still&still_id=0&time=" + time;
+            exactTime += imageRange;
         }
         const startTime = Main.Settings.pan;
 

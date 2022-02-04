@@ -184,7 +184,7 @@ namespace Prosur::Webserver::Resources::Frames{
 					limit 1";
 				break;
 			case Range:
-				query += " where time >= $1::int8 and time <= $2::int8";
+				query += " where time >= $1 and time <= $2";
 				queryParameters.push_back(numericParameters["min"]);
 				queryParameters.push_back(numericParameters["max"]);
 				if(modulus > 1){

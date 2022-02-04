@@ -24,6 +24,7 @@ body{
 canvas{
     cursor: crosshair;
     z-index: 3;
+    width: calc(100vw - 400px - 400px);
 }
 
 #legend, #zoom-level, #mouse-value{
@@ -61,12 +62,19 @@ canvas{
 canvas, #timeline{
     position: absolute;
     margin-left: 400px;
-    width: calc(100vw - 400px - 400px);
+    
 }
 
 #timeline{
     bottom: 0;
     height: 200px;
+    margin-left: 440px;
+    margin-right: 400px;
+    border-top: 1px solid black;
+    overflow: hidden;
+    white-space: nowrap;
+    /* padding-left: 40px; */
+    width: calc(100vw - 400px - 440px);
 }
 
 canvas{
@@ -94,14 +102,10 @@ canvas{
     left: 400px;
     right: 400px;
     height: 100vh;
-    
     background: yellow;
 }
 
-#timeline{
-    float: left;
-
-    margin-left: 400px;
-    margin-right: 400px;
-    border-top: 1px solid black;
+#timeline img{
+    /* float: left; */
+    border:  0;
 }
