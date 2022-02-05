@@ -67,6 +67,7 @@ else ()
 		src/Webserver/Webserver.cpp
 		src/Webserver/Resources/Frames.cpp
 		src/Webserver/Resources/Jobs.cpp
+		src/Webserver/Resources/Job.cpp
 		src/Webserver/Resources/File.cpp
 		src/Webserver/Resources/Client.cpp
 		src/Database/Database.cpp

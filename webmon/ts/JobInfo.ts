@@ -16,7 +16,7 @@ namespace JobInfo{
             // Only clearing the job panel
             return;
         }
-        let url = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/frames?mode=job&job_id=" + jobId;
+        let url = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/job?job_id=" + jobId;
 
         let xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
@@ -30,16 +30,19 @@ namespace JobInfo{
                 console.error("JobInfo: failed to download, response was null. Is the backend reachable?");
                 return;
             }
-            let parameters = xhr.response.parameters;
-            if(typeof parameters == "undefined" || parameters == null || parameters.length == 0){
-                console.error("JobInfo: Parameters not present. Value: " + parameters);
+            if(typeof xhr.response == "undefined"){
+                console.error("JobInfo: failed to download, response was undefined. Is the backend reachable?");
+                return;
+            }
+            if(xhr.response.length == 0){
+                console.error("JobInfo: Parameter object length is 0");
                 return;
             }
 
             // Construct table
             let table = document.createElement("table");
-            for(let key in parameters){
-                let value = parameters[key];
+            for(let key in xhr.response){
+                let value = xhr.response[key];
                 let row = document.createElement("tr");
 
                 // Param name

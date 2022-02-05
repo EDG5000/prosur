@@ -65,25 +65,18 @@ namespace ChunkLoader{
                 console.error("ChunkLoader: Error from Prosurd: " + xhr.response);
                 return;
             }
-            if(typeof xhr.response.frames == "undefined"){
-                console.error("ChunkLoader: Response is missing the frames property.");
+            if(typeof xhr.response.time == "undefined"){
+                console.error("ChunkLoader: Response is missing the time property.");
                 return;
             }
-            if(typeof xhr.response.parameters == "undefined"){
-                console.error("ChunkLoader: Response is missing the parameters property.");
-                return;
-            }
-            if(typeof xhr.response.frames.time == "undefined"){
-                console.error("ChunkLoader: The time column is not present in the receive data. Cannot plot data.");
-                return;
-            }
-            if(xhr.response.frames.time.length == 0){
+            if(xhr.response.time.length == 0){
+                // If there is no data, 404 should be returned. An empty array is considered an error.
                 console.error("ChunkLoader: Empty chunk");
                 return;
             }
 
             // Check cache limit
-            framesLoaded += xhr.response.frames.time.length;
+            framesLoaded += xhr.response.time.length;
             if(framesLoaded > Const.CACHE_MAX_FRAMES){
                 framesLoaded = 0;
                 // TODO how to handle cache?
@@ -92,8 +85,8 @@ namespace ChunkLoader{
             }
             
             // Store chunk
-            Main.chunks[zoom][min + ""] = xhr.response.frames;
-            
+            Main.chunks[zoom][min + ""] = xhr.response;
+
             // Invalidate the canvas to have it redrawn as new data might change what is drawn
             Main.canvasInvalidated = true;
 

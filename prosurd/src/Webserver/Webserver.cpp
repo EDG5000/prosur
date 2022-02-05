@@ -34,6 +34,7 @@
 #include <Webserver/Resources/Jobs.hpp>
 #include "Webserver/Resources/File.hpp"
 #include "Webserver/Resources/Client.hpp"
+#include "Webserver/Resources/Job.hpp"
 #include "Webserver/HTTPResponseBody.hpp"
 
 using namespace std;
@@ -64,6 +65,7 @@ namespace Prosur::Webserver{
 		{"jobs", Resources::Jobs::run}, // Default action (index). List all jobs.
 		{"frames", Resources::Frames::run}, // Get all frames for given job_id or all frames between start and end time (includes frames when printer was idle)
 		{"file", Resources::File::run}, // Download job file or still image taken at given frame ID
+		{"job", Resources::Job::run} // Job print parameters
 	};
 
 	// Write response HTTP header and body with provided HTTP status code and response body
