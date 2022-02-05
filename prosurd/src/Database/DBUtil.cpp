@@ -43,12 +43,12 @@ namespace Prosur::Database::DBUtil{
 	}
 
 	vector<map<string, DBValue>> query(string query, vector<DBValue> params){
-		cout << "DBUtil::query " << query << " is invoked with params: " << endl;
+		/*cout << "DBUtil::query " << query << " is invoked with params: " << endl;
 		for(auto& param: params){
 			cerr << param.toString() << " ";
 
 		}
-		cout << endl;
+		cout << endl;*/
 
 		// Check if a connection is present for the current thread, if not, set it up
 		PGconn* conn;

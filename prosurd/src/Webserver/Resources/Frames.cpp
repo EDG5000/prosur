@@ -40,8 +40,6 @@ using namespace nlohmann;
 
 namespace Prosur::Webserver::Resources::Frames{
 
-
-
 	enum Mode{
 		Latest, // Return 1 frame, the latest frame
 		Range, // Between min and max, inclusive
@@ -250,7 +248,7 @@ namespace Prosur::Webserver::Resources::Frames{
 
 		responseBody = outputObject;
 
-		cout << "first frame time" << frames[0]["time"].toString() << "parm long min " << queryParameters[0].toString() << endl;
+		//cout << "first frame time" << frames[0]["time"].toString() << "parm long min " << queryParameters[0].toString() << endl;
 
 		return HTTP::OK;
 	}

@@ -59,7 +59,7 @@ namespace Const{
     export const SCROLL_BAR_SIZE = 50; // Needs to be set to browser scroll bar size or larger
     export const MIN_ZOOM = 1; // 2^13 = ~24hr
     export const MAX_ZOOM = 13; // 2^13 = ~24hr
-    export const CACHE_MAX_FRAMES = 10000 // ~100 bytes per frame
+    export const CACHE_MAX_FRAMES = 100000 // ~100 bytes per frame
     export let CHUNK_RANGE = {}; // Delta time per chunk, per zoom level. With modulus of 1, this equals the plot width in pixels.
     export const CHUNK_SIZE = window.innerWidth - Const.X_MARGIN - Const.SIDEBAR_WIDTH; // Amount of frames in chunk
     export const STILL_CAPTURE_INTERVAL = 6;
