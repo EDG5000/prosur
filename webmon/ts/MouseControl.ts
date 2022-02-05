@@ -16,6 +16,7 @@ export function init(){
         // Every event, mutate zoom level by 1. Max is Const.MAX_ZOOM. Min = 
         if(e.deltaY < 0 && Main.Settings.zoom < Const.MAX_ZOOM){
             //Main.UserSettings.zoom *= (1 + Const.ZOOM_AFFECTOR);
+            //Main.setZoom(Main.Settings.zoom + 1);
             Main.Settings.zoom += 1;
         }else if(e.deltaY > 0 && Main.Settings.zoom > (Const.MIN_ZOOM + 1)){
             //Main.UserSettings.zoom *= (1 - Const.ZOOM_AFFECTOR);
@@ -27,30 +28,39 @@ export function init(){
         }
         */
        
-        localStorage.zoom = Main.Settings.zoom;
+        //localStorage.zoom = Main.Settings.zoom;
         updateLabel();
         
         //Main.HTMLElements.scroller.scrollLeft = 
         //Main.Settings.pan = Main.Settings.pan - Main.Settings.pan * Main.HTMLElements.scroller.scrollWidth;;
         // TODO set pan
-        localStorage.pan = Main.Settings.pan;
-        Main.tick();
+        //localStorage.pan = Main.Settings.pan;
+        Main.canvasInvalidated = true;
     });
 
-    Main.canvas.addEventListener("mousedown", e => {
+    /*Main.canvas.*/addEventListener("mousedown", e => {
+        //e.preventDefault();
         isDown = true;
         startX = e.pageX;
     });
 
-    Main.canvas.addEventListener("mouseleave", () => {
+    addEventListener("mouseout", (e: any) => {
+        if(e.toElement == null){
+            // We moved out of the browser window, stop tracking the mouse, otherwise, keep tracking it
+            //console.log(e);
+            //e.preventDefault();
+            isDown = false;
+        }
+
+    });
+
+    addEventListener("mouseup", (e) => {
+        //e.preventDefault();
         isDown = false;
     });
 
-    Main.canvas.addEventListener("mouseup", () => {
-        isDown = false;
-    });
-
-    Main.canvas.addEventListener("mousemove", e => {
+    addEventListener("mousemove", e => {
+        //e.preventDefault();
         // TODO
         //Plotter.onMouseMove(e.offsetX, e.offsetY);
 
@@ -71,8 +81,7 @@ export function init(){
         const walkTime = (walkPixels / plotWidth) * Const.CHUNK_RANGE[Main.Settings.zoom];
         //console.log("Walk time: " + walkTime);
         Main.Settings.pan -= walkTime;
-        localStorage.pan = Main.Settings.pan;
-        Main.tick();
+        Main.canvasInvalidated = true;
     });
 }
 

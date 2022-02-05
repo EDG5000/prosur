@@ -57,11 +57,11 @@ export function init(){
         e.preventDefault();
         let link: HTMLAnchorElement = <HTMLAnchorElement> e.target;
         const time = parseInt(link.dataset.time);
-        const jobId = parseInt(link.dataset.jobId);
-        Main.Settings.pan = time;
-        localStorage.pan = time;
-        Main.tick();
-        JobInfo.load(jobId);
+        if(time != Main.Settings.pan){
+            Main.Settings.pan = time;
+            console.log(Main.Settings.pan);
+            Main.canvasInvalidated = true;
+        }
     });
 
     // Load and display list of files
@@ -81,15 +81,17 @@ export function init(){
             
             // Link is only used to allow user to navigate to the url, perhaps for downloading data to disk
             link.href = "http://" + Const.HOST + ":" + Const.PORT + "/frames?mode=job&job_id=" + job.job_id;
-            link.dataset.jobId = job.job_id;
-            link.dataset.time = job.time;
-            // Cap values beyond ~2032, some test data has timestamps all the way in the upcoming dyson-sphere epoch, which are within the int64_t allowed limit but not within JavaScript's 32-bit floating point Numbers.
+           
+            // Cap values beyond ~2032; some test data has timestamps all the way in the upcoming dyson-sphere epoch; within the int64_t allowed limit, but not within JavaScript's 32-bit floating point Numbers.
             if(job.time > 1957071184){
                 job.time = 1957071184;
             }
+
+            link.dataset.time = job.time;
             const dateTimeString = new Date(job.time * 1000).toJSON().replace("T", " ").slice(0, 19);
             const jobName = job.job_file_name.replace("0:/gcodes/", "").replace(".gcode", "");
             link.innerText = jobName + "(" + dateTimeString + ")";
+            //link.innerText = job.time + "";
             addedLinks.push(link);
             Main.sessionListContainer.appendChild(link);
             Main.sessionListContainer.appendChild(document.createElement("br"));

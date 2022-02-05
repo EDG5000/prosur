@@ -17,6 +17,7 @@ namespace Prosur::Webserver::Resources::Jobs{
 			select distinct on(job_id) time, job_id, job_file_name \
 			from frame \
 			where job_id is not null \
+			order by job_id, time asc \
 		");
 
 		// Create JSON array to store return data
@@ -24,6 +25,7 @@ namespace Prosur::Webserver::Resources::Jobs{
 		for(auto& row: jobs){
 			json job;
 			job["time"] = row["time"];
+			//cout << job["time"] << endl;
 			job["job_file_name"] = row["job_file_name"];
 			job["job_id"] = row["job_id"];
 			returnObject.push_back(job);

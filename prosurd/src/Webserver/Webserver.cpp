@@ -67,20 +67,20 @@ namespace Prosur::Webserver{
 	};
 
 	// Write response HTTP header and body with provided HTTP status code and response body
-	static void sendResponse(int client_socket, int httpCode, HTTPResponseBody responseBody){ // TODO Note: previously, responseBody was of reference-type to avoid copying.
+	static void sendResponse(int clientSocket, int httpCode, HTTPResponseBody responseBody){ // TODO Note: previously, responseBody was of reference-type to avoid copying.
 		// Create response headers
 		string responseHeader = "HTTP/1.1 " + to_string(httpCode) + " " + STATUS_MESSAGE.at(httpCode)+"\r\n" \
 			"Access-Control-Allow-Origin: *\r\n" \
 			"Content-Type: " + responseBody.type() + "\r\n\r\n";
 
 		// Write response headers
-		write(client_socket, responseHeader.c_str(), responseHeader.size());
+		write(clientSocket, responseHeader.c_str(), responseHeader.size());
 
 		// Send response body
-		write(client_socket, responseBody, responseBody.size());
+		write(clientSocket, responseBody, responseBody.size());
 
 		// Close connection
-		close(client_socket);
+		close(clientSocket);
 	}
 
 	// Process incoming TCP connection; read and process HTTP request data
@@ -187,7 +187,7 @@ namespace Prosur::Webserver{
 		HTTPResponseBody responseBody;
 		int httpCode = resourceHandlers[resourceName](responseBody, requestParameters);
 
-		if(httpCode != HTTP::OK){
+		if(httpCode != HTTP::OK && httpCode != HTTP::NOT_FOUND){
 			cerr << "Webserver: Error while serving resource. URL: " + url << endl;
 		}
 
@@ -201,7 +201,6 @@ namespace Prosur::Webserver{
 		// TODO handle requests in a separate thread for each request? What happens when multiple requests are received in rapid succession?
 		thread([]{
 			// 1. Setup; get local address
-			int serverSocket, clientSocket;
 			int addrSize;
 			SA_IN serverAddr, clientAddr;
 			serverAddr.sin_family = AF_INET;
@@ -209,7 +208,7 @@ namespace Prosur::Webserver{
 			serverAddr.sin_port = htons(SERVER_PORT);
 
 			// 2. Create socket
-			serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+			int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 			if(serverSocket < 0){
 				cerr << "Failed to create socket. Error code: " << to_string(serverSocket) << endl;
 				terminate();
@@ -238,13 +237,15 @@ namespace Prosur::Webserver{
 
 			while(true){
 				addrSize = sizeof(SA_IN);
-				clientSocket = accept(
+				int clientSocket = accept(
 					serverSocket, // fd
 					(SA*) &clientAddr, // sockaddr
 					(socklen_t*) &addrSize // socklen
 				);
-				// TODO start a thread per request
-				handleConnection(clientSocket);
+				// TODO Not sure if the thread here has any benefits. Seems to work fine without.
+				thread([=]{
+					handleConnection(clientSocket);
+				}).detach();
 			}
 		}).detach();
 	}

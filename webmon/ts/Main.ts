@@ -12,11 +12,19 @@ namespace Main{
     export namespace Settings{
         export let selectedColumns = typeof localStorage.selectedColumns == "undefined" ? {} : JSON.parse(localStorage.selectedColumns);
         export let zoom = isNaN(localStorage.zoom) ? 1 : parseFloat(localStorage.zoom);
-        export let pan = isNaN(localStorage.pan) ? 1 : parseFloat(localStorage.pan);
+        export let pan = isNaN(localStorage.pan) ? Math.floor(new Date().getTime()/1000) : parseFloat(localStorage.pan);
+       
     }
+
+    // Derrived from Settings before or during drawing each frame
+    export let leftChunkTime = -1; // Updated prior
+    export let rightChunkTime = -1; // Updated prior
+    export let jobId = -1; // Updated during drawing
 
     // Chunk holder (chunky)
     export let chunks: any[] = null;
+
+    export let canvasInvalidated = true;
 
     let init = function(){
         // Get elements
@@ -35,12 +43,26 @@ namespace Main{
         JobList.init()
         MouseControl.init();
 
-        tick();
+        draw();
     };
 
-    export function tick(){
-        ChunkLoader.tick();
-        Timeline.tick();
+    export function draw(){
+        if(canvasInvalidated){
+            canvasInvalidated = false;
+            const range = Const.CHUNK_RANGE[Main.Settings.zoom];
+            leftChunkTime = Math.floor(Main.Settings.pan / range) * range;
+            rightChunkTime = leftChunkTime + range;
+    
+            ChunkLoader.tick();
+            Timeline.tick();
+            Plotter.draw();
+            localStorage.pan = Main.Settings.pan;
+            //console.log("Persisting: " + localStorage.pan);
+            localStorage.zoom = Main.Settings.zoom;
+            
+        }
+        
+        requestAnimationFrame(draw);
     }
 
     addEventListener("DOMContentLoaded", init);

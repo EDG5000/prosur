@@ -11,7 +11,11 @@ namespace JobInfo{
 
     //export let parameters: Map<String,String>
     export function load(jobId: number){
-
+        Main.parameterListContainer.innerHTML = "";
+        if(jobId == -1){
+            // Only clearing the job panel
+            return;
+        }
         let url = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/frames?mode=job&job_id=" + jobId;
 
         let xhr = new XMLHttpRequest();
@@ -53,7 +57,6 @@ namespace JobInfo{
             }
 
             // Add table to container
-            Main.parameterListContainer.innerHTML = "";
             Main.parameterListContainer.appendChild(table);
 
         };

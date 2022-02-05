@@ -16,7 +16,7 @@
  *	Return frames between MIN_TIME and MAX_TIME (inclusive, unix epoch seconds). Mandatory parameters.
  *
  *	job:
- *	Return al frames belonging to print job with matching JOB_ID. job_id parameter mandatory.
+ *	Return all frames belonging to print job with matching JOB_ID. job_id parameter mandatory.
  *
  *MODULO:
  *Optional. Effectively reduces sampling rate. module=10 will reduce rate by 10, e.g. .1Hz will become .01Hz frame interval.
@@ -42,26 +42,23 @@ namespace Prosur::Webserver::Resources::Frames{
 
 	enum Mode{
 		Latest, // Return 1 frame, the latest frame
-		Range, // Between min and max, inclusive
-		Job // Show all frames by given job_id
+		Range// Between min and max, inclusive
 	};
 
 	const map<string, Mode> MODE_VALUES = {
 		{"latest", Latest},
-		{"range", Range},
-		{"job", Job}
+		{"range", Range}
 	};
 
 	// List of mandatory parameters keyed by Mode
 	const map<Mode, vector<string>> MANDATORY_PARAMETERS = {
 			{Latest, {}},
-			{Range, {"min", "max"}},
-			{Job, {"job_id"}}
+			{Range, {"min", "max"}}
 	};
 
 	int run(HTTPResponseBody& responseBody, map<string,string> parameters){
 		// Check integer-params to be valid integers, when present. Store in map.
-		vector<string> integerKeys = {"job_id", "min", "max", "modulus"};
+		vector<string> integerKeys = {"min", "max", "modulus"};
 		map<string, int64_t> numericParameters;
 		for(const auto& key: integerKeys){
 			if(!parameters.contains(key)){
@@ -191,15 +188,6 @@ namespace Prosur::Webserver::Resources::Frames{
 				}
 				query += " order by time asc"; // Test data is sometimes ordered illogically
 				break;
-			case Job:
-				query += " where job_id = $1";
-				queryParameters.push_back((int) numericParameters["job_id"]);
-				if(modulus > 1){
-					query += "  and time % $2 = 0";
-					queryParameters.push_back((int) numericParameters["modulus"]);
-				}
-				query += " order by time asc"; // Test data is sometimes ordered illogically
-				break;
 		}
 
 		// Run query to obtain frames
@@ -215,40 +203,16 @@ namespace Prosur::Webserver::Resources::Frames{
 		}
 
 		// Start preparing JSON object to return
-		json outputObject;
-		outputObject["frames"] = {};
-		outputObject["parameters"] = {};
+		json outputObject = {};
 
 		// Write frames to the JSON object
 		for(auto& row: frames){
 			for(auto& [column, value]: row){
-				outputObject["frames"][column].push_back(value);
-			}
-		}
-
-		// When in job mode, fetch job parameters and write to the JSON object
-		if(mode == Job){ // key, value, job_id
-			auto parameterRows = Database::DBUtil::query("\
-				select * from job_parameter \
-				where job_id = $1 \
-			", {(int) numericParameters["job_id"]});
-			// Get job parameter key and value from each row, put in JSON object
-			for(auto& row: parameterRows){
-				if(!row.contains("key")){
-					cerr << "Database::Resource::Frames: Missing column: key from output." << endl;
-					terminate();
-				}
-				if(!row.contains("value")){
-					cerr << "Database::Resource::Frames: Missing column: value from output." << endl;
-					terminate();
-				}
-				outputObject["parameters"][(string) row["key"]] = (string) row["value"];
+				outputObject[column].push_back(value);
 			}
 		}
 
 		responseBody = outputObject;
-
-		//cout << "first frame time" << frames[0]["time"].toString() << "parm long min " << queryParameters[0].toString() << endl;
 
 		return HTTP::OK;
 	}

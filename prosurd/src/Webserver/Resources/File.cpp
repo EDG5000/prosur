@@ -112,7 +112,6 @@ namespace Prosur::Webserver::Resources::File{
 		}
 
 		if(rows.size() == 0){
-			responseBody = "Webserver: File: No such file.";
 			cerr << responseBody.stringData << endl;
 			return HTTP::NOT_FOUND;
 		}

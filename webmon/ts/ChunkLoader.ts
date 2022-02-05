@@ -13,25 +13,26 @@ namespace ChunkLoader{
     }
 
     export function tick(){
-        // Load left chunk
-        const range = Const.CHUNK_RANGE[Main.Settings.zoom];
-        const leftChunkTime = Math.floor(Main.Settings.pan / range) * range;
-        const rightChunkTime = leftChunkTime + range;
-
-        get(leftChunkTime, Main.Settings.zoom, function(leftChunk, zoom){
-            ChunkLoader.get(rightChunkTime, Main.Settings.zoom, function(rightChunk, zoom){
-                Plotter.draw(leftChunkTime, rightChunkTime, leftChunk, rightChunk, zoom);
-            });
-        });   
+        const zoom = Main.Settings.zoom;
+        const leftChunkTime = Main.leftChunkTime;
+        const rightChunkTime = Main.rightChunkTime;
+        get(leftChunkTime, zoom, function(){
+            ChunkLoader.get(rightChunkTime, zoom);
+        });
     }
 
     // Fetch chunk from cache or backend 
-    export function get(min: number, zoom: number, cb: (chunk: any, zoom: number) => void){
+    export function get(min: number, zoom: number, cb: () => void = null){
         if(typeof Main.chunks[zoom][min + ""] != "undefined"){
-            // Cache hit
-            cb(Main.chunks[zoom][min + ""], zoom);
+            // Cache hit, nothing to fetch
+            if(cb != null){
+                cb();
+            }
             return;
         }
+
+        // Mark chunk as empty before starting request, to avoid further requests for this chunk until the chunk result is obtained
+        Main.chunks[zoom][min + ""] = null;
 
         // Configure request and set callback
         const modulus = Math.pow(2, zoom);
@@ -45,12 +46,15 @@ namespace ChunkLoader{
         xhr.onreadystatechange = function() {
             // Error checking
             if(xhr.readyState != Const.XHR.DONE){
+                // Ignore, wait until state is at XHR.DONE
                 return;
             }
             if(xhr.status == 404){
                 // Request succeeded, but no data was found (empty chunk). Invoke the callback regardless.
-                Main.chunks[Main.Settings.zoom][min + ""] = null; // Mark chunk as confirmed empty
-                cb(null, zoom);
+                Main.chunks[zoom][min + ""] = null; // Mark chunk as confirmed empty
+                if(cb != null){
+                    cb();
+                }
                 return;
             }
             if(xhr.response == null){
@@ -82,18 +86,20 @@ namespace ChunkLoader{
             framesLoaded += xhr.response.frames.time.length;
             if(framesLoaded > Const.CACHE_MAX_FRAMES){
                 framesLoaded = 0;
+                // TODO how to handle cache?
                 console.log("Cache was invalidated due to exceeding maximum size of " + Const.CACHE_MAX_FRAMES);
                 resetCache();
-                Main.tick();
-                return;
             }
             
             // Store chunk
-            Main.chunks[Main.Settings.zoom][min + ""] = xhr.response.frames;
+            Main.chunks[zoom][min + ""] = xhr.response.frames;
+            
+            // Invalidate the canvas to have it redrawn as new data might change what is drawn
+            Main.canvasInvalidated = true;
 
             // Callback
             if(cb != null){
-                cb(xhr.response.frames, zoom);
+                cb();
             }
         };
         xhr.send();

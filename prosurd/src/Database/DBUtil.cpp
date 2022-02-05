@@ -177,6 +177,7 @@ namespace Prosur::Database::DBUtil{
 					rowData[columnName] = *((int*) data); // implicit Param constructor
 					break;
 				case INT8OID:
+					//cout << "directly from the horses' mouth: " << *((int64_t*) data) << endl;
 					rowData[columnName] = *((int64_t*) data); // implicit Param constructor
 					break;
 				case BYTEAOID: {

@@ -8,22 +8,16 @@ namespace Plotter{
 		Main.mouseValueContainer.innerText = (0).toFixed(2);
 
 		addEventListener("resize", function(){
+			if(Main.leftChunkTime == -1){
+				// Only redraw upon resize after first frame is drawn
+				return;
+			}
 			requestAnimationFrame(function(){
-				if(typeof lastZoom == "undefined"){
-					// No drawing has yet taken place, so we cannot redraw. Ignore event.
-					return;
-				}
-				draw(lastLeftChunkTime, lastRightChunkTime, lastLeftChunk, lastRightChunk, lastZoom);
+				draw();
 			});
 		});
 	}
 
-	// Only read when redrawing due to browser window resize
-	let lastLeftChunkTime: number;
-	let lastRightChunkTime:number;
-	let lastLeftChunk: any;
-	let lastRightChunk: any;
-	let lastZoom: number;
 
 	let yMin = 0;
 	let yMax = 0;
@@ -33,22 +27,21 @@ namespace Plotter{
 		Main.mouseValueContainer.innerText = yValue;
 	}
 	
-	export function draw(leftChunkTime: number, rightChunkTime: number, leftChunk: any, rightChunk: any, zoom: number){
+	export function draw(){
 		//console.log(Main.Settings.pan);
+		const leftChunkTime = Main.leftChunkTime;
+		const rightChunkTime = Main.rightChunkTime;
+		const zoom = Main.Settings.zoom;
+		const leftChunk = typeof Main.chunks[zoom][leftChunkTime + ""] != "undefined" ? Main.chunks[zoom][leftChunkTime + ""] : null;
+		const rightChunk = typeof Main.chunks[zoom][rightChunkTime + ""] != "undefined" ? Main.chunks[zoom][rightChunkTime + ""] : null;
 
-		// Store parameters to allow redrawing upong window resize
-		lastLeftChunkTime = leftChunkTime;
-		lastRightChunkTime = rightChunkTime;
-		lastLeftChunk = leftChunk;
-		lastRightChunk = rightChunk;
-		lastZoom = zoom;
+		//console.log("Leftchunktime: " + leftChunkTime);
 
 		// Calculate additional parameters
 		Main.canvas.width = innerWidth - Const.SIDEBAR_WIDTH;
 		Main.canvas.height = innerHeight - Const.SCROLL_BAR_SIZE;
 		const chunkRange = Const.CHUNK_RANGE[zoom];
 		const pan = Main.Settings.pan;
-		const scaleX = Main.Settings.zoom * Const.BASE_ZOOM_FACTOR;
 		const columns: Array<string> = [];
 
 		// If there is data in any of the chunks, update legend, obtain user-selected column list and determine y-range
@@ -82,7 +75,7 @@ namespace Plotter{
 					// Store choice in memory and flush to local storage
 					Main.Settings.selectedColumns[column] = radio.checked;
 					localStorage.selectedColumns = JSON.stringify(Main.Settings.selectedColumns);
-					Main.tick();
+					Main.canvasInvalidated = true;
 				};
 				
 				radio.value = column;
@@ -184,8 +177,6 @@ namespace Plotter{
 		} 
 		ctx.stroke();
 	
-		
-
 		// Plot the data if at least one of the chunks are non-null
 		if(leftChunk != null || rightChunk != null){
 			let startIndex: number;
@@ -204,6 +195,18 @@ namespace Plotter{
 			}else{
 				// Ending at left chunk
 				endIndex = Const.CHUNK_SIZE - 1;
+			}
+			
+			// Load new job data if jobId changed. Clear job panel if no job in first frame
+			let firstChunk = leftChunk != null ? leftChunk : rightChunk;
+			let jobId = -1;
+			if(typeof firstChunk["job_id"] != "undefined" && firstChunk["job_id"].length > startIndex){
+				jobId = firstChunk["job_id"][startIndex];
+			}
+			if(jobId != Main.jobId){
+				// Job ID has changed; persist it and trigger job load
+				Main.jobId = jobId;
+				JobInfo.load(jobId);
 			}
 
 			// Draw data for each column
@@ -249,7 +252,7 @@ namespace Plotter{
 					}else{
 						break;
 					}
-					let xPos = ((time - Main.Settings.pan) / Const.CHUNK_RANGE[zoom]) * (Main.canvas.width - Const.X_MARGIN);
+					let xPos = Const.X_MARGIN + ((time - Main.Settings.pan) / Const.CHUNK_RANGE[zoom]) * (Main.canvas.width - Const.X_MARGIN);
 					let yPos = Main.canvas.height - ((val-yMin) * scaleY) - Const.Y_MARGIN;
 					if(xPos < 0 || yPos < 0){
 						//debugger;

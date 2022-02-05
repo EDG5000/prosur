@@ -20,15 +20,19 @@ namespace Timeline{
         //imageCount = Math.ceil(containerWidth / imageWidth) + 1; // One more image is needed; when panning the images, the screen is to remain filled
         for(let i = 0; i < imageCount; i++){
             let img = document.createElement("img");
+            img.onload = function(){
+                img.style.visibility = "initial";
+            }
+            img.onerror = function(){
+                img.style.visibility = "hidden";
+            }
             img.width = imageWidth;
             img.height = imageHeight; // Optional
             images.push(img);
             Main.timelineContainer.appendChild(img);
         }
-    
     }
-            
-
+         
     // Pan the images and update the src attributes
     export function tick(){
 
@@ -36,10 +40,10 @@ namespace Timeline{
         for(let i = 0; i < imageCount; i++){
             // Closest matching 6th frame, as still are only taken on 6th frames
             let time = exactTime - (exactTime % Const.STILL_CAPTURE_INTERVAL);
+            images[i].style.visibility = "hidden";
             images[i].src = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/file?mode=still&still_id=0&time=" + time;
             exactTime += imageRange;
         }
         const startTime = Main.Settings.pan;
-
     }
 }
