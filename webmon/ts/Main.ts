@@ -2,7 +2,7 @@ namespace Main{
 
     // Elements
     export let canvas: HTMLCanvasElement = null;
-    export let sessionListContainer: HTMLElement;
+    export let jobListContainer: HTMLElement;
     export let mouseValueContainer: HTMLElement;
     export let legend: HTMLElement;
     export let parameterListContainer: HTMLElement;
@@ -13,7 +13,8 @@ namespace Main{
         export let selectedColumns = typeof localStorage.selectedColumns == "undefined" ? {} : JSON.parse(localStorage.selectedColumns);
         export let zoom = isNaN(localStorage.zoom) ? 1 : parseFloat(localStorage.zoom);
         export let pan = isNaN(localStorage.pan) ? Math.floor(new Date().getTime()/1000) : parseFloat(localStorage.pan);
-       
+        export let jobListScrollTop =  isNaN(localStorage.jobListScrollTop) ? 0 : parseFloat(localStorage.jobListScrollTop);
+        export let parameterListScrollTop =  isNaN(localStorage.parameterListScrollTop) ? 0 : parseFloat(localStorage.parameterListScrollTop);
     }
 
     // Derrived from Settings before or during drawing each frame
@@ -28,7 +29,7 @@ namespace Main{
 
     let init = function(){
         // Get elements
-        sessionListContainer = document.getElementById("session-list");
+        jobListContainer = document.getElementById("job-list");
         mouseValueContainer = document.getElementById("mouse-value");
         parameterListContainer = document.getElementById("parameter-list");
         timelineContainer = document.getElementById("timeline");
@@ -40,7 +41,8 @@ namespace Main{
         Plotter.init();
         ChunkLoader.init();
         Timeline.init();
-        JobList.init()
+        JobList.init();
+        JobInfo.init();
         MouseControl.init();
 
         draw();

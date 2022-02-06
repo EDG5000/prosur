@@ -28,26 +28,22 @@ namespace Plotter{
 	}
 	
 	export function draw(){
-		//console.log(Main.Settings.pan);
+		Main.canvas.width = Main.canvas.clientWidth;
+		Main.canvas.height = Main.canvas.clientHeight;
 		const leftChunkTime = Main.leftChunkTime;
 		const rightChunkTime = Main.rightChunkTime;
 		const zoom = Main.Settings.zoom;
 		const leftChunk = typeof Main.chunks[zoom][leftChunkTime + ""] != "undefined" ? Main.chunks[zoom][leftChunkTime + ""] : null;
 		const rightChunk = typeof Main.chunks[zoom][rightChunkTime + ""] != "undefined" ? Main.chunks[zoom][rightChunkTime + ""] : null;
-
-		//console.log("Leftchunktime: " + leftChunkTime);
-
-		// Calculate additional parameters
-		Main.canvas.width = innerWidth - Const.SIDEBAR_WIDTH;
-		Main.canvas.height = innerHeight - Const.SCROLL_BAR_SIZE;
 		const chunkRange = Const.CHUNK_RANGE[zoom];
 		const pan = Main.Settings.pan;
 		const columns: Array<string> = [];
+		const allColumns: Array<string> = [];
+		const initialChunkOffset = Math.floor(((pan % chunkRange) / chunkRange) * Const.CHUNK_SIZE);
 
 		// If there is data in any of the chunks, update legend, obtain user-selected column list and determine y-range
 		if(leftChunk != null || rightChunk != null){
-			// List numeric columns available in the data by looking at the left chunk
-			const allColumns: Array<string> = [];
+			
 			// Pick any non-null chunk
 			const chunk = leftChunk != null ? leftChunk : rightChunk;
 
@@ -77,13 +73,14 @@ namespace Plotter{
 					localStorage.selectedColumns = JSON.stringify(Main.Settings.selectedColumns);
 					Main.canvasInvalidated = true;
 				};
-				
+				radio.id = column;
 				radio.value = column;
-				const span = document.createElement("span");
-				span.style.color = color;
-				span.innerText = column.toUpperCase();
+				const label: HTMLLabelElement = document.createElement("label");
+				label.htmlFor = column;
+				label.style.color = color;
+				label.innerText = column.toUpperCase();
 				Main.legend.appendChild(radio);
-				Main.legend.appendChild(span);
+				Main.legend.appendChild(label);
 				Main.legend.appendChild(document.createElement("br"));
 			}
 
@@ -179,52 +176,98 @@ namespace Plotter{
 	
 		// Plot the data if at least one of the chunks are non-null
 		if(leftChunk != null || rightChunk != null){
-			let startIndex: number;
-			let endIndex: number;
 
-			if(leftChunk != null){
-				// Starting at left chunk
-				startIndex = Math.floor(((pan % chunkRange) / chunkRange) * Const.CHUNK_SIZE);
-			}else{
-				// First row of right chunk
-				startIndex = 0;
-			}
-			if(rightChunk != null){
-				// Inverse of startIndex
-				endIndex = Const.CHUNK_SIZE - startIndex;
-			}else{
-				// Ending at left chunk
-				endIndex = Const.CHUNK_SIZE - 1;
-			}
 			
 			// Load new job data if jobId changed. Clear job panel if no job in first frame
-			let firstChunk = leftChunk != null ? leftChunk : rightChunk;
 			let jobId = -1;
-			if(typeof firstChunk["job_id"] != "undefined" && firstChunk["job_id"].length > startIndex){
-				jobId = firstChunk["job_id"][startIndex];
+			if(leftChunk != null && typeof leftChunk.job_id != "undefined" && initialChunkOffset < leftChunk.job_id.length){
+				// Offset still within left chunk
+				jobId = leftChunk.job_id[initialChunkOffset];
+			}else if(rightChunk != null && typeof rightChunk != "undefined" && initialChunkOffset > Const.CHUNK_SIZE && initialChunkOffset % Const.CHUNK_SIZE < rightChunk.job_id.length){
+				// Offset beyond left chunk and within right chunk
+				jobId = rightChunk.job_id[initialChunkOffset * Const.CHUNK_SIZE];
 			}
+
 			if(jobId != Main.jobId){
 				// Job ID has changed; persist it and trigger job load
 				Main.jobId = jobId;
 				JobInfo.load(jobId);
 			}
 
+			let test = 0;
 			// Draw data for each column
 			for(let colno = 0; colno < columns.length; colno++){
+				// Get index of column in full column list in order to pick the color
+				let color: string;
+				let column = columns[colno];
+				for(let allcolno = 0; allcolno < allColumns.length; allcolno++){
+					if(allColumns[allcolno] == column){
+						color = Const.SENSOR_COLORS[allcolno];
+						break;
+					}
+				}
 				// Get colname, set color, start path
-				const column = columns[colno];
-				let color = Const.SENSOR_COLORS[colno];
+				//column = columns[colno];
+				
 				ctx.strokeStyle = color;
 				ctx.beginPath();
-				
+
+				let startLine = true;
+				let test = 0;
+				for(let plotIndex = 0; plotIndex < Const.CHUNK_SIZE; plotIndex++){
+					let chunkOffset = initialChunkOffset + plotIndex;
+					let val: number;
+					//console.log(chunkOffset + " en " + chunkOffset % Const.CHUNK_SIZE);
+					if(leftChunk != null && chunkOffset < leftChunk.time.length){
+						// Offset still within left chunk
+						val = leftChunk[column][chunkOffset];
+					}else if(rightChunk != null && chunkOffset > Const.CHUNK_SIZE && (chunkOffset % Const.CHUNK_SIZE) < rightChunk.time.length){
+						// Offset beyond left chunk and within right chunk
+						val = rightChunk[column][chunkOffset % Const.CHUNK_SIZE];
+					}else{
+						// No data for this plot index. Prevent next line (if any) from connecting with the last drawn data.
+						startLine = true;
+						
+						continue;
+					}
+	
+	
+					let x = Const.X_MARGIN + Math.round(((plotIndex/Const.CHUNK_SIZE) * (Main.canvas.width - Const.X_MARGIN)));
+					let y = Main.canvas.height - Math.round(((val-yMin) * scaleY)) - Const.Y_MARGIN;
+	
+					/*if(isNaN(y)){
+						console.log(y);
+					}*/
+
+					if(startLine){
+						//console.log("Move: " + x + ", " + y);
+						ctx.moveTo(x, y);
+						startLine = false;
+					}else{
+						ctx.lineTo(x, y);
+						test++;
+						//console.log("Line: " + x + ", " + y);
+					}
+				}
+				//console.log(test);
+
+
+
+
+
+
+
+
+
+
+				/*
 				// Draw a line per value
 				let inLeftChunk = leftChunk != null; // Still in left chunk. Set low once right chunk is reached.
-				let ready = false;
 				let initial = true;
 				// Start iterating at startIndex of left chunk if possible. Otherwise, start at leftIndex of right chunk
 				// End at endIndex of right chunk or endIndex in left chunk if right chunk is not available
 				// Move from left chunk to right chunk as needed
-				for(let index = startIndex; !ready; index++){
+				for(let index = startIndex; true; index++){
 					let val: number;
 					let time: number;
 					if(inLeftChunk && index < leftChunk[column].length){
@@ -252,22 +295,22 @@ namespace Plotter{
 					}else{
 						break;
 					}
-					let xPos = Const.X_MARGIN + ((time - Main.Settings.pan) / Const.CHUNK_RANGE[zoom]) * (Main.canvas.width - Const.X_MARGIN);
-					let yPos = Main.canvas.height - ((val-yMin) * scaleY) - Const.Y_MARGIN;
-					if(xPos < 0 || yPos < 0){
-						//debugger;
-					}
+					let xPos = Const.X_MARGIN + Math.round(((time - Main.Settings.pan) / Const.CHUNK_RANGE[zoom]) * (Main.canvas.width - Const.X_MARGIN));
+					let yPos = Main.canvas.height - Math.round(((val-yMin) * scaleY)) - Const.Y_MARGIN;
 					if(initial){
-						//console.log("Move: " + xPos + " - " + xPos);
+						console.log("Move: " + xPos + ", " + yPos);
 						ctx.moveTo(xPos, yPos);
 						initial = false;
 					}else{
 						ctx.lineTo(xPos, yPos);
-						//console.log("Line: " + xPos + " - " + xPos);
+						test++;
+						console.log("Line: " + xPos + ", " + yPos);
 					}
 				}
+				*/
 				ctx.stroke();
 			}
+			//console.log(test);
 			// Complete drawing of grid
 			ctx.stroke();
 		}

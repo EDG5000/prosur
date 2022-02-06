@@ -53,15 +53,29 @@ export function init(){
     }*/
  
     // Pan the plotter and load job data when clicking on a job
-    Main.sessionListContainer.addEventListener("click", function(e: Event){
+    Main.jobListContainer.addEventListener("click", function(e: Event){
         e.preventDefault();
         let link: HTMLAnchorElement = <HTMLAnchorElement> e.target;
         const time = parseInt(link.dataset.time);
         if(time != Main.Settings.pan){
             Main.Settings.pan = time;
-            console.log(Main.Settings.pan);
+            //console.log(Main.Settings.pan);
             Main.canvasInvalidated = true;
         }
+    });
+
+    // Persist scroll position of the panel (rate limited)
+    let frameRequest: number;
+    Main.jobListContainer.addEventListener("scroll", function(e: Event){
+        if(frameRequest != -1){
+            cancelAnimationFrame(frameRequest);
+        }
+        frameRequest = requestAnimationFrame(function(){
+            frameRequest = -1;
+            Main.Settings.jobListScrollTop = Main.jobListContainer.scrollTop;
+            localStorage.jobListScrollTop = Main.Settings.jobListScrollTop;
+        });
+        
     });
 
     // Load and display list of files
@@ -88,14 +102,17 @@ export function init(){
             }
 
             link.dataset.time = job.time;
-            const dateTimeString = new Date(job.time * 1000).toJSON().replace("T", " ").slice(0, 19);
+            const dateTimeString = Util.createTimeLabel(job.time);
             const jobName = job.job_file_name.replace("0:/gcodes/", "").replace(".gcode", "");
             link.innerText = jobName + "(" + dateTimeString + ")";
             //link.innerText = job.time + "";
             addedLinks.push(link);
-            Main.sessionListContainer.appendChild(link);
-            Main.sessionListContainer.appendChild(document.createElement("br"));
+            Main.jobListContainer.appendChild(link);
+            Main.jobListContainer.appendChild(document.createElement("br"));
         }
+
+        // Restore scroll position
+        Main.jobListContainer.scrollTop = Main.Settings.jobListScrollTop;
     };
 
     // URL is set to Apache directory index containing log file

@@ -18,7 +18,7 @@ export function init(){
             //Main.UserSettings.zoom *= (1 + Const.ZOOM_AFFECTOR);
             //Main.setZoom(Main.Settings.zoom + 1);
             Main.Settings.zoom += 1;
-        }else if(e.deltaY > 0 && Main.Settings.zoom > (Const.MIN_ZOOM + 1)){
+        }else if(e.deltaY > 0 && Main.Settings.zoom > 0){
             //Main.UserSettings.zoom *= (1 - Const.ZOOM_AFFECTOR);
             Main.Settings.zoom -= 1;
         }
@@ -38,11 +38,15 @@ export function init(){
         Main.canvasInvalidated = true;
     });
 
-    /*Main.canvas.*/addEventListener("mousedown", e => {
+    Main.canvas.addEventListener("mousedown", e => {
+        if(e.button != 0){
+            // Ignore if not left button
+            return;
+        }
         //e.preventDefault();
         isDown = true;
         startX = e.pageX;
-    });
+    }); 
 
     addEventListener("mouseout", (e: any) => {
         if(e.toElement == null){
@@ -51,7 +55,6 @@ export function init(){
             //e.preventDefault();
             isDown = false;
         }
-
     });
 
     addEventListener("mouseup", (e) => {
@@ -80,7 +83,7 @@ export function init(){
         
         const walkTime = (walkPixels / plotWidth) * Const.CHUNK_RANGE[Main.Settings.zoom];
         //console.log("Walk time: " + walkTime);
-        Main.Settings.pan -= walkTime;
+        Main.Settings.pan -= Math.round(walkTime);
         Main.canvasInvalidated = true;
     });
 }

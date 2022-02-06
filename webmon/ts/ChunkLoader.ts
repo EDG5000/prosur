@@ -7,7 +7,7 @@ namespace ChunkLoader{
 
     function resetCache(){
         Main.chunks = [];
-        for(let zoom = 0; zoom < Const.MAX_ZOOM; zoom++){
+        for(let zoom = 0; zoom <= Const.MAX_ZOOM; zoom++){
             Main.chunks.push({}); 
         }
     }

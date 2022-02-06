@@ -6,7 +6,7 @@ export let createTimeLabel = function(unixTime: number){
     //return new Date(unixTime * 1000).toLocaleString();
     
     // Method B (intelligent)
-    return new Date(unixTime * 1000).toJSON().replace("T", " ").slice(0, 19);
+    return new Date(unixTime * 1000).toJSON().replace("T", " ").slice(0, 16);
 
     // Method C (artisanal, against recommendation)
     /*let date = new Date(unixTime * 1000);

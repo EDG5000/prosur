@@ -21,20 +21,15 @@ body{
     color: white;
 }
 
-canvas{
-    cursor: crosshair;
-    z-index: 3;
-    width: calc(100vw - 400px - 400px);
-}
-
 #legend, #zoom-level, #mouse-value{
     position: fixed;
     color: white;
     padding: 5px;
-    background: #262626;
+    background: #000;
     border: 1px solid #909090;
     font-weight: bold;
     z-index: 4;
+    opacity: 0.7;
 }
 
 #legend{
@@ -53,7 +48,7 @@ canvas{
 }
 
 /* Three columns */
-#session-list, #parameter-list{
+#job-list, #parameter-list{
     position: absolute;
     height: 100vh;
     top: 0;
@@ -67,20 +62,23 @@ canvas, #timeline{
 #timeline{
     bottom: 0;
     height: 200px;
-    margin-left: 440px;
+    margin-left: 450px;
     margin-right: 400px;
     border-top: 1px solid black;
     overflow: hidden;
     white-space: nowrap;
-    width: calc(100vw - 400px - 440px);
+    width: calc(100vw - 400px - 450px);
 }
 
 canvas{
     top: 0;
+    width: calc(100vw - 400px - 400px);
     height: calc(100vh - 200px);
+    z-index: 3;
+    cursor: crosshair;
 }
 
-#session-list{
+#job-list{
     left: 0;
     width: 400px;
     overflow-y: scroll;
