@@ -1,0 +1,18 @@
+Determining if the CXX compiler works failed with the following output:
+Change Dir: /home/joel/repos/infinus/prosur/prosurd/build_arm/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_96531/fast && /usr/bin/make -f CMakeFiles/cmTC_96531.dir/build.make CMakeFiles/cmTC_96531.dir/build
+make[1]: Entering directory '/home/joel/repos/infinus/prosur/prosurd/build_arm/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_96531.dir/testCXXCompiler.cxx.o
+/usr/bin/clang++ --target=arm-linux-gnueabihf     -o CMakeFiles/cmTC_96531.dir/testCXXCompiler.cxx.o -c /home/joel/repos/infinus/prosur/prosurd/build_arm/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_96531
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_96531.dir/link.txt --verbose=1
+/usr/bin/clang++ --target=arm-linux-gnueabihf       CMakeFiles/cmTC_96531.dir/testCXXCompiler.cxx.o  -o cmTC_96531 
+/usr/bin/arm-linux-gnueabihf-ld: cannot find -lstdc++
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make[1]: *** [CMakeFiles/cmTC_96531.dir/build.make:87: cmTC_96531] Error 1
+make[1]: Leaving directory '/home/joel/repos/infinus/prosur/prosurd/build_arm/CMakeFiles/CMakeTmp'
+make: *** [Makefile:121: cmTC_96531/fast] Error 2
+
+
+

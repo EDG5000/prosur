@@ -60,8 +60,10 @@ namespace Prosur::Webserver{
 	// - The map<string,string> argument contains query string parameters.
 	// - Return type is HTTP status code.
 	// - The response body has to be written either to the string argument or to the vector<char> argument.
-	map<string, int(*)(HTTPResponseBody&, map<string,string>)> resourceHandlers = {
+	map<string, int(*)(string, HTTPResponseBody&, map<string,string>)> resourceHandlers = {
 		{"", Resources::Client::run},
+		{"main.js", Resources::Client::run},
+		{"main.css", Resources::Client::run},
 		{"jobs", Resources::Jobs::run}, // Default action (index). List all jobs.
 		{"frames", Resources::Frames::run}, // Get all frames for given job_id or all frames between start and end time (includes frames when printer was idle)
 		{"file", Resources::File::run}, // Download job file or still image taken at given frame ID
@@ -187,7 +189,7 @@ namespace Prosur::Webserver{
 
 		// Call appropriate resource handler to obtain response body and HTTP code
 		HTTPResponseBody responseBody;
-		int httpCode = resourceHandlers[resourceName](responseBody, requestParameters);
+		int httpCode = resourceHandlers[resourceName](resourceName, responseBody, requestParameters);
 
 		if(httpCode != HTTP::OK && httpCode != HTTP::NOT_FOUND){
 			cerr << "Webserver: Error while serving resource. URL: " + url << endl;

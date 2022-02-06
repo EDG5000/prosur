@@ -18,7 +18,6 @@ namespace Plotter{
 		});
 	}
 
-
 	let yMin = 0;
 	let yMax = 0;
 
@@ -43,7 +42,6 @@ namespace Plotter{
 
 		// If there is data in any of the chunks, update legend, obtain user-selected column list and determine y-range
 		if(leftChunk != null || rightChunk != null){
-			
 			// Pick any non-null chunk
 			const chunk = leftChunk != null ? leftChunk : rightChunk;
 
@@ -176,8 +174,6 @@ namespace Plotter{
 	
 		// Plot the data if at least one of the chunks are non-null
 		if(leftChunk != null || rightChunk != null){
-
-			
 			// Load new job data if jobId changed. Clear job panel if no job in first frame
 			let jobId = -1;
 			if(leftChunk != null && typeof leftChunk.job_id != "undefined" && initialChunkOffset < leftChunk.job_id.length){
@@ -207,8 +203,6 @@ namespace Plotter{
 					}
 				}
 				// Get colname, set color, start path
-				//column = columns[colno];
-				
 				ctx.strokeStyle = color;
 				ctx.beginPath();
 
@@ -227,90 +221,26 @@ namespace Plotter{
 					}else{
 						// No data for this plot index. Prevent next line (if any) from connecting with the last drawn data.
 						startLine = true;
-						
 						continue;
 					}
 	
-	
 					let x = Const.X_MARGIN + Math.round(((plotIndex/Const.CHUNK_SIZE) * (Main.canvas.width - Const.X_MARGIN)));
 					let y = Main.canvas.height - Math.round(((val-yMin) * scaleY)) - Const.Y_MARGIN;
-	
-					/*if(isNaN(y)){
-						console.log(y);
-					}*/
 
 					if(startLine){
-						//console.log("Move: " + x + ", " + y);
+						//console.log("moveTo " + x + ", " + " " + y);
 						ctx.moveTo(x, y);
 						startLine = false;
 					}else{
+						//console.log("lineTo " + x + ", " + " " + y);
 						ctx.lineTo(x, y);
 						test++;
-						//console.log("Line: " + x + ", " + y);
 					}
 				}
-				//console.log(test);
 
-
-
-
-
-
-
-
-
-
-				/*
-				// Draw a line per value
-				let inLeftChunk = leftChunk != null; // Still in left chunk. Set low once right chunk is reached.
-				let initial = true;
-				// Start iterating at startIndex of left chunk if possible. Otherwise, start at leftIndex of right chunk
-				// End at endIndex of right chunk or endIndex in left chunk if right chunk is not available
-				// Move from left chunk to right chunk as needed
-				for(let index = startIndex; true; index++){
-					let val: number;
-					let time: number;
-					if(inLeftChunk && index < leftChunk[column].length){
-						val = leftChunk[column][index];
-						time = leftChunk["time"][index];
-					}else if(inLeftChunk && index == Const.CHUNK_SIZE){
-						// Left chunk fully traversed
-						if(rightChunk == null){
-							// There is no right chunk, so all drawing is complete
-							break;
-						}else{
-							// Proceed to right chunk or abort when right chunk is not available
-							index = 0;
-							inLeftChunk = false;
-							continue;
-						}
-					}else if(rightChunk != null && index < endIndex && index < rightChunk[column].length){
-						// In right chunk
-						val = rightChunk[column][index];
-						time = rightChunk["time"][index];
-						if(rightChunk == null){
-							// Only the left chunk was present, abort now.
-							break;
-						}
-					}else{
-						break;
-					}
-					let xPos = Const.X_MARGIN + Math.round(((time - Main.Settings.pan) / Const.CHUNK_RANGE[zoom]) * (Main.canvas.width - Const.X_MARGIN));
-					let yPos = Main.canvas.height - Math.round(((val-yMin) * scaleY)) - Const.Y_MARGIN;
-					if(initial){
-						console.log("Move: " + xPos + ", " + yPos);
-						ctx.moveTo(xPos, yPos);
-						initial = false;
-					}else{
-						ctx.lineTo(xPos, yPos);
-						test++;
-						console.log("Line: " + xPos + ", " + yPos);
-					}
-				}
-				*/
 				ctx.stroke();
 			}
-			//console.log(test);
+
 			// Complete drawing of grid
 			ctx.stroke();
 		}

@@ -14,7 +14,9 @@ namespace Prosur::Webserver{
 		Text,
 		HTML,
 		JPEG,
-		JSON
+		JSON,
+		CSS,
+		JavaScript
 	};
 
 	// Allows flexible returning of a response body by assinging strings, binary data (char vector) a json objects.
@@ -30,8 +32,8 @@ namespace Prosur::Webserver{
 		HTTPResponseBody(){}; // Required to be present when used in std::map.
 		// By default, assigning a HTTPResponseBody instance with a string will result in a text/plain response body (due to automatic implicit conversion)
 		// Caller can explicity invoke constructor and set the "html" flag high, this will set the content type to text/html
-		HTTPResponseBody(string pStringData, bool html = false): stringData(pStringData){
-			contentType = html ? HTML : Text;
+		HTTPResponseBody(string pStringData, ContentType pContentType = Text): stringData(pStringData){
+			contentType = pContentType;
 		}
 		// Initialize with c-string
 		HTTPResponseBody(const char* pStringData): stringData(pStringData), contentType(Text){}
@@ -81,6 +83,10 @@ namespace Prosur::Webserver{
 				return "text/plain";
 			case HTML:
 				return "text/html";
+			case CSS:
+				return "text/css";
+			case JavaScript:
+				return "text/javascript";
 			}
 			return "";
 		}

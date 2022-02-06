@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace Prosur::Webserver::Resources::Jobs{
-	int run(HTTPResponseBody& responseBody, map<string,string> params){
+	int run(string resource, HTTPResponseBody& responseBody, map<string,string> params){
 		// Perform query extracting records each representing a job
 		auto jobs = Database::DBUtil::query("\
 			select distinct on(job_id) time, job_id, job_file_name \

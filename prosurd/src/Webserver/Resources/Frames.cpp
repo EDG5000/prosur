@@ -56,7 +56,7 @@ namespace Prosur::Webserver::Resources::Frames{
 			{Range, {"min", "max"}}
 	};
 
-	int run(HTTPResponseBody& responseBody, map<string,string> parameters){
+	int run(string resource, HTTPResponseBody& responseBody, map<string,string> parameters){
 		// Check integer-params to be valid integers, when present. Store in map.
 		vector<string> integerKeys = {"min", "max", "modulus"};
 		map<string, int64_t> numericParameters;

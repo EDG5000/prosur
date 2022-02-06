@@ -1,1 +1,0 @@
-create symlink mnt-data pointing to /mnt/data

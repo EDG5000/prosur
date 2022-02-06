@@ -49,6 +49,7 @@ namespace Main{
     };
 
     export function draw(){
+
         if(canvasInvalidated){
             canvasInvalidated = false;
             const range = Const.CHUNK_RANGE[Main.Settings.zoom];

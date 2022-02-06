@@ -52,7 +52,7 @@ namespace Prosur::Database{
 			DBValueType type = Int;
 
 			// Allows assigning by any of the supported types. Sets the type and value.
-			DBValue(){}; // Required to be present when used in std::map.
+			DBValue(){};
 			DBValue(int64_t pLongVal): longVal(pLongVal), type(Long){}
 			DBValue(string pStringVal): stringVal(pStringVal), type(String){}
 			DBValue(const char* pStringVal): stringVal(pStringVal), type(String){}
@@ -154,8 +154,7 @@ namespace Prosur::Database{
 				case Float:
 					return floatVal;
 				case Undefined:
-					cerr << "Error: Calling operator json() on DBValue with type Undefined causes undefined behaviour." << endl;
-					terminate();
+					return NULL;
 				default:
 				case Binary:
 					return "<binary data of length: " + to_string(size()) + ">";

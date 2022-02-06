@@ -8,5 +8,5 @@
 using namespace std;
 
 namespace Prosur::Webserver::Resources::File{
-	int run(HTTPResponseBody& responseBody, map<string,string> params);
+	int run(string resource, HTTPResponseBody& responseBody, map<string,string> params);
 }

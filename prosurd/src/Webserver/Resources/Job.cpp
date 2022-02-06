@@ -11,7 +11,7 @@
 using namespace std;
 
 namespace Prosur::Webserver::Resources::Job{
-	int run(HTTPResponseBody& responseBody, map<string,string> parameters){
+	int run(string resource, HTTPResponseBody& responseBody, map<string,string> parameters){
 
 		const string KEY_JOB_ID = "job_id";
 

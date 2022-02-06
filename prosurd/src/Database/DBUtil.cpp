@@ -160,10 +160,12 @@ namespace Prosur::Database::DBUtil{
 		for(int row = 0; row < rows; row++){
 			map<string, DBValue> rowData;
 			for(int column = 0; column < columnNames.size(); column++){
-				if(PQgetisnull(result, row, column)){
-					continue;
-				}
 				string columnName = columnNames[column];
+				if(PQgetisnull(result, row, column)){
+					rowData[columnName] = NULL;
+					//continue;
+				}
+
 				Oid type = fieldTypes[columnName];
 				char* data = PQgetvalue(result, row, column);
 				size_t size = PQgetlength(result, row, column);

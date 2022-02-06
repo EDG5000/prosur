@@ -2,6 +2,21 @@ namespace ChunkLoader{
     let framesLoaded = 0;
 
     export function init(){
+        setInterval(function(){
+            //console.log(Main.Settings.pan + Const.CHUNK_RANGE[Main.Settings.zoom] - (Math.floor(new Date().getTime()/1000)-2));
+            if((Main.Settings.pan + Const.CHUNK_RANGE[Main.Settings.zoom]) > (Math.floor(new Date().getTime()/1000)-2)){
+                // Viewing last second; enable live view
+                Main.Settings.pan = Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
+                
+                // Reload current right chunk (unless not initialized yet)
+                if(Main.rightChunkTime != -1){
+                    // TODO when precisely aligned with chunk, and other edge cases, such as at the right boundary of the right
+                    delete Main.chunks[Main.Settings.zoom][Main.rightChunkTime + ""];
+                    get(Main.rightChunkTime, Main.Settings.zoom);
+                }
+
+            }
+        }, 500);
         resetCache();
     }
 

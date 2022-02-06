@@ -25,14 +25,26 @@ using namespace std;
 using namespace filesystem;
 
 namespace Prosur::Webserver::Resources::Client{
-	int run(HTTPResponseBody& responseBody, map<string,string> params){
-
-		std::ifstream t(current_path().string() + "/client.html");
-		std::stringstream buffer;
-		buffer << t.rdbuf();
-		string htmlData = buffer.str();
-		responseBody = HTTPResponseBody(htmlData, true);
-
+	int run(string resource, HTTPResponseBody& responseBody, map<string,string> params){
+		if(resource == ""){
+			resource = "index.html";
+		}
+		ifstream file(current_path().string() + "/../webmon/" + resource);
+		stringstream buffer;
+		buffer << file.rdbuf();
+		string fileData = buffer.str();
+		string extension = resource.substr(resource.find(".") + 1);
+		ContentType contentType;
+		if(extension == "css"){
+			contentType = CSS;
+		}else if(extension == "js"){
+			contentType = JavaScript;
+		}else if(extension == "html"){
+			contentType = HTML;
+		}else{
+			contentType = Text;
+		}
+		responseBody = HTTPResponseBody(fileData, contentType);
 		return HTTP::OK;
 	}
 }

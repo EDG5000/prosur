@@ -40,7 +40,7 @@ namespace Prosur::Webserver::Resources::File{
 			{Job, {"job_id"}}
 	};
 
-	int run(HTTPResponseBody& responseBody, map<string,string> params){
+	int run(string resource, HTTPResponseBody& responseBody, map<string,string> params){
 		// Ensure mode param is present
 		if(!params.contains("mode")){
 			responseBody = "Webserver: File: mode param is missing, while it is mandatory.";

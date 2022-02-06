@@ -1,7 +1,6 @@
 {
 	"compilerOptions": {
-		"outFile": "build/main.js",
-		"outDir": "build",
+		"outFile": "main.js",
 		"sourceRoot": "../ts/",
 		"rootDir": "ts/",
 		"inlineSourceMap": true, // Alleviate some caching issues. 
