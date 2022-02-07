@@ -52,7 +52,7 @@ namespace Prosur::Database{
 			DBValueType type = Int;
 
 			// Allows assigning by any of the supported types. Sets the type and value.
-			DBValue(){};
+			DBValue(): type(Undefined){};
 			DBValue(int64_t pLongVal): longVal(pLongVal), type(Long){}
 			DBValue(string pStringVal): stringVal(pStringVal), type(String){}
 			DBValue(const char* pStringVal): stringVal(pStringVal), type(String){}
@@ -154,7 +154,7 @@ namespace Prosur::Database{
 				case Float:
 					return floatVal;
 				case Undefined:
-					return NULL;
+					return json(nullptr);
 				default:
 				case Binary:
 					return "<binary data of length: " + to_string(size()) + ">";

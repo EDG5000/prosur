@@ -65,6 +65,9 @@ namespace JobInfo{
             Main.parameterListContainer.scrollTop = Main.Settings.parameterListScrollTop;
         };
         xhr.send();
+
+        // Mark job in job column
+        JobList.markActiveJob(jobId);
     }
 
     function addRow(key: string, value: string){

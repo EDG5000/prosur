@@ -38,19 +38,24 @@ render(frame)
 
 export let addedLinks: Array<HTMLAnchorElement>; // Used when adjusting selection state
 
-// Load list of available log files and initiate load of the last-loaded file
-export function init(){    
+
+export function markActiveJob(jobId: number){
 
     // Mark the correct link as selected
-    /*for(let linkIndex in SessionList.addedLinks){
-        let link = SessionList.addedLinks[linkIndex];
-        let linkFilename = link.href.substring(link.href.lastIndexOf('/')+1);
-        if(linkFilename == filename){
+    for(let linkIndex in addedLinks){
+        let link = addedLinks[linkIndex];
+        let jobId = link.dataset.jobId;
+        if(jobId == (jobId + "")){
             link.style.border = "1px solid black";
         }else{
             link.style.border = "none";
         }
-    }*/
+    }
+}
+
+// Load list of available log files and initiate load of the last-loaded file
+export function init(cb: Function){    
+
  
     // Pan the plotter and load job data when clicking on a job
     Main.jobListContainer.addEventListener("click", function(e: Event){
@@ -102,6 +107,7 @@ export function init(){
             }
 
             link.dataset.time = job.time;
+            link.dataset.jobId = job.job_id;
             const dateTimeString = Util.createTimeLabel(job.time);
             const jobName = job.job_file_name.replace("0:/gcodes/", "").replace(".gcode", "");
             link.innerText = jobName + "(" + dateTimeString + ")";
@@ -113,6 +119,7 @@ export function init(){
 
         // Restore scroll position
         Main.jobListContainer.scrollTop = Main.Settings.jobListScrollTop;
+        cb();
     };
 
     // URL is set to Apache directory index containing log file

@@ -20,6 +20,7 @@ namespace Plotter{
 
 	let yMin = 0;
 	let yMax = 0;
+	let allColumns: Array<string> = [];
 
 	export function onMouseMove(x: number, y: number){
 		let yValue = (Math.round(100 * ((yMax - yMin) * (1-(y / (Main.canvas.height-Const.Y_MARGIN))) + yMin))/100).toFixed(2);
@@ -37,49 +38,47 @@ namespace Plotter{
 		const chunkRange = Const.CHUNK_RANGE[zoom];
 		const pan = Main.Settings.pan;
 		const columns: Array<string> = [];
-		const allColumns: Array<string> = [];
+		
 		const initialChunkOffset = Math.floor(((pan % chunkRange) / chunkRange) * Const.CHUNK_SIZE);
 
 		// If there is data in any of the chunks, update legend, obtain user-selected column list and determine y-range
 		if(leftChunk != null || rightChunk != null){
-			// Pick any non-null chunk
-			const chunk = leftChunk != null ? leftChunk : rightChunk;
-
-			// Obtain numerical columns
-			for(let column in chunk){
-				if(typeof chunk[column][0] != "number"){
-					// We are here to plot numbers and numbers only. Understood?
-					continue;
-				}
-				allColumns.push(column);
-			}
+		
 		
 			// Update legend based on columns present in the data
 			// Create checkboxes for toggling the columns and attach a handler for when they are clicked
-			Main.legend.innerText = "";
-			for(let i = 0; i < allColumns.length; i++){
-				let column = allColumns[i];
-				let color = typeof Const.SENSOR_COLORS[i] != "undefined" ? Const.SENSOR_COLORS[i] : "white";
-				// Create checkbox to toggle column
-				const radio = document.createElement("input");
-				// Columns are checked off unless a user setting with value "true" is present
-				radio.checked = typeof Main.Settings.selectedColumns[column] != "undefined" && Main.Settings.selectedColumns[column];
-				radio.type = "checkbox";
-				radio.onclick = function(e){
-					// Store choice in memory and flush to local storage
-					Main.Settings.selectedColumns[column] = radio.checked;
-					localStorage.selectedColumns = JSON.stringify(Main.Settings.selectedColumns);
-					Main.canvasInvalidated = true;
-				};
-				radio.id = column;
-				radio.value = column;
-				const label: HTMLLabelElement = document.createElement("label");
-				label.htmlFor = column;
-				label.style.color = color;
-				label.innerText = column.toUpperCase();
-				Main.legend.appendChild(radio);
-				Main.legend.appendChild(label);
-				Main.legend.appendChild(document.createElement("br"));
+			if(Main.legend.innerHTML == ""){
+				// Pick any non-null chunk
+				const chunk = leftChunk != null ? leftChunk : rightChunk;
+				let i = 0;
+				for(let column in chunk){
+					if(column == "time"){
+						continue;
+					}
+					allColumns.push(column);
+					let color = typeof Const.SENSOR_COLORS[i] != "undefined" ? Const.SENSOR_COLORS[i] : "white";
+					// Create checkbox to toggle column
+					const radio = document.createElement("input");
+					// Columns are checked off unless a user setting with value "true" is present
+					radio.checked = typeof Main.Settings.selectedColumns[column] != "undefined" && Main.Settings.selectedColumns[column];
+					radio.type = "checkbox";
+					radio.onclick = function(e){
+						// Store choice in memory and flush to local storage
+						Main.Settings.selectedColumns[column] = radio.checked;
+						localStorage.selectedColumns = JSON.stringify(Main.Settings.selectedColumns);
+						Main.canvasInvalidated = true;
+					};
+					radio.id = column;
+					radio.value = column;
+					const label: HTMLLabelElement = document.createElement("label");
+					label.htmlFor = column;
+					label.style.color = color;
+					label.innerText = column.toUpperCase();
+					Main.legend.appendChild(radio);
+					Main.legend.appendChild(label);
+					Main.legend.appendChild(document.createElement("br"));
+					i++;
+				}
 			}
 
 			// List the user-selected columns if they are also present in the data
@@ -176,12 +175,12 @@ namespace Plotter{
 		if(leftChunk != null || rightChunk != null){
 			// Load new job data if jobId changed. Clear job panel if no job in first frame
 			let jobId = -1;
-			if(leftChunk != null && typeof leftChunk.job_id != "undefined" && initialChunkOffset < leftChunk.job_id.length){
+			if(leftChunk != null && typeof leftChunk.job_id != "undefined"){
 				// Offset still within left chunk
 				jobId = leftChunk.job_id[initialChunkOffset];
-			}else if(rightChunk != null && typeof rightChunk != "undefined" && initialChunkOffset > Const.CHUNK_SIZE && initialChunkOffset % Const.CHUNK_SIZE < rightChunk.job_id.length){
-				// Offset beyond left chunk and within right chunk
-				jobId = rightChunk.job_id[initialChunkOffset * Const.CHUNK_SIZE];
+				if(jobId == null){
+					jobId = -1;
+				}
 			}
 
 			if(jobId != Main.jobId){
@@ -190,7 +189,7 @@ namespace Plotter{
 				JobInfo.load(jobId);
 			}
 
-			let test = 0;
+
 			// Draw data for each column
 			for(let colno = 0; colno < columns.length; colno++){
 				// Get index of column in full column list in order to pick the color
@@ -207,18 +206,19 @@ namespace Plotter{
 				ctx.beginPath();
 
 				let startLine = true;
-				let test = 0;
 				for(let plotIndex = 0; plotIndex < Const.CHUNK_SIZE; plotIndex++){
 					let chunkOffset = initialChunkOffset + plotIndex;
-					let val: number;
+					let val = null;
 					//console.log(chunkOffset + " en " + chunkOffset % Const.CHUNK_SIZE);
-					if(leftChunk != null && chunkOffset < leftChunk.time.length){
+					if(leftChunk != null && chunkOffset < Const.CHUNK_SIZE){
 						// Offset still within left chunk
 						val = leftChunk[column][chunkOffset];
-					}else if(rightChunk != null && chunkOffset > Const.CHUNK_SIZE && (chunkOffset % Const.CHUNK_SIZE) < rightChunk.time.length){
+					}else if(rightChunk != null && chunkOffset > Const.CHUNK_SIZE){
 						// Offset beyond left chunk and within right chunk
 						val = rightChunk[column][chunkOffset % Const.CHUNK_SIZE];
-					}else{
+					}
+
+					if(val == null){
 						// No data for this plot index. Prevent next line (if any) from connecting with the last drawn data.
 						startLine = true;
 						continue;
@@ -234,7 +234,6 @@ namespace Plotter{
 					}else{
 						//console.log("lineTo " + x + ", " + " " + y);
 						ctx.lineTo(x, y);
-						test++;
 					}
 				}
 

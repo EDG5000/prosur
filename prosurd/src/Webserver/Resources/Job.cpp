@@ -17,7 +17,7 @@ namespace Prosur::Webserver::Resources::Job{
 
 		if(!parameters.contains(KEY_JOB_ID)){
 			responseBody = "Webserver: Job: job_id parameter missing.";
-			cerr << responseBody;
+			cerr << responseBody << endl;
 			return HTTP::BAD_REQUEST;
 		}
 

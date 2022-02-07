@@ -162,8 +162,8 @@ namespace Prosur::Database::DBUtil{
 			for(int column = 0; column < columnNames.size(); column++){
 				string columnName = columnNames[column];
 				if(PQgetisnull(result, row, column)){
-					rowData[columnName] = NULL;
-					//continue;
+					rowData[columnName] = DBValue();
+					continue;
 				}
 
 				Oid type = fieldTypes[columnName];

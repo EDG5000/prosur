@@ -41,15 +41,16 @@ namespace Main{
         Plotter.init();
         ChunkLoader.init();
         Timeline.init();
-        JobList.init();
         JobInfo.init();
         MouseControl.init();
 
-        draw();
+        JobList.init(function(){
+            // Start drawing loop
+            draw(); 
+        });
     };
 
     export function draw(){
-
         if(canvasInvalidated){
             canvasInvalidated = false;
             const range = Const.CHUNK_RANGE[Main.Settings.zoom];

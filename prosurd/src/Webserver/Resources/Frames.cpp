@@ -50,15 +50,21 @@ namespace Prosur::Webserver::Resources::Frames{
 		{"range", Range}
 	};
 
+	const string KEY_PARAM_MIN = "min";
+	const string KEY_PARAM_MAX = "max";
+	const string KEY_PARAM_MODULUS = "modulus";
+	const string KEY_PARAM_MODE = "mode";
+	const string KEY_PARAM_COLUMNS= "columns";
+
 	// List of mandatory parameters keyed by Mode
 	const map<Mode, vector<string>> MANDATORY_PARAMETERS = {
 			{Latest, {}},
-			{Range, {"min", "max"}}
+			{Range, {KEY_PARAM_MIN, KEY_PARAM_MAX}}
 	};
 
 	int run(string resource, HTTPResponseBody& responseBody, map<string,string> parameters){
 		// Check integer-params to be valid integers, when present. Store in map.
-		vector<string> integerKeys = {"min", "max", "modulus"};
+		vector<string> integerKeys = {KEY_PARAM_MIN, KEY_PARAM_MAX, KEY_PARAM_MODULUS};
 		map<string, int64_t> numericParameters;
 		for(const auto& key: integerKeys){
 			if(!parameters.contains(key)){
@@ -79,21 +85,21 @@ namespace Prosur::Webserver::Resources::Frames{
 		}
 
 		// Validate the mode param, which is mandatory
-		if(!parameters.contains("mode")){
+		if(!parameters.contains(KEY_PARAM_MODE)){
 			responseBody = "Webserver: Error: mode parameter not present, while it is mandatory.";
 			cerr << responseBody << endl;
 			return HTTP::BAD_REQUEST;
 		}
 
 		// Check if mode param is one of available options
-		if(!MODE_VALUES.contains(parameters["mode"])){
-			responseBody = "Webserver: Unknown mode selected: " + parameters["mode"];
+		if(!MODE_VALUES.contains(parameters[KEY_PARAM_MODE])){
+			responseBody = "Webserver: Unknown mode selected: " + parameters[KEY_PARAM_MODE];
 			cerr << responseBody << endl;
 			return HTTP::BAD_REQUEST;
 		}
 
 		// Assign Mode
-		Mode mode = MODE_VALUES.at(parameters["mode"]);
+		Mode mode = MODE_VALUES.at(parameters[KEY_PARAM_MODE]);
 
 		// Check for presence of available parameters based on selected Mode
 		for(const auto& key: MANDATORY_PARAMETERS.at(mode)){
@@ -106,10 +112,10 @@ namespace Prosur::Webserver::Resources::Frames{
 
 		// Obtain the optional modulus param. Modulus of 1 will have no effect.
 		int modulus = 1;
-		if(numericParameters.contains("modulus")){
-			modulus = numericParameters["modulus"];
+		if(numericParameters.contains(KEY_PARAM_MODULUS)){
+			modulus = numericParameters[KEY_PARAM_MODULUS];
 			if(modulus == 0){
-				responseBody = "Webserver: Error: modulus parameter needs to be at least 1. Value: " + to_string(numericParameters["modulus"]);
+				responseBody = "Webserver: Error: modulus parameter needs to be at least 1. Value: " + to_string(numericParameters[KEY_PARAM_MODULUS]);
 				cerr << responseBody << endl;
 				return HTTP::BAD_REQUEST;
 			}
@@ -117,15 +123,15 @@ namespace Prosur::Webserver::Resources::Frames{
 
 		// Retrieve user selection of columns
 		vector<string> userSelectedColumns;
-		if(parameters.contains("columns")){
+		if(parameters.contains(KEY_PARAM_COLUMNS)){
 			// Check the input for max size
-			if(parameters["columns"].size() > 1000){
+			if(parameters[KEY_PARAM_COLUMNS].size() > 1000){
 				responseBody = "Webserver: error: column parameter exceeded max length of 1000";
 				cerr << responseBody << endl;
 				return HTTP::BAD_REQUEST;
 			}
 			// Parse the parameter into a vector
-			userSelectedColumns = Util::strSplit(parameters["columns"], ",");
+			userSelectedColumns = Util::strSplit(parameters[KEY_PARAM_COLUMNS], ",");
 			// Check each column for existance and disallow binary columns
 			for(string& column: userSelectedColumns){
 				if(!Database::frameColumnTypes.contains(column)){
@@ -180,11 +186,11 @@ namespace Prosur::Webserver::Resources::Frames{
 				break;
 			case Range:
 				query += " where time >= $1 and time <= $2";
-				queryParameters.push_back(numericParameters["min"]);
-				queryParameters.push_back(numericParameters["max"]);
+				queryParameters.push_back(numericParameters[KEY_PARAM_MIN]);
+				queryParameters.push_back(numericParameters[KEY_PARAM_MAX]);
 				if(modulus > 1){
 					query += " and time % $3 = 0";
-					queryParameters.push_back(numericParameters["modulus"]);
+					queryParameters.push_back(numericParameters[KEY_PARAM_MODULUS]);
 				}
 				query += " order by time asc"; // Test data is sometimes ordered illogically
 				break;
@@ -196,18 +202,44 @@ namespace Prosur::Webserver::Resources::Frames{
 		// A job should at least have one frame
 		if(frames.size() == 0){
 			// Nothing do to; header cannot be constructed and no rows to serialize.
-			string error = "Webserver: Frames: No data found.";
-			responseBody = error;
-			cerr << error << endl;
+			responseBody = "Webserver: Frames: No data found.";;
+			cerr << responseBody << endl;
 			return HTTP::NOT_FOUND;
+		}
+
+		vector<string> columns;
+		for(auto& [column, value]: frames[0]){
+			columns.push_back(column);
 		}
 
 		// Start preparing JSON object to return
 		json outputObject = {};
 
-		// Write frames to the JSON object
-		for(auto& row: frames){
-			for(auto& [column, value]: row){
+		// Produce contiguous block of data within min and max (accounting for modulus)
+		if(mode == Range){
+			for(int64_t time = numericParameters[KEY_PARAM_MIN]; time < numericParameters[KEY_PARAM_MAX]; time += modulus){
+				// Attempt to find a matching row
+				bool found = false;
+				for(auto& row: frames){
+					if(row.contains("time") && ((int64_t)row["time"]) == time){
+						// Matching row located, use it
+						for(auto& column: columns){
+							outputObject[column].push_back(row[column]);
+						}
+						found = true;
+						break;
+					}
+				}
+				if(found){
+					continue;
+				}
+				// No matching row was found, synthesize it
+				for(auto& column: columns){
+					outputObject[column].push_back(json(nullptr));
+				}
+			}
+		}else if(mode == Latest){
+			for(auto& [column, value]: frames[0]){
 				outputObject[column].push_back(value);
 			}
 		}

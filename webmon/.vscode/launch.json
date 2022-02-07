@@ -7,7 +7,7 @@
             "request": "launch",
             "name": "Launch Chrome against localhost",
             //"url": "file://${workspaceFolder}/index.html",
-            "url": "http://localhost",
+            "url": "http://localhost:8080",
             "webRoot": "${workspaceFolder}",
             //"preLaunchTask": "tsc: build - tsconfig.json",
             //"preLaunchTask": "tsc: watch - tsconfig.json",
