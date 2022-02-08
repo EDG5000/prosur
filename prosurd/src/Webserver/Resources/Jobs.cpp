@@ -21,7 +21,7 @@ namespace Prosur::Webserver::Resources::Jobs{
 		");
 
 		// Create JSON array to store return data
-		json returnObject;
+		json returnObject = json::array();
 		for(auto& row: jobs){
 			json job;
 			job["time"] = row["time"];

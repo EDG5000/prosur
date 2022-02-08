@@ -20,6 +20,7 @@ webmon/ts/Config.ts
 webmon/mnt-data
 scripts/hc3d-tm.pid
 prosurd/build
+prosurd/build_remote
 prosurd/build_test
 prosurd/build_test_camera
 prosurd/client.html
