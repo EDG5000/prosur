@@ -12,7 +12,7 @@
 datalog/
 vendor/mjpg-streamer/build/
 webmon/mnt-data/
-webmon/build/main.js
+webmon/main.js
 webmon/testdata
 tm/hc3d-tm-sitl/Debug/hc3d-tm-sitl.exe
 tm/Debug/makefile
