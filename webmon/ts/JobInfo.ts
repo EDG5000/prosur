@@ -24,7 +24,7 @@ namespace JobInfo{
             // Only clearing the job panel
             return;
         }
-        let url = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/job?job_id=" + jobId;
+        let url = "/job?job_id=" + jobId;
 
         let xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
@@ -50,7 +50,7 @@ namespace JobInfo{
             // Construct table
             table = document.createElement("table");
             addRow("Job ID", jobId + "");
-            const downloadUrl = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/file?mode=job&job_id=" + jobId;
+            const downloadUrl = "/file?mode=job&job_id=" + jobId;
             addRow("File", "<a href=\"" + downloadUrl + "\">Download</a>");
             for(let key in xhr.response){
                 let value = xhr.response[key];

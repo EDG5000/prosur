@@ -41,7 +41,7 @@ namespace Timeline{
             // Closest matching 6th frame, as still are only taken on 6th frames
             let time = exactTime - (exactTime % Const.STILL_CAPTURE_INTERVAL);
             images[i].style.visibility = "hidden";
-            images[i].src = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/file?mode=still&still_id=0&time=" + time;
+            images[i].src = "/file?mode=still&still_id=0&time=" + time;
             exactTime += imageRange;
         }
         const startTime = Main.Settings.pan;

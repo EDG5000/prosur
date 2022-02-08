@@ -51,7 +51,7 @@ namespace ChunkLoader{
 
         // Configure request and set callback
         const modulus = Math.pow(2, zoom);
-        let url = Const.URL_SCHEME + Const.HOST + ":" + Const.PORT + "/frames?mode=range&min=" + min + "&max=" + (min + Const.CHUNK_RANGE[Main.Settings.zoom]);
+        let url = "/frames?mode=range&min=" + min + "&max=" + (min + Const.CHUNK_RANGE[Main.Settings.zoom]);
         if(modulus != 1){
             url += ("&modulus=" + modulus);
         }

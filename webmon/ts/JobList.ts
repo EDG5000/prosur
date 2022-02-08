@@ -99,7 +99,7 @@ export function init(cb: Function){
             const link = document.createElement("a");
             
             // Link is only used to allow user to navigate to the url, perhaps for downloading data to disk
-            link.href = "http://" + Const.HOST + ":" + Const.PORT + "/frames?mode=job&job_id=" + job.job_id;
+            link.href = "/frames?mode=job&job_id=" + job.job_id;
            
             // Cap values beyond ~2032; some test data has timestamps all the way in the upcoming dyson-sphere epoch; within the int64_t allowed limit, but not within JavaScript's 32-bit floating point Numbers.
             if(job.time > 1957071184){
@@ -124,7 +124,7 @@ export function init(cb: Function){
 
     // URL is set to Apache directory index containing log file
     let url: string;
-    url = Const.URL_SCHEME + Const.HOST+":" + Const.PORT + "/jobs";
+    url = "/jobs";
     xhr.open("GET", url, true);
 
     // Start the XHR request

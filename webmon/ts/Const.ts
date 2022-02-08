@@ -1,9 +1,5 @@
 namespace Const{
 
-    export const URL_SCHEME = "http://";
-    export const HOST = "localhost";
-    export const PORT = 8080;
-
     export const SENSOR_COLORS = [
         "#e6194B",
         "#3cb44b",
@@ -69,9 +65,7 @@ namespace Const{
         // Frame count depends on modulus and chunk size, calculated at init 
         for(let zoom = 0; zoom <= Const.MAX_ZOOM; zoom++){
             // Using an object for this, as the first element can have non-zero value.
-            //console.log(zoom);
             CHUNK_RANGE.push(CHUNK_SIZE * Math.pow(2, zoom));
         }
-        //console.log(" consolas");
     }   
 }
