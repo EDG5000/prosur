@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <bit>
 
-#include <postgresql/libpq-fe.h>
+#include <libpq-fe.h>
 
 #include <Database/DBValue.hpp>
 

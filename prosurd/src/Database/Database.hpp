@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include <postgresql/libpq-fe.h>
+#include <libpq-fe.h>
 
 #include "Database/DBValue.hpp"
 #include "Database/Frame.hpp"

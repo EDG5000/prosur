@@ -170,7 +170,10 @@ namespace Prosur::Datasource::RepRap{
 				cerr << "RepRapClient: error: get_current_job_filename returned an empty string. unable to download job file" << endl;
 				terminate();
 			}
-			frame.jobFile = HTTPUtil::call(RR_BASE_URL + "rr_gcode?"  + Util::encodeURIComponent("gcode=M37 P\"0:/gcodes/" + filename + "\""));
+			//http://theseus3.local/rr_download?name=0:/gcodes/bltouch-mount-v2.gcode
+			//frame.jobFile = HTTPUtil::call(RR_BASE_URL + "rr_gcode?"  + Util::encodeURIComponent("gcode=M37 P\"0:/gcodes/" + filename + "\""));
+		frame.jobFile = HTTPUtil::call(RR_BASE_URL + "rr_download?name="  + filename);
+
 			frame.jobParameters = JobFile::extractParameters(frame.jobFile);
 		}
 	}

@@ -35,9 +35,19 @@ namespace Prosur::Datasource::RepRap::HTTPUtil{
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, onReceiveData);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &receiveBuffer);
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L); //remove this to disable verbose output
-		curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
+		//curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
 
 		CURLcode res = curl_easy_perform(curl);
+
+		long http_code = 0;
+		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+		if (http_code != 200){
+			cerr << "HTTPUtil: call: curl_easy_perform() failed: Got HTTP status: " << to_string(http_code);
+			cerr << " Response: " << receiveBuffer;
+			cerr << " Request URL: " << url << endl;
+			return "";
+		}
+
 		if(res != CURLE_OK){
 			cerr << "HTTPUtil: call: curl_easy_perform() failed: " << curl_easy_strerror(res) << endl;
 			return "";

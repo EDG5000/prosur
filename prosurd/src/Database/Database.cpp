@@ -14,7 +14,7 @@
 #include <time.h>
 #include <arpa/inet.h>
 
-#include <postgresql/libpq-fe.h>
+#include <libpq-fe.h>
 
 #include "Datasource/RepRap/RepRap.hpp"
 #include "Database/DBUtil.hpp"

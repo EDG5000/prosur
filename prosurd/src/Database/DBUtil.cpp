@@ -10,11 +10,11 @@
 #include <iostream>
 #include <thread>
 
-#include <postgresql/libpq-fe.h>
-#include <postgresql/12/server/catalog/pg_type_d.h> // Nasty
+#include <libpq-fe.h>
 
 #include "Util/Util.hpp"
 #include <Database/DBValue.hpp>
+#include "OID.hpp"
 
 using namespace std;
 
@@ -43,6 +43,7 @@ namespace Prosur::Database::DBUtil{
 	}
 
 	vector<map<string, DBValue>> query(string query, vector<DBValue> params){
+		cout << query << endl;
 		/*cout << "DBUtil::query " << query << " is invoked with params: " << endl;
 		for(auto& param: params){
 			cerr << param.toString() << " ";
