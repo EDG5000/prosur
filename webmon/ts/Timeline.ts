@@ -32,17 +32,19 @@ namespace Timeline{
             Main.timelineContainer.appendChild(img);
         }
     }
-         
+          
     // Pan the images and update the src attributes
     export function tick(){
 
         let exactTime = Main.Settings.pan;
         for(let i = 0; i < imageCount; i++){
             // Closest matching 6th frame, as still are only taken on 6th frames
-            let time = exactTime - (exactTime % Const.STILL_CAPTURE_INTERVAL);
-            images[i].style.visibility = "hidden";
-            images[i].src = "/file?mode=still&still_id=0&time=" + time;
+            const min = exactTime;
             exactTime += imageRange;
+            const max = exactTime;
+            images[i].style.visibility = "hidden";
+            images[i].src = "/file?mode=still&still_id=0&min=" + min + "&max=" + max;
+            
         }
         const startTime = Main.Settings.pan;
     }

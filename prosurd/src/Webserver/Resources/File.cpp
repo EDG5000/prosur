@@ -36,7 +36,7 @@ namespace Prosur::Webserver::Resources::File{
 	};
 
 	map<Mode, vector<string>> mandatoryParams = {
-			{Still, {"time", "still_id"}},
+			{Still, {"min", "max", "still_id"}},
 			{Job, {"job_id"}}
 	};
 
@@ -96,8 +96,10 @@ namespace Prosur::Webserver::Resources::File{
 			rows = Database::DBUtil::query("\
 				select "+colName+" \
 				from frame \
-				where time = $1 and "+colName+" is not null\
-				", {(int64_t) numericParams["time"]}
+				where time > $1 and time < $2 and "+colName+" is not null \
+				order by time desc \
+				limit 1 \
+				", {(int64_t) numericParams["min"], (int64_t) numericParams["max"]}
 			);
 		}else if(mode == Job){
 			colName = "data";

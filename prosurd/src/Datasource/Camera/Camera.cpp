@@ -26,12 +26,26 @@ namespace Prosur::Datasource::Camera{
 	void fillFrame(Database::Frame& frame){
 
 		// 1. Open the device
+		int fd;
 		// Get file descriptor to the video device
-		int fd = open(CAMERA_PATH.c_str(), O_RDWR | O_EXCL);
-		if(fd < 0){
-			cerr << "Camera: Failed to open device << " << CAMERA_PATH << ", OPEN Errno:" << strerror(errno) << endl;
+		int attempt = 0;
+		while(attempt < 10){
+			fd = open(CAMERA_PATH.c_str(), O_RDWR | O_EXCL);
+			if(fd < 0){
+				// Keep trying
+				cerr << "Camera: Failed to open device << " << CAMERA_PATH << ", OPEN Errno:" << strerror(errno) << endl;
+				usleep(1000 * 10); // 10ms
+				attempt++;
+				//terminate();
+				continue;
+			}
+			break;
+		}
+		if(attempt == 10){
+			cerr << "I give up yo" << endl;
 			terminate();
 		}
+
 
 		// 2. Ask the device if it can capture frames
 		v4l2_capability capability;

@@ -39,11 +39,19 @@ namespace Prosur::Database::DBUtil{
 			terminate();
 		}
 
+		PGresult* result = PQexec(conn, "set search_path to prosur");
+		ExecStatusType status = PQresultStatus(result);
+		// Check for query error
+		if(status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK){
+			cerr << "DBUtil: Setting up connection failed. Error: " << string(PQerrorMessage(conn)) << " Query was: " << query << endl;
+			terminate();
+		}
+
 		return conn;
 	}
 
 	vector<map<string, DBValue>> query(string query, vector<DBValue> params){
-		cout << query << endl;
+		//cout << query << endl;
 		/*cout << "DBUtil::query " << query << " is invoked with params: " << endl;
 		for(auto& param: params){
 			cerr << param.toString() << " ";
@@ -55,13 +63,14 @@ namespace Prosur::Database::DBUtil{
 		PGconn* conn;
 		if(!connections.contains(this_thread::get_id())){
 			conn = connect();
-			connections[this_thread::get_id()] = conn;
 
 			// Set default schema to prosur
 			// TODO is below call causing issues?
-			DBUtil::query("set search_path to prosur");
+			//DBUtil::query("set search_path to prosur");
+
+			connections[this_thread::get_id()] = conn;
 			// TODO add error handling to this call
-			//PQexec(conn, "set search_path to prosur");
+			//
 		}else{
 			conn = connections[this_thread::get_id()];
 		}
