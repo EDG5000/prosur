@@ -25,7 +25,7 @@ namespace Prosur::Webserver::Resources::Jobs{
 		for(auto& row: jobs){
 			json job;
 			job["time"] = row["time"];
-			//cout << job["time"] << endl;
+			//cerr << job["time"] << endl;
 			job["job_file_name"] = row["job_file_name"];
 			job["job_id"] = row["job_id"];
 			returnObject.push_back(job);

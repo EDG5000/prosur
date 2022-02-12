@@ -26,7 +26,7 @@ rsync \
 $REMOTE_CONN:$REMOTE_PATH
 
 # Compile, kill, run in background
-ssh $REMOTE_CONN "cd $REMOTE_PATH/../build_prosurd && make && cd $REMOTE_PATH/prosurd && killall prosurd ; scripts/run-prosurd.sh >/dev/null 2>/dev/null &"
+ssh $REMOTE_CONN "cd $REMOTE_PATH/../build_prosurd && make && cd $REMOTE_PATH/prosurd && sudo killall prosurd ; scripts/run-prosurd.sh >/dev/null 2>/dev/null &"
 
 # Tail the log file
 ssh $REMOTE_CONN "cd $REMOTE_PATH && tail -f ../prosurd.log"

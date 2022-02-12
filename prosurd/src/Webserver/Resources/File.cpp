@@ -44,14 +44,14 @@ namespace Prosur::Webserver::Resources::File{
 		// Ensure mode param is present
 		if(!params.contains("mode")){
 			responseBody = "Webserver: File: mode param is missing, while it is mandatory.";
-			cerr << responseBody.stringData << endl;
+			cerr << responseBody << endl;
 			return HTTP::BAD_REQUEST;
 		}
 
 		// Ensure mode param is valid
 		if(!modeValues.contains(params["mode"])){
 			responseBody = "Webserver: File: mode param does not correspond to any of the available modes.";
-			cerr << responseBody.stringData << endl;
+			cerr << responseBody << endl;
 			return HTTP::BAD_REQUEST;
 		}
 
@@ -63,19 +63,19 @@ namespace Prosur::Webserver::Resources::File{
 		for(string& key: mandatoryParams[mode]){
 			if(!params.contains(key)){
 				responseBody = "Webserver: File: missing mandatory param: " + key + " when in mode " + params["mode"];
-				cerr << responseBody.stringData << endl;
+				cerr << responseBody << endl;
 				return HTTP::BAD_REQUEST;
 			}
 			try{
 				numericParams[key] = stoi(params[key]);
 			}catch(const exception& e){
 				responseBody = "Webserver: File: param " + key + " is not a valid integer, which is illegal.";
-				cerr << responseBody.stringData << endl;
+				cerr << responseBody << endl;
 				return HTTP::BAD_REQUEST;
 			}
 			if(numericParams[key] < 0){
 				responseBody = "Webserver: File: param " + key + " is lower than zero, which is illegal.";
-				cerr << responseBody.stringData << endl;
+				cerr << responseBody << endl;
 				return HTTP::BAD_REQUEST;
 			}
 		}
@@ -88,7 +88,7 @@ namespace Prosur::Webserver::Resources::File{
 			// Ensure still_id is within legal range
 			if(numericParams["still_id"] > (STILL_COLUMN_COUNT-1)){
 				responseBody = "Webserver: File: param still_id is higher than " + to_string(STILL_COLUMN_COUNT-1) + ", which is illegal.";
-				cerr << responseBody.stringData << endl;
+				cerr << responseBody << endl;
 				return HTTP::BAD_REQUEST;
 			}
 			// Construct column name
@@ -114,13 +114,12 @@ namespace Prosur::Webserver::Resources::File{
 		}
 
 		if(rows.size() == 0){
-			cerr << responseBody.stringData << endl;
 			return HTTP::NOT_FOUND;
 		}
 
 		if(rows.size() > 1){
 			responseBody = "Webserver: File: Multiple rows were returned unexpectedly. Row count: " + to_string(rows.size());
-			cerr << responseBody.stringData << endl;
+			cerr << responseBody << endl;
 			return HTTP::INTERNAL_SERVER_ERROR;
 		}
 

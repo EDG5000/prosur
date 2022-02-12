@@ -66,7 +66,7 @@ namespace Prosur::Datasource::AuxTemp{
 		tty.c_cc[VEOF] = 0x04;
 
 		if(tcsetattr(fd, TCSANOW, &tty) != 0){
-			cout << "AuxTemp: Error from tcsetattr: " << strerror(errno) << endl;
+			cerr << "AuxTemp: Error from tcsetattr: " << strerror(errno) << endl;
 			terminate();
 		}
 	}
@@ -87,9 +87,9 @@ namespace Prosur::Datasource::AuxTemp{
 			// Terminate string
 			buf[rdlen] = 0;
 		}else if (rdlen < 0){
-			cout << "Error from read: " << " " << strerror(errno) << endl;
+			cerr << "Error from read: " << " " << strerror(errno) << endl;
 		} else{
-			cout << "Nothing read. EOF?" << endl;
+			cerr << "Nothing read. EOF?" << endl;
 		}
 		readBuffer += string(buf);
 

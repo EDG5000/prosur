@@ -51,13 +51,13 @@ namespace Prosur::Database::DBUtil{
 	}
 
 	vector<map<string, DBValue>> query(string query, vector<DBValue> params){
-		//cout << query << endl;
-		/*cout << "DBUtil::query " << query << " is invoked with params: " << endl;
+		//cerr << query << endl;
+		/*cerr << "DBUtil::query " << query << " is invoked with params: " << endl;
 		for(auto& param: params){
 			cerr << param.toString() << " ";
 
 		}
-		cout << endl;*/
+		cerr << endl;*/
 
 		// Check if a connection is present for the current thread, if not, set it up
 		PGconn* conn;
@@ -112,12 +112,12 @@ namespace Prosur::Database::DBUtil{
 				query.c_str()
 			);
 		}else{
-			/*cout << "Now running query " << query << " with params: " << endl;
+			/*cerr << "Now running query " << query << " with params: " << endl;
 			for(auto& param: params){
 				cerr << param.toString() << " ";
 
 			}
-			cout << endl;*/
+			cerr << endl;*/
 
 			// Perform query
 			result = PQexecParams(
@@ -189,7 +189,7 @@ namespace Prosur::Database::DBUtil{
 					rowData[columnName] = *((int*) data); // implicit Param constructor
 					break;
 				case INT8OID:
-					//cout << "directly from the horses' mouth: " << *((int64_t*) data) << endl;
+					//cerr << "directly from the horses' mouth: " << *((int64_t*) data) << endl;
 					rowData[columnName] = *((int64_t*) data); // implicit Param constructor
 					break;
 				case BYTEAOID: {

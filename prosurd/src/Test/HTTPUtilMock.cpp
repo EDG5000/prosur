@@ -77,7 +77,7 @@ rr_gcode?gcode=M37 P\"0:/gcodes/CFFFP_Electronics Box.gcode\"
 		// simulated print.
 
 		string path = current_path().string() + "/testdata/mock_http_requests.har.json";
-		//cout << "HTTPMock: init: loading from " << path << endl;
+		//cerr << "HTTPMock: init: loading from " << path << endl;
 		ifstream file(path);
         stringstream buffer;
         buffer << file.rdbuf();

@@ -6,7 +6,7 @@
 using namespace std;
 
 namespace Prosur::Util{
-	int64_t unixTime(); // Seconds since Unix epoch
+	int64_t timeUs();  // Unix time in microseconds
 	void swapbytes(char* inp, size_t len);
 	string isodatetime(); // Generate ISO datetime string from current time
 	string isodatetime(int64_t timestamp); // Generate ISO datetime string from unix timestamp in seconds as parameter

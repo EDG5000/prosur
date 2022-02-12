@@ -18,8 +18,8 @@ namespace Plotter{
 		});
 	}
 
-	let yMin = 0;
-	let yMax = 0;
+	let yMin;
+	let yMax;
 	let allColumns: Array<string> = [];
 
 	export function onMouseMove(x: number, y: number){
@@ -89,8 +89,8 @@ namespace Plotter{
 			}
 
 			// Determine y-range
-			yMin = 0;
-			yMax = 0;
+			yMin = null;
+			yMax = null;
 			for(let column of columns){
 				let chunks = [];
 				if(leftChunk != null){
@@ -102,6 +102,9 @@ namespace Plotter{
 				for(let chunk of chunks){
 					// Fetch value from the correct chunk
 					for(let val of chunk[column]){
+						if(val == null){
+							continue;
+						}
 						// Update min and max as appropriate
 						if(val < yMin || yMin == null){
 							yMin = val;
@@ -217,6 +220,11 @@ namespace Plotter{
 						// Offset beyond left chunk and within right chunk
 						val = rightChunk[column][chunkOffset % Const.CHUNK_SIZE];
 					}
+
+					if(colno == 0){
+						console.log(val);
+					}
+					
 
 					if(val == null){
 						// No data for this plot index. Prevent next line (if any) from connecting with the last drawn data.

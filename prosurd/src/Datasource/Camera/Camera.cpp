@@ -11,6 +11,7 @@
 #include <vector>
 #include <iostream>
 #include <ostream>
+#include <thread>
 
 #include "linux/v4l2-common.h"
 #include "linux/videodev2.h"
@@ -23,7 +24,17 @@ namespace Prosur::Datasource::Camera{
 
 	const string CAMERA_PATH = "/dev/v4l/by-id/usb-046d_0825_533B82A0-video-index0";
 
+	bool ready = false;
+
 	void fillFrame(Database::Frame& frame){
+		if(!ready){
+			thread t([]{
+
+				t.detach();
+			});
+		}
+
+		cerr << "Capture" << endl;
 
 		// 1. Open the device
 		int fd;
@@ -34,7 +45,7 @@ namespace Prosur::Datasource::Camera{
 			if(fd < 0){
 				// Keep trying
 				cerr << "Camera: Failed to open device << " << CAMERA_PATH << ", OPEN Errno:" << strerror(errno) << endl;
-				usleep(1000 * 10); // 10ms
+				usleep(1000 * 1000); // 10ms
 				attempt++;
 				//terminate();
 				continue;
@@ -47,12 +58,16 @@ namespace Prosur::Datasource::Camera{
 		}
 
 
+		cerr << "Opened" << endl;
+
 		// 2. Ask the device if it can capture frames
 		v4l2_capability capability;
 		if(ioctl(fd, VIDIOC_QUERYCAP, &capability) < 0){
 			cerr << "Camera: Failed to get device capabilities, VIDIOC_QUERYCAP Errno: " << strerror(errno) << endl;
 			terminate();
 		}
+
+		cerr << "VIDIOC_QUERYCAP" << endl;
 
 		// 3. Set Image format
 		v4l2_format imageFormat;
@@ -67,6 +82,8 @@ namespace Prosur::Datasource::Camera{
 			terminate();
 		}
 
+		cerr << "VIDIOC_S_FMT" << endl;
+
 		// 4. Request Buffers from the device
 		v4l2_requestbuffers requestBuffer = {0};
 		// One request buffer
@@ -80,6 +97,8 @@ namespace Prosur::Datasource::Camera{
 			terminate();
 		}
 
+		cerr << "VIDIOC_REQBUFS" << endl;
+
 		// 5. Query the buffer to get raw data ie. ask for the requested buffer and allocate memory for it
 		v4l2_buffer queryBuffer = {0};
 		queryBuffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -90,11 +109,15 @@ namespace Prosur::Datasource::Camera{
 			terminate();
 		}
 
+		cerr << "VIDIOC_QUERYBUF" << endl;
+
 		// Use a pointer to point to the newly created buffer
 		// mmap() will map the memory address of the device to
 		// an address in memory
 		char* buffer = (char*) mmap(NULL, queryBuffer.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, queryBuffer.m.offset);
 		memset(buffer, 0, queryBuffer.length);
+
+		cerr << "mmap" << endl;
 
 		// 6. Get a frame
 		// Create a new buffer type so the device knows which buffer we are talking about
@@ -104,6 +127,8 @@ namespace Prosur::Datasource::Camera{
 		bufferinfo.memory = V4L2_MEMORY_MMAP;
 		bufferinfo.index = 0;
 
+		cerr << "memset" << endl;
+
 		// Activate streaming
 		int type = bufferinfo.type;
 		if(ioctl(fd, VIDIOC_STREAMON, &type) < 0){
@@ -111,11 +136,15 @@ namespace Prosur::Datasource::Camera{
 			terminate();
 		}
 
+		cerr << "VIDIOC_STREAMON" << endl;
+
 		// Queue the buffer
 		if(ioctl(fd, VIDIOC_QBUF, &bufferinfo) < 0){
 			cerr << "Camera: Could not queue buffer, VIDIOC_QBUF Errno: " << strerror(errno) << endl;
 			terminate();
 		}
+
+		cerr << "VIDIOC_QBUF" << endl;
 
 		// Dequeue the buffer
 		if(ioctl(fd, VIDIOC_DQBUF, &bufferinfo) < 0){
@@ -123,23 +152,35 @@ namespace Prosur::Datasource::Camera{
 			terminate();
 		}
 
+		cerr << "VIDIOC_DQBUF" << endl;
+
 		// End streaming
 		if(ioctl(fd, VIDIOC_STREAMOFF, &type) < 0){
 			cerr << "Camera: Could not end streaming, VIDIOC_STREAMOFF Errno: " << strerror(errno) << endl;
 			terminate();
 		}
 
+		cerr << "VIDIOC_STREAMOFF" << endl;
+
 		// Copy data to Frame
 		frame.still.push_back({});
 		frame.still[0].resize(bufferinfo.bytesused);
 		memcpy(frame.still[0].data(), buffer, bufferinfo.bytesused);
 
+		cerr << "memcpy" << endl;
+
 		// Unmap the memory. Otherwise, the close() call will be ignored.
 		munmap(buffer, queryBuffer.length);
+
+
+		cerr << "munmap" << endl;
 
 		// Close the video device
 		if(close(fd) < 0){
 			cerr << "Camera: Camera: Unable to close device " << to_string(fd) << ". Error:  " << strerror(errno) << endl;
+			terminate();
 		}
+
+		cerr << "close" << endl;
 	}
 }

@@ -24,14 +24,17 @@ namespace Prosur::Util{
 		return std::rand();
 	}
 
-	int64_t unixTime(){
+	// Unix time in microseconds
+	int64_t timeUs(){
 		#ifdef TEST_MODE_MOCK_INPUT
 			// When testing, no sleeping is done; each invocation, one second passes
 			static int64_t time = Util::rand();
-			time++;
+			time += 1000 * 1000;
 			return time;
 		#else
-			return time(NULL);
+			struct timeval tv;
+			gettimeofday(&tv,NULL);
+			return tv.tv_sec*(uint64_t)1000000+tv.tv_usec;
 		#endif
 	}
 
@@ -55,7 +58,7 @@ namespace Prosur::Util{
 	string isodatetime(int64_t timestamp){
 		struct tm* timeinfo = localtime((time_t*)(&timestamp));
 		char buf[sizeof "2011-10-08T07:07:09Z"];
-		strftime(buf, sizeof buf, "%FT%TZ", localtime((time_t*)(&timestamp)));
+		strftime(buf, sizeof buf, "%F %TZ", localtime((time_t*)(&timestamp)));
 		return buf;
 	}
 
@@ -64,7 +67,7 @@ namespace Prosur::Util{
 		time_t now;
 		time(&now);
 		char buf[sizeof "2011-10-08T07:07:09Z"];
-		strftime(buf, sizeof buf, "%FT%TZ", gmtime(&now));
+		strftime(buf, sizeof buf, "%F %TZ", gmtime(&now));
 		return buf;
 	}
 

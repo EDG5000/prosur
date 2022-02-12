@@ -38,13 +38,14 @@ namespace Prosur{
 		Webserver::init();
 
 		while(true){
-			int64_t startTime = Util::unixTime();
+			cerr << "Frame" << endl;
+			int64_t startTime = Util::timeUs();
 
 			#ifndef TEST_FLAG_WEBMON_ONLY
 				// Store isPrinting from previous frame; clear Frame and populate frame time
 				bool wasPrinting = frame.isPrinting;
 				frame = {};
-				frame.time = startTime;
+				frame.time = startTime / 1000 / 1000;
 				frame.wasPrinting = wasPrinting;
 
 				// Data sources each fill Frame members
@@ -65,8 +66,9 @@ namespace Prosur{
 			// Unless we are in TEST_MODE_MOCK_INPUT, sleep based on time taken during this cycle
 			#ifndef TEST_MODE_MOCK_INPUT
 				// Substract time taken during cycle with target interval
-				int64_t timeTaken = time(NULL) - startTime;
+				int64_t timeTaken = Util::timeUs() - startTime;
 				int64_t sleepTime = FRAME_COLLECTION_INTERVAL - timeTaken;
+				cerr << "Time taken: " << timeTaken << " Sleep time: " << sleepTime << endl;
 				if(sleepTime < 0){
 					cerr << "warning: taking " << (sleepTime * -1) << "us too long to keep up with desired " << FRAME_COLLECTION_INTERVAL << "us interval. Operating at reduced frame collection rate." << endl;
 					sleepTime = 0;

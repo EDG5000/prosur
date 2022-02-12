@@ -16,9 +16,6 @@
 
 #include "Webserver/Webserver.hpp"
 
-#include <iostream>
-#include <string>
-#include <map>
 #include <sys/types.h>
 #include <sys/select.h>
 #include <sys/stat.h>
@@ -26,6 +23,11 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <limits.h>
+#include <signal.h>
+
+#include <iostream>
+#include <string>
+#include <map>
 #include <thread>
 
 #include "Database/DBUtil.hpp"
@@ -200,6 +202,9 @@ namespace Prosur::Webserver{
 	}
 
 	void init(){
+		// Ignore SIGPIPE signals, triggered by the kernel when clients hang up connections early, which would cause the program to abort
+		signal(SIGPIPE, SIG_IGN);
+
 		// Start thread, listen for incoming connections
 		// Invoke handleConnection for each connection
 		// TODO handle requests in a separate thread for each request? What happens when multiple requests are received in rapid succession?

@@ -7,7 +7,7 @@ cd ${SCRIPT_DIR}/..
 
 echo "Starting postgres" | ts | tee -a $LOG_FILE
 
-su - postgres -c "/usr/local/pgsql/bin/pg_ctl start -l /usr/local/pgsql/var/log/pgsql.log -D /mnt/data/prosurd_db"
+sudo su - postgres -c "/usr/local/pgsql/bin/pg_ctl start -l /usr/local/pgsql/var/log/pgsql.log -D /mnt/data/prosurd_db"
 
 echo "Waiting postgres to launch on 5432..." | ts | tee -a $LOG_FILE
 
