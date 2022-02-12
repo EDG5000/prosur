@@ -42,7 +42,7 @@ namespace Timeline{
             const min = exactTime;
             exactTime += imageRange;
             const max = exactTime;
-            images[i].style.visibility = "hidden";
+            //images[i].style.visibility = "hidden";
             images[i].src = "/file?mode=still&still_id=0&min=" + min + "&max=" + max;
             
         }

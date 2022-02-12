@@ -221,9 +221,9 @@ namespace Plotter{
 						val = rightChunk[column][chunkOffset % Const.CHUNK_SIZE];
 					}
 
-					if(colno == 0){
+					/*if(colno == 0){
 						console.log(val);
-					}
+					}*/
 					
 
 					if(val == null){

@@ -12,3 +12,8 @@ target_link_libraries(prosurd PUBLIC PkgConfig::libcurl)
 # libpq
 pkg_check_modules(libpq REQUIRED IMPORTED_TARGET libpq>=12.9)
 target_link_libraries(prosurd PUBLIC PkgConfig::libpq)
+
+# libv4l2
+pkg_check_modules(libv4l2 REQUIRED IMPORTED_TARGET libv4l2>=1.18.0)
+target_link_libraries(prosurd PUBLIC PkgConfig::libv4l2)
+

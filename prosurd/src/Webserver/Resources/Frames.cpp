@@ -202,8 +202,8 @@ namespace Prosur::Webserver::Resources::Frames{
 		// A job should at least have one frame
 		if(frames.size() == 0){
 			// Nothing do to; header cannot be constructed and no rows to serialize.
-			responseBody = "Webserver: Frames: No data found.";;
-			cerr << responseBody << endl;
+			//responseBody = "Webserver: Frames: No data found.";;
+			//cerr << responseBody << endl;
 			return HTTP::NOT_FOUND;
 		}
 

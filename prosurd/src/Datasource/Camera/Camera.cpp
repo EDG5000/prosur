@@ -18,169 +18,182 @@
 
 #include "Database/Frame.hpp"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/mman.h>
+#include <linux/videodev2.h>
+#include "libv4l2.h"
+
+#include <mutex>
+#include <thread>
+
 using namespace std;
+
+
 
 namespace Prosur::Datasource::Camera{
 
-	const string CAMERA_PATH = "/dev/v4l/by-id/usb-046d_0825_533B82A0-video-index0";
+	mutex mtx;
 
 	bool ready = false;
 
+	//void* image_buffer = 0; // 0 when empty (while still grabbing first framr)
+	//size_t image_buffer_size; // Image buffer
+
+	vector<char> image_buffer;
+
+	#define CLEAR(x) memset(&(x), 0, sizeof(x))
+
+	struct buffer{
+		void   *start;
+		size_t length;
+	};
+
+	static void xioctl(int fh, int request, void *arg){
+		int r;
+
+		do{
+			r = v4l2_ioctl(fh, request, arg);
+		}while (r == -1 && ((errno == EINTR) || (errno == EAGAIN)));
+
+		if(r == -1){
+			cerr << "Camera: error: " << strerror(errno) << endl;
+			terminate();
+		}
+	}
+
 	void fillFrame(Database::Frame& frame){
-		if(!ready){
-			thread t([]{
 
-				t.detach();
-			});
-		}
+        if(!ready){
+        	ready = true;
+			thread([]{
+				struct v4l2_format              fmt;
+				struct v4l2_buffer              buf;
+				struct v4l2_requestbuffers      req;
+				enum v4l2_buf_type              type;
+				fd_set                          fds;
+				struct timeval                  tv;
+				int                             r, fd = -1;
+				unsigned int                    i, n_buffers;
+				const char                      *dev_name = "/dev/v4l/by-id/usb-046d_0825_533B82A0-video-index0";
+				char                            out_name[256];
+				FILE                            *fout;
+				struct buffer                   *buffers;
 
-		cerr << "Capture" << endl;
+				fd = v4l2_open(dev_name, O_RDWR | O_NONBLOCK, 0);
+				if (fd < 0) {
+					cerr << "Cannot open device. Error: " << strerror(errno) << endl;
+					terminate();
+				}
 
-		// 1. Open the device
-		int fd;
-		// Get file descriptor to the video device
-		int attempt = 0;
-		while(attempt < 10){
-			fd = open(CAMERA_PATH.c_str(), O_RDWR | O_EXCL);
-			if(fd < 0){
-				// Keep trying
-				cerr << "Camera: Failed to open device << " << CAMERA_PATH << ", OPEN Errno:" << strerror(errno) << endl;
-				usleep(1000 * 1000); // 10ms
-				attempt++;
-				//terminate();
-				continue;
-			}
-			break;
-		}
-		if(attempt == 10){
-			cerr << "I give up yo" << endl;
-			terminate();
-		}
+				CLEAR(fmt);
+				fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+				fmt.fmt.pix.width = 1280;
+				fmt.fmt.pix.height = 960;
+				fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
+				fmt.fmt.pix.field = V4L2_FIELD_NONE;
+				xioctl(fd, VIDIOC_S_FMT, &fmt);
+				if (fmt.fmt.pix.pixelformat != V4L2_PIX_FMT_MJPEG) {
+					cerr << "Camera: Libv4l didn't accept V4L2_PIX_FMT_MJPEG format. Can't proceed." << endl;
+					terminate();
+				}
+				if ((fmt.fmt.pix.width != 1280) || (fmt.fmt.pix.height != 960)){
+					cerr << "Camera: Libv4l didn't accept requested resoluation. Can't proceed." << endl;
+					terminate();
+				}
+
+				CLEAR(req);
+				req.count = 2;
+				req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+				req.memory = V4L2_MEMORY_MMAP;
+				xioctl(fd, VIDIOC_REQBUFS, &req);
+
+				buffers = (buffer*) calloc(req.count, sizeof(*buffers));
+				for (n_buffers = 0; n_buffers < req.count; ++n_buffers) {
+					CLEAR(buf);
+
+					buf.type        = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+					buf.memory      = V4L2_MEMORY_MMAP;
+					buf.index       = n_buffers;
+
+					xioctl(fd, VIDIOC_QUERYBUF, &buf);
+
+					buffers[n_buffers].length = buf.length;
+					buffers[n_buffers].start = v4l2_mmap(NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, buf.m.offset);
+
+					if (MAP_FAILED == buffers[n_buffers].start) {
+						cerr << "Camera: map failed." << endl;
+						terminate();
+					}
+				}
+
+				for (i = 0; i < n_buffers; ++i) {
+					CLEAR(buf);
+					buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+					buf.memory = V4L2_MEMORY_MMAP;
+					buf.index = i;
+					xioctl(fd, VIDIOC_QBUF, &buf);
+				}
+				type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+				xioctl(fd, VIDIOC_STREAMON, &type);
+
+				while(true){
+					do{
+						FD_ZERO(&fds);
+						FD_SET(fd, &fds);
+
+						/* Timeout. */
+						tv.tv_sec = 2;
+						tv.tv_usec = 0;
+
+						//r = select(fd + 1, &fds, NULL, NULL, &tv);
+						r = select(fd + 1, &fds, NULL, NULL, NULL);
+					}while ((r == -1 && (errno = EINTR)));
+					if (r == -1) {
+						break;
+					}
+
+					CLEAR(buf);
+					buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+					buf.memory = V4L2_MEMORY_MMAP;
+					xioctl(fd, VIDIOC_DQBUF, &buf);
 
 
-		cerr << "Opened" << endl;
+					mtx.lock();
+					image_buffer.resize(buf.bytesused);
+					memcpy(image_buffer.data(), buffers[buf.index].start, buf.bytesused);
+					mtx.unlock();
 
-		// 2. Ask the device if it can capture frames
-		v4l2_capability capability;
-		if(ioctl(fd, VIDIOC_QUERYCAP, &capability) < 0){
-			cerr << "Camera: Failed to get device capabilities, VIDIOC_QUERYCAP Errno: " << strerror(errno) << endl;
-			terminate();
-		}
+					xioctl(fd, VIDIOC_QBUF, &buf);
+				}
 
-		cerr << "VIDIOC_QUERYCAP" << endl;
+				type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+				xioctl(fd, VIDIOC_STREAMOFF, &type);
+				for (i = 0; i < n_buffers; ++i){
+					v4l2_munmap(buffers[i].start, buffers[i].length);
+				}
 
-		// 3. Set Image format
-		v4l2_format imageFormat;
-		imageFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		imageFormat.fmt.pix.width = 1280;
-		imageFormat.fmt.pix.height = 960;
-		imageFormat.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
-		imageFormat.fmt.pix.field = V4L2_FIELD_NONE;
-		// Tell the device you are using this format
-		if(ioctl(fd, VIDIOC_S_FMT, &imageFormat) < 0){
-			cerr << "Camera: Device could not set format, VIDIOC_S_FMT Errno: " << strerror(errno) << endl;
-			terminate();
-		}
+				v4l2_close(fd);
 
-		cerr << "VIDIOC_S_FMT" << endl;
+				cerr << "Camera: Error in select:" << strerror(errno) << endl;
+				terminate();
 
-		// 4. Request Buffers from the device
-		v4l2_requestbuffers requestBuffer = {0};
-		// One request buffer
-		requestBuffer.count = 1;
-		// Request a buffer wich we an use for capturing frames
-		requestBuffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		requestBuffer.memory = V4L2_MEMORY_MMAP;
-
-		if(ioctl(fd, VIDIOC_REQBUFS, &requestBuffer) < 0){
-			cerr << "Camera: Could not request buffer from device, VIDIOC_REQBUFS Errno: " << strerror(errno) << endl;
-			terminate();
-		}
-
-		cerr << "VIDIOC_REQBUFS" << endl;
-
-		// 5. Query the buffer to get raw data ie. ask for the requested buffer and allocate memory for it
-		v4l2_buffer queryBuffer = {0};
-		queryBuffer.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		queryBuffer.memory = V4L2_MEMORY_MMAP;
-		queryBuffer.index = 0;
-		if(ioctl(fd, VIDIOC_QUERYBUF, &queryBuffer) < 0){
-			cerr << "Camera: Device did not return the buffer information, VIDIOC_QUERYBUF Errno: " << strerror(errno) << endl;
-			terminate();
-		}
-
-		cerr << "VIDIOC_QUERYBUF" << endl;
-
-		// Use a pointer to point to the newly created buffer
-		// mmap() will map the memory address of the device to
-		// an address in memory
-		char* buffer = (char*) mmap(NULL, queryBuffer.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, queryBuffer.m.offset);
-		memset(buffer, 0, queryBuffer.length);
-
-		cerr << "mmap" << endl;
-
-		// 6. Get a frame
-		// Create a new buffer type so the device knows which buffer we are talking about
-		v4l2_buffer bufferinfo;
-		memset(&bufferinfo, 0, sizeof(bufferinfo));
-		bufferinfo.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		bufferinfo.memory = V4L2_MEMORY_MMAP;
-		bufferinfo.index = 0;
-
-		cerr << "memset" << endl;
-
-		// Activate streaming
-		int type = bufferinfo.type;
-		if(ioctl(fd, VIDIOC_STREAMON, &type) < 0){
-			cerr << "Camera: Could not start streaming, VIDIOC_STREAMON Errno: " << strerror(errno) << endl;
-			terminate();
-		}
-
-		cerr << "VIDIOC_STREAMON" << endl;
-
-		// Queue the buffer
-		if(ioctl(fd, VIDIOC_QBUF, &bufferinfo) < 0){
-			cerr << "Camera: Could not queue buffer, VIDIOC_QBUF Errno: " << strerror(errno) << endl;
-			terminate();
-		}
-
-		cerr << "VIDIOC_QBUF" << endl;
-
-		// Dequeue the buffer
-		if(ioctl(fd, VIDIOC_DQBUF, &bufferinfo) < 0){
-			cerr << "Camera: Could not dequeue the buffer, VIDIOC_DQBUF Errno: " << strerror(errno) << endl;
-			terminate();
-		}
-
-		cerr << "VIDIOC_DQBUF" << endl;
-
-		// End streaming
-		if(ioctl(fd, VIDIOC_STREAMOFF, &type) < 0){
-			cerr << "Camera: Could not end streaming, VIDIOC_STREAMOFF Errno: " << strerror(errno) << endl;
-			terminate();
-		}
-
-		cerr << "VIDIOC_STREAMOFF" << endl;
+			}).detach();
+        }
 
 		// Copy data to Frame
-		frame.still.push_back({});
-		frame.still[0].resize(bufferinfo.bytesused);
-		memcpy(frame.still[0].data(), buffer, bufferinfo.bytesused);
+        if(image_buffer.size() != 0){
+        	mtx.lock();
+        	frame.still.push_back(image_buffer);
+			mtx.unlock();
+        }
 
-		cerr << "memcpy" << endl;
-
-		// Unmap the memory. Otherwise, the close() call will be ignored.
-		munmap(buffer, queryBuffer.length);
-
-
-		cerr << "munmap" << endl;
-
-		// Close the video device
-		if(close(fd) < 0){
-			cerr << "Camera: Camera: Unable to close device " << to_string(fd) << ". Error:  " << strerror(errno) << endl;
-			terminate();
-		}
-
-		cerr << "close" << endl;
 	}
 }
