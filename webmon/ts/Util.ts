@@ -5,6 +5,8 @@ export let createTimeLabel = function(unixTime: number){
     // Method A (well-mannered, ill-advised)
     //return new Date(unixTime * 1000).toLocaleString();
     
+    unixTime += (new Date().getTimezoneOffset()*-60);
+
     // Method B (intelligent)
     return new Date(unixTime * 1000).toJSON().replace("T", " ").slice(0, 16);
 

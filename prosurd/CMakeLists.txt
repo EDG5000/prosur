@@ -6,8 +6,11 @@ cmake_minimum_required(VERSION 3.16.3)
 project(prosurd LANGUAGES CXX)
 
 set(CMAKE_BUILD_TYPE Debug)
+#SET(CMAKE_CXX_FLAGS_DEBUG "-O0")
+#SET(CMAKE_C_FLAGS_DEBUG "-O0")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#set(CMAKE_EXE_LINKER_FLAGS "-Wl,-export-dynamic")
 
 #
 #	Build configuration options
@@ -141,3 +144,7 @@ add_executable(
 #
 
 include(dependencies.cmake)
+
+
+# For pedantic warnings
+#target_compile_options(prosurd PRIVATE -Wall -Wextra -Wpedantic -Werror)

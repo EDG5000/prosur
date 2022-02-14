@@ -24,6 +24,7 @@ export function init(){
         updateLabel();
         
         if(liveView){
+            console.log("liveView");
             // Ensure panning to live data as before the zoom changed to ensure auto-refresh stays active
             Main.Settings.pan = Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
         }

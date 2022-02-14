@@ -9,6 +9,7 @@
 #include "json.hpp"
 
 #include "Database/Frame.hpp"
+#include "Main.hpp"
 
 namespace Prosur::Datasource::AuxTemp{
 	constexpr int SENSOR_COUNT = 8;

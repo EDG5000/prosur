@@ -44,6 +44,7 @@ namespace Prosur::Webserver{
 			stringData = pJsonData.dump(4);
 		}
 
+		// Allows writing to output stream
 		friend ostream& operator<<(ostream& os, const HTTPResponseBody& dt){
 		    os << dt.stringData;
 		    return os;
@@ -53,6 +54,16 @@ namespace Prosur::Webserver{
 			stringData += rhs.stringData;
 			return *this;
 		}
+
+		// Allows obtaining as raw data pointer (see size())
+		operator string() const{
+			if(stringData.size() > 0){
+				return stringData;
+			}else{
+				return "<binary:" + to_string(binaryData.size()) + ">";
+			}
+		}
+
 
 		// Allows obtaining as raw data pointer (see size())
 		operator char*() const{

@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "JobFile/ParameterExtractor/PrusaSlicer.hpp"
+#include "Main.hpp"
 
 namespace Prosur::JobFile{
 
@@ -22,7 +23,7 @@ namespace Prosur::JobFile{
 				return type;
 			}
 		}
-		cerr << "JobFile: Unable to identify job file for job parameter extraction." << endl;
+		log("JobFile: Unable to identify job file for job parameter extraction.");
 		terminate();
 	}
 

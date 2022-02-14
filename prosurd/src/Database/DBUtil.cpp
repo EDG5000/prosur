@@ -15,6 +15,7 @@
 #include "Util/Util.hpp"
 #include <Database/DBValue.hpp>
 #include "OID.hpp"
+#include "Main.hpp"
 
 using namespace std;
 
@@ -34,7 +35,7 @@ namespace Prosur::Database::DBUtil{
 
 		// Check to see that the backend connection was successfully made
 		if (PQstatus(conn) != CONNECTION_OK){
-			cerr << "dbclient: Connection to database failed: " << string(PQerrorMessage(conn)) << endl;
+			log("dbclient: Connection to database failed: " + string(PQerrorMessage(conn)));
 			PQfinish(conn);
 			terminate();
 		}
@@ -43,7 +44,7 @@ namespace Prosur::Database::DBUtil{
 		ExecStatusType status = PQresultStatus(result);
 		// Check for query error
 		if(status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK){
-			cerr << "DBUtil: Setting up connection failed. Error: " << string(PQerrorMessage(conn)) << " Query was: " << query << endl;
+			log("DBUtil: Setting up connection failed. Error: " + string(PQerrorMessage(conn)));
 			terminate();
 		}
 
@@ -51,13 +52,14 @@ namespace Prosur::Database::DBUtil{
 	}
 
 	vector<map<string, DBValue>> query(string query, vector<DBValue> params){
-		//cerr << query << endl;
-		/*cerr << "DBUtil::query " << query << " is invoked with params: " << endl;
+		log(query);
+		//cerr + query);
+		/*log("DBUtil::query " + query + " is invoked with params: ");
 		for(auto& param: params){
-			cerr << param.toString() << " ";
+			cerr + param.toString() + " ";
 
 		}
-		cerr << endl;*/
+		cerr);*/
 
 		// Check if a connection is present for the current thread, if not, set it up
 		PGconn* conn;
@@ -112,12 +114,12 @@ namespace Prosur::Database::DBUtil{
 				query.c_str()
 			);
 		}else{
-			/*cerr << "Now running query " << query << " with params: " << endl;
+			/*log("Now running query " + query + " with params: ");
 			for(auto& param: params){
-				cerr << param.toString() << " ";
+				cerr + param.toString() + " ";
 
 			}
-			cerr << endl;*/
+			cerr);*/
 
 			// Perform query
 			result = PQexecParams(
@@ -135,11 +137,11 @@ namespace Prosur::Database::DBUtil{
 		ExecStatusType status = PQresultStatus(result);
 		// Check for query error
 		if(status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK){
-			cerr << "DBUtil: Query failed. Error: " << string(PQerrorMessage(conn)) << " Query was: " << query << " Parameters: ";
+			string error = "DBUtil: Query failed. Error: " + string(PQerrorMessage(conn)) + " Query was: " + query + " Parameters: ";
 			for(auto& param: params){
-				cerr << param.toString() << " ";
+				error += param.toString() + " ";
 			}
-			cerr << endl;
+			log(error);
 			terminate();
 		}
 
@@ -189,7 +191,7 @@ namespace Prosur::Database::DBUtil{
 					rowData[columnName] = *((int*) data); // implicit Param constructor
 					break;
 				case INT8OID:
-					//cerr << "directly from the horses' mouth: " << *((int64_t*) data) << endl;
+					//log("directly from the horses' mouth: " + *((int64_t*) data));
 					rowData[columnName] = *((int64_t*) data); // implicit Param constructor
 					break;
 				case BYTEAOID: {

@@ -1,6 +1,11 @@
 #include <sys/time.h>
 #include <Util/Util.hpp>
 
+#include <time.h>
+#include <dlfcn.h>
+#include <cxxabi.h>
+#include <execinfo.h>
+
 #include <ctime>
 #include <iostream>
 #include <string>
@@ -8,8 +13,12 @@
 #include <fstream>
 #include <regex>
 #include <cstdlib>
+#include <cstdio>
+#include <string>
+#include <sstream>
+#include <iostream>
 
-#include <time.h>
+#include "Main.hpp"
 
 using namespace std;
 
@@ -21,7 +30,7 @@ namespace Prosur::Util{
 			srand(time(NULL));
 			ready = true;
 		}
-		return std::rand();
+		return rand();
 	}
 
 	// Unix time in microseconds
@@ -48,26 +57,18 @@ namespace Prosur::Util{
 	    }
 	}
 
-	// Derrived from https://stackoverflow.com/a/68367878
 	void writeDataToFileDebug(vector<uint8_t> data, string filename){
-		std::ofstream out(filename, std::ios::out | std::ios::binary);
+		ofstream out(filename, ios::out | ios::binary);
 		out.write(reinterpret_cast<const char*>(data.data()), data.size());
 		out.close();
 	}
 
-	string isodatetime(int64_t timestamp){
-		struct tm* timeinfo = localtime((time_t*)(&timestamp));
-		char buf[sizeof "2011-10-08T07:07:09Z"];
-		strftime(buf, sizeof buf, "%F %TZ", localtime((time_t*)(&timestamp)));
-		return buf;
-	}
-
-	// Derrived from https://stackoverflow.com/a/9528166
 	string isodatetime(){
+		tzset();
 		time_t now;
 		time(&now);
-		char buf[sizeof "2011-10-08T07:07:09Z"];
-		strftime(buf, sizeof buf, "%F %TZ", gmtime(&now));
+		char buf[16];
+		strftime(buf, sizeof buf, "%b %d %H:%M:%S", localtime(&now));
 		return buf;
 	}
 
@@ -117,23 +118,23 @@ namespace Prosur::Util{
 		tm datetime = {};
 		char* result = strptime(dateTimeString.c_str(), "%Y-%m-%dT%H:%M:%S", &datetime);
 		if(result == NULL){ // Should not be NULL and should point to the NUL byte at the end of the input string to mark a successfull full parse
-			cerr << "Error, unable to parse date string: " << dateTimeString << " (failed at character " << result-dateTimeString.c_str() << *result << ")" << endl;
+			log("Error, unable to parse date string: " + dateTimeString);
 			terminate();
 		}
 		return mktime(&datetime);
 	}
 
-	std::string decodeURIComponent(std::string encoded) {
-		std::string decoded = encoded;
-		std::smatch sm;
-		std::string haystack;
+	string decodeURIComponent(string encoded) {
+		string decoded = encoded;
+		smatch sm;
+		string haystack;
 		int dynamicLength = decoded.size() - 2;
 		if (decoded.size() < 3) return decoded;
 		for (int i = 0; i < dynamicLength; i++){
 			haystack = decoded.substr(i, 3);
-			if (std::regex_match(haystack, sm, std::regex("%[0-9A-F]{2}"))){
+			if (regex_match(haystack, sm, regex("%[0-9A-F]{2}"))){
 				haystack = haystack.replace(0, 1, "0x");
-				std::string rc = {(char)std::stoi(haystack, nullptr, 16)};
+				string rc = {(char)stoi(haystack, nullptr, 16)};
 				decoded = decoded.replace(decoded.begin() + i, decoded.begin() + i + 3, rc);
 			}
 			dynamicLength = decoded.size() - 2;
@@ -141,16 +142,56 @@ namespace Prosur::Util{
 		return decoded;
 	}
 
-	std::string encodeURIComponent(std::string decoded){
-		std::ostringstream oss;
-		std::regex r("[!'\\(\\)*-.0-9A-Za-z_~]");
+	string encodeURIComponent(string decoded){
+		ostringstream oss;
+		regex r("[!'\\(\\)*-.0-9A-Za-z_~]");
 		for (char &c : decoded){
-			if (std::regex_match((std::string){c}, r)){
+			if (regex_match((string){c}, r)){
 				oss << c;
 			}else{
-				oss << "%" << std::uppercase << std::hex << (0xff & c);
+				oss << "%" << uppercase << hex << (0xff & c);
 			}
 		}
 		return oss.str();
+	}
+
+	string printStacktrace(){
+		const int skip = 1;
+		void *callstack[128];
+		const int nMaxFrames = sizeof(callstack) / sizeof(callstack[0]);
+		char buf[1024];
+		int nFrames = backtrace(callstack, nMaxFrames);
+		char **symbols = backtrace_symbols(callstack, nFrames);
+
+		std::ostringstream trace_buf;
+		for (int i = skip; i < nFrames; i++) {
+			Dl_info info;
+			if (dladdr(callstack[i], &info)) {
+				char *demangled = NULL;
+				int status;
+				demangled = abi::__cxa_demangle(info.dli_sname, NULL, 0, &status);
+				std::snprintf(
+					buf,
+					sizeof(buf),
+					"%-3d %*p %s + %zd\n",
+					i,
+					(int)(2 + sizeof(void*) * 2),
+					callstack[i],
+					status == 0 ? demangled : info.dli_sname,
+					(char *)callstack[i] - (char *)info.dli_saddr
+				);
+				free(demangled);
+			} else {
+				std::snprintf(buf, sizeof(buf), "%-3d %*p\n",
+					i, (int)(2 + sizeof(void*) * 2), callstack[i]);
+			}
+			trace_buf << buf;
+			std::snprintf(buf, sizeof(buf), "%s\n", symbols[i]);
+			trace_buf << buf;
+		}
+		free(symbols);
+		if (nFrames == nMaxFrames)
+			trace_buf << "[truncated]\n";
+		return trace_buf.str();
 	}
 }

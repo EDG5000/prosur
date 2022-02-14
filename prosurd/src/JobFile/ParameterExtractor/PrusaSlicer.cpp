@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "Util/Util.hpp"
+#include "Main.hpp"
 
 namespace Prosur::JobFile::Extractor::PrusaSlicer{
 
@@ -14,7 +15,7 @@ namespace Prosur::JobFile::Extractor::PrusaSlicer{
 		// Find part in file where parameters start (last section of the file)
 		int start = fileData.find(START_MARKER);
 		if(start == string::npos){
-			cerr << "JobFile::Extractor::PrusaSlicer: Unable to find parameter start marker: " + START_MARKER << " file size: " + to_string(fileData.size()) << endl;
+			log("JobFile::Extractor::PrusaSlicer: Unable to find parameter start marker: " + START_MARKER + " file size: " + to_string(fileData.size()));
 			terminate();
 		}
 
@@ -22,7 +23,7 @@ namespace Prosur::JobFile::Extractor::PrusaSlicer{
 		const string parameterSource = fileData.substr(start, string::npos);
 		const vector<string> lines = Util::strSplit(parameterSource, "\n");
 		if(lines.size() < 2){
-			cerr << "JobFile::Extractor::PrusaSlicer: Expected at least two lines in the parameter section. Section: " << parameterSource << " Line count: " << to_string(lines.size()) << endl;
+			log("JobFile::Extractor::PrusaSlicer: Expected at least two lines in the parameter section. Section: " + parameterSource + " Line count: " + to_string(lines.size()));
 			terminate();
 		}
 
@@ -44,7 +45,7 @@ namespace Prosur::JobFile::Extractor::PrusaSlicer{
 			outputMap[components[0]] = components[1];
 		}
 		if(outputMap.size() == 0){
-			cerr << "ParameterExtractor: Expected output map size to be larger than zero. Source string: " << parameterSource << endl;
+			log("ParameterExtractor: Expected output map size to be larger than zero. Source string: " + parameterSource);
 			terminate();
 		}
 		return outputMap;

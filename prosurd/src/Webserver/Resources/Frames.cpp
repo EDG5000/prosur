@@ -34,6 +34,7 @@
 #include "Webserver/HTTPResponseBody.hpp"
 #include "json.hpp"
 #include "Util/Util.hpp"
+#include "Main.hpp"
 
 using namespace std;
 using namespace nlohmann;
@@ -74,12 +75,12 @@ namespace Prosur::Webserver::Resources::Frames{
 				numericParameters[key] = stol(parameters[key]);
 			}catch(const exception& e){
 				responseBody = "Webserver: Error: "+key+" parameter is non-numeric. reason: " + string(e.what());
-				cerr << responseBody << endl;
+				log(responseBody);
 				return HTTP::BAD_REQUEST;
 			}
 			if(numericParameters[key] < 0){
 				responseBody = "Webserver: Error: "+key+" parameter is lower than 0. Value: " + to_string(numericParameters[key]);
-				cerr << responseBody << endl;
+				log(responseBody);
 				return HTTP::BAD_REQUEST;
 			}
 		}
@@ -87,14 +88,14 @@ namespace Prosur::Webserver::Resources::Frames{
 		// Validate the mode param, which is mandatory
 		if(!parameters.contains(KEY_PARAM_MODE)){
 			responseBody = "Webserver: Error: mode parameter not present, while it is mandatory.";
-			cerr << responseBody << endl;
+			log(responseBody);
 			return HTTP::BAD_REQUEST;
 		}
 
 		// Check if mode param is one of available options
 		if(!MODE_VALUES.contains(parameters[KEY_PARAM_MODE])){
 			responseBody = "Webserver: Unknown mode selected: " + parameters[KEY_PARAM_MODE];
-			cerr << responseBody << endl;
+			log(responseBody);
 			return HTTP::BAD_REQUEST;
 		}
 
@@ -105,7 +106,7 @@ namespace Prosur::Webserver::Resources::Frames{
 		for(const auto& key: MANDATORY_PARAMETERS.at(mode)){
 			if(!numericParameters.contains(key)){
 				responseBody = "Webserver: Parameter " + key + " was not present, it is mandatory for the selected mode";
-				cerr << responseBody << endl;
+				log(responseBody);
 				return HTTP::BAD_REQUEST;
 			}
 		}
@@ -116,7 +117,7 @@ namespace Prosur::Webserver::Resources::Frames{
 			modulus = numericParameters[KEY_PARAM_MODULUS];
 			if(modulus == 0){
 				responseBody = "Webserver: Error: modulus parameter needs to be at least 1. Value: " + to_string(numericParameters[KEY_PARAM_MODULUS]);
-				cerr << responseBody << endl;
+				log(responseBody);
 				return HTTP::BAD_REQUEST;
 			}
 		}
@@ -127,7 +128,7 @@ namespace Prosur::Webserver::Resources::Frames{
 			// Check the input for max size
 			if(parameters[KEY_PARAM_COLUMNS].size() > 1000){
 				responseBody = "Webserver: error: column parameter exceeded max length of 1000";
-				cerr << responseBody << endl;
+				log(responseBody);
 				return HTTP::BAD_REQUEST;
 			}
 			// Parse the parameter into a vector
@@ -136,12 +137,12 @@ namespace Prosur::Webserver::Resources::Frames{
 			for(string& column: userSelectedColumns){
 				if(!Database::frameColumnTypes.contains(column)){
 					responseBody = "Webserver: Error: selected column does not exist in database: " + column;
-					cerr << responseBody << endl;
+					log(responseBody);
 					return HTTP::BAD_REQUEST;
 				}
 				if(Database::frameColumnTypes[column] == "text" || Database::frameColumnTypes[column] == "bytea"){
 					responseBody = "Webserver: Error: selected column is not numeric: " + column;
-					cerr << responseBody << endl;
+					log(responseBody);
 					return HTTP::BAD_REQUEST;
 				}
 			}
@@ -203,7 +204,7 @@ namespace Prosur::Webserver::Resources::Frames{
 		if(frames.size() == 0){
 			// Nothing do to; header cannot be constructed and no rows to serialize.
 			//responseBody = "Webserver: Frames: No data found.";;
-			//cerr << responseBody << endl;
+			//log(responseBody);
 			return HTTP::NOT_FOUND;
 		}
 

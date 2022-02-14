@@ -5,6 +5,8 @@ namespace ChunkLoader{
         setInterval(function(){
             //console.log(Main.Settings.pan + Const.CHUNK_RANGE[Main.Settings.zoom] - (Math.floor(new Date().getTime()/1000)-2));
             if((Main.Settings.pan + Const.CHUNK_RANGE[Main.Settings.zoom]) > (Math.floor(new Date().getTime()/1000)-2)){
+                Main.lastImageInvalidated = true; // Prevent image on the right from being cached by browser
+                console.log("Live view active");
                 // Viewing last second; enable live view
                 Main.Settings.pan = Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
                 
@@ -16,7 +18,7 @@ namespace ChunkLoader{
                 }
 
             }
-        }, 500);
+        }, 1000);
         resetCache();
     }
 

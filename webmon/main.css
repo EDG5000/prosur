@@ -62,12 +62,12 @@ canvas, #timeline{
 #timeline{
     bottom: 0;
     height: 200px;
-    margin-left: 450px;
+    margin-left: 470px;
     margin-right: 400px;
     border-top: 1px solid black;
     overflow: hidden;
     white-space: nowrap;
-    width: calc(100vw - 400px - 450px);
+    width: calc(100vw - 400px - 470px);
 }
 
 canvas{

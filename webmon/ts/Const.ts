@@ -49,7 +49,7 @@ namespace Const{
     export const X_GRID_INTERVAL = 0.2; // Relative to graph width
     export const Y_GRID_INTERVAL = 0.1; // Relative to graph height
     export const Y_MARGIN = 40;
-    export const X_MARGIN = 50;
+    export const X_MARGIN = 70;
     export const Y_LABEL_X_OFFSET = 10;
     export const X_LABEL_Y_OFFSET = 20;
     export const SCROLL_BAR_SIZE = 50; // Needs to be set to browser scroll bar size or larger

@@ -14,6 +14,7 @@
 
 #include "json.hpp"
 
+#include "Main.hpp"
 #include "Database/Frame.hpp"
 
 using namespace nlohmann;
@@ -29,14 +30,14 @@ namespace Prosur::Datasource::AuxTemp{
 	static void init(){
 		fd = open(DEVICE_NAME.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
 		if (fd < 0) {
-			cerr << "Error opening " << DEVICE_NAME << " " << strerror(errno) << endl;
+			log("Error opening " + DEVICE_NAME + " " + string(strerror(errno)));
 			terminate();
 		}
 
 		struct termios tty;
 
 		if (tcgetattr(fd, &tty) < 0) {
-			cerr << "Error from tcgetattr: " << strerror(errno) << endl;
+			log("Error from tcgetattr: " + string(strerror(errno)));
 			terminate();
 		}
 
@@ -66,7 +67,7 @@ namespace Prosur::Datasource::AuxTemp{
 		tty.c_cc[VEOF] = 0x04;
 
 		if(tcsetattr(fd, TCSANOW, &tty) != 0){
-			cerr << "AuxTemp: Error from tcsetattr: " << strerror(errno) << endl;
+			log("AuxTemp: Error from tcsetattr: " + string(strerror(errno)));
 			terminate();
 		}
 	}
@@ -87,9 +88,9 @@ namespace Prosur::Datasource::AuxTemp{
 			// Terminate string
 			buf[rdlen] = 0;
 		}else if (rdlen < 0){
-			cerr << "Error from read: " << " " << strerror(errno) << endl;
+			log("Error from read: " + string(strerror(errno)));
 		} else{
-			cerr << "Nothing read. EOF?" << endl;
+			log("Nothing read. EOF?");
 		}
 		readBuffer += string(buf);
 
@@ -106,21 +107,22 @@ namespace Prosur::Datasource::AuxTemp{
 			try{
 				json auxTempFrame = json::parse(lines[lineIndex]);
 				if(auxTempFrame.size() < 2){
-					cerr << "Error: expected at least 2 elements in frame: " << lines[lineIndex] << endl;
+					log("Error: expected at least 2 elements in frame: " + lines[lineIndex]);
 					terminate();
 				}
 				// Read first element which should equal the element count
 				int expectedValues = auxTempFrame[0];
 				if(auxTempFrame.size()-1 != expectedValues){
-					cerr << "Error: indicated element count does not correspond to actual element count in frame: " << lines[lineIndex] << endl;
+					log("Error: indicated element count does not correspond to actual element count in frame: " + lines[lineIndex]);
 					terminate();
 				}
 				// Copy values over; start at second element to skip the size-indicating element.
 				for(int valueIndex = 1; valueIndex < auxTempFrame.size(); valueIndex++){
-					frame.auxTemp.push_back(auxTempFrame[valueIndex]);
+					float val = auxTempFrame[valueIndex];
+					frame.auxTemp.push_back(val / 100);
 				}
 			}catch(exception& e){
-				cerr << "Warning: Dropping frame: " << lines[lineIndex] << endl;
+				log("Warning: Dropping frame: " + lines[lineIndex]);
 			}
 		}
 

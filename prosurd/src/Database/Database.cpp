@@ -21,6 +21,7 @@
 #include <Database/DBValue.hpp>
 #include "Database/Frame.hpp"
 #include "Util/Util.hpp"
+#include "Main.hpp"
 
 using namespace std;
 using namespace filesystem;
@@ -40,7 +41,7 @@ namespace Prosur::Database{
 		buffer << t.rdbuf();
 		string databaseCreationScript = buffer.str();
 		if(databaseCreationScript.size() == 0){
-			cerr << "Database: Error: Unable to load database.sql from current path. Make sure ${CWD}/database.sql exists." << endl;
+			log("Database: Error: Unable to load database.sql from current path. Make sure ${CWD}/database.sql exists.");
 			terminate();
 		}
 		DBUtil::query(databaseCreationScript.c_str());
@@ -58,7 +59,7 @@ namespace Prosur::Database{
 			// No existing jobs present, start ID at 0
 			lastJobId = 0;
 		}else if(result.size() != 1){
-			cerr << "DatabaseClient: Unable to obtain latest job_id value. Row count was not 1, but " << result.size()  << endl;
+			log("DatabaseClient: Unable to obtain latest job_id value. Row count was not 1, but " + to_string(result.size()));
 			terminate();
 		}else if(result.size() == 1){
 			lastJobId = result[0]["job_id"];
@@ -99,7 +100,7 @@ namespace Prosur::Database{
 		if(newJob){
 			// Get filename and date modified of current job file
 			if(frame.jobFilename == ""){
-				cerr << "DatabaseClient: update: Error: get_current_job_filename returned empty string, cannot insert job." << endl;
+				log("DatabaseClient: update: Error: get_current_job_filename returned empty string, cannot insert job.");
 				terminate();
 			}
 
@@ -114,7 +115,7 @@ namespace Prosur::Database{
 				iterations++;
 			}
 			if(iterations == 10){ // No more then 10 iterations are reasonable
-				cerr << "DatabaseClient: update: Infinite loop when trying to find unique filename, aborting. Filename: " << frame.jobFilename << endl;
+				log("DatabaseClient: update: Infinite loop when trying to find unique filename, aborting. Filename: " + frame.jobFilename);
 				terminate();
 			}
 

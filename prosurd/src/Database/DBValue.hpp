@@ -18,6 +18,8 @@
 
 #include "json.hpp"
 
+#include "Main.hpp"
+
 using namespace std;
 using namespace nlohmann;
 
@@ -43,7 +45,7 @@ namespace Prosur::Database{
 		void checkType(DBValueType pType){
 			if(type != pType){
 				// This will slow down accessing of parameters, but better safe than sorry
-				cerr << "DBUtil: Param: Attempt to access Param as "+to_string(pType)+" while type is " << to_string(type) << " Value: " << toString() << endl;
+				log("DBUtil: Param: Attempt to access Param as "+to_string(pType)+" while type is " + to_string(type) + " Value: " + toString());
 				terminate();
 			}
 		}
@@ -74,7 +76,7 @@ namespace Prosur::Database{
 				case Binary:
 					return binaryVal.size() == 0;
 				case Undefined:
-					cerr << "Error: Calling isNull() on DBValue with type Undefined causes undefined behaviour." << endl;
+					log("Error: Calling isNull() on DBValue with type Undefined causes undefined behaviour.");
 					terminate();
 				}
 				return 0;
@@ -93,7 +95,7 @@ namespace Prosur::Database{
 				case Binary:
 					return binaryVal.size();
 				case Undefined:
-					cerr << "Error: Calling size() on DBValue with type Undefined causes undefined behaviour." << endl;
+					log("Error: Calling size() on DBValue with type Undefined causes undefined behaviour.");
 					terminate();
 				}
 				return 0;
@@ -111,7 +113,7 @@ namespace Prosur::Database{
 				case String:
 					return (char*) stringVal.data();
 				case Undefined:
-					cerr << "Error: Calling operator char*() on DBValue with type Undefined causes undefined behaviour." << endl;
+					log("Error: Calling operator char*() on DBValue with type Undefined causes undefined behaviour.");
 					terminate();
 				default:
 				case Binary:
@@ -177,7 +179,7 @@ namespace Prosur::Database{
 				case Binary:
 					return "<binary data of length: " + to_string(size()) + ">";
 				case Undefined:
-					cerr << "Error: Calling operator toString() on DBValue with type Undefined causes undefined behaviour." << endl;
+					log("Error: Calling operator toString() on DBValue with type Undefined causes undefined behaviour.");
 					terminate();
 				}
 			}

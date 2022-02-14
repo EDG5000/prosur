@@ -7,6 +7,7 @@
 #include "Util/Util.hpp"
 #include "Database/Database.hpp"
 #include "Database/DBUtil.hpp"
+#include "Main.hpp"
 
 using namespace std;
 
@@ -25,7 +26,7 @@ namespace Prosur::Webserver::Resources::Jobs{
 		for(auto& row: jobs){
 			json job;
 			job["time"] = row["time"];
-			//cerr << job["time"] << endl;
+			//cerr + job["time"]);
 			job["job_file_name"] = row["job_file_name"];
 			job["job_id"] = row["job_id"];
 			returnObject.push_back(job);

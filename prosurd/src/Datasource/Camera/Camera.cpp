@@ -6,48 +6,34 @@
 #include <sys/mman.h>
 #include <errno.h>
 #include <string.h>
+#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <linux/videodev2.h>
 
 #include <string>
 #include <vector>
 #include <iostream>
 #include <ostream>
+#include <mutex>
 #include <thread>
 
 #include "linux/v4l2-common.h"
 #include "linux/videodev2.h"
-
-#include "Database/Frame.hpp"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/mman.h>
-#include <linux/videodev2.h>
 #include "libv4l2.h"
 
-#include <mutex>
-#include <thread>
+#include "Database/Frame.hpp"
+#include "Main.hpp"
+#include "Main.hpp"
 
 using namespace std;
-
-
 
 namespace Prosur::Datasource::Camera{
 
 	mutex mtx;
-
 	bool ready = false;
-
-	//void* image_buffer = 0; // 0 when empty (while still grabbing first framr)
-	//size_t image_buffer_size; // Image buffer
-
 	vector<char> image_buffer;
-
 	#define CLEAR(x) memset(&(x), 0, sizeof(x))
 
 	struct buffer{
@@ -57,19 +43,17 @@ namespace Prosur::Datasource::Camera{
 
 	static void xioctl(int fh, int request, void *arg){
 		int r;
-
 		do{
 			r = v4l2_ioctl(fh, request, arg);
 		}while (r == -1 && ((errno == EINTR) || (errno == EAGAIN)));
 
 		if(r == -1){
-			cerr << "Camera: error: " << strerror(errno) << endl;
+			log("Camera: error: " + string(strerror(errno)));
 			terminate();
 		}
 	}
 
 	void fillFrame(Database::Frame& frame){
-
         if(!ready){
         	ready = true;
 			thread([]{
@@ -88,7 +72,7 @@ namespace Prosur::Datasource::Camera{
 
 				fd = v4l2_open(dev_name, O_RDWR | O_NONBLOCK, 0);
 				if (fd < 0) {
-					cerr << "Cannot open device. Error: " << strerror(errno) << endl;
+					log("Cannot open device. Error: " + string(strerror(errno)));
 					terminate();
 				}
 
@@ -100,11 +84,11 @@ namespace Prosur::Datasource::Camera{
 				fmt.fmt.pix.field = V4L2_FIELD_NONE;
 				xioctl(fd, VIDIOC_S_FMT, &fmt);
 				if (fmt.fmt.pix.pixelformat != V4L2_PIX_FMT_MJPEG) {
-					cerr << "Camera: Libv4l didn't accept V4L2_PIX_FMT_MJPEG format. Can't proceed." << endl;
+					log("Camera: Libv4l didn't accept V4L2_PIX_FMT_MJPEG format. Can't proceed.");
 					terminate();
 				}
 				if ((fmt.fmt.pix.width != 1280) || (fmt.fmt.pix.height != 960)){
-					cerr << "Camera: Libv4l didn't accept requested resoluation. Can't proceed." << endl;
+					log("Camera: Libv4l didn't accept requested resoluation. Can't proceed.");
 					terminate();
 				}
 
@@ -128,7 +112,7 @@ namespace Prosur::Datasource::Camera{
 					buffers[n_buffers].start = v4l2_mmap(NULL, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, buf.m.offset);
 
 					if (MAP_FAILED == buffers[n_buffers].start) {
-						cerr << "Camera: map failed." << endl;
+						log("Camera: map failed.");
 						terminate();
 					}
 				}
@@ -145,6 +129,11 @@ namespace Prosur::Datasource::Camera{
 				xioctl(fd, VIDIOC_STREAMON, &type);
 
 				while(true){
+					// Get frame collection start time
+					struct timeval tv;
+					gettimeofday(&tv,NULL);
+					long startTime = tv.tv_sec*(uint64_t)1000000+tv.tv_usec;
+
 					do{
 						FD_ZERO(&fds);
 						FD_SET(fd, &fds);
@@ -153,7 +142,6 @@ namespace Prosur::Datasource::Camera{
 						tv.tv_sec = 2;
 						tv.tv_usec = 0;
 
-						//r = select(fd + 1, &fds, NULL, NULL, &tv);
 						r = select(fd + 1, &fds, NULL, NULL, NULL);
 					}while ((r == -1 && (errno = EINTR)));
 					if (r == -1) {
@@ -165,13 +153,25 @@ namespace Prosur::Datasource::Camera{
 					buf.memory = V4L2_MEMORY_MMAP;
 					xioctl(fd, VIDIOC_DQBUF, &buf);
 
-
 					mtx.lock();
 					image_buffer.resize(buf.bytesused);
 					memcpy(image_buffer.data(), buffers[buf.index].start, buf.bytesused);
 					mtx.unlock();
 
 					xioctl(fd, VIDIOC_QBUF, &buf);
+
+					// Get frame collection end time
+					gettimeofday(&tv,NULL);
+					long endTime = tv.tv_sec*(uint64_t)1000000+tv.tv_usec;
+
+					// Sleep to maintain needed collection frequency
+					int64_t timeTaken = endTime - startTime;
+					int64_t sleepTime = (FRAME_COLLECTION_INTERVAL * STILL_CAPTURE_INTERVAL) - timeTaken;
+					if(sleepTime < 0){
+						log("Camera: warning: taking " + to_string(sleepTime * -1) + "us too long to keep up with desired " + to_string(FRAME_COLLECTION_INTERVAL) + "us image collection rate.");
+						sleepTime = 0;
+					}
+					usleep(sleepTime);
 				}
 
 				type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -182,7 +182,7 @@ namespace Prosur::Datasource::Camera{
 
 				v4l2_close(fd);
 
-				cerr << "Camera: Error in select:" << strerror(errno) << endl;
+				log("Camera: Error in select:" + string(strerror(errno)));
 				terminate();
 
 			}).detach();

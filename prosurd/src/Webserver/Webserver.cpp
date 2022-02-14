@@ -38,6 +38,7 @@
 #include "Webserver/Resources/Client.hpp"
 #include "Webserver/Resources/Job.hpp"
 #include "Webserver/HTTPResponseBody.hpp"
+#include "Main.hpp"
 
 using namespace std;
 
@@ -105,10 +106,6 @@ namespace Prosur::Webserver{
 				(void*) (buffer + requestSize), // buf
 				sizeof(buffer)-requestSize-1 // nbytes
 			);
-			if(bytesRead < 0){
-				cerr << "Webserver: Received error while reading request data. Error code: " + to_string(bytesRead) << endl;
-				return;
-			}
 			requestSize += bytesRead;
 			if(requestSize > BUFSIZE-1 || buffer[requestSize-1] == '\n'){
 				break;
@@ -118,7 +115,7 @@ namespace Prosur::Webserver{
 		// Request cannot be empty
 		if(requestSize == 0){
 			string error = "Webserver: Error: request size is 0, ignoring connection.";
-			cerr << error << endl;
+			log(error);
 			sendResponse(clientSocket, HTTP::BAD_REQUEST, error);
 			return;
 		}
@@ -126,7 +123,7 @@ namespace Prosur::Webserver{
 		// Limit request size to 1000 bytes
 		if(requestSize > 1000){
 			string error = "Webserver: Error: request size exceeds 1000. Size: " + to_string(requestSize);
-			cerr << error << endl;
+			log(error);
 			sendResponse(clientSocket, HTTP::BAD_REQUEST, error);
 			return;
 		}
@@ -138,7 +135,7 @@ namespace Prosur::Webserver{
 		vector<string> headerLines = Util::strSplit(requestData, "\r\n");
 		if(headerLines.size() == 0){
 			string error = "Webserver: Request header line count expected to be at least 1. Request data: " + requestData ;
-			cerr << error << endl;
+			log(error);
 			sendResponse(clientSocket, HTTP::BAD_REQUEST, error);
 			return;
 		}
@@ -148,13 +145,16 @@ namespace Prosur::Webserver{
 		vector<string> statusComponents = Util::strSplit(statusLine, " ");
 		if(statusComponents.size() != 3){
 			string error = "Webserver: Expected request status line component count to be 3, Status line was: " + statusLine;
-			cerr << error << endl;
+			log(error);
 			sendResponse(clientSocket, HTTP::BAD_REQUEST, error);
 			return;
 		}
 
 		// Parse URL to extract document name and query string (both optional)
 		string url = statusComponents[1];
+
+		log(url);
+
 		vector<string> urlSplit = Util::strSplit(url, "?");
 
 		// Extract document name (may be empty) from URL
@@ -171,7 +171,7 @@ namespace Prosur::Webserver{
 				vector<string> pairElements = Util::strSplit(pair, "=");
 				if(pairElements.size() != 2){
 					string error = "Webserver: Error: Malformed URI. Pair element count expected to be 2. Source pair: " + pair + "Total URL: " + url;
-					cerr << error << endl;
+					log(error);
 					sendResponse(clientSocket, HTTP::BAD_REQUEST, error);
 					return;
 				}
@@ -184,7 +184,7 @@ namespace Prosur::Webserver{
 		// Detect non-existing document
 		if(!resourceHandlers.contains(resourceName)){
 			string error = "Webserver: Error: Resource not found: " + resourceName;
-			cerr << error << endl;
+			log(error);
 			sendResponse(clientSocket, HTTP::NOT_FOUND, error);
 			return;
 		}
@@ -194,7 +194,7 @@ namespace Prosur::Webserver{
 		int httpCode = resourceHandlers[resourceName](resourceName, responseBody, requestParameters);
 
 		if(httpCode != HTTP::OK && httpCode != HTTP::NOT_FOUND){
-			cerr << "Webserver: Error while serving resource. URL: " + url << endl;
+			log("Webserver: Error while serving resource. URL: " + url);
 		}
 
 		// Respond
@@ -219,28 +219,28 @@ namespace Prosur::Webserver{
 			// 2. Create socket
 			int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 			if(serverSocket < 0){
-				cerr << "Failed to create socket. Error code: " << to_string(serverSocket) << endl;
+				log("Failed to create socket. Error code: " + to_string(serverSocket));
 				terminate();
 			}
 
 			// Enable SO_REUSEADDR setting to disable socket reuse cooldown period
 			int enable = 1;
 			if(setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0){
-				cerr << "Failed to enable SO_REUSEADDR. Error code: " << to_string(serverSocket) << endl;
+				log("Failed to enable SO_REUSEADDR. Error code: " + to_string(serverSocket));
 				terminate();
 			}
 
 			// 3. Bind socket
 			int result = bind(serverSocket, (SA*)&serverAddr, sizeof(serverAddr));
 			if(result < 0){
-				cerr << "Webserver: Unable to bind to socket. Error code: " << to_string(result) << endl;
+				log("Webserver: Unable to bind to socket. Error code: " + to_string(result));
 				terminate();
 			}
 
 			// 4. Start listening
 			result = listen(serverSocket, SERVER_BACKLOG);
 			if(result < 0){
-				cerr << "Webserver: Unable to listen to socket. Error code: " << to_string(result) << endl;
+				log("Webserver: Unable to listen to socket. Error code: " + to_string(result));
 				terminate();
 			}
 

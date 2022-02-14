@@ -17,3 +17,5 @@ target_link_libraries(prosurd PUBLIC PkgConfig::libpq)
 pkg_check_modules(libv4l2 REQUIRED IMPORTED_TARGET libv4l2>=1.18.0)
 target_link_libraries(prosurd PUBLIC PkgConfig::libv4l2)
 
+# For printing backtraces
+target_link_libraries(prosurd PUBLIC dl)

@@ -26,6 +26,7 @@ namespace Main{
     export let chunks: any[] = null;
 
     export let canvasInvalidated = true;
+    export let lastImageInvalidated = true;
 
     let init = function(){
         // Get elements

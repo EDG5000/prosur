@@ -11,6 +11,7 @@
 #include <Util/Util.hpp>
 #include "Database/Frame.hpp"
 #include "JobFile/JobFile.hpp"
+#include "Main.hpp"
 
 using namespace std;
 using namespace nlohmann;
@@ -19,6 +20,8 @@ namespace Prosur::Datasource::RepRap{
 
 	const int TEMP_SENSOR_COUNT = 3;
 	const string RR_BASE_URL = "http://theseus3.local/";
+	//const string RR_BASE_URL = "http://192.168.2.22/";
+
 	const string FLAGS_STATUS = "d99fn";
 	const string FLAGS_JOB = "d99vn";
 	const string KEY_JOB = "job";
@@ -34,14 +37,14 @@ namespace Prosur::Datasource::RepRap{
 		}
 		string receiveBuffer = HTTPUtil::call(url);
 		if(receiveBuffer == ""){
-			cerr << "RepRapClient: downloadModel: HTTPUtil::call returned empty string." << endl;
+			log("RepRapClient: downloadModel: HTTPUtil::call returned empty string.");
 			terminate();
 			return json();
 		}
 		try{
 			return json::parse(receiveBuffer);
 		}catch(const json::exception& e){
-			cerr << "RepRapClient: exception while parsing body in call(): " << e.what() << endl;
+			log("RepRapClient: exception while parsing body in call(): " + string(e.what()));
 			return json();
 		}
 	}
@@ -61,7 +64,7 @@ namespace Prosur::Datasource::RepRap{
 				for(int i = 0; i < (keyIndex+1); i++){
 					error += "." + keys[i];
 				}
-				cerr << error << endl;
+				log(error);
 				terminate();
 			}
 			// Set object reference to be used next iteration
@@ -77,7 +80,7 @@ namespace Prosur::Datasource::RepRap{
 		// Download base status object and store in om
 		json om = downloadModel(FLAGS_STATUS);
 		if(om.is_null()){
-			cerr << "rffclient: unable to retrieve om_status, skipping update cycle." << endl;
+			log("rffclient: unable to retrieve om_status, skipping update cycle.");
 			terminate();
 		}
 
@@ -86,7 +89,7 @@ namespace Prosur::Datasource::RepRap{
 		try{
 			frame.isPrinting = !om["result"]["job"]["build"].is_null();
 		}catch(json::exception& e){
-			cerr << "RepRapClient: fillFrame: unable to value for isPrinting state from om: " << e.what() << endl;
+			log("RepRapClient: fillFrame: unable to value for isPrinting state from om: " + string(e.what()));
 			terminate();
 		}
 
@@ -98,7 +101,7 @@ namespace Prosur::Datasource::RepRap{
 			if(frame.isPrinting){
 				json om_job = downloadModel(FLAGS_JOB, KEY_JOB);
 				if(om_job.is_null()){
-					cerr << "rffclient: unable to retrieve om_job." << endl;
+					log("rffclient: unable to retrieve om_job.");
 					terminate();
 				}
 
@@ -158,7 +161,7 @@ namespace Prosur::Datasource::RepRap{
 				frame.probe.push_back(om["result"]["sensors"]["probes"][i]["value"][0]); // Probes with multiple values will only have value 0 stored.
 			}
 		}catch(json::exception& e){
-			cerr << "RepRapClient: fillFrame: error: " << e.what() << " while accessing object model: " << om.dump(4) << " frame: " << frame.toString() << " keys accessed: " << Util::join(lastKeysChecked, ".") << endl;
+			log("RepRapClient: fillFrame: error: " + string(e.what()) + " while accessing object model: " + string(om.dump(4)) + " frame: " + string(frame.toString()) + " keys accessed: " + Util::join(lastKeysChecked, "."));
 			terminate();
 		}
 
@@ -167,7 +170,7 @@ namespace Prosur::Datasource::RepRap{
 		if(frame.isPrinting && !frame.wasPrinting){
 			string filename = frame.jobFilename;
 			if(filename == ""){
-				cerr << "RepRapClient: error: get_current_job_filename returned an empty string. unable to download job file" << endl;
+				log("RepRapClient: error: get_current_job_filename returned an empty string. unable to download job file");
 				terminate();
 			}
 			//http://theseus3.local/rr_download?name=0:/gcodes/bltouch-mount-v2.gcode

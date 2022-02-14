@@ -7,6 +7,7 @@
 #include "Util/Util.hpp"
 #include "Database/Database.hpp"
 #include "Database/DBUtil.hpp"
+#include "Main.hpp"
 
 using namespace std;
 
@@ -17,7 +18,7 @@ namespace Prosur::Webserver::Resources::Job{
 
 		if(!parameters.contains(KEY_JOB_ID)){
 			responseBody = "Webserver: Job: job_id parameter missing.";
-			cerr << responseBody << endl;
+			log(responseBody);
 			return HTTP::BAD_REQUEST;
 		}
 
@@ -26,7 +27,7 @@ namespace Prosur::Webserver::Resources::Job{
 			jobId = stoi(parameters[KEY_JOB_ID]);
 		}catch(const exception& e){
 			responseBody = "Webserver: Error: parameter " + KEY_JOB_ID + " is non-numeric. reason: " + string(e.what());
-			cerr << responseBody << endl;
+			log(responseBody);
 			return HTTP::BAD_REQUEST;
 		}
 
@@ -42,11 +43,11 @@ namespace Prosur::Webserver::Resources::Job{
 		// Get job parameter key and value from each row, put in JSON object
 		for(auto& row: parameterRows){
 			if(!row.contains("key")){
-				cerr << "Database::Resource::Frames: Missing column: key from output." << endl;
+				log("Database::Resource::Frames: Missing column: key from output.");
 				terminate();
 			}
 			if(!row.contains("value")){
-				cerr << "Database::Resource::Frames: Missing column: value from output." << endl;
+				log("Database::Resource::Frames: Missing column: value from output.");
 				terminate();
 			}
 			outputObject[(string) row["key"]] = (string) row["value"];

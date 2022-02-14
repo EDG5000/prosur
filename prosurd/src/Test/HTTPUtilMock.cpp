@@ -9,6 +9,7 @@
 #include "json.hpp"
 
 #include <Util/Util.hpp>
+#include "Main.hpp"
 
 using namespace std;
 using namespace filesystem;
@@ -77,7 +78,7 @@ rr_gcode?gcode=M37 P\"0:/gcodes/CFFFP_Electronics Box.gcode\"
 		// simulated print.
 
 		string path = current_path().string() + "/testdata/mock_http_requests.har.json";
-		//cerr << "HTTPMock: init: loading from " << path << endl;
+		//log("HTTPMock: init: loading from " + path);
 		ifstream file(path);
         stringstream buffer;
         buffer << file.rdbuf();
@@ -124,13 +125,13 @@ rr_gcode?gcode=M37 P\"0:/gcodes/CFFFP_Electronics Box.gcode\"
 		// Perform modulus operation to stay within vector range regardless of subsequent invocation count
 		string id = identify(url);
 		if(!responses.contains(id)){
-			cerr << "HTTPUtilMock: No responses available for request with id " << id << " and URL: " << url << endl;
+			log("HTTPUtilMock: No responses available for request with id " + id + " and URL: " + url);
 		}
 		responseLastIndex[id]++;
 		int index = responseLastIndex[id] % responses[id].size();
 		string& response = responses[id][index];
 		if(response.size() == 0){
-			cerr << "HTTPUtilMock: Empty response body for id: " << id << " index: " << to_string(index) << endl;
+			log("HTTPUtilMock: Empty response body for id: " + id + " index: " + to_string(index));
 			terminate();
 		}
 		return response;
