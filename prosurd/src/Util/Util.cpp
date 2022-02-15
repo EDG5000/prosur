@@ -155,6 +155,8 @@ namespace Prosur::Util{
 		return oss.str();
 	}
 
+	// TODO does not show symbol names of application code, only of stdlib
+	// May need more adjustments to build system, or another approach
 	string printStacktrace(){
 		const int skip = 1;
 		void *callstack[128];

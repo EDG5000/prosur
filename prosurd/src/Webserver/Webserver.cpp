@@ -80,11 +80,20 @@ namespace Prosur::Webserver{
 			"Access-Control-Allow-Origin: *\r\n" \
 			"Content-Type: " + responseBody.type() + "\r\n\r\n";
 
-		// Write response headers
-		write(clientSocket, responseHeader.c_str(), responseHeader.size());
+		ssize_t bytesWritten;
 
-		// Send response body
-		write(clientSocket, responseBody, responseBody.size());
+		// Write response headers
+		bytesWritten = write(clientSocket, responseHeader.c_str(), responseHeader.size());
+
+		if(bytesWritten >= 0){
+			// Send response body
+			bytesWritten = write(clientSocket, responseBody, responseBody.size());
+		}
+
+		if(bytesWritten < 0){
+			log("Webserver: Received error while writing response data: " + string(strerror(errno)));
+			// TODO letting socket close after error. Is that the correct action?
+		}
 
 		// Close connection
 		close(clientSocket);
@@ -93,7 +102,7 @@ namespace Prosur::Webserver{
 	// Process incoming TCP connection; read and process HTTP request data
 	static void handleConnection(int clientSocket){
 		char buffer[BUFSIZE];
-		size_t bytesRead = 0;
+		ssize_t bytesRead = 0;
 		int requestSize = 0;
 		//char actualPath[PATH_MAX+1];
 		bool initial = true;
@@ -106,6 +115,11 @@ namespace Prosur::Webserver{
 				(void*) (buffer + requestSize), // buf
 				sizeof(buffer)-requestSize-1 // nbytes
 			);
+			if(bytesRead < 0){
+				log("Webserver: Received error while reading request data: " + string(strerror(errno)));
+				close(clientSocket); // TODO is this the right action, e.g. are we always in a position to close the socket or is the descriptor to be discarded and no operations are to be performed on it anymore?
+				return;
+			}
 			requestSize += bytesRead;
 			if(requestSize > BUFSIZE-1 || buffer[requestSize-1] == '\n'){
 				break;

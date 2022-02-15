@@ -46,18 +46,16 @@ namespace Prosur{
 		std::set_terminate([](){
 			// Print unhandled exceptions to log before exiting
 			exception_ptr e = current_exception();
-			log("Unhandled exception.");
 			if(e){
 				try{
 					rethrow_exception(e);
 				}catch (const exception& e){
-					log("Error: " + string(e.what()));
+					cerr << e.what() << endl;
 				}catch(...){
 					log("Unknown exception.");
 				}
 			}
-			log(Util::printStacktrace());
-
+			cerr << Util::printStacktrace() << endl;
 			abort();
 		});
 
@@ -65,7 +63,8 @@ namespace Prosur{
 		Webserver::init();
 
 		while(true){
-			stoi("a");
+			//terminate();
+			//stoi("a");
 			//log("Frame");
 			int64_t startTime = Util::timeUs();
 
