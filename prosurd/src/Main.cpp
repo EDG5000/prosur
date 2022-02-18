@@ -6,7 +6,7 @@
  *
  */
 
-#include "Main.hpp"
+#include "Log.hpp"
 
 #include <inttypes.h>
 #include <unistd.h>
@@ -24,17 +24,13 @@
 #include "Webserver/Webserver.hpp"
 #include "Util/Util.hpp"
 #include "Database/Frame.hpp"
-#include "Main.hpp"
+#include "Log.hpp"
 
 using namespace std;
 using namespace Prosur;
 
 namespace Prosur{
 	Database::Frame frame;
-
-	void log(string line){
-		cerr << "[" << Util::isodatetime() << "] " << line << endl;
-	}
 
 	extern "C" int main() {
 

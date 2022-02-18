@@ -4,6 +4,8 @@
 
 using namespace std;
 
-namespace Prosur::Datasource::RepRap::HTTPUtil{
+namespace Prosur::HTTPClient{
+
 	string call(string url);
+
 }

@@ -24,8 +24,8 @@
 #include "libv4l2.h"
 
 #include "Database/Frame.hpp"
-#include "Main.hpp"
-#include "Main.hpp"
+#include "Log.hpp"
+#include "Const.hpp"
 
 using namespace std;
 

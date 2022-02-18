@@ -15,7 +15,7 @@
 #include "Util/Util.hpp"
 #include <Database/DBValue.hpp>
 #include "OID.hpp"
-#include "Main.hpp"
+#include "Log.hpp"
 
 using namespace std;
 

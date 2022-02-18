@@ -63,6 +63,9 @@ namespace Main{
             const autoScroll = Main.liveView && MouseControl.getMaxPan() != Main.Settings.pan;
             if(autoScroll){
                 Main.Settings.pan = Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
+                if(isNaN(Main.Settings.pan)){
+                    debugger;
+                }
             }
             leftChunkTime = Math.floor(Main.Settings.pan / range) * range;
             rightChunkTime = leftChunkTime + range;

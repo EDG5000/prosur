@@ -14,7 +14,7 @@
 
 #include "json.hpp"
 
-#include "Main.hpp"
+#include "Log.hpp"
 #include "Database/Frame.hpp"
 
 using namespace nlohmann;

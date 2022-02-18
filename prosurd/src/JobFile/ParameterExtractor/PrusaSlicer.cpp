@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "Util/Util.hpp"
-#include "Main.hpp"
+#include "Log.hpp"
 
 namespace Prosur::JobFile::Extractor::PrusaSlicer{
 

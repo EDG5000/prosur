@@ -80,7 +80,11 @@ export function init(){
 }
 
 export function getMaxPan(){
-    return Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
+    const pan = Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
+    if(isNaN(pan)){
+        debugger;
+    }
+    return pan;
 }
 
 // When scrolled to maximum or more

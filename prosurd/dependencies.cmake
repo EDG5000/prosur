@@ -6,8 +6,8 @@ find_package(Threads REQUIRED)
 target_link_libraries(prosurd PUBLIC Threads::Threads)
 
 # libcurl
-pkg_check_modules(libcurl REQUIRED IMPORTED_TARGET libcurl>=7.17.0)
-target_link_libraries(prosurd PUBLIC PkgConfig::libcurl)
+#pkg_check_modules(libcurl REQUIRED IMPORTED_TARGET libcurl>=7.17.0)
+#target_link_libraries(prosurd PUBLIC PkgConfig::libcurl)
 
 # libpq
 pkg_check_modules(libpq REQUIRED IMPORTED_TARGET libpq>=12.9)

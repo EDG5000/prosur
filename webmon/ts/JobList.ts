@@ -63,6 +63,9 @@ export function init(cb: Function){
         let link: HTMLAnchorElement = <HTMLAnchorElement> e.target;
         const time = parseInt(link.dataset.time);
         if(time != Main.Settings.pan){
+            if(isNaN(time)){
+                debugger;
+            }
             Main.Settings.pan = time;
             //console.log(Main.Settings.pan);
             Main.canvasInvalidated = true;

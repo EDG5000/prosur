@@ -34,7 +34,7 @@
 #include "Webserver/HTTPResponseBody.hpp"
 #include "json.hpp"
 #include "Util/Util.hpp"
-#include "Main.hpp"
+#include "Log.hpp"
 
 using namespace std;
 using namespace nlohmann;

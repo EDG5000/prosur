@@ -18,7 +18,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "Main.hpp"
+#include "Log.hpp"
 
 using namespace std;
 

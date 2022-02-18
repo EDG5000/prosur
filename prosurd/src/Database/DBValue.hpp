@@ -18,7 +18,7 @@
 
 #include "json.hpp"
 
-#include "Main.hpp"
+#include "Log.hpp"
 
 using namespace std;
 using namespace nlohmann;

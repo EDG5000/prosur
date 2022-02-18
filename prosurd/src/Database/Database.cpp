@@ -21,7 +21,7 @@
 #include <Database/DBValue.hpp>
 #include "Database/Frame.hpp"
 #include "Util/Util.hpp"
-#include "Main.hpp"
+#include "Log.hpp"
 
 using namespace std;
 using namespace filesystem;

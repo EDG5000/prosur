@@ -1,7 +1,7 @@
 #include "Database/Frame.hpp"
 
 #include "Database/DBValue.hpp"
-#include "Main.hpp"
+#include "Log.hpp"
 
 #include <map>
 #include <vector>

@@ -1,17 +1,17 @@
-#include <Datasource/RepRap/HTTPUtil.hpp>
 #include <Datasource/RepRap/RepRap.hpp>
+
 #include <vector>
 #include <iostream>
 #include <string>
 #include <time.h>
 
-#include "curl/curl.h"
 #include "json.hpp"
 
-#include <Util/Util.hpp>
+#include "HTTPClient/HTTPClient.hpp"
+#include "Util/Util.hpp"
 #include "Database/Frame.hpp"
 #include "JobFile/JobFile.hpp"
-#include "Main.hpp"
+#include "Log.hpp"
 
 using namespace std;
 using namespace nlohmann;
@@ -19,8 +19,8 @@ using namespace nlohmann;
 namespace Prosur::Datasource::RepRap{
 
 	const int TEMP_SENSOR_COUNT = 3;
-	const string RR_BASE_URL = "http://theseus3.local/";
-	//const string RR_BASE_URL = "http://192.168.2.22/";
+	//const string RR_BASE_URL = "http://theseus3.local/";
+	const string RR_BASE_URL = "http://192.168.2.22/";
 
 	const string FLAGS_STATUS = "d99fn";
 	const string FLAGS_JOB = "d99vn";
@@ -35,9 +35,9 @@ namespace Prosur::Datasource::RepRap{
 		if(key != ""){
 			url += "&key=" + key;
 		}
-		string receiveBuffer = HTTPUtil::call(url);
+		string receiveBuffer = HTTPClient::call(url);
 		if(receiveBuffer == ""){
-			log("RepRapClient: downloadModel: HTTPUtil::call returned empty string.");
+			log("RepRapClient: downloadModel: HTTPClient::call returned empty string.");
 			terminate();
 			return json();
 		}
@@ -174,8 +174,8 @@ namespace Prosur::Datasource::RepRap{
 				terminate();
 			}
 			//http://theseus3.local/rr_download?name=0:/gcodes/bltouch-mount-v2.gcode
-			//frame.jobFile = HTTPUtil::call(RR_BASE_URL + "rr_gcode?"  + Util::encodeURIComponent("gcode=M37 P\"0:/gcodes/" + filename + "\""));
-		frame.jobFile = HTTPUtil::call(RR_BASE_URL + "rr_download?name="  + filename);
+			//frame.jobFile = HTTPClient::call(RR_BASE_URL + "rr_gcode?"  + Util::encodeURIComponent("gcode=M37 P\"0:/gcodes/" + filename + "\""));
+		frame.jobFile = HTTPClient::call(RR_BASE_URL + "rr_download?name="  + filename);
 
 			frame.jobParameters = JobFile::extractParameters(frame.jobFile);
 		}

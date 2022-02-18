@@ -6,7 +6,7 @@
 #include <filesystem>
 
 #include "Database/Frame.hpp"
-#include "Main.hpp"
+#include "Log.hpp"
 
 using namespace std;
 using namespace filesystem;

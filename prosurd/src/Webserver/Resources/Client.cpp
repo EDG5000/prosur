@@ -20,7 +20,7 @@
 #include "Util/Util.hpp"
 #include "Database/Database.hpp"
 #include "Database/DBUtil.hpp"
-#include "Main.hpp"
+#include "Log.hpp"
 
 using namespace std;
 using namespace filesystem;

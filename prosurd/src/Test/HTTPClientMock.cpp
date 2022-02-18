@@ -1,4 +1,5 @@
-#include <Datasource/RepRap/HTTPUtil.hpp>
+#include "HTTPClient/HTTPClient.hpp"
+
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -8,8 +9,8 @@
 
 #include "json.hpp"
 
-#include <Util/Util.hpp>
-#include "Main.hpp"
+#include "Util/Util.hpp"
+#include "Log.hpp"
 
 using namespace std;
 using namespace filesystem;

@@ -1,2 +1,7 @@
 /Debug/
 /Release/
+
+build 
+build_TEST_MODE_CAMERA 
+build_TEST_MODE_HTTP
+build_TEST_MODE_MOCK_INPUT 

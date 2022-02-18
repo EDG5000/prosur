@@ -38,7 +38,7 @@
 #include "Webserver/Resources/Client.hpp"
 #include "Webserver/Resources/Job.hpp"
 #include "Webserver/HTTPResponseBody.hpp"
-#include "Main.hpp"
+#include "Log.hpp"
 
 using namespace std;
 
@@ -98,7 +98,9 @@ namespace Prosur::Webserver{
 		}
 
 		// Close connection
-		close(clientSocket);
+		if(close(clientSocket) < 0){
+			log("Webserver: Received error while closing socket: " + string(strerror(errno)));
+		}
 	}
 
 	// Process incoming TCP connection; read and process HTTP request data
@@ -235,28 +237,28 @@ namespace Prosur::Webserver{
 			// 2. Create socket
 			int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 			if(serverSocket < 0){
-				log("Failed to create socket. Error code: " + to_string(serverSocket));
+				log("Failed to create socket. Error code: " + string(strerror(errno)));
 				terminate();
 			}
 
 			// Enable SO_REUSEADDR setting to disable socket reuse cooldown period
 			int enable = 1;
 			if(setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0){
-				log("Failed to enable SO_REUSEADDR. Error code: " + to_string(serverSocket));
+				log("Failed to enable SO_REUSEADDR. Error code: " + string(strerror(errno)));
 				terminate();
 			}
 
 			// 3. Bind socket
 			int result = bind(serverSocket, (SA*)&serverAddr, sizeof(serverAddr));
 			if(result < 0){
-				log("Webserver: Unable to bind to socket. Error code: " + to_string(result));
+				log("Webserver: Unable to bind to socket. Error code: " + string(strerror(errno)));
 				terminate();
 			}
 
 			// 4. Start listening
 			result = listen(serverSocket, SERVER_BACKLOG);
 			if(result < 0){
-				log("Webserver: Unable to listen to socket. Error code: " + to_string(result));
+				log("Webserver: Unable to listen to socket. Error code: " + string(strerror(errno)));
 				terminate();
 			}
 
