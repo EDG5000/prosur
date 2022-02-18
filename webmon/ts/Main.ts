@@ -26,7 +26,7 @@ namespace Main{
     export let chunks: any[] = null;
 
     export let canvasInvalidated = true;
-    export let lastImageInvalidated = true;
+    export let liveView = false;
 
     let init = function(){
         // Get elements
@@ -48,6 +48,11 @@ namespace Main{
         JobList.init(function(){
             // Start drawing loop
             draw(); 
+
+            // Start timeline update loop. Otherwise while panning a 60fps update rate will be attempted, which floods the server
+            setInterval(function(){
+                Timeline.tick();
+            }, 1000 / 6); // (6 fps)
         });
     };
 
@@ -55,14 +60,22 @@ namespace Main{
         if(canvasInvalidated){
             canvasInvalidated = false;
             const range = Const.CHUNK_RANGE[Main.Settings.zoom];
+            const autoScroll = Main.liveView && MouseControl.getMaxPan() != Main.Settings.pan;
+            if(autoScroll){
+                Main.Settings.pan = Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
+            }
             leftChunkTime = Math.floor(Main.Settings.pan / range) * range;
             rightChunkTime = leftChunkTime + range;
-    
-            ChunkLoader.tick();
-            Timeline.tick();
+            if(autoScroll){
+                delete Main.chunks[Main.Settings.zoom][Main.rightChunkTime + ""];
+            }
+            ChunkLoader.get(leftChunkTime, Settings.zoom, function(){
+                ChunkLoader.get(rightChunkTime, Settings.zoom);
+            });
+
+            
             Plotter.draw();
             localStorage.pan = Main.Settings.pan;
-            //console.log("Persisting: " + localStorage.pan);
             localStorage.zoom = Main.Settings.zoom;
             
         }

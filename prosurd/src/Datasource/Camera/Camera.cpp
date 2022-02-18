@@ -166,9 +166,9 @@ namespace Prosur::Datasource::Camera{
 
 					// Sleep to maintain needed collection frequency
 					int64_t timeTaken = endTime - startTime;
-					int64_t sleepTime = (FRAME_COLLECTION_INTERVAL * STILL_CAPTURE_INTERVAL) - timeTaken;
+					int64_t sleepTime = ((FRAME_COLLECTION_INTERVAL_S * 1000 * 1000) * STILL_CAPTURE_INTERVAL) - timeTaken;
 					if(sleepTime < 0){
-						log("Camera: warning: taking " + to_string(sleepTime * -1) + "us too long to keep up with desired " + to_string(FRAME_COLLECTION_INTERVAL) + "us image collection rate.");
+						log("Camera: warning: taking " + to_string(sleepTime * -1) + "us too long to keep up with desired " + to_string(FRAME_COLLECTION_INTERVAL_S) + "us image collection rate.");
 						sleepTime = 0;
 					}
 					usleep(sleepTime);

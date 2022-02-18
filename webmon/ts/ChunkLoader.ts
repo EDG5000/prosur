@@ -3,17 +3,15 @@ namespace ChunkLoader{
 
     export function init(){
         setInterval(function(){
-            //console.log(Main.Settings.pan + Const.CHUNK_RANGE[Main.Settings.zoom] - (Math.floor(new Date().getTime()/1000)-2));
-            if((Main.Settings.pan + Const.CHUNK_RANGE[Main.Settings.zoom]) > (Math.floor(new Date().getTime()/1000)-2)){
-                Main.lastImageInvalidated = true; // Prevent image on the right from being cached by browser
+            // When live view is active and 
+            if(Main.liveView && Main.rightChunkTime != -1){
                 console.log("Live view active");
                 // Viewing last second; enable live view
-                Main.Settings.pan = Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
-                
+
                 // Reload current right chunk (unless not initialized yet)
                 if(Main.rightChunkTime != -1){
                     // TODO when precisely aligned with chunk, and other edge cases, such as at the right boundary of the right
-                    delete Main.chunks[Main.Settings.zoom][Main.rightChunkTime + ""];
+                    
                     get(Main.rightChunkTime, Main.Settings.zoom);
                 }
 
@@ -27,15 +25,6 @@ namespace ChunkLoader{
         for(let zoom = 0; zoom <= Const.MAX_ZOOM; zoom++){
             Main.chunks.push({}); 
         }
-    }
-
-    export function tick(){
-        const zoom = Main.Settings.zoom;
-        const leftChunkTime = Main.leftChunkTime;
-        const rightChunkTime = Main.rightChunkTime;
-        get(leftChunkTime, zoom, function(){
-            ChunkLoader.get(rightChunkTime, zoom);
-        });
     }
 
     // Fetch chunk from cache or backend 

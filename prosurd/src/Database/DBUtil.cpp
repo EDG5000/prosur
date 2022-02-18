@@ -52,7 +52,7 @@ namespace Prosur::Database::DBUtil{
 	}
 
 	vector<map<string, DBValue>> query(string query, vector<DBValue> params){
-		log(query);
+		//log(query);
 		//cerr + query);
 		/*log("DBUtil::query " + query + " is invoked with params: ");
 		for(auto& param: params){

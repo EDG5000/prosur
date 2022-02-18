@@ -8,7 +8,12 @@ export let createTimeLabel = function(unixTime: number){
     unixTime += (new Date().getTimezoneOffset()*-60);
 
     // Method B (intelligent)
-    return new Date(unixTime * 1000).toJSON().replace("T", " ").slice(0, 16);
+    let dateString = new Date(unixTime * 1000).toJSON();
+    if(dateString == null){
+        console.error("Date string is null. Unixtime was: " + unixTime);
+        debugger;
+    }
+    return dateString.replace("T", " ").slice(0, 16);
 
     // Method C (artisanal, against recommendation)
     /*let date = new Date(unixTime * 1000);

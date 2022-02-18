@@ -161,6 +161,7 @@ namespace Plotter{
 			ctx.moveTo(xPosition, 0);
 			ctx.lineTo(xPosition, Main.canvas.height - Const.Y_MARGIN);
 			let timeUnix = Main.Settings.pan + Const.CHUNK_RANGE[zoom] * xRelative;
+			
 			valueString = Util.createTimeLabel(timeUnix);
 			if(xRelative == 0){
 				ctx.textAlign = "left";

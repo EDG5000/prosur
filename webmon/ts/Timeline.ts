@@ -1,15 +1,16 @@
 namespace Timeline{
-    let images: Array<HTMLImageElement> = [];
+    const imageCount = 1 / Const.X_GRID_INTERVAL;
 
+    let images: Array<HTMLImageElement> = [];
     let containerHeight: number;
     let containerWidth: number;
     let imageScaleFactor: number;
     let imageWidth: number;
     let imageHeight: number;
-    const imageCount = 1 / Const.X_GRID_INTERVAL;
     let imageRange: number; // Image width expressed as time range
+    let urls = {};
 
-    let lastCacheBuster = new Date().getTime(); // Use cache buster parameter when requesting last image. Param only updated if last image is invalidated because of live-viewing
+    let initial = true;
 
     export function init(){
         containerHeight = Main.timelineContainer.clientHeight;
@@ -22,11 +23,18 @@ namespace Timeline{
         //imageCount = Math.ceil(containerWidth / imageWidth) + 1; // One more image is needed; when panning the images, the screen is to remain filled
         for(let i = 0; i < imageCount; i++){
             let img = document.createElement("img");
+            img.alt = i + "";
             img.onload = function(){
                 img.style.visibility = "initial";
+                if(img.src != urls[img.alt]){
+                    img.src = urls[img.alt];
+                }
             }
             img.onerror = function(){
                 img.style.visibility = "hidden";
+                if(img.src != urls[img.alt]){
+                    img.src = urls[img.alt];
+                }
             }
             img.width = imageWidth;
             img.height = imageHeight; // Optional
@@ -46,18 +54,24 @@ namespace Timeline{
             const max = exactTime;
             //images[i].style.visibility = "hidden";
             let url = "/file?mode=still&still_id=0&min=" + min + "&max=" + max;
-            if(i == imageCount-1){
-                // Last image in the row. Add and optionally updatecache buster param
-                if(Main.lastImageInvalidated){
-                    Main.lastImageInvalidated = false;
-                    // Update cache buster flag as last image was deemed invalidated (due to live-viewing of data)
-                    lastCacheBuster = new Date().getTime();
-                }
-                url += "&cacheBuster=" + lastCacheBuster;
+            if(i == imageCount-1 && Main.liveView){
+                // Update cache buster flag as last image was deemed invalidated (due to live-viewing of data)
+                url += "&cacheBuster=" + new Date().getTime();
             }
 
-            images[i].src = url;
+            console.log(url);
+            urls[i] = url;
+            if(initial){
+                console.log("hallo " + url);
+                images[i].src = url;
+                
+            }
+                
+            
+            
+            //
         }
-        const startTime = Main.Settings.pan;
+        initial = false;
+        //const startTime = Main.Settings.pan;
     }
 }

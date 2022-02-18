@@ -13,7 +13,7 @@ export function init(){
 
     // Add mouse listener
     Main.canvas.addEventListener("wheel", function(e: any){
-        const liveView = Main.Settings.pan + Const.CHUNK_RANGE[Main.Settings.zoom] > (Math.floor(new Date().getTime()/1000)-1);
+        Main.liveView = isPannedToMaximum();
       
         // Every event, mutate zoom level by 1.
         if(e.deltaY < 0 && Main.Settings.zoom < Const.MAX_ZOOM){
@@ -23,10 +23,10 @@ export function init(){
         }
         updateLabel();
         
-        if(liveView){
+        if(Main.liveView){
             console.log("liveView");
-            // Ensure panning to live data as before the zoom changed to ensure auto-refresh stays active
-            Main.Settings.pan = Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
+            // Correct pan to ensure right boundary of screen matches with current time
+            Main.Settings.pan = getMaxPan();
         }
 
         Main.canvasInvalidated = true;
@@ -58,22 +58,34 @@ export function init(){
 
         if (!isDown) return;
         e.preventDefault();
-        // Mouse movement in pixels
+        // Mouse movement in pixels; reset walk origin
         const walkPixels = (e.pageX - startX);
-
-        // Update startX for next event
         startX = e.pageX;
+
+        // Calculated correct pan time offset based on walk pixel distance
         const plotWidth = (Main.canvas.width - Const.X_MARGIN);
         const walkTime = (walkPixels / plotWidth) * Const.CHUNK_RANGE[Main.Settings.zoom];
         Main.Settings.pan -= Math.round(walkTime);
 
-        // Limit maximum pan to current time
-        if(Main.Settings.pan + Const.CHUNK_RANGE[Main.Settings.zoom] > Math.floor(new Date().getTime()/1000)){
-            Main.Settings.pan = Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
+        // When scrolled to maximum or more, set to limit and raise flag.
+        if(isPannedToMaximum()){
+            Main.Settings.pan = getMaxPan();
+            Main.liveView = true;
+        }else{
+            Main.liveView = false;
         }
-        
+
         Main.canvasInvalidated = true;
     });
+}
+
+export function getMaxPan(){
+    return Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
+}
+
+// When scrolled to maximum or more
+function isPannedToMaximum(){
+    return Main.Settings.pan + Const.CHUNK_RANGE[Main.Settings.zoom] > (Math.floor(new Date().getTime()/1000)-1);
 }
 
 export function updateLabel(){

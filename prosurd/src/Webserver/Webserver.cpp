@@ -51,6 +51,8 @@ namespace Prosur::Webserver{
 	typedef struct sockaddr_in SA_IN;
 	typedef struct sockaddr SA;
 
+	//thread& thread;
+
 	const map<int, string> STATUS_MESSAGE = {
 		{HTTP::OK, "OK"},
 		{HTTP::BAD_REQUEST, "Bad Request"},
@@ -222,7 +224,7 @@ namespace Prosur::Webserver{
 		// Start thread, listen for incoming connections
 		// Invoke handleConnection for each connection
 		// TODO handle requests in a separate thread for each request? What happens when multiple requests are received in rapid succession?
-		thread([]{
+		//thread([]{
 			// 1. Setup; get local address
 			int addrSize;
 			SA_IN serverAddr, clientAddr;
@@ -270,7 +272,7 @@ namespace Prosur::Webserver{
 					handleConnection(clientSocket);
 				}).detach();
 			}
-		}).detach();
+		//}).detach();
 	}
 }
 

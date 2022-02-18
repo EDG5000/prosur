@@ -11,7 +11,7 @@ namespace Prosur::Database{
 	// Is filled by the various Datasource functions before being passed to insertFrame
 	class Frame{
 	public:
-		int64_t time; // Unix time second epoch in seconds; primary key of Frame
+		int64_t time = 0; // Unix time second epoch in seconds; primary key of Frame
 		int jobId;
 
 		string jobFile; // Stored in job_file with filename and modified as composite key, avoiding redundant files.
