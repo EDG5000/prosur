@@ -19,8 +19,8 @@ using namespace nlohmann;
 namespace Prosur::Datasource::RepRap{
 
 	const int TEMP_SENSOR_COUNT = 3;
-	//const string RR_BASE_URL = "http://theseus3.local/";
-	const string RR_BASE_URL = "http://192.168.2.22/";
+	const string RR_BASE_URL = "http://theseus3.local/";
+	//const string RR_BASE_URL = "http://192.168.2.22/";
 
 	const string FLAGS_STATUS = "d99fn";
 	const string FLAGS_JOB = "d99vn";

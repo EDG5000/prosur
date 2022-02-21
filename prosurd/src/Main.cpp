@@ -25,6 +25,7 @@
 #include "Util/Util.hpp"
 #include "Database/Frame.hpp"
 #include "Log.hpp"
+#include "Const.hpp"
 
 using namespace std;
 using namespace Prosur;

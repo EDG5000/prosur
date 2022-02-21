@@ -6,14 +6,15 @@
 
 namespace Prosur{
 
-	string url = "http://172.217.168.206";
+	//string url = "http://google.com/";
+	string url = "http://theseus3.local/";
 
 	extern "C" int main(){
-		log("hallo");
 		while(true){
 
 			string response = HTTPClient::call(url);
 			if(response == ""){
+				usleep(1000 * 1000 * 1);
 				log("Request failed.");
 				continue;
 			}
