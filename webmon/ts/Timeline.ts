@@ -8,9 +8,6 @@ namespace Timeline{
     let imageWidth: number;
     let imageHeight: number;
     let imageRange: number; // Image width expressed as time range
-    let urls = {};
-
-    let initial = true;
 
     export function init(){
         containerHeight = Main.timelineContainer.clientHeight;
@@ -23,18 +20,28 @@ namespace Timeline{
         //imageCount = Math.ceil(containerWidth / imageWidth) + 1; // One more image is needed; when panning the images, the screen is to remain filled
         for(let i = 0; i < imageCount; i++){
             let img = document.createElement("img");
-            img.alt = i + "";
+            img.dataset.queuedUrl = ""; // For queueing a url to be loaded after the current load is complete (as a means of throttling)
+            img.dataset.currentUrl = ""; // Storing currently assigned url. Browser will turn the relative url in absolute url in src attr., sabotaging our logic
+            img.dataset.active = "false";
+
+            let loadNextImage = function(){
+                // If an image different than the currently loaded one is queued up, load it
+                if(img.dataset.currentUrl != img.dataset.queuedUrl && img.dataset.queuedUrl != ""){
+                    img.dataset.queuedUrl = ""; // Mark queue field as empty
+                    img.dataset.currentUrl = img.dataset.nextUrl; // Mark url currently loaded
+                    img.src = img.dataset.currentUrl; // Initiate load
+                }else{
+                    // Load complete and no image queued, mark as inactive
+                    img.dataset.active = "false";
+                }
+            };
             img.onload = function(){
                 img.style.visibility = "initial";
-                if(img.src != urls[img.alt]){
-                    img.src = urls[img.alt];
-                }
+                loadNextImage();
             }
             img.onerror = function(){
                 img.style.visibility = "hidden";
-                if(img.src != urls[img.alt]){
-                    img.src = urls[img.alt];
-                }
+                loadNextImage();
             }
             img.width = imageWidth;
             img.height = imageHeight; // Optional
@@ -45,7 +52,6 @@ namespace Timeline{
           
     // Pan the images and update the src attributes
     export function tick(){
-
         let exactTime = Main.Settings.pan;
         for(let i = 0; i < imageCount; i++){
             // Closest matching 6th frame, as still are only taken on 6th frames
@@ -58,20 +64,20 @@ namespace Timeline{
                 // Update cache buster flag as last image was deemed invalidated (due to live-viewing of data)
                 url += "&cacheBuster=" + new Date().getTime();
             }
-
-            console.log(url);
-            urls[i] = url;
-            if(initial){
-                console.log("hallo " + url);
-                images[i].src = url;
-                
+            
+            // If not currently loading an image, load the image directly
+            if(images[i].dataset.active == "true"){
+                images[i].dataset.queuedUrl = url; // Only set queue attribute, load image once current load completes
+            }else{
+                // Not currently loading an image. Directly initiate load (if URL has changed)
+                if(images[i].dataset.currentUrl != url){
+                    // Currently loaded url different from desired URL, directly load it
+                    images[i].dataset.currentUrl = url; // Register URL currently being loaded
+                    images[i].dataset.queuedUrl = ""; // No URL queued
+                    images[i].dataset.active = "true"; // Mark as active
+                    images[i].src = url; // Initiate load
+                }
             }
-                
-            
-            
-            //
         }
-        initial = false;
-        //const startTime = Main.Settings.pan;
     }
 }

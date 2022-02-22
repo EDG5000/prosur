@@ -119,11 +119,13 @@ string request = "GET " + url + " HTTP/1.1\r\n\r\n";
 				}
 				return "";
 			}
-			// Append to response string
-			response += string(buffer);
+
 			if(bytesRead == 0){
 				break;
 			}
+
+			// Append to response string
+			response += string(buffer, bytesRead);
 		}
 		if(close(sockfd) < 0){
 			log("HTTPClient: Unable to close socket: " + string(strerror(errno)));

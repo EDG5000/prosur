@@ -50,9 +50,9 @@ namespace Main{
             draw(); 
 
             // Start timeline update loop. Otherwise while panning a 60fps update rate will be attempted, which floods the server
-            setInterval(function(){
-                Timeline.tick();
-            }, 1000 / 6); // (6 fps)
+            /*setInterval(function(){
+               
+            }, 1000 / 6); // (6 fps)*/
         });
     };
 
@@ -76,7 +76,7 @@ namespace Main{
                 ChunkLoader.get(rightChunkTime, Settings.zoom);
             });
 
-            
+            Timeline.tick();
             Plotter.draw();
             localStorage.pan = Main.Settings.pan;
             localStorage.zoom = Main.Settings.zoom;
