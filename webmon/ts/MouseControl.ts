@@ -13,8 +13,6 @@ export function init(){
 
     // Add mouse listener
     Main.canvas.addEventListener("wheel", function(e: any){
-        Main.liveView = isPannedToMaximum();
-      
         // Every event, mutate zoom level by 1.
         if(e.deltaY < 0 && Main.Settings.zoom < Const.MAX_ZOOM){
             Main.Settings.zoom += 1;
@@ -23,8 +21,8 @@ export function init(){
         }
         updateLabel();
         
-        if(Main.liveView){
-            console.log("liveView");
+        if(Main.Settings.liveView){
+            //console.log("liveView");
             // Correct pan to ensure right boundary of screen matches with current time
             Main.Settings.pan = getMaxPan();
         }
@@ -70,9 +68,11 @@ export function init(){
         // When scrolled to maximum or more, set to limit and raise flag.
         if(isPannedToMaximum()){
             Main.Settings.pan = getMaxPan();
-            Main.liveView = true;
+            Main.Settings.liveView = true;
+            localStorage.liveView = true;
         }else{
-            Main.liveView = false;
+            Main.Settings.liveView = false;
+            localStorage.liveView = false;
         }
 
         Main.canvasInvalidated = true;

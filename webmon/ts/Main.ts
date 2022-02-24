@@ -15,19 +15,20 @@ namespace Main{
         export let pan = isNaN(localStorage.pan) ? Math.floor(new Date().getTime()/1000) : parseFloat(localStorage.pan);
         export let jobListScrollTop =  isNaN(localStorage.jobListScrollTop) ? 0 : parseFloat(localStorage.jobListScrollTop);
         export let parameterListScrollTop =  isNaN(localStorage.parameterListScrollTop) ? 0 : parseFloat(localStorage.parameterListScrollTop);
+        export let liveView = typeof localStorage.liveView != "undefined" && localStorage.liveView == "true";
     }
 
     // Derrived from Settings before or during drawing each frame
     export let leftChunkTime = -1; // Updated prior
     export let rightChunkTime = -1; // Updated prior
-    export let jobId = -1; // Updated during drawing
+    export let jobId = null; // Updated during drawing
 
     // Chunk holder (chunky)
     export let chunks: any[] = null;
 
+    // Redraw frame while this flag is high
     export let canvasInvalidated = true;
-    export let liveView = false;
-
+    
     let init = function(){
         // Get elements
         jobListContainer = document.getElementById("job-list");
@@ -57,23 +58,19 @@ namespace Main{
     };
 
     export function draw(){
-        if(canvasInvalidated){
+        const autoScroll = Main.Settings.liveView && MouseControl.getMaxPan() != Main.Settings.pan;
+        if(canvasInvalidated || autoScroll){
             canvasInvalidated = false;
             const range = Const.CHUNK_RANGE[Main.Settings.zoom];
-            const autoScroll = Main.liveView && MouseControl.getMaxPan() != Main.Settings.pan;
+           
             if(autoScroll){
-                Main.Settings.pan = Math.floor(new Date().getTime()/1000) - Const.CHUNK_RANGE[Main.Settings.zoom];
-                if(isNaN(Main.Settings.pan)){
-                    debugger;
-                }
+                Main.Settings.pan = MouseControl.getMaxPan();
             }
             leftChunkTime = Math.floor(Main.Settings.pan / range) * range;
             rightChunkTime = leftChunkTime + range;
-            if(autoScroll){
-                delete Main.chunks[Main.Settings.zoom][Main.rightChunkTime + ""];
-            }
+
             ChunkLoader.get(leftChunkTime, Settings.zoom, function(){
-                ChunkLoader.get(rightChunkTime, Settings.zoom);
+                ChunkLoader.get(rightChunkTime, Settings.zoom, null, autoScroll);
             });
 
             Timeline.tick();

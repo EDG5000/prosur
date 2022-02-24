@@ -7,7 +7,6 @@ namespace Timeline{
     let imageScaleFactor: number;
     let imageWidth: number;
     let imageHeight: number;
-    let imageRange: number; // Image width expressed as time range
 
     export function init(){
         containerHeight = Main.timelineContainer.clientHeight;
@@ -15,7 +14,7 @@ namespace Timeline{
         imageWidth = Math.round(containerWidth / imageCount);
         imageScaleFactor = imageWidth / Const.STILL_WIDTH;
         imageHeight = Const.STILL_HEIGHT * imageScaleFactor;
-        imageRange =  Math.round(Const.CHUNK_RANGE[Main.Settings.zoom]  / imageCount);
+       
 
         //imageCount = Math.ceil(containerWidth / imageWidth) + 1; // One more image is needed; when panning the images, the screen is to remain filled
         for(let i = 0; i < imageCount; i++){
@@ -23,12 +22,13 @@ namespace Timeline{
             img.dataset.queuedUrl = ""; // For queueing a url to be loaded after the current load is complete (as a means of throttling)
             img.dataset.currentUrl = ""; // Storing currently assigned url. Browser will turn the relative url in absolute url in src attr., sabotaging our logic
             img.dataset.active = "false";
+            img.dataset.index = i + "";
 
             let loadNextImage = function(){
                 // If an image different than the currently loaded one is queued up, load it
                 if(img.dataset.currentUrl != img.dataset.queuedUrl && img.dataset.queuedUrl != ""){
+                    img.dataset.currentUrl = img.dataset.queuedUrl; // Mark url currently loaded
                     img.dataset.queuedUrl = ""; // Mark queue field as empty
-                    img.dataset.currentUrl = img.dataset.nextUrl; // Mark url currently loaded
                     img.src = img.dataset.currentUrl; // Initiate load
                 }else{
                     // Load complete and no image queued, mark as inactive
@@ -36,22 +36,27 @@ namespace Timeline{
                 }
             };
             img.onload = function(){
+                //("onload " + img.dataset.index);
                 img.style.visibility = "initial";
                 loadNextImage();
             }
             img.onerror = function(){
+                //console.log("onerror " + img.dataset.index);
                 img.style.visibility = "hidden";
                 loadNextImage();
             }
+
             img.width = imageWidth;
             img.height = imageHeight; // Optional
             images.push(img);
             Main.timelineContainer.appendChild(img);
-        }
+        } 
     }
           
     // Pan the images and update the src attributes
     export function tick(){
+        const imageRange =  Math.round(Const.CHUNK_RANGE[Main.Settings.zoom]  / imageCount);
+
         let exactTime = Main.Settings.pan;
         for(let i = 0; i < imageCount; i++){
             // Closest matching 6th frame, as still are only taken on 6th frames
@@ -60,7 +65,7 @@ namespace Timeline{
             const max = exactTime;
             //images[i].style.visibility = "hidden";
             let url = "/file?mode=still&still_id=0&min=" + min + "&max=" + max;
-            if(i == imageCount-1 && Main.liveView){
+            if(i == imageCount-1 && Main.Settings.liveView){
                 // Update cache buster flag as last image was deemed invalidated (due to live-viewing of data)
                 url += "&cacheBuster=" + new Date().getTime();
             }

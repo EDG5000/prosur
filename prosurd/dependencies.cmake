@@ -5,7 +5,7 @@ find_package(PkgConfig REQUIRED)
 #
 
 # libpq-dev (for database)
-pkg_check_modules(libpq REQUIRED IMPORTED_TARGET libpq>=12)
+pkg_check_modules(libpq REQUIRED IMPORTED_TARGET libpq>=12.9)
 target_link_libraries(prosurd PUBLIC PkgConfig::libpq)
 
 # libv4l2-dev (for camera)

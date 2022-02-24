@@ -165,7 +165,7 @@ namespace Plotter{
 			valueString = Util.createTimeLabel(timeUnix);
 			if(xRelative == 0){
 				ctx.textAlign = "left";
-			}else if(xRelative == 1){ // The rounding here is a bit hacky.
+			}else if(xRelative == 1){
 				ctx.textAlign = "right";
 			}else{
 				ctx.textAlign = "center";
@@ -177,28 +177,14 @@ namespace Plotter{
 	
 		// Plot the data if at least one of the chunks are non-null
 		if(leftChunk != null || rightChunk != null){
-			// Load new job data if jobId changed. Clear job panel if no job in first frame
 			let jobId = -1;
-			if(leftChunk != null && typeof leftChunk.job_id != "undefined"){
-				// Offset still within left chunk
-				jobId = leftChunk.job_id[initialChunkOffset];
-				if(jobId == null){
-					jobId = -1;
-				}
-			}
-
-			if(jobId != Main.jobId){
-				// Job ID has changed; persist it and trigger job load
-				Main.jobId = jobId;
-				JobInfo.load(jobId);
-			}
-
 
 			// Draw data for each column
 			for(let colno = 0; colno < columns.length; colno++){
 				// Get index of column in full column list in order to pick the color
 				let color: string;
 				let column = columns[colno];
+
 				for(let allcolno = 0; allcolno < allColumns.length; allcolno++){
 					if(allColumns[allcolno] == column){
 						color = Const.SENSOR_COLORS[allcolno];
@@ -217,15 +203,16 @@ namespace Plotter{
 					if(leftChunk != null && chunkOffset < Const.CHUNK_SIZE){
 						// Offset still within left chunk
 						val = leftChunk[column][chunkOffset];
+						if(colno == 0 && typeof leftChunk["job_id"] != "undefined" && leftChunk["job_id"][chunkOffset] != null){
+							jobId = leftChunk["job_id"][chunkOffset];
+						}
 					}else if(rightChunk != null && chunkOffset > Const.CHUNK_SIZE){
 						// Offset beyond left chunk and within right chunk
 						val = rightChunk[column][chunkOffset % Const.CHUNK_SIZE];
+						if(colno == 0 && typeof rightChunk["job_id"] != "undefined" && rightChunk["job_id"][chunkOffset % Const.CHUNK_SIZE] != null){
+							jobId = rightChunk["job_id"][chunkOffset % Const.CHUNK_SIZE];
+						}
 					}
-
-					/*if(colno == 0){
-						console.log(val);
-					}*/
-					
 
 					if(val == null){
 						// No data for this plot index. Prevent next line (if any) from connecting with the last drawn data.
@@ -237,16 +224,21 @@ namespace Plotter{
 					let y = Main.canvas.height - Math.round(((val-yMin) * scaleY)) - Const.Y_MARGIN;
 
 					if(startLine){
-						//console.log("moveTo " + x + ", " + " " + y);
 						ctx.moveTo(x, y);
 						startLine = false;
 					}else{
-						//console.log("lineTo " + x + ", " + " " + y);
 						ctx.lineTo(x, y);
 					}
 				}
 
 				ctx.stroke();
+			}
+			
+			// Load new job data if jobId changed. Clear job panel if no job in first frame
+			if(jobId != Main.jobId){
+				// Job ID has changed; persist it and trigger job load
+				Main.jobId = jobId;
+				JobInfo.load(jobId);
 			}
 
 			// Complete drawing of grid

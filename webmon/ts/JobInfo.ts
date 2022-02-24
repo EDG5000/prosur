@@ -18,9 +18,9 @@ namespace JobInfo{
         });
     }
 
-    export function load(jobId: number){
+    export function load(jobId: any){ // null or number
         Main.parameterListContainer.innerHTML = "";
-        if(jobId == -1){
+        if(jobId == null){
             // Only clearing the job panel
             return;
         }

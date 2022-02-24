@@ -4,7 +4,7 @@ namespace ChunkLoader{
     export function init(){
         setInterval(function(){
             // When live view is active and 
-            if(Main.liveView && Main.rightChunkTime != -1){
+            if(Main.Settings.liveView && Main.rightChunkTime != -1){
                 console.log("Live view active");
                 // Viewing last second; enable live view
 
@@ -28,8 +28,10 @@ namespace ChunkLoader{
     }
 
     // Fetch chunk from cache or backend 
-    export function get(min: number, zoom: number, cb: () => void = null){
-        if(typeof Main.chunks[zoom][min + ""] != "undefined"){
+    // When overrideCache is high, cache is ignored
+    export function get(min: number, zoom: number, cb: () => void = null, overrideCache = false){
+        const existsInCache = typeof Main.chunks[zoom][min + ""] != "undefined";
+        if(existsInCache && !overrideCache){
             // Cache hit, nothing to fetch
             if(cb != null){
                 cb();
@@ -38,7 +40,11 @@ namespace ChunkLoader{
         }
 
         // Mark chunk as empty before starting request, to avoid further requests for this chunk until the chunk result is obtained
-        Main.chunks[zoom][min + ""] = null;
+        // Unless cache override is active
+        if(!overrideCache){
+            Main.chunks[zoom][min + ""] = null;
+        }
+       
 
         // Configure request and set callback
         const modulus = Math.pow(2, zoom);
@@ -82,7 +88,11 @@ namespace ChunkLoader{
             }
 
             // Check cache limit
-            framesLoaded += xhr.response.time.length;
+            if(!existsInCache){
+                // Increase cache size counter, but not when redownloading chunk that was already present in cache
+                framesLoaded += xhr.response.time.length;
+            }
+            
             if(framesLoaded > Const.CACHE_MAX_FRAMES){
                 framesLoaded = 0;
                 // TODO how to handle cache?
