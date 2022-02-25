@@ -19,8 +19,8 @@ using namespace nlohmann;
 namespace Prosur::Datasource::RepRap{
 
 	const int TEMP_SENSOR_COUNT = 3;
-	const string RR_BASE_URL = "http://theseus3.local/";
-	//const string RR_BASE_URL = "http://192.168.2.22/";
+	//const string RR_BASE_URL = "http://theseus3.local/";
+	const string RR_BASE_URL = "http://192.168.2.2/";
 
 	const string FLAGS_STATUS = "d99fn";
 	const string FLAGS_JOB = "d99vn";
@@ -175,8 +175,8 @@ namespace Prosur::Datasource::RepRap{
 			}
 			//http://theseus3.local/rr_download?name=0:/gcodes/bltouch-mount-v2.gcode
 			//frame.jobFile = HTTPClient::call(RR_BASE_URL + "rr_gcode?"  + Util::encodeURIComponent("gcode=M37 P\"0:/gcodes/" + filename + "\""));
-		frame.jobFile = HTTPClient::call(RR_BASE_URL + "rr_download?name="  + filename);
-
+			string url = RR_BASE_URL + "rr_download?name="  + Util::encodeURIComponent(filename);
+			frame.jobFile = HTTPClient::call(url);
 			frame.jobParameters = JobFile::extractParameters(frame.jobFile);
 		}
 	}

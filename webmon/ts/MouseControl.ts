@@ -65,18 +65,22 @@ export function init(){
         const walkTime = (walkPixels / plotWidth) * Const.CHUNK_RANGE[Main.Settings.zoom];
         Main.Settings.pan -= Math.round(walkTime);
 
-        // When scrolled to maximum or more, set to limit and raise flag.
-        if(isPannedToMaximum()){
-            Main.Settings.pan = getMaxPan();
-            Main.Settings.liveView = true;
-            localStorage.liveView = true;
-        }else{
-            Main.Settings.liveView = false;
-            localStorage.liveView = false;
-        }
+        onPan();
 
         Main.canvasInvalidated = true;
     });
+}
+
+export function onPan(){
+    // When scrolled to maximum or more, set to limit and raise flag.
+    if(isPannedToMaximum()){
+        Main.Settings.pan = getMaxPan();
+        Main.Settings.liveView = true;
+        localStorage.liveView = true;
+    }else{
+        Main.Settings.liveView = false;
+        localStorage.liveView = false;
+    }
 }
 
 export function getMaxPan(){

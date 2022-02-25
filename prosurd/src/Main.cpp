@@ -63,16 +63,16 @@ namespace Prosur{
 		#endif
 
 		while(true){
-			//log("Time at start: " + to_string(Util::timeUs()));
 			// Store isPrinting from previous frame; clear Frame and populate frame time
-			//int64_t startTime = ;
-			//int64_t lastTime = frame.time;
 			bool wasPrinting = frame.isPrinting;
 			int64_t startTime = Util::timeUs() / 1000 / 1000;
+
 			// Check if we are keeping pace
 			if(frame.time != 0 && startTime - frame.time != FRAME_COLLECTION_INTERVAL_S){
 				log("Warning: Not keeping up with desired interval of " + to_string(FRAME_COLLECTION_INTERVAL_S) + ". Interval was: " + to_string(startTime - frame.time));
 			}
+
+			// Clear Frame, populate basic fields
 			frame = {};
 			frame.time = startTime;
 			frame.wasPrinting = wasPrinting;

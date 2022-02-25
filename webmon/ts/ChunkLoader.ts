@@ -5,7 +5,7 @@ namespace ChunkLoader{
         setInterval(function(){
             // When live view is active and 
             if(Main.Settings.liveView && Main.rightChunkTime != -1){
-                console.log("Live view active");
+                //console.log("Live view active");
                 // Viewing last second; enable live view
 
                 // Reload current right chunk (unless not initialized yet)
@@ -69,21 +69,34 @@ namespace ChunkLoader{
                 }
                 return;
             }
+
+            let onError = function(){
+                if(!overrideCache && typeof Main.chunks[zoom][min + ""] != "undefined"){
+                    // If chunk was previously marked empty prior to iniaiting loading of the chunk,
+                    // unmark it so it will not trigger a cache hit upon chunk reload
+                    delete Main.chunks[zoom][min + ""];
+                }
+            };
+
             if(xhr.response == null){
                 console.error("ChunkLoader: failed to download, response was null. Is the backend reachable?");
+                onError();
                 return;
             }
             if(typeof xhr.response == "string"){
                 console.error("ChunkLoader: Error from Prosurd: " + xhr.response);
+                onError();
                 return;
             }
             if(typeof xhr.response.time == "undefined"){
                 console.error("ChunkLoader: Response is missing the time property.");
+                onError();
                 return;
             }
             if(xhr.response.time.length == 0){
                 // If there is no data, 404 should be returned. An empty array is considered an error.
                 console.error("ChunkLoader: Empty chunk");
+                onError();
                 return;
             }
 
@@ -96,7 +109,7 @@ namespace ChunkLoader{
             if(framesLoaded > Const.CACHE_MAX_FRAMES){
                 framesLoaded = 0;
                 // TODO how to handle cache?
-                console.log("Cache was invalidated due to exceeding maximum size of " + Const.CACHE_MAX_FRAMES);
+                //console.log("Cache was invalidated due to exceeding maximum size of " + Const.CACHE_MAX_FRAMES);
                 resetCache();
             }
             

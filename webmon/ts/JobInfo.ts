@@ -51,7 +51,7 @@ namespace JobInfo{
             table = document.createElement("table");
             addRow("Job ID", jobId + "");
             const downloadUrl = "/file?mode=job&job_id=" + jobId;
-            addRow("File", "<a href=\"" + downloadUrl + "\">Download</a>");
+            addRow("File", "<a target=\"_newtab\" href=\"" + downloadUrl + "\">Download</a>");
             for(let key in xhr.response){
                 let value = xhr.response[key];
                 addRow(key, value);
@@ -85,5 +85,5 @@ namespace JobInfo{
 
         // Add row
         table.appendChild(row);
-    }
+     }
 }

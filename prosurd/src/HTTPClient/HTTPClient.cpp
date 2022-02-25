@@ -17,6 +17,7 @@
 #include <iostream>
 
 #include "Log.hpp"
+#include "Util/Util.hpp"
 
 using namespace std;
 
@@ -40,10 +41,10 @@ namespace Prosur::HTTPClient{
 			log("HTTPClient: URL path missing. Only URLs with path allowed.");
 			return "";
 		}
-		if(url.find(":") != string::npos){
+		/*if(url.find(":") != string::npos){
 			log("HTTPClient: Explicit port specifier not allowed in url: " + url);
 			return "";
-		}
+		}*/
 		string hostname = url.substr(0, url.find("/"));
 		url = url.substr(hostname.size());
 
@@ -89,8 +90,7 @@ namespace Prosur::HTTPClient{
 		// Create request
 		// We are relying on remote server to hang up connection after sending response
 		//string request = "GET " + url + " HTTP/1.1\r\nConnection: close\r\n\r\n";
-string request = "GET " + url + " HTTP/1.1\r\n\r\n";
-
+		string request = "GET " + url + " HTTP/1.1\r\n\r\n";
 
 		// Send request
 		ssize_t nbytes_total = 0;
@@ -131,12 +131,42 @@ string request = "GET " + url + " HTTP/1.1\r\n\r\n";
 			log("HTTPClient: Unable to close socket: " + string(strerror(errno)));
 		}
 
-		// Strip headers
-		if(response.find("\r\n\r\n") == string::npos){
+		// Parse response into header lines, status line and response body. Check HTTP status.
+		int headerEndPosition = response.find("\r\n\r\n");
+		if(headerEndPosition == string::npos){
 			log("HTTPClient: Error: Response does not contain the expected two newlines after the header. URL: " + url + " Response: " + response);
 			return "";
 		}
-		response = response.substr(response.find("\r\n\r\n") + 4);
+		string headerSection = response.substr(0, headerEndPosition);
+		if(headerSection.size() == 0){
+			log("HTTPClient: Error: Response contains empty header section. Response: " + response);
+			return "";
+		}
+		vector<string> responseHeaders = Util::strSplit(headerSection, "\r\n");
+		if(responseHeaders.size() == 0){
+			log("HTTPClient: Error: Response contains no headers. Header section: " + headerSection);
+			return "";
+		}
+		string statusLine = responseHeaders.at(0);
+		vector<string> statusLineComponents = Util::strSplit(statusLine, " ");
+		if(statusLineComponents.size() < 2){
+			log("HTTPClient: Error: Response contains less than 2 status line components. Status line: " + statusLine);
+			return "";
+		}
+		int status;
+		try{
+			status = stoi(statusLineComponents.at(1));
+		}catch(exception& e){
+			log("HTTPClient: Error: Unable to parse HTTP response code from string: " + statusLineComponents.at(0) + " Response: " + response);
+			return "";
+		}
+		if(status != 200){
+			log("HTTPClient: Error: Got HTTP error status of " + to_string(status) + ". URL: " + url + " Response: " + response);
+			return "";
+		}
+
+		// Strip header section to leave only the response body
+		response = response.substr(headerEndPosition + 4);
 
 		return response;
 	}
