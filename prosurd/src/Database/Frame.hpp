@@ -37,7 +37,6 @@ namespace Prosur::Database{
 		float speedRequestedMms;
 		int printLayersPrinted;
 		int printLayersTotal;
-		float printProgressPercentage;
 
 		void exportMap(map<string, DBValue>& values); // Used by toString and by Database when inserting into database
 		string toString(); // Used when printing errors

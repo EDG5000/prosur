@@ -97,7 +97,7 @@ namespace Prosur::Datasource::RepRap{
 		// Access the downloaded model; store relevant values in the Frame
 		// TODO The key checking and complicated error reporting code makes this piece less elegant than originally intended.
 		try{
-			// When printing, download and merge job model to get information about current print
+			// When printing, download job model to get information about current print
 			if(frame.isPrinting){
 				json om_job = downloadModel(FLAGS_JOB, KEY_JOB);
 				if(om_job.is_null()){
@@ -117,7 +117,17 @@ namespace Prosur::Datasource::RepRap{
 
 				checkKeys(om_job, {"result", "file", "numLayers"});
 				frame.printLayersTotal = om_job["result"]["file"]["numLayers"];
+
+				//log("Om Job: " + om_job.dump(4));
+
 			}
+
+			//log("Om: " + om.dump(4));
+
+			checkKeys(om, {"result", "move", "currentMove", "requestedSpeed"});
+			frame.speedRequestedMms = om["result"]["move"]["currentMove"]["requestedSpeed"];
+			checkKeys(om, {"result", "move", "currentMove", "topSpeed"});
+			frame.speedCurrentMms = om["result"]["move"]["currentMove"]["topSpeed"];
 
 			if(!om["result"]["job"]["layer"].is_null()){
 				checkKeys(om, {"result", "job", "layer"});

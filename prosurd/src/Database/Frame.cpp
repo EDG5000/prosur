@@ -56,10 +56,9 @@ namespace Prosur::Database{
 
 		// Coincidentally, the following lines ended up being sorted by length
 		values["speed_current_mms"] = speedCurrentMms;
+		values["print_layers_total"] = printLayersTotal;
 		values["speed_requested_mms"] = speedRequestedMms;
 		values["print_layers_printed"] = printLayersPrinted;
-		values["print_layers_total"] = printLayersTotal;
-		values["print_progress_percentage"] = printProgressPercentage;
 	}
 
 	string Frame::toString(){

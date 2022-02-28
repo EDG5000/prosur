@@ -171,7 +171,7 @@ namespace Prosur::Webserver{
 		// Parse URL to extract document name and query string (both optional)
 		string url = statusComponents[1];
 
-		log(url);
+		//log(url);
 
 		vector<string> urlSplit = Util::strSplit(url, "?");
 
