@@ -61,7 +61,7 @@ canvas, #timeline{
 
 #timeline{
     bottom: 0;
-    height: 200px;
+    height: 243px;
     margin-left: 470px;
     margin-right: 400px;
     border-top: 1px solid black;
@@ -73,7 +73,7 @@ canvas, #timeline{
 canvas{
     top: 0;
     width: calc(100vw - 400px - 400px);
-    height: calc(100vh - 200px);
+    height: calc(100vh - 243px);
     z-index: 3;
     cursor: crosshair;
 }

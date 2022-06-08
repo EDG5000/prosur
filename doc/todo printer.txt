@@ -1,9 +1,0 @@
-pulldown issue on 5v power loss/floating (MCU brownout/blackout)
-70 zit dicht bij de limiet, als pomp uit staat kan er makkelijk een triggering optreden
-waterverlies
-ventilatoren raken kabels extruder
-TODO rpi backup maken
-
-Non-uniforme mixing: is dit een probleem?
-rt0:64.87	rt1:68.68	rt2:68.93	rt3:70.12	rt4:63.68	rt5:70.31	rt6:64.68	rt7:68.62
-0 = -5				4 = -6		6 = -6
