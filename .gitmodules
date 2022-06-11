@@ -1,3 +1,0 @@
-[submodule "vendor/mjpg-streamer"]
-	path = vendor/mjpg-streamer
-	url = https://github.com/jacksonliam/mjpg-streamer
