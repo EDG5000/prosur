@@ -1,4 +1,8 @@
 # Prosur (Production Surveyor) 
+
+*Logging all activity<br>
+in your additive production facility.*
+
 A tool which monitors your additive production processes, such as FDM 3D printing.
 
 The tool automatically collects as much data as it can, storing it permanently. A browser-based viewer allows scrolling through the collected data using a single infinitely-scrolling graph. 
@@ -39,6 +43,7 @@ Whether you are building from source or running a precompiled release, first you
 2. Ensure the following is present in the table in /etc/postgres/12/main/pg_hba.conf:
 ```
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
+
 local   all             postgres                                trust
 ```
 3. Restart PostgreSQL: `sudo service postgresql restart`
