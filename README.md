@@ -15,18 +15,6 @@ Prosur will record continually at 1Hz, whether printing or not, the following in
 - Axis positions (extruder, gantry)
 - Aux. temperatures (such as chamber temperatures)
 
-![Analyzing the first layer with Prosur](https://media.githubusercontent.com/media/EDG5000/prosur/master/doc/prosur-demo-monitor-first-layer.gif)
-*Analyzing the first layer with Prosur*
-
-![Infinitely scrolling through months of print data](https://media.githubusercontent.com/media/EDG5000/prosur/master/doc/prosur-demo-infinite-scroll.gif)
-*Infinitely scrolling through months of print data*
-
-![Downloading a job file (gcode) of a recorded print job](https://media.githubusercontent.com/media/EDG5000/prosur/master/doc/prosur-demo-download-job.gif)
-*Downloading a job file (gcode) of a recorded print job*
-
-![Live view of printer homing process](https://media.githubusercontent.com/media/EDG5000/prosur/master/doc/prosur-demo-live-view.gif)
-*Live view of printer homing process*
-
 ## Data sources
 
 The following data sources are currently implemented:
