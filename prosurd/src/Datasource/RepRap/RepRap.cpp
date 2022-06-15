@@ -19,9 +19,8 @@ using namespace nlohmann;
 
 namespace Prosur::Datasource::RepRap{
 
+	string hostname;
 	const int TEMP_SENSOR_COUNT = 3;
-	const string RR_BASE_URL = "http://theseus3.local/";
-	//const string RR_BASE_URL = "http://192.168.2.2/";
 
 	const string FLAGS_STATUS = "d99fn";
 	const string FLAGS_JOB = "d99vn";
@@ -32,7 +31,7 @@ namespace Prosur::Datasource::RepRap{
 	// Call RR API
 	static json downloadModel(string flags, string key = ""){
 		// Form url
-		string url = RR_BASE_URL + "rr_model?flags=" + flags;
+		string url = hostname + "rr_model?flags=" + flags;
 		if(key != ""){
 			url += "&key=" + key;
 		}
@@ -181,7 +180,7 @@ namespace Prosur::Datasource::RepRap{
 			}
 			//http://theseus3.local/rr_download?name=0:/gcodes/bltouch-mount-v2.gcode
 			//frame.jobFile = HTTPClient::call(RR_BASE_URL + "rr_gcode?"  + Util::encodeURIComponent("gcode=M37 P\"0:/gcodes/" + filename + "\""));
-			string url = RR_BASE_URL + "rr_download?name="  + Util::encodeURIComponent(filename);
+			string url = hostname + "rr_download?name="  + Util::encodeURIComponent(filename);
 			frame.jobFile = HTTPClient::call(url);
 			if(frame.jobFile.size() == 0){
 				log("RepRap: Unable to download job file. Skipping job parameter extraction.");

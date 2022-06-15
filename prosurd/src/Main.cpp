@@ -33,7 +33,7 @@ using namespace Prosur;
 namespace Prosur{
 	Database::Frame frame;
 
-	extern "C" int main() {
+	extern "C" int main(int argCount, char** argv) {
 
 		// Print unhandled exceptions to log before exiting
 		set_terminate([](){
@@ -61,6 +61,12 @@ namespace Prosur{
 				Webserver::init();
 			}).detach();
 		#endif
+
+		if(argCount < 1){
+			log("Error: Supply the hostname for the RepRap datasource as the first program argument.");
+			return 1;
+		}
+		Datasource::RepRap::hostname = "http://" + string(argv[0]) + "/";
 
 		while(true){
 			// Store isPrinting from previous frame; clear Frame and populate frame time

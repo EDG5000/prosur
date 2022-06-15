@@ -10,5 +10,6 @@
 using namespace std;
 
 namespace Prosur::Datasource::RepRap{
+	extern string hostname;
 	void fillFrame(Database::Frame& frame); // Fill a part of the passed Frame
 }

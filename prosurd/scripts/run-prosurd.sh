@@ -3,7 +3,7 @@
 # Get script path. Log file path is expected to be next to prosur git root directory
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 LOG_FILE=$SCRIPT_DIR/../../../prosurd.log
-#LOG_FILE=/var/log/prosurd.log
+
 
 # Start postgresql
 echo "Starting postgres" | ts | tee -a $LOG_FILE
@@ -28,7 +28,11 @@ echo "Gateway online. Proceeding." | ts | tee -a $LOG_FILE
 # Start prosurd
 echo "Starting prosurd" | ts | tee -a $LOG_FILE
 cd ${SCRIPT_DIR}/.. # PWD must be prosur/prosurd while launching
-../../build_prosurd/prosurd &>> $LOG_FILE
+
+# Load config file
+source scripts/run-prosurd.config
+
+../../build_prosurd/prosurd $REPRAP_HOSTNAME &>> $LOG_FILE
 echo "Prosurd completed" | ts | tee -a $LOG_FILE
 
 

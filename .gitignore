@@ -25,3 +25,4 @@ prosurd/build_test
 prosurd/build_test_camera
 prosurd/client.html
 /README.md.backup
+/prosurd/scripts/run-prosurd.config

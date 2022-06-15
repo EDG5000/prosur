@@ -11,8 +11,7 @@ Prosur will record continually at 1Hz, whether printing or not, the following in
 - Periodic stills (every 6th second)
 - Temperatures
 - A job file (such as gcode) when starting a job
-- Job parameters (slicer settings)yy
-
+- Job parameters (slicer settings)
 - Axis positions (extruder, gantry)
 - Aux. temperatures (such as chamber temperatures)
 
@@ -44,7 +43,7 @@ All data is stored in a PostgreSQL database. The system consists of three module
 
 The collection is written in modern C++, while the viewer is written in TypeScript. There are no libraries, except libpq for database interaction. Everything is implemented from scratch, using built-in Unix, Linux, STL and DOM libraries and headers. It is tested with both modern GCC and modern Clang.
 
-Please note: Various Linux-specific headers are used for the Camera datasource. For the HTTP server and client, standard Unix headers are used. Some headers may be Linux specific as well. To support other Unix systems. disable the Camera module or reimplement it.
+Please note: Various Linux-specific headers are used for the Camera datasource. For the HTTP server and client, standard Unix headers are used. Some headers may be Linux specific as well. To support other Unix systems. Disable the Camera module or reimplement it.
 
 ## Installing and configuring PostgreSQL
 
@@ -73,13 +72,15 @@ Note: Prosurd will auto-create the database on first start of the daemon, there 
 
 ## Building from source
 
+Note: This tutorial is aimed at Ubuntu 20.04.4 LTS, but should work with any Linux-based operating system.
+
 Note: Before continuing, ensure PostgreSQL is set up. See chapter 'Installing and configuring PostgreSQL'.
 
-Info: The build system is CMake for the backend. For the frontend, TypeScript's built-in tsc command is used.
+Info: The build system is CMake for the backend. For the frontend, TypeScript's built-in `tsc` command is used.
 
 Info: These instructions use APT as a package source. If you are using another package manager, use equivalent commands.
 
-### Install dependencies
+### 1. Install dependencies
 
 - GCC or Clang
 - CMake
@@ -93,7 +94,7 @@ Here is your one-liner:
 ```
 sudo apt install build-essential, cmake, libpq-dev, postgresql, postgresql-dev, postgresql-server-dev, npm
 ```
-### Install TypeScript compiler
+### 2. Install TypeScript compiler
 
 Install Typescript compiler using npm. Update NPM and Node. Typescript compiler uses Node.js runtime.
 ```
@@ -102,7 +103,7 @@ sudo npm install -g node
 sudo npm install -g typescript
 ```
 
-### Compile prosurd
+### 3. Compile prosurd
 
 Configure using CMake. Compile with make.
 ```
@@ -114,7 +115,7 @@ cmake ..
 make
 ```
 
-### Compile webmon
+### 4. Compile webmon
 ```
 cd prosur
 cd webmon
@@ -122,19 +123,26 @@ tsc
 ```
 Note: During development, use the Build command within VS Code (optional) to enable TypeScript 'watch' auto-compilation for convenience.
 
-### Run!
+### 5. Run!
 ```
-cd prosur/prosurd/build
-./prosurd mylitleprinter.local
+cd prosur/prosurd
+./build/prosurd mylitleprinter.local 
 ```
+Note:  `CWD` must be in same folder as database.sql (`CWD` must be `prosur/prosurd`, do not `cd` into `build/`).
 
-IMPORTANT: Replace 'mylittleprinter.local' with the IP or mDNS hostname of your 3D printer. To avoid confusion, use a hostname corresponding to the size of your 3D printer. For example, if you have a large 3D printer, the recommended intuitive hostname is myverylarge3dprinter.local.
+IMPORTANT: Replace `mylittleprinter.local` with the IP or mDNS hostname of your 3D printer. To avoid confusion, use a hostname corresponding to the size of your 3D printer. For example, if you have a large 3D printer, the recommended intuitive hostname is myverylarge3dprinter.local.
 
 Note: In RepRapFirmware, in `config.g`, use `M550 P"MyLittlePrinter` to set the mDNS hostname to `mylittleprinter.local`.
 
-1. Open web browser, type the hostname or IP where `prosurd` is running, suffix with `:8080` e.g. `mylittlepc.local:8080`
-2. Power on your RepRapFirmware-based 3D printer.
+1. Power on your RepRapFirmware-based 3D printer.
+2. Open web browser, type the hostname or IP where `prosurd` is running, suffix with `:8080` e.g. `mylittlepc.local:8080`
 3. Data is now collected and can be viewed.
+
+# Automatically starting at boot
+
+A script is present in `scripts/run-prosurd.sh` which starts Postgres, waits for the network to be online and starts prosurd. It takes care of appending program output to a log file and running it through `ts` for logging timestamps.
+
+Run `crontab -e` and add a line containing `@reboot /path/to/prosur/prosurd/scripts/run-prosurd.sh`.
 
 # How to use the web viewer
 
@@ -147,10 +155,22 @@ Note: In RepRapFirmware, in `config.g`, use `M550 P"MyLittlePrinter` to set the 
 - The value under the mouse cursor is displayed in the graph.
 - The graph will continually perform auto-ranging.
 - To easily enable live view from any viewer position, zoom out quite a bit, then scroll all the way to the right. Then zoom in again.
-- See the slicer settings used for a particular print by scrolling to the print session in the live view or clicking on it in the left pane. The right pane will then show the job parameters, and will allow you to download the job file (usually gcodde).
+- See the slicer settings used for a particular print by scrolling to the print session in the live view or clicking on it in the left pane. The right pane will then show the job parameters, and will allow you to download the job file (usually GCode).
 
 # Why?
 
-Prosur takes the guesswork out of working with 3D printers. No longer do you have to randomly adjust settings. If you broke your settings or forgot what settings you used for a particular print, it will al be easily findable using the web viewer. If you want to see which values produced the best prints, you can use the viewer for that as well. Want to re-print a file from a long time ago, but forgot the print settings? Simply download the gcode file from the archive and print it again. Want to monitor your printers capability in maintaining the correct temperature? You can use the plots for that. If needed for further analysis you can extract CSV files using a PostgreSQL GUI, such as DBeaver.
+Prosur takes the guesswork out of working with 3D printers. No longer do you have to randomly adjust settings. If you broke your settings or forgot what settings you used for a particular print, it will all be easily find-able using the web viewer.
+
+If you want to see which values produced the best prints, you can use the viewer for that as well. 
+
+Want to re-print a file from a long time ago, but forgot the print settings? Simply download the GCode file from the archive and print it again. 
+
+Want to monitor your printers capability in maintaining the correct temperature? You can use the plots for that. 
+
+If needed for further analysis, you can extract CSV files using a PostgreSQL GUI, such as DBeaver.
+  
+# Feedback?
+
+Please feel free to share any feedback or questions in the Issues section.
 
 
